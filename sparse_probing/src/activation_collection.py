@@ -34,9 +34,7 @@ def get_all_llm_activations(
             desc=f"Collecting activations for class {class_name}",
         ):
             tokens_BL = tokenized_inputs["input_ids"][i : i + batch_size]
-            attention_mask_BL = tokenized_inputs["attention_mask"][
-                i * batch_size : (i + 1) * batch_size
-            ]
+            attention_mask_BL = tokenized_inputs["attention_mask"][i : i + batch_size]
 
             acts_BLD = None
 
