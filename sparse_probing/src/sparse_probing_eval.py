@@ -1,3 +1,5 @@
+import os
+import time
 import torch
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
@@ -18,15 +20,15 @@ def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
 
 def run_eval(
     config: eval_config.EvalConfig,
-    model_name: str,
     device: str,
 ):
     results_dict = {}
-    results_dict["custom_eval_config"] = asdict(config)
     results_dict["custom_eval_results"] = {}
 
-    model = HookedTransformer.from_pretrained(model_name, device=device, dtype=config.model_dtype)
-    llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[model_name]
+    model = HookedTransformer.from_pretrained(
+        config.model_name, device=device, dtype=config.model_dtype
+    )
+    llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
 
     train_df, test_df = dataset_creation.load_huggingface_dataset(config.dataset_name)
     train_data, test_data = dataset_creation.get_multi_label_train_test_data(
@@ -119,10 +121,14 @@ def run_eval(
                     average_test_accuracy(sae_top_k_test_accuracies)
                 )
 
+    config.model_dtype = str(config.model_dtype)  # so it's json serializable
+    results_dict["custom_eval_config"] = asdict(config)
     return results_dict
 
 
 if __name__ == "__main__":
+    start_time = time.time()
+
     if torch.backends.mps.is_available():
         device = "mps"
     else:
@@ -132,9 +138,19 @@ if __name__ == "__main__":
 
     config = eval_config.EvalConfig()
 
-    results_dict = run_eval(config, config.model_name, device)
+    results_dict = run_eval(config, device)
 
     output_filename = config.sae_release + "_eval_results.json"
+    output_folder = "sparse_probing_results"
 
-    with open(output_filename, "w") as f:
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder, exist_ok=True)
+
+    output_location = os.path.join(output_folder, output_filename)
+
+    with open(output_location, "w") as f:
         json.dump(results_dict, f)
+
+    end_time = time.time()
+
+    print(f"Finished evaluation in {end_time - start_time} seconds")
