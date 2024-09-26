@@ -6,6 +6,8 @@ from transformer_lens import HookedTransformer
 from sae_lens import SAE
 import json
 from dataclasses import asdict
+import pandas as pd
+from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 
 import dataset_creation
 import utils
@@ -22,6 +24,11 @@ def run_eval(
     config: eval_config.EvalConfig,
     device: str,
 ):
+    # TODO: Make this nicer.
+    sae_map_df = pd.DataFrame.from_records(
+        {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
+    ).T
+
     results_dict = {}
     results_dict["custom_eval_results"] = {}
 
@@ -74,6 +81,8 @@ def run_eval(
         )
 
         for sae_name in tqdm(config.saes, desc="Running SAE evaluation"):
+            sae_recording_name = sae_map_df.saes_map[config.sae_release][sae_name]
+
             sae, cfg_dict, sparsity = SAE.from_pretrained(
                 release=config.sae_release,
                 sae_id=sae_name,
@@ -99,7 +108,7 @@ def run_eval(
                 select_top_k=None,
             )
 
-            results_dict["custom_eval_results"][sae_name] = {
+            results_dict["custom_eval_results"][sae_recording_name] = {
                 "llm_test_accuracy": average_test_accuracy(llm_test_accuracies),
                 "sae_test_accuracy": average_test_accuracy(sae_test_accuracies),
             }
@@ -117,9 +126,9 @@ def run_eval(
                         select_top_k=k,
                     )
                 )
-                results_dict["custom_eval_results"][sae_name][f"sae_top_{k}_test_accuracy"] = (
-                    average_test_accuracy(sae_top_k_test_accuracies)
-                )
+                results_dict["custom_eval_results"][sae_recording_name][
+                    f"sae_top_{k}_test_accuracy"
+                ] = average_test_accuracy(sae_top_k_test_accuracies)
 
     config.model_dtype = str(config.model_dtype)  # so it's json serializable
     results_dict["custom_eval_config"] = asdict(config)
