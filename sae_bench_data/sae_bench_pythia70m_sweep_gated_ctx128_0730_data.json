@@ -1,0 +1,1726 @@
+{
+    "sae_config_dictionary_learning": {
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_18": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_16": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_11": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_10": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_17": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_19": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_4": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_3": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_2": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_5": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_12": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_15": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_14": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_13": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_0": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_7": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_9": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_8": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_6": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_1": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 3,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_3",
+                "submodule_name": "resid_post_layer_3"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_18": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_16": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_11": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_10": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_17": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_19": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.9,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_4": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_3": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_2": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_5": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_12": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_15": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_14": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_13": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.7,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_0": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_7": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.0001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_9": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_8": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.001,
+                "l1_penalty": 0.5,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_6": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 16384,
+                "lr": 0.001,
+                "l1_penalty": 0.3,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_1": {
+            "trainer": {
+                "dict_class": "GatedAutoEncoder",
+                "trainer_class": "GatedSAETrainer",
+                "activation_dim": 512,
+                "dict_size": 4096,
+                "lr": 0.0001,
+                "l1_penalty": 0.1,
+                "warmup_steps": 1000,
+                "device": "cuda:0",
+                "layer": 4,
+                "lm_name": "EleutherAI/pythia-70m-deduped",
+                "wandb_name": "GatedSAETrainer-EleutherAI/pythia-70m-deduped-resid_post_layer_4",
+                "submodule_name": "resid_post_layer_4"
+            },
+            "buffer": {
+                "d_submodule": 512,
+                "io": "out",
+                "n_ctxs": 10000,
+                "ctx_len": 128,
+                "refresh_batch_size": 32,
+                "out_batch_size": 4096,
+                "device": "cuda:0"
+            }
+        }
+    },
+    "basic_eval_results": {
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_18": {
+            "l2_loss": 4.091695547103882,
+            "l1_loss": 48.56572914123535,
+            "l0": 60.5049991607666,
+            "frac_variance_explained": 0.956131637096405,
+            "cossim": 0.9561952650547028,
+            "l2_ratio": 0.9431371688842773,
+            "relative_reconstruction_bias": 0.9953996241092682,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.46875,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.95703125,
+            "frac_alive": 0.2049560546875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_16": {
+            "l2_loss": 4.192893028259277,
+            "l1_loss": 51.17982292175293,
+            "l0": 68.81499862670898,
+            "frac_variance_explained": 0.8996331989765167,
+            "cossim": 0.9526893496513367,
+            "l2_ratio": 0.957265168428421,
+            "relative_reconstruction_bias": 1.0063791275024414,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.5,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.95703125,
+            "frac_alive": 0.694091796875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_11": {
+            "l2_loss": 2.5663819313049316,
+            "l1_loss": 122.03194046020508,
+            "l0": 241.2249984741211,
+            "frac_variance_explained": 0.9915377795696259,
+            "cossim": 0.9824479222297668,
+            "l2_ratio": 0.9817214906215668,
+            "relative_reconstruction_bias": 0.9983848631381989,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.234375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.363037109375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_10": {
+            "l2_loss": 3.303561568260193,
+            "l1_loss": 71.1842155456543,
+            "l0": 130.38500213623047,
+            "frac_variance_explained": 0.953961968421936,
+            "cossim": 0.9726590514183044,
+            "l2_ratio": 0.9666237831115723,
+            "relative_reconstruction_bias": 0.9969744980335236,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.34375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.96875,
+            "frac_alive": 0.29925537109375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_17": {
+            "l2_loss": 4.077711820602417,
+            "l1_loss": 99.79027938842773,
+            "l0": 79.9749984741211,
+            "frac_variance_explained": 0.9596592485904694,
+            "cossim": 0.9543067216873169,
+            "l2_ratio": 0.9473299384117126,
+            "relative_reconstruction_bias": 0.9983561635017395,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.546875,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.951171875,
+            "frac_alive": 0.476318359375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_19": {
+            "l2_loss": 3.802935004234314,
+            "l1_loss": 91.14981079101562,
+            "l0": 90.1349983215332,
+            "frac_variance_explained": 0.9635432958602905,
+            "cossim": 0.9614428579807281,
+            "l2_ratio": 0.9609856605529785,
+            "relative_reconstruction_bias": 0.9999611675739288,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.390625,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.96875,
+            "frac_alive": 0.2374267578125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_4": {
+            "l2_loss": 2.3242627382278442,
+            "l1_loss": 103.32945251464844,
+            "l0": 252.79999542236328,
+            "frac_variance_explained": 0.9789170026779175,
+            "cossim": 0.9860871434211731,
+            "l2_ratio": 0.9804092943668365,
+            "relative_reconstruction_bias": 0.9959313869476318,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.234375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.826416015625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_3": {
+            "l2_loss": 0.43181225657463074,
+            "l1_loss": 216.08472442626953,
+            "l0": 590.9849853515625,
+            "frac_variance_explained": 0.9997637271881104,
+            "cossim": 0.9995618760585785,
+            "l2_ratio": 1.0001021027565002,
+            "relative_reconstruction_bias": 1.0001211762428284,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 1.0,
+            "frac_alive": 0.15557861328125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_2": {
+            "l2_loss": 1.8509351015090942,
+            "l1_loss": 131.13249969482422,
+            "l0": 396.88499450683594,
+            "frac_variance_explained": 0.9975889325141907,
+            "cossim": 0.9916780889034271,
+            "l2_ratio": 0.9986166059970856,
+            "relative_reconstruction_bias": 1.0027380585670471,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.234375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.1112060546875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_5": {
+            "l2_loss": 1.2129348516464233,
+            "l1_loss": 197.0015640258789,
+            "l0": 379.8599853515625,
+            "frac_variance_explained": 0.9937676191329956,
+            "cossim": 0.9962087273597717,
+            "l2_ratio": 0.9963479340076447,
+            "relative_reconstruction_bias": 1.0004808902740479,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.140625,
+            "loss_zero": 13.5625,
+            "frac_recovered": 1.0,
+            "frac_alive": 0.5693359375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_12": {
+            "l2_loss": 3.748379111289978,
+            "l1_loss": 60.0474910736084,
+            "l0": 96.12499618530273,
+            "frac_variance_explained": 0.9261168241500854,
+            "cossim": 0.9605966508388519,
+            "l2_ratio": 0.9601201415061951,
+            "relative_reconstruction_bias": 1.0017150044441223,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.453125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.9609375,
+            "frac_alive": 0.797119140625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_15": {
+            "l2_loss": 3.244529366493225,
+            "l1_loss": 120.72209167480469,
+            "l0": 134.03500366210938,
+            "frac_variance_explained": 0.9876659214496613,
+            "cossim": 0.9710160791873932,
+            "l2_ratio": 0.9653101563453674,
+            "relative_reconstruction_bias": 0.9983204305171967,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.328125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.97265625,
+            "frac_alive": 0.2999267578125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_14": {
+            "l2_loss": 3.701678156852722,
+            "l1_loss": 59.957834243774414,
+            "l0": 87.77499771118164,
+            "frac_variance_explained": 0.9801019430160522,
+            "cossim": 0.964617520570755,
+            "l2_ratio": 0.9765737950801849,
+            "relative_reconstruction_bias": 1.0015305280685425,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.40625,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.96875,
+            "frac_alive": 0.25762939453125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_13": {
+            "l2_loss": 3.400195837020874,
+            "l1_loss": 103.83464813232422,
+            "l0": 125.91999816894531,
+            "frac_variance_explained": 0.9450815618038177,
+            "cossim": 0.9684658944606781,
+            "l2_ratio": 0.9677082598209381,
+            "relative_reconstruction_bias": 1.0002705752849579,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.96875,
+            "frac_alive": 0.603515625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_0": {
+            "l2_loss": 1.7389051914215088,
+            "l1_loss": 131.95904541015625,
+            "l0": 407.3849792480469,
+            "frac_variance_explained": 0.9963776767253876,
+            "cossim": 0.9922364354133606,
+            "l2_ratio": 0.9922811985015869,
+            "relative_reconstruction_bias": 1.0007711052894592,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.203125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.98828125,
+            "frac_alive": 0.45361328125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_7": {
+            "l2_loss": 1.375364363193512,
+            "l1_loss": 178.87802124023438,
+            "l0": 459.0299987792969,
+            "frac_variance_explained": 0.9939996600151062,
+            "cossim": 0.9952470064163208,
+            "l2_ratio": 0.99808269739151,
+            "relative_reconstruction_bias": 1.0008546710014343,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.109375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 1.0,
+            "frac_alive": 0.35467529296875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_9": {
+            "l2_loss": 2.5680607557296753,
+            "l1_loss": 132.91940307617188,
+            "l0": 224.09999084472656,
+            "frac_variance_explained": 0.9906136989593506,
+            "cossim": 0.9822552502155304,
+            "l2_ratio": 0.9823748171329498,
+            "relative_reconstruction_bias": 1.0007079243659973,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.234375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.68505859375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_8": {
+            "l2_loss": 3.177458882331848,
+            "l1_loss": 76.50387954711914,
+            "l0": 147.06499481201172,
+            "frac_variance_explained": 0.9791415333747864,
+            "cossim": 0.9747806787490845,
+            "l2_ratio": 0.9815819263458252,
+            "relative_reconstruction_bias": 1.0009117126464844,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.34375,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.97265625,
+            "frac_alive": 0.866943359375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_6": {
+            "l2_loss": 2.5198302268981934,
+            "l1_loss": 99.1658821105957,
+            "l0": 223.1649932861328,
+            "frac_variance_explained": 0.9766861200332642,
+            "cossim": 0.9830348789691925,
+            "l2_ratio": 0.980072021484375,
+            "relative_reconstruction_bias": 0.9981227815151215,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.28125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.25921630859375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_3/trainer_1": {
+            "l2_loss": 0.42098043859004974,
+            "l1_loss": 221.11109161376953,
+            "l0": 606.5899658203125,
+            "frac_variance_explained": 0.9997320473194122,
+            "cossim": 0.9995822012424469,
+            "l2_ratio": 1.0001044273376465,
+            "relative_reconstruction_bias": 1.0014447569847107,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.125,
+            "loss_zero": 13.5625,
+            "frac_recovered": 1.0,
+            "frac_alive": 0.48046875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_18": {
+            "l2_loss": 4.544029951095581,
+            "l1_loss": 64.54390335083008,
+            "l0": 93.29499816894531,
+            "frac_variance_explained": 0.9530273377895355,
+            "cossim": 0.9571136236190796,
+            "l2_ratio": 0.9798197150230408,
+            "relative_reconstruction_bias": 1.0121071338653564,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.328125,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.958984375,
+            "frac_alive": 0.31329345703125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_16": {
+            "l2_loss": 4.652043342590332,
+            "l1_loss": 65.01736259460449,
+            "l0": 91.68999481201172,
+            "frac_variance_explained": 0.9426365494728088,
+            "cossim": 0.9524129331111908,
+            "l2_ratio": 0.9474399089813232,
+            "relative_reconstruction_bias": 0.9983129799365997,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.4375,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.935546875,
+            "frac_alive": 0.84130859375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_11": {
+            "l2_loss": 2.5382686853408813,
+            "l1_loss": 136.68033599853516,
+            "l0": 349.23500061035156,
+            "frac_variance_explained": 0.9688377976417542,
+            "cossim": 0.9864452183246613,
+            "l2_ratio": 0.9831381738185883,
+            "relative_reconstruction_bias": 0.997850775718689,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.1875,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.984375,
+            "frac_alive": 0.4822998046875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_10": {
+            "l2_loss": 3.355391263961792,
+            "l1_loss": 89.64961242675781,
+            "l0": 185.51499938964844,
+            "frac_variance_explained": 0.9566273391246796,
+            "cossim": 0.976550430059433,
+            "l2_ratio": 0.9768743813037872,
+            "relative_reconstruction_bias": 1.0025873184204102,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.296875,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.962890625,
+            "frac_alive": 0.39385986328125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_17": {
+            "l2_loss": 4.453660726547241,
+            "l1_loss": 90.71004486083984,
+            "l0": 121.21999740600586,
+            "frac_variance_explained": 0.9363422095775604,
+            "cossim": 0.9571953117847443,
+            "l2_ratio": 0.9606445729732513,
+            "relative_reconstruction_bias": 1.0029930472373962,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.34375,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.955078125,
+            "frac_alive": 0.770751953125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_19": {
+            "l2_loss": 4.1556220054626465,
+            "l1_loss": 85.76207733154297,
+            "l0": 132.45499420166016,
+            "frac_variance_explained": 0.9457806944847107,
+            "cossim": 0.9629827737808228,
+            "l2_ratio": 0.9646439850330353,
+            "relative_reconstruction_bias": 1.002303421497345,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.3125,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.9609375,
+            "frac_alive": 0.3802490234375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_4": {
+            "l2_loss": 2.5167651176452637,
+            "l1_loss": 138.07901763916016,
+            "l0": 320.7649841308594,
+            "frac_variance_explained": 0.976967453956604,
+            "cossim": 0.9864054322242737,
+            "l2_ratio": 0.9795602262020111,
+            "relative_reconstruction_bias": 0.9929051101207733,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.15625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.990234375,
+            "frac_alive": 0.845947265625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_3": {
+            "l2_loss": 0.4588934928178787,
+            "l1_loss": 251.64488983154297,
+            "l0": 626.2799682617188,
+            "frac_variance_explained": 0.999695897102356,
+            "cossim": 0.9996055960655212,
+            "l2_ratio": 0.9995828866958618,
+            "relative_reconstruction_bias": 1.0001797676086426,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.109375,
+            "loss_zero": 10.25,
+            "frac_recovered": 1.0,
+            "frac_alive": 0.16845703125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_2": {
+            "l2_loss": 2.022075593471527,
+            "l1_loss": 159.20934295654297,
+            "l0": 437.47999572753906,
+            "frac_variance_explained": 0.9937213957309723,
+            "cossim": 0.991720050573349,
+            "l2_ratio": 1.0012033581733704,
+            "relative_reconstruction_bias": 1.010353922843933,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.171875,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.98828125,
+            "frac_alive": 0.13287353515625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_5": {
+            "l2_loss": 1.1042667031288147,
+            "l1_loss": 231.8655776977539,
+            "l0": 416.26499938964844,
+            "frac_variance_explained": 0.9974260926246643,
+            "cossim": 0.9976780116558075,
+            "l2_ratio": 0.9985581636428833,
+            "relative_reconstruction_bias": 1.0010928511619568,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.140625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.9921875,
+            "frac_alive": 0.610595703125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_12": {
+            "l2_loss": 4.10287070274353,
+            "l1_loss": 80.71371841430664,
+            "l0": 140.92499542236328,
+            "frac_variance_explained": 0.9564054310321808,
+            "cossim": 0.96378493309021,
+            "l2_ratio": 0.9669409096240997,
+            "relative_reconstruction_bias": 1.001811444759369,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.328125,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.958984375,
+            "frac_alive": 0.927978515625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_15": {
+            "l2_loss": 3.4895445108413696,
+            "l1_loss": 96.07304000854492,
+            "l0": 210.3699951171875,
+            "frac_variance_explained": 0.9376392662525177,
+            "cossim": 0.9741920530796051,
+            "l2_ratio": 0.9717768132686615,
+            "relative_reconstruction_bias": 0.9996769726276398,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.265625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.96875,
+            "frac_alive": 0.43914794921875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_14": {
+            "l2_loss": 4.100494861602783,
+            "l1_loss": 71.07941436767578,
+            "l0": 126.03999710083008,
+            "frac_variance_explained": 0.9571558833122253,
+            "cossim": 0.9647511839866638,
+            "l2_ratio": 0.955089807510376,
+            "relative_reconstruction_bias": 0.9961054027080536,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.34375,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.955078125,
+            "frac_alive": 0.35986328125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_13": {
+            "l2_loss": 3.6238642930984497,
+            "l1_loss": 111.26651000976562,
+            "l0": 181.40999603271484,
+            "frac_variance_explained": 0.9572663903236389,
+            "cossim": 0.9720774590969086,
+            "l2_ratio": 0.9714520275592804,
+            "relative_reconstruction_bias": 1.0007032454013824,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.25,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.97265625,
+            "frac_alive": 0.820556640625,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_0": {
+            "l2_loss": 2.1015034914016724,
+            "l1_loss": 157.79371643066406,
+            "l0": 447.23500061035156,
+            "frac_variance_explained": 0.9945869445800781,
+            "cossim": 0.9909184873104095,
+            "l2_ratio": 0.9937534928321838,
+            "relative_reconstruction_bias": 1.0032199025154114,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.265625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.970703125,
+            "frac_alive": 0.57080078125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_7": {
+            "l2_loss": 1.298915684223175,
+            "l1_loss": 212.2872543334961,
+            "l0": 552.8450012207031,
+            "frac_variance_explained": 0.9958517253398895,
+            "cossim": 0.9966045916080475,
+            "l2_ratio": 0.9983577728271484,
+            "relative_reconstruction_bias": 1.0026415586471558,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.140625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.9921875,
+            "frac_alive": 0.431396484375,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_9": {
+            "l2_loss": 2.4558699131011963,
+            "l1_loss": 160.01457977294922,
+            "l0": 303.6599884033203,
+            "frac_variance_explained": 0.9797276258468628,
+            "cossim": 0.9876122772693634,
+            "l2_ratio": 0.9878036081790924,
+            "relative_reconstruction_bias": 1.0016292035579681,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.203125,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.98046875,
+            "frac_alive": 0.809814453125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_8": {
+            "l2_loss": 3.303896188735962,
+            "l1_loss": 101.02452087402344,
+            "l0": 211.1449966430664,
+            "frac_variance_explained": 0.9402211010456085,
+            "cossim": 0.976602166891098,
+            "l2_ratio": 0.9772749245166779,
+            "relative_reconstruction_bias": 1.001644790172577,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.234375,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.9765625,
+            "frac_alive": 0.94970703125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_6": {
+            "l2_loss": 2.697478413581848,
+            "l1_loss": 130.88229370117188,
+            "l0": 293.4949951171875,
+            "frac_variance_explained": 0.9774413704872131,
+            "cossim": 0.9855411946773529,
+            "l2_ratio": 0.9804334044456482,
+            "relative_reconstruction_bias": 0.9974142014980316,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.15625,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.990234375,
+            "frac_alive": 0.28546142578125,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        },
+        "pythia70m_sweep_gated_ctx128_0730/resid_post_layer_4/trainer_1": {
+            "l2_loss": 0.4438294917345047,
+            "l1_loss": 243.34272003173828,
+            "l0": 670.1249694824219,
+            "frac_variance_explained": 0.9996143281459808,
+            "cossim": 0.9995978474617004,
+            "l2_ratio": 0.9998750388622284,
+            "relative_reconstruction_bias": 1.000118374824524,
+            "loss_original": 5.109375,
+            "loss_reconstructed": 5.125,
+            "loss_zero": 10.25,
+            "frac_recovered": 0.99609375,
+            "frac_alive": 0.51904296875,
+            "hyperparameters": {
+                "n_inputs": 250,
+                "context_length": 128
+            }
+        }
+    }
+}
