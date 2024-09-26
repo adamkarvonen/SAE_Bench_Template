@@ -25,7 +25,7 @@ def run_eval(
     results_dict = {}
     results_dict["custom_eval_results"] = {}
 
-    model = HookedTransformer.from_pretrained(
+    model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=config.model_dtype
     )
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
