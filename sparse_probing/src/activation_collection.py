@@ -30,10 +30,10 @@ def get_all_llm_activations(
         tokenized_inputs = tokenized_inputs_dict[class_name]
 
         for i in tqdm(
-            range(len(tokenized_inputs["input_ids"]) // batch_size),
+            range(0, len(tokenized_inputs["input_ids"]), batch_size),
             desc=f"Collecting activations for class {class_name}",
         ):
-            tokens_BL = tokenized_inputs["input_ids"][i * batch_size : (i + 1) * batch_size]
+            tokens_BL = tokenized_inputs["input_ids"][i : i + batch_size]
             attention_mask_BL = tokenized_inputs["attention_mask"][
                 i * batch_size : (i + 1) * batch_size
             ]
@@ -94,8 +94,8 @@ def get_sae_meaned_activations(
 
         all_acts_BF = []
 
-        for i in range(len(all_acts_BLD) // sae_batch_size):
-            acts_BLD = all_acts_BLD[i * sae_batch_size : (i + 1) * sae_batch_size]
+        for i in range(0, len(all_acts_BLD), sae_batch_size):
+            acts_BLD = all_acts_BLD[i : i + sae_batch_size]
             acts_BLF = sae.encode(acts_BLD)
 
             activations_BL = einops.reduce(acts_BLD, "B L D -> B L", "sum")
