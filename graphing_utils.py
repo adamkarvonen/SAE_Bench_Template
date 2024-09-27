@@ -1,11 +1,14 @@
-import matplotlib.pyplot as plt
 import json
 import torch
 import pickle
-from matplotlib.colors import Normalize
-import numpy as np
 import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import seaborn as sns
+from scipy import stats
+from matplotlib.colors import Normalize
 from typing import Optional, Dict, Any
 from collections import defaultdict
 
@@ -381,3 +384,118 @@ def plot_steps_vs_average_diff(
 
     # Show the plot
     plt.show()
+
+
+def plot_correlation_heatmap(
+    plotting_results: dict[str, dict[str, float]],
+    metric_names: list[str],
+    ae_names: Optional[list[str]] = None,
+    title: str = "Metric Correlation Heatmap",
+    output_filename: str = None,
+    figsize: tuple = (12, 10),
+    cmap: str = "coolwarm",
+    annot: bool = True,
+):
+    # If ae_names is not provided, use all ae_names from plotting_results
+    if ae_names is None:
+        ae_names = list(plotting_results.keys())
+
+    # If metric_names is not provided, use all metric names from the first ae_name
+    # if metric_names is None:
+    #     metric_names = list(plotting_results[ae_names[0]].keys())
+
+    # Create a DataFrame from the plotting_results
+    data = []
+    for ae in ae_names:
+        row = [plotting_results[ae].get(metric, np.nan) for metric in metric_names]
+        data.append(row)
+
+    df = pd.DataFrame(data, index=ae_names, columns=metric_names)
+
+    # Calculate the correlation matrix
+    corr_matrix = df.corr()
+
+    # Create the heatmap
+    plt.figure(figsize=figsize)
+    sns.heatmap(corr_matrix, annot=annot, cmap=cmap, vmin=-1, vmax=1, center=0)
+
+    plt.title(title)
+    plt.tight_layout()
+
+    # Save the plot if output_filename is provided
+    if output_filename:
+        plt.savefig(output_filename, bbox_inches="tight")
+
+    plt.show()
+
+
+def plot_correlation_scatter(
+    plotting_results: dict[str, dict[str, float]],
+    metric_x: str,
+    metric_y: str,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
+    ae_names: Optional[list[str]] = None,
+    title: str = "Metric Comparison Scatter Plot",
+    output_filename: Optional[str] = None,
+    figsize: tuple = (10, 8),
+):
+    # If ae_names is not provided, use all ae_names from plotting_results
+    if ae_names is None:
+        ae_names = list(plotting_results.keys())
+
+    # Extract x and y values for the specified metrics
+    x_values = [plotting_results[ae].get(metric_x, float("nan")) for ae in ae_names]
+    y_values = [plotting_results[ae].get(metric_y, float("nan")) for ae in ae_names]
+
+    # Remove any NaN values
+    valid_data = [
+        (x, y, ae)
+        for x, y, ae in zip(x_values, y_values, ae_names)
+        if not (np.isnan(x) or np.isnan(y))
+    ]
+    if not valid_data:
+        print("No valid data points after removing NaN values.")
+        return
+
+    x_values, y_values, valid_ae_names = zip(*valid_data)
+
+    # Convert to numpy arrays
+    x_values = np.array(x_values)
+    y_values = np.array(y_values)
+
+    # Calculate correlation coefficients
+    r, p_value = stats.pearsonr(x_values, y_values)
+    r_squared = r**2
+
+    # Create the scatter plot
+    plt.figure(figsize=figsize)
+    scatter = sns.scatterplot(x=x_values, y=y_values, label="SAE", color="blue")
+
+    if x_label is None:
+        x_label = metric_x
+    if y_label is None:
+        y_label = metric_y
+
+    # Add labels and title
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+
+    # Add a trend line
+    sns.regplot(x=x_values, y=y_values, scatter=False, color="red", label=f"r = {r:.4f}")
+
+    plt.legend()
+
+    plt.tight_layout()
+
+    # Save the plot if output_filename is provided
+    if output_filename:
+        plt.savefig(output_filename, bbox_inches="tight")
+
+    plt.show()
+
+    # Print correlation coefficients
+    print(f"Pearson correlation coefficient (r): {r:.4f}")
+    print(f"Coefficient of determination (r²): {r_squared:.4f}")
+    print(f"P-value: {p_value:.4f}")
