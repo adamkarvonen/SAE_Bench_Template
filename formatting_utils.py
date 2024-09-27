@@ -1,7 +1,8 @@
 import json
 from typing import Optional
 
-def get_sparsity_penalty(config: dict, trainer_class: str) -> float:
+def get_sparsity_penalty(config: dict) -> float:
+    trainer_class = config["trainer"]["trainer_class"]
     if trainer_class == "TrainerTopK":
         return config["trainer"]["k"]
     elif trainer_class == "PAnnealTrainer":

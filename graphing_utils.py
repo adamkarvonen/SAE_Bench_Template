@@ -131,6 +131,7 @@ def plot_interactive_3var_graph(
     output_filename: Optional[str] = None,
     x_axis_key: str = "l0",
     y_axis_key: str = "frac_recovered",
+    title: str = "",
 ):
     # Extract data from results
     ae_paths = list(results.keys())
@@ -141,7 +142,7 @@ def plot_interactive_3var_graph(
 
     dict_size = [data["dict_size"] for data in results.values()]
     lr = [data["lr"] for data in results.values()]
-    l1_penalty = [data["l1_penalty"] for data in results.values()]
+    l1_penalty = [data["sparsity_penalty"] for data in results.values()]
 
     # Create the scatter plot
     fig = go.Figure()
@@ -159,7 +160,7 @@ def plot_interactive_3var_graph(
                 showscale=True,
             ),
             text=[
-                f"AE Path: {ae}<br>L0: {l0:.4f}<br>Frac Recovered: {fr:.4f}<br>Custom Metric: {ad:.4f}<br>Dict Size: {d:.4f}<br>LR: {l:.4f}<br>L1 Penalty: {l1:.4f}"
+                f"AE Path: {ae}<br>L0: {l0:.4f}<br>Frac Recovered: {fr:.4f}<br>Custom Metric: {ad:.4f}<br>Dict Size: {d:.4f}<br>LR: {l:.4f}<br>Sparsity Penalty: {l1:.4f}"
                 for ae, l0, fr, ad, d, l, l1 in zip(
                     ae_paths,
                     l0_values,
@@ -176,7 +177,7 @@ def plot_interactive_3var_graph(
 
     # Update layout
     fig.update_layout(
-        title="L0 vs Loss Recovered",
+        title=title,
         xaxis_title="L0 (Sparsity)",
         yaxis_title="Loss Recovered (Fidelity)",
         hovermode="closest",
