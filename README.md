@@ -1,3 +1,5 @@
+## SAE Bench: Template for custom evals
+
 This repo contains the template we would like to use for the SAE Bench project. The `template.ipynb` explains the input to your custom eval (SAEs hosted on SAELens) and the output (a standardized results file).
 
 The `sparse_probing` folder contains a full example implementation of a custom eval. In `main.py`, we have a function that takes a list of SAELens SAE names (defined in `eval_config.py`) and an sae release and returns a dictionary of results in a standard format. This folder contains some helper functions, like pre-computing model activations in `activation_collection.py`, that might be useful for you, too! We try to reuse functions as much as possible across evals to reduce bugs. Let Adam and Can know if you've implemented a helper function that might be useful for other evals as well (like autointerp, feature scoring). 
@@ -17,6 +19,8 @@ For the purpose of validating evaluation outputs, we have `compare_run_results.i
 Once evaluations have been completed, please submit them as pull requests to this repo.
 
 ## Quick start:
+(Set up a virtual environment running on `python 3.11.9` and `pip install -r sparse_probing/requirements.txt`.)
+
 1. Browse through `template.ipynb` to learn about input and output of your metric.
 2. Execute `sparse_probing/sparse_probing_eval.py` to see an example implementation.
 3. Inspect sparse probing results with `graphing.ipynb`.
