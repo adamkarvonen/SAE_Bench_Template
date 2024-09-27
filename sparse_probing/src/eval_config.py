@@ -20,17 +20,28 @@ class EvalConfig:
     epochs: int = 10
     lr: float = 1e-3
 
-    sae_batch_size: int = 500
+    sae_batch_size: int = 125
 
     sae_release: str = "sae_bench_pythia70m_sweep_topk_ctx128_0730"
     model_name: str = "pythia-70m-deduped"
+    layers = [4]
+    trainer_ids = list(range(20))
+
+    # Uncomment to run Gemma SAEs
+
+    sae_release: str = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824"
+    model_name: str = "gemma-2-2b"
+    layers = [19]
+    trainer_ids = list(range(6))
 
     k_values = [1, 2, 5, 10, 20, 50, 100]
 
     saes = []
-    layers = [4]
-    trainer_ids = [2, 10, 18]
 
     for layer in layers:
-        for i in trainer_ids:
-            saes.append(f"blocks.{layer}.hook_resid_post__trainer_{i}")
+        for trainer_id in trainer_ids:
+            sae_name = f"{sae_release}/resid_post_layer_{layer}/trainer_{trainer_id}"
+            sae_name = sae_name.replace("sae_bench_", "")
+            saes.append(sae_name)
+
+    print("SAEs: ", saes)
