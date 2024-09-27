@@ -8,6 +8,7 @@ import json
 from dataclasses import asdict
 import pandas as pd
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+import random
 
 import dataset_creation
 import utils
@@ -22,12 +23,16 @@ def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
 
 def run_eval(
     config: eval_config.EvalConfig,
+    sae_release: str,
+    sae_names: list[str],
     device: str,
 ):
     # TODO: Make this nicer.
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
     ).T
+    sae_id_to_name_map = sae_map_df.saes_map[sae_release]
+    sae_name_to_id_map = {v: k for k, v in sae_id_to_name_map.items()}
 
     results_dict = {}
     results_dict["custom_eval_results"] = {}
@@ -81,11 +86,11 @@ def run_eval(
         )
 
         for sae_name in tqdm(config.saes, desc="Running SAE evaluation"):
-            sae_recording_name = sae_map_df.saes_map[config.sae_release][sae_name]
+            sae_id = sae_name_to_id_map[sae_name]
 
             sae, cfg_dict, sparsity = SAE.from_pretrained(
                 release=config.sae_release,
-                sae_id=sae_name,
+                sae_id=sae_id,
                 device=device,
             )
             sae = sae.to(device=device)
@@ -108,7 +113,7 @@ def run_eval(
                 select_top_k=None,
             )
 
-            results_dict["custom_eval_results"][sae_recording_name] = {
+            results_dict["custom_eval_results"][sae_name] = {
                 "llm_test_accuracy": average_test_accuracy(llm_test_accuracies),
                 "sae_test_accuracy": average_test_accuracy(sae_test_accuracies),
             }
@@ -126,9 +131,9 @@ def run_eval(
                         select_top_k=k,
                     )
                 )
-                results_dict["custom_eval_results"][sae_recording_name][
-                    f"sae_top_{k}_test_accuracy"
-                ] = average_test_accuracy(sae_top_k_test_accuracies)
+                results_dict["custom_eval_results"][sae_name][f"sae_top_{k}_test_accuracy"] = (
+                    average_test_accuracy(sae_top_k_test_accuracies)
+                )
 
     config.model_dtype = str(config.model_dtype)  # so it's json serializable
     results_dict["custom_eval_config"] = asdict(config)
@@ -147,7 +152,13 @@ if __name__ == "__main__":
 
     config = eval_config.EvalConfig()
 
-    results_dict = run_eval(config, device)
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+
+    print(f"Running evaluation for the followwing sae release: {config.sae_release}")
+    print(f"Running evaluation for the followwing saes: {config.saes}")
+
+    results_dict = run_eval(config, config.sae_release, config.saes, device)
 
     output_filename = config.sae_release + "_eval_results.json"
     output_folder = "sparse_probing_results"
