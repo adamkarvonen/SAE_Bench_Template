@@ -5,6 +5,8 @@ Estimated runtime:
 - Pythia-70M: 10 seconds to collect activations per layer with SAEs, 10 seconds per SAE to perform probing
 - Gemma-2-2B: 2 minutes to collect activations per layer with SAEs, 10 seconds per SAE to perform probing
 
+Using Gemma-2-2B, at current batch sizes, I see a peak GPU memory usage of 22 GB.
+
 All configuration arguments and hyperparameters are located in `eval_config.py`. The full eval config is saved to the results json file.
 
 If ran in the current state, `cd` in to `src/` and run `python sparse_probing_eval.py`. It should produce `sparse_probing_results/sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_eval_results.json`.

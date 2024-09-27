@@ -8,7 +8,7 @@ Here is what we would like to see from each eval:
 - Ensuring the code meets some minimum bar (isn't missing anything, isn't abysmally slow etc).
 - Ensuring we have example output to validate against.
 
-In `template.ipynb`, we show the structure that we would like to see in the results dictionary which an eval should return. This results dictionary can be loaded in to `graph_sae_results.ipynb`, to create a wide variety of plots.
+In `template.ipynb`, we show the structure that we would like to see in the results dictionary which an eval should return. This results dictionary can be loaded in to `graph_sae_results.ipynb`, to create a wide variety of plots. We also already have the basic `L0 / Loss Recovered` metrics for every SAE, as specified in `template.ipynb`.
 
 For the purpose of validating evaluation outputs, we have `compare_run_results.ipynb`. Using this, you can run the same eval twice with the same input, and verify within a tolerance that it returns the same outputs. If the eval is fully deterministic, the results should be identical.
 
