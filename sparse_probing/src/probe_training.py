@@ -94,6 +94,8 @@ def prepare_probe_data(
     return batched_acts, batched_labels
 
 
+@jaxtyped(typechecker=beartype)
+@torch.no_grad
 def test_probe(
     input_batches: list[Float[torch.Tensor, "batch_size d_model"]],
     label_batches: list[Int[torch.Tensor, "batch_size"]],
@@ -127,6 +129,7 @@ def test_probe(
     return accuracy_all
 
 
+@jaxtyped(typechecker=beartype)
 def train_probe(
     train_input_batches: list[Float[torch.Tensor, "batch_size d_model"]],
     train_label_batches: list[Int[torch.Tensor, "batch_size"]],
@@ -166,6 +169,7 @@ def train_probe(
     return probe, test_accuracy
 
 
+@jaxtyped(typechecker=beartype)
 def train_probe_on_activations(
     train_activations: dict[str, Float[torch.Tensor, "num_datapoints d_model"]],
     test_activations: dict[str, Float[torch.Tensor, "num_datapoints d_model"]],

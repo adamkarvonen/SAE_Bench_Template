@@ -57,6 +57,7 @@ def get_all_llm_activations(
 
 
 @jaxtyped(typechecker=beartype)
+@torch.no_grad
 def create_meaned_model_activations(
     all_llm_activations_BLD: dict[str, Float[torch.Tensor, "batch_size seq_len d_model"]],
 ) -> dict[str, Float[torch.Tensor, "batch_size d_model"]]:
