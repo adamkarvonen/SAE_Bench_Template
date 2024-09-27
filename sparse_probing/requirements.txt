@@ -13,3 +13,7 @@ ipykernel==6.29.5
 jaxtyping==0.2.25
 beartype==0.14.1
 ipykernel==6.29.5
+seaborn==0.13.2
+
+# Optional utils
+nbstripout==0.7.1

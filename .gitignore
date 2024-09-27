@@ -1,6 +1,8 @@
 .venv/
 .DS_Store
 
+/images/
+
 */__pycache__/
 */.pytest_cache/
 */.mypy_cache/
