@@ -1,2 +1,12 @@
 .venv/
 .DS_Store
+
+*/__pycache__/
+*/.pytest_cache/
+*/.mypy_cache/
+*/.tox/
+*/.vscode/
+*/.idea/
+*/.mypy_cache/
+*/.pytest_cache/
+*/.coverage
