@@ -533,6 +533,7 @@ def plot_training_steps(
         step = int(value[steps_key])
         metric_scores = value[metric_key]
         trainer_key = f"{trainer_label} Layer {layer} Trainer {trainer}"
+        tokens_per_step = value['buffer']['out_batch_size']
         
         trainer_data[trainer_key]["steps"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
@@ -557,7 +558,7 @@ def plot_training_steps(
 
     # Calculate break point based on data
     steps_break_point = min([s for s in all_steps if s > 0]) / 2
-    break_point = steps_break_point / max(all_steps) * 100  # Convert to percentage
+    break_point = steps_break_point # / max(all_steps) * 100  # Convert to percentage
 
     for trainer_key, data in trainer_data.items():
         steps = data["steps"]
@@ -572,22 +573,19 @@ def plot_training_steps(
         
         sorted_data = sorted(zip(steps, metric_scores))
         steps, metric_scores = zip(*sorted_data)
-        max_step = max(steps)
-        step_percentages1 = [step / max_step * 100 for step in steps]
-        step_percentages2 = [max((step / max_step * 100), 0.01) for step in steps]
         
-        ax1.plot(step_percentages1, metric_scores, marker="o", label=trainer_class, 
+        ax1.plot(steps, metric_scores, marker="o", label=trainer_class, 
                  linewidth=4 if trainer_key == "Average" else 2, 
                  color=color, alpha=1 if trainer_key == "Average" else 0.3,
                  zorder=10 if trainer_key == "Average" else 1)
-        ax2.plot(step_percentages2, metric_scores, marker="o", label=trainer_class, 
+        ax2.plot(steps, metric_scores, marker="o", label=trainer_class, 
                  linewidth=4 if trainer_key == "Average" else 2, 
                  color=color, alpha=1 if trainer_key == "Average" else 0.3,
                  zorder=10 if trainer_key == "Average" else 1)
 
     # Set up the broken axis
     ax1.set_xlim(-break_point/4, break_point)
-    ax2.set_xlim(break_point, 100)
+    # ax2.set_xlim(break_point, 100)
     ax2.set_xscale('log')
 
     # Hide the spines between ax1 and ax2
@@ -611,14 +609,14 @@ def plot_training_steps(
     if not y_label:
         y_label = metric_key.replace("_", " ").capitalize()
     ax1.set_ylabel(y_label)
-    fig.text(0.5, 0.01, 'Training Progress (%)', ha='center', va='center')
+    fig.text(0.5, 0.01, 'Training Tokens', ha='center', va='center')
     fig.suptitle(title)
 
     # Adjust x-axis ticks
-    ax1.set_xticks([0])
-    ax1.set_xticklabels(['0%'])
-    ax2.set_xticks([0.1, 1, 10, 100])
-    ax2.set_xticklabels([f'0.1%', '1%', '10%', '100%'])
+    # ax1.set_xticks([0])
+    # ax1.set_xticklabels(['0%'])
+    # ax2.set_xticks([0.1, 1, 10, 100])
+    # ax2.set_xticklabels([f'0.1%', '1%', '10%', '100%'])
 
     # Add grid
     ax1.grid(True, alpha=0.3)
