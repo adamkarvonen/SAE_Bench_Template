@@ -1,7 +1,15 @@
+import re
+import torch
 from dataclasses import dataclass, asdict
 from typing import Optional, List
 from enum import Enum
-import torch
+
+# TODO make import from shared directory more robust
+import os
+import sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append('/share/u/can/SAE_Bench_Template')
+from formatting_utils import filter_sae_names
 
 
 @dataclass
@@ -19,29 +27,25 @@ class EvalConfig:
     probe_batch_size: int = 250
     epochs: int = 10
     lr: float = 1e-3
-
     sae_batch_size: int = 125
 
-    sae_release: str = "sae_bench_pythia70m_sweep_topk_ctx128_0730"
-    model_name: str = "pythia-70m-deduped"
-    layers = [4]
-    trainer_ids = list(range(20))
+    ## Uncomment to run Pythia SAEs
+    # sae_release: str = "sae_bench_pythia70m_sweep_topk_ctx128_0730"
+    # model_name: str = "pythia-70m-deduped"
+    # layers = [4]
+    # trainer_ids = list(range(20))
+    # include_checkpoints = False
 
-    # Uncomment to run Gemma SAEs
 
+    ## Uncomment to run Gemma SAEs
     sae_release: str = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824"
     model_name: str = "gemma-2-2b"
     layers = [19]
     trainer_ids = list(range(6))
-
+    include_checkpoints = True
     k_values = [1, 2, 5, 10, 20, 50, 100]
 
-    saes = []
-
-    for layer in layers:
-        for trainer_id in trainer_ids:
-            sae_name = f"{sae_release}/resid_post_layer_{layer}/trainer_{trainer_id}"
-            sae_name = sae_name.replace("sae_bench_", "")
-            saes.append(sae_name)
-
-    print("SAEs: ", saes)
+    # Find all sae_names that match the given criteria
+    def __post_init__(self):
+        self.saes = filter_sae_names(self.sae_release, self.layers, self.trainer_ids, self.include_checkpoints)
+        print("SAEs: ", self.saes)

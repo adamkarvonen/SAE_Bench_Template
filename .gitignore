@@ -1,8 +1,6 @@
 .venv/
 .DS_Store
 
-/images/
-
 */__pycache__/
 */.pytest_cache/
 */.mypy_cache/
@@ -12,3 +10,6 @@
 */.mypy_cache/
 */.pytest_cache/
 */.coverage
+
+/images/
+/sparse_probing/sparse_probing_results/
