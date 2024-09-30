@@ -14,6 +14,7 @@ jaxtyping==0.2.25
 beartype==0.14.1
 ipykernel==6.29.5
 seaborn==0.13.2
+scikit-learn==1.5.2
 
 # Optional utils
 nbstripout==0.7.1

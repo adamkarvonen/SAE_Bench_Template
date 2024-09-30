@@ -1,12 +1,10 @@
 import torch
 import torch.nn as nn
-from tqdm import tqdm
-from typing import Callable, Optional
-from jaxtyping import Int, Float, jaxtyped, BFloat16
+from typing import Optional
+from jaxtyping import Int, Float, jaxtyped, Bool
 from beartype import beartype
-import einops
-from transformer_lens import HookedTransformer
-from sae_lens import SAE
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
 import dataset_info
 
@@ -60,11 +58,11 @@ def prepare_probe_data(
 
 
 @jaxtyped(typechecker=beartype)
-def select_top_k_mean_diff(
+def get_top_k_mean_diff_mask(
     acts_BD: Float[torch.Tensor, "batch_size d_model"],
     labels_B: Int[torch.Tensor, "batch_size"],
     k: int,
-) -> Float[torch.Tensor, "batch_size d_model"]:
+) -> Bool[torch.Tensor, "k"]:
     positive_mask_B = labels_B == dataset_info.POSITIVE_CLASS_LABEL
     negative_mask_B = labels_B == dataset_info.NEGATIVE_CLASS_LABEL
 
@@ -76,6 +74,14 @@ def select_top_k_mean_diff(
     mask_D = torch.ones(acts_BD.shape[1], dtype=torch.bool, device=acts_BD.device)
     mask_D[top_k_indices_D] = False
 
+    return mask_D
+
+
+@jaxtyped(typechecker=beartype)
+def apply_topk_mask_gpu(
+    acts_BD: Float[torch.Tensor, "batch_size d_model"],
+    mask_D: Bool[torch.Tensor, "d_model"],
+) -> Float[torch.Tensor, "batch_size k"]:
     masked_acts_BD = acts_BD.clone()
     masked_acts_BD[:, mask_D] = 0.0
 
@@ -83,8 +89,79 @@ def select_top_k_mean_diff(
 
 
 @jaxtyped(typechecker=beartype)
+def apply_topk_mask_sklearn(
+    acts_BD: Float[torch.Tensor, "batch_size d_model"],
+    mask_D: Bool[torch.Tensor, "d_model"],
+) -> Float[torch.Tensor, "batch_size k"]:
+    masked_acts_BD = acts_BD.clone()
+
+    masked_acts_BD = masked_acts_BD[:, ~mask_D]
+
+    return masked_acts_BD
+
+
+@beartype
+def train_sklearn_probe(
+    train_inputs: Float[torch.Tensor, "train_dataset_size d_model"],
+    train_labels: Int[torch.Tensor, "train_dataset_size"],
+    test_inputs: Float[torch.Tensor, "test_dataset_size d_model"],
+    test_labels: Int[torch.Tensor, "test_dataset_size"],
+    max_iter: int = 1000,  # non-default sklearn value, increased due to convergence warnings
+    C: float = 1.0,  # default sklearn value
+    verbose: bool = False,
+    l1_ratio: Optional[float] = None,
+) -> tuple[LogisticRegression, float]:
+    # Convert torch tensors to numpy arrays
+    train_inputs_np = train_inputs.cpu().numpy()
+    train_labels_np = train_labels.cpu().numpy()
+    test_inputs_np = test_inputs.cpu().numpy()
+    test_labels_np = test_labels.cpu().numpy()
+
+    # Initialize the LogisticRegression model
+    if l1_ratio is not None:
+        # Use Elastic Net regularization
+        probe = LogisticRegression(
+            penalty="elasticnet",
+            solver="saga",
+            C=C,
+            l1_ratio=l1_ratio,
+            max_iter=max_iter,
+            verbose=int(verbose),
+        )
+    else:
+        # Use L2 regularization
+        probe = LogisticRegression(penalty="l2", C=C, max_iter=max_iter, verbose=int(verbose))
+
+    # Train the model
+    probe.fit(train_inputs_np, train_labels_np)
+
+    # Compute accuracies
+    train_accuracy = accuracy_score(train_labels_np, probe.predict(train_inputs_np))
+    test_accuracy = accuracy_score(test_labels_np, probe.predict(test_inputs_np))
+
+    if verbose:
+        print(f"\nTraining completed.")
+        print(f"Train accuracy: {train_accuracy}, Test accuracy: {test_accuracy}\n")
+
+    return probe, test_accuracy
+
+
+# Helper function to test the probe
+@beartype
+def test_sklearn_probe(
+    inputs: Float[torch.Tensor, "dataset_size d_model"],
+    labels: Int[torch.Tensor, "dataset_size"],
+    probe: LogisticRegression,
+) -> float:
+    inputs_np = inputs.cpu().numpy()
+    labels_np = labels.cpu().numpy()
+    predictions = probe.predict(inputs_np)
+    return accuracy_score(labels_np, predictions)
+
+
+@jaxtyped(typechecker=beartype)
 @torch.no_grad
-def test_probe(
+def test_probe_gpu(
     inputs: Float[torch.Tensor, "test_dataset_size d_model"],
     labels: Int[torch.Tensor, "test_dataset_size"],
     batch_size: int,
@@ -121,7 +198,7 @@ def test_probe(
 
 
 @jaxtyped(typechecker=beartype)
-def train_probe(
+def train_probe_gpu(
     train_inputs: Float[torch.Tensor, "train_dataset_size d_model"],
     train_labels: Int[torch.Tensor, "train_dataset_size"],
     test_inputs: Float[torch.Tensor, "test_dataset_size d_model"],
@@ -156,8 +233,8 @@ def train_probe(
             loss.backward()
             optimizer.step()
 
-        train_accuracy = test_probe(train_inputs, train_labels, batch_size, probe)
-        test_accuracy = test_probe(test_inputs, test_labels, batch_size, probe)
+        train_accuracy = test_probe_gpu(train_inputs, train_labels, batch_size, probe)
+        test_accuracy = test_probe_gpu(test_inputs, test_labels, batch_size, probe)
 
         if epoch == epochs - 1 and verbose:
             print(
@@ -171,13 +248,8 @@ def train_probe(
 def train_probe_on_activations(
     train_activations: dict[str, Float[torch.Tensor, "train_dataset_size d_model"]],
     test_activations: dict[str, Float[torch.Tensor, "test_dataset_size d_model"]],
-    probe_batch_size: int,
-    epochs: int,
-    lr: float,
-    model_dtype: torch.dtype,
-    device: str,
     select_top_k: Optional[int] = None,
-) -> tuple[dict[str, Probe], dict[str, float]]:
+) -> tuple[dict[str, LogisticRegression], dict[str, float]]:
     torch.set_grad_enabled(True)
 
     probes, test_accuracies = {}, {}
@@ -188,26 +260,35 @@ def train_probe_on_activations(
         test_acts, test_labels = prepare_probe_data(test_activations, profession)
 
         if select_top_k is not None:
-            train_acts = select_top_k_mean_diff(train_acts, train_labels, select_top_k)
-            test_acts = select_top_k_mean_diff(test_acts, test_labels, select_top_k)
+            activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)
+            train_acts = apply_topk_mask_sklearn(train_acts, activation_mask_D)
+            test_acts = apply_topk_mask_sklearn(test_acts, activation_mask_D)
 
         activation_dim = train_acts.shape[1]
 
-        print(f"activation dim: {activation_dim}")
+        print(f"Num non-zero elements: {activation_dim}")
 
-        probe, test_accuracy = train_probe(
+        probe, test_accuracy = train_sklearn_probe(
             train_acts,
             train_labels,
             test_acts,
             test_labels,
-            dim=activation_dim,
-            batch_size=probe_batch_size,
-            epochs=epochs,
-            device=device,
-            model_dtype=model_dtype,
-            lr=lr,
             verbose=False,
         )
+
+        # probe, test_accuracy = train_probe_gpu(
+        #     train_acts,
+        #     train_labels,
+        #     test_acts,
+        #     test_labels,
+        #     dim=activation_dim,
+        #     batch_size=probe_batch_size,
+        #     epochs=epochs,
+        #     device=device,
+        #     model_dtype=model_dtype,
+        #     lr=lr,
+        #     verbose=False,
+        # )
 
         print(f"Test accuracy for {profession}: {test_accuracy}")
 
