@@ -77,15 +77,27 @@ def run_eval(
         llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
             all_train_acts_BD,
             all_test_acts_BD,
-            config.probe_batch_size,
-            config.epochs,
-            config.lr,
-            config.model_dtype,
-            device,
             select_top_k=None,
         )
 
+        llm_results = {"llm_test_accuracy": average_test_accuracy(llm_test_accuracies)}
+
+        for k in config.k_values:
+            llm_top_k_probes, llm_top_k_test_accuracies = probe_training.train_probe_on_activations(
+                all_train_acts_BD,
+                all_test_acts_BD,
+                select_top_k=k,
+            )
+            llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
+                llm_top_k_test_accuracies
+            )
+
         for sae_name in tqdm(config.saes, desc="Running SAE evaluation"):
+            results_dict["custom_eval_results"][sae_name] = {}
+
+            for llm_result_key, llm_result_value in llm_results.items():
+                results_dict["custom_eval_results"][sae_name][llm_result_key] = llm_result_value
+
             sae_id = sae_name_to_id_map[sae_name]
 
             sae, cfg_dict, sparsity = SAE.from_pretrained(
@@ -105,29 +117,18 @@ def run_eval(
             sae_probes, sae_test_accuracies = probe_training.train_probe_on_activations(
                 all_sae_train_acts_BF,
                 all_sae_test_acts_BF,
-                config.probe_batch_size,
-                config.epochs,
-                config.lr,
-                config.model_dtype,
-                device,
                 select_top_k=None,
             )
 
-            results_dict["custom_eval_results"][sae_name] = {
-                "llm_test_accuracy": average_test_accuracy(llm_test_accuracies),
-                "sae_test_accuracy": average_test_accuracy(sae_test_accuracies),
-            }
+            results_dict["custom_eval_results"][sae_name]["sae_test_accuracy"] = (
+                average_test_accuracy(sae_test_accuracies)
+            )
 
             for k in config.k_values:
                 sae_top_k_probes, sae_top_k_test_accuracies = (
                     probe_training.train_probe_on_activations(
                         all_sae_train_acts_BF,
                         all_sae_test_acts_BF,
-                        config.probe_batch_size,
-                        config.epochs,
-                        config.lr,
-                        config.model_dtype,
-                        device,
                         select_top_k=k,
                     )
                 )
