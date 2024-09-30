@@ -133,6 +133,7 @@ def train_probe(
     model_dtype: torch.dtype,
     lr: float,
     verbose: bool = False,
+    l1_penalty: Optional[float] = None,
 ) -> tuple[Probe, float]:
     probe = Probe(dim, model_dtype).to(device)
     optimizer = torch.optim.AdamW(probe.parameters(), lr=lr)
@@ -146,13 +147,16 @@ def train_probe(
             loss = criterion(
                 logits_B, labels_B.clone().detach().to(device=device, dtype=model_dtype)
             )
-            optimizer.zero_grad()
 
+            if l1_penalty is not None:
+                l1_loss = l1_penalty * torch.sum(torch.abs(probe.net.weight))
+                loss += l1_loss
+
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
         train_accuracy = test_probe(train_inputs, train_labels, batch_size, probe)
-
         test_accuracy = test_probe(test_inputs, test_labels, batch_size, probe)
 
         if epoch == epochs - 1 and verbose:
