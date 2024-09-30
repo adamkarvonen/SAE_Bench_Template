@@ -5,7 +5,7 @@ import torch
 @dataclass
 class EvalConfig:
     random_seed: int = 42
-    model_dtype: torch.dtype = torch.bfloat16
+    model_dtype: torch.dtype = None  # Set in __post_init__
 
     dataset_name: str = "bias_in_bios"
     chosen_classes: list[str] = field(default_factory=lambda: ["0", "1", "2", "6", "9"])
@@ -37,6 +37,13 @@ class EvalConfig:
     saes: list[str] = field(default_factory=list)
 
     def __post_init__(self):
+        if self.model_name == "pythia-70m-deduped":
+            self.model_dtype = torch.float32
+        elif self.model_name == "gemma-2-2b":
+            self.model_dtype = torch.bfloat16
+        else:
+            raise ValueError(f"Unknown model name: {self.model_name}")
+
         for layer in self.layers:
             for trainer_id in self.trainer_ids:
                 sae_name = f"{self.sae_release}/resid_post_layer_{layer}/trainer_{trainer_id}"
