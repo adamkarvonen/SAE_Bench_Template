@@ -37,10 +37,12 @@ def run_eval(
     results_dict = {}
     results_dict["custom_eval_results"] = {}
 
-    model = HookedTransformer.from_pretrained_no_processing(
-        config.model_name, device=device, dtype=config.model_dtype
-    )
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+    model = HookedTransformer.from_pretrained_no_processing(
+        config.model_name, device=device, dtype=llm_dtype
+    )
 
     train_df, test_df = dataset_creation.load_huggingface_dataset(config.dataset_name)
     train_data, test_data = dataset_creation.get_multi_label_train_test_data(
@@ -108,10 +110,10 @@ def run_eval(
             sae = sae.to(device=device)
 
             all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
-                all_train_acts_BLD, sae, config.sae_batch_size, config.model_dtype
+                all_train_acts_BLD, sae, config.sae_batch_size, llm_dtype
             )
             all_sae_test_acts_BF = activation_collection.get_sae_meaned_activations(
-                all_test_acts_BLD, sae, config.sae_batch_size, config.model_dtype
+                all_test_acts_BLD, sae, config.sae_batch_size, llm_dtype
             )
 
             sae_probes, sae_test_accuracies = probe_training.train_probe_on_activations(
@@ -136,7 +138,6 @@ def run_eval(
                     average_test_accuracy(sae_top_k_test_accuracies)
                 )
 
-    config.model_dtype = str(config.model_dtype)  # so it's json serializable
     results_dict["custom_eval_config"] = asdict(config)
     return results_dict
 

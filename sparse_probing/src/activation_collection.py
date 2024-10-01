@@ -13,6 +13,11 @@ LLM_NAME_TO_BATCH_SIZE = {
     "gemma-2-2b": 32,
 }
 
+LLM_NAME_TO_DTYPE = {
+    "pythia-70m-deduped": torch.float32,
+    "gemma-2-2b": torch.bfloat16,
+}
+
 
 @jaxtyped(typechecker=beartype)
 @torch.no_grad

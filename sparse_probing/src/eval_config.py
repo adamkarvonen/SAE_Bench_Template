@@ -5,6 +5,7 @@ import torch
 # I wanted to avoid the pip install -e . in the shared directory, but maybe that's the best way to do it
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from formatting_utils import filter_sae_names
 
@@ -12,7 +13,6 @@ from formatting_utils import filter_sae_names
 @dataclass
 class EvalConfig:
     random_seed: int = 42
-    model_dtype: torch.dtype = None  # Set in __post_init__
 
     dataset_name: str = "bias_in_bios"
     chosen_classes: list[str] = field(default_factory=lambda: ["0", "1", "2", "6", "9"])
@@ -35,7 +35,7 @@ class EvalConfig:
     # include_checkpoints: bool = False
 
     ## Uncomment to run Gemma SAEs
-    
+
     sae_release: str = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824"
     model_name: str = "gemma-2-2b"
     layers: list[int] = field(default_factory=lambda: [19])
@@ -47,13 +47,12 @@ class EvalConfig:
     saes: list[str] = field(default_factory=list)
 
     def __post_init__(self):
-        if self.model_name == "pythia-70m-deduped":
-            self.model_dtype = torch.float32
-        elif self.model_name == "gemma-2-2b":
-            self.model_dtype = torch.bfloat16
-        else:
-            raise ValueError(f"Unknown model name: {self.model_name}")
-
-        self.saes = filter_sae_names(self.sae_release, self.layers, self.trainer_ids, self.include_checkpoints, drop_sae_bench_prefix=True)
+        self.saes = filter_sae_names(
+            self.sae_release,
+            self.layers,
+            self.trainer_ids,
+            self.include_checkpoints,
+            drop_sae_bench_prefix=True,
+        )
 
         print("SAEs: ", self.saes)
