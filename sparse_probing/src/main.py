@@ -9,6 +9,8 @@ from dataclasses import asdict
 import pandas as pd
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 import random
+import gc
+from sae_lens.sae import TopK
 
 import dataset_creation
 import utils
@@ -104,6 +106,9 @@ def run_eval(
             config.selected_saes_dict[sae_release],
             desc="Running SAE evaluation on all selected SAEs",
         ):
+            gc.collect()
+            torch.cuda.empty_cache()
+
             sae_id = sae_name_to_id_map[sae_name]
 
             sae, cfg_dict, sparsity = SAE.from_pretrained(
@@ -112,6 +117,14 @@ def run_eval(
                 device=device,
             )
             sae = sae.to(device=device)
+
+            if "topk" in sae_name:
+                if isinstance(sae.activation_fn, TopK):
+                    continue
+
+                sae = formatting_utils.fix_topk_saes(sae, sae_release, sae_name, data_dir="../")
+
+                assert isinstance(sae.activation_fn, TopK)
 
             all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
                 all_train_acts_BLD, sae, config.sae_batch_size, llm_dtype

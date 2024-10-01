@@ -4,6 +4,26 @@ import re
 from typing import Optional, Union
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 
+from sae_lens.sae import SAE, TopK
+
+
+def fix_topk_saes(sae: SAE, sae_release: str, sae_name: str, data_dir: str = "") -> SAE:
+    """Temporary workaround as the TopK SAEs are currently being loaded as Standard SAEs."""
+
+    if isinstance(sae.activation_fn, TopK):
+        print(f"SAE {sae_name} already has TopK activation function.")
+        return sae
+
+    sae_data_filename = f"{data_dir}sae_bench_data/{sae_release}_data.json"
+
+    with open(sae_data_filename, "r") as f:
+        sae_data = json.load(f)
+
+    k = sae_data["sae_config_dictionary_learning"][sae_name]["trainer"]["k"]
+    sae.activation_fn = TopK(k=k)
+
+    return sae
+
 
 def make_available_sae_df(for_printing: bool = False) -> pd.DataFrame:
     """Extract info on SAEs selected for our benchmarking project from SAE-Lens"""
