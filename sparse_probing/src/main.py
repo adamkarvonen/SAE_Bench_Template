@@ -120,10 +120,11 @@ def run_eval(
                 all_test_acts_BLD, sae, config.sae_batch_size, llm_dtype
             )
 
-            sae_probes, sae_test_accuracies = probe_training.train_probe_on_activations(
+            _, sae_test_accuracies = probe_training.train_probe_on_activations(
                 all_sae_train_acts_BF,
                 all_sae_test_acts_BF,
                 select_top_k=None,
+                use_sklearn=False,
             )
 
             results_dict["custom_eval_results"][sae_name] = {}
@@ -166,7 +167,7 @@ if __name__ == "__main__":
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
 
-    # populate selected_saes_dict
+    # populate selected_saes_dict using config values
     for release in config.sae_releases:
         if "gemma-scope" in release:
             config.selected_saes_dict[release] = (
@@ -185,7 +186,7 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(config, device)
 
-    # create output filename
+    # create output filename and save results
     checkpoints_str = ""
     if config.include_checkpoints:
         checkpoints_str = "_with_checkpoints"
