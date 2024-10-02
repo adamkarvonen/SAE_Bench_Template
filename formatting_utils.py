@@ -152,7 +152,9 @@ def filter_sae_names(
 
     for sae_name in sae_names:
         info = extract_sae_info(sae_name)
-        if info["layer"] in layers and info["is_checkpoint"] == include_checkpoints:
+        if info["layer"] in layers:
+            if not include_checkpoints and info["is_checkpoint"]:
+                continue
             if trainer_ids:
                 if info["trainer_id"] not in trainer_ids:
                     continue
