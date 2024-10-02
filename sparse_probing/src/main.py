@@ -33,8 +33,15 @@ def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
 
 def run_eval(
     config: eval_config.EvalConfig,
+    selected_saes_dict: dict[str, list[str]],
     device: str,
 ):
+    """config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
+    It is saved in the results_dict for reproducibility.
+    selected_saes_dict: dict[str, list[str]] is a dict of SAE release name: list of SAE names to evaluate.
+    Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
+    ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
+    'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
     # TODO: Make this nicer.
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
@@ -95,15 +102,15 @@ def run_eval(
         )
         llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(llm_top_k_test_accuracies)
 
-    for sae_release in config.selected_saes_dict:
+    for sae_release in selected_saes_dict:
         print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {config.selected_saes_dict[sae_release]}"
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
         )
         sae_id_to_name_map = sae_map_df.saes_map[sae_release]
         sae_name_to_id_map = {v: k for k, v in sae_id_to_name_map.items()}
 
         for sae_name in tqdm(
-            config.selected_saes_dict[sae_release],
+            selected_saes_dict[sae_release],
             desc="Running SAE evaluation on all selected SAEs",
         ):
             gc.collect()
@@ -197,7 +204,7 @@ if __name__ == "__main__":
         print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
 
     # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, device)
+    results_dict = run_eval(config, config.selected_saes_dict, device)
 
     # create output filename and save results
     checkpoints_str = ""
