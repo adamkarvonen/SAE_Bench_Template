@@ -1,7 +1,9 @@
 .venv/
 .DS_Store
+.vscode/
+.gitattributes
 
-*/__pycache__/
+*__pycache__/
 */.pytest_cache/
 */.mypy_cache/
 */.tox/
@@ -13,5 +15,6 @@
 
 /images/
 /sparse_probing/sparse_probing_results/*
+!/sparse_probing/sparse_probing_results/example_pythia-70m-deduped_layer_4_eval_results.json
 !/sparse_probing/sparse_probing_results/example_gemma-2-2b_layer_19_eval_results.json
 !/sparse_probing/sparse_probing_results/example_gemma-2-2b_layer_19_with_checkpoints_eval_results.json
