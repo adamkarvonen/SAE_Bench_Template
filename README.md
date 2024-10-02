@@ -18,6 +18,8 @@ For the purpose of validating evaluation outputs, we have `compare_run_results.i
 
 Once evaluations have been completed, please submit them as pull requests to this repo.
 
+For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recovered and getting a set of tokens from The Pile, refer to this notebook: https://github.com/jbloomAus/SAELens/blob/main/tutorials/basic_loading_and_analysing.ipynb
+
 ## Quick start:
 (Set up a virtual environment running on `python 3.11.9` and `pip install -r sparse_probing/requirements.txt`.)
 
