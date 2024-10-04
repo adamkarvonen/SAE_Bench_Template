@@ -1,30 +1,22 @@
 import os
 import time
 import torch
-from tqdm import tqdm
-from transformer_lens import HookedTransformer
-from sae_lens import SAE
-import json
-from dataclasses import asdict
 import pandas as pd
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 import random
 import gc
+import json
+from tqdm import tqdm
+from dataclasses import asdict
+from transformer_lens import HookedTransformer
+from sae_lens import SAE
 from sae_lens.sae import TopK
+from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 
-import dataset_creation
-import utils
 import eval_config
-import activation_collection
 import probe_training
-
-# TODO make import from shared directory more robust
-# I wanted to avoid the pip install -e . in the shared directory, but maybe that's the best way to do it
-import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-import formatting_utils
+import utils.dataset_utils as dataset_utils
+import utils.activation_collection as activation_collection
+import utils.formatting_utils as formatting_utils
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -57,8 +49,8 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    train_df, test_df = dataset_creation.load_huggingface_dataset(config.dataset_name)
-    train_data, test_data = dataset_creation.get_multi_label_train_test_data(
+    train_df, test_df = dataset_utils.load_huggingface_dataset(config.dataset_name)
+    train_data, test_data = dataset_utils.get_multi_label_train_test_data(
         train_df,
         test_df,
         config.dataset_name,
@@ -67,11 +59,11 @@ def run_eval(
         config.random_seed,
     )
 
-    train_data = utils.filter_dataset(train_data, config.chosen_classes)
-    test_data = utils.filter_dataset(test_data, config.chosen_classes)
+    train_data = dataset_utils.filter_dataset(train_data, config.chosen_classes)
+    test_data = dataset_utils.filter_dataset(test_data, config.chosen_classes)
 
-    train_data = utils.tokenize_data(train_data, model.tokenizer, config.context_length, device)
-    test_data = utils.tokenize_data(test_data, model.tokenizer, config.context_length, device)
+    train_data = dataset_utils.tokenize_data(train_data, model.tokenizer, config.context_length, device)
+    test_data = dataset_utils.tokenize_data(test_data, model.tokenizer, config.context_length, device)
 
     print(f"Running evaluation for layer {config.layer}")
     hook_name = f"blocks.{config.layer}.hook_resid_post"
@@ -214,7 +206,7 @@ if __name__ == "__main__":
     output_filename = (
         config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
     )
-    output_folder = "sparse_probing_results"
+    output_folder = "results" # at evals/<eval_name>
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder, exist_ok=True)

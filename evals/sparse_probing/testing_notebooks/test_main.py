@@ -15,10 +15,10 @@ import random
 
 import copy
 
-import dataset_creation
+import utils.dataset_utils as dataset_utils
 import utils
 import eval_config
-import activation_collection
+import utils.activation_collection as activation_collection
 import probe_training
 
 # TODO make import from shared directory more robust
@@ -27,7 +27,7 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-import formatting_utils
+import utils.formatting_utils as formatting_utils
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -81,8 +81,8 @@ model = HookedTransformer.from_pretrained_no_processing(
     config.model_name, device=device, dtype=llm_dtype
 )
 
-train_df, test_df = dataset_creation.load_huggingface_dataset(config.dataset_name)
-train_data, test_data = dataset_creation.get_multi_label_train_test_data(
+train_df, test_df = dataset_utils.load_huggingface_dataset(config.dataset_name)
+train_data, test_data = dataset_utils.get_multi_label_train_test_data(
     train_df,
     test_df,
     config.dataset_name,
@@ -128,7 +128,7 @@ from beartype import beartype
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-import dataset_info
+import utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):

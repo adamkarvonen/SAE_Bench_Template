@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import copy
 
-import dataset_info
+import utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):
