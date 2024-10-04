@@ -3,16 +3,12 @@ Shared helpers for experiments
 """
 
 import re
-from dataclasses import dataclass
-from functools import cache
 from pathlib import Path
 from typing import Callable, Iterable, Literal
 
 import numpy as np
 import pandas as pd
 import torch
-from sae_lens import SAE
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm.autonotebook import tqdm
 from transformer_lens import HookedTransformer
 from transformers import PreTrainedTokenizerFast
@@ -83,7 +79,7 @@ def load_probe_data_split_or_train(
     dtype: torch.dtype = DEFAULT_DTYPE,
     device: str = DEFAULT_DEVICE,
 ) -> tuple[torch.Tensor, list[tuple[str, int]]]:
-    probe_path = Path(probes_dir) / f"layer_{layer}" / "probe.pth"
+    probe_path = Path(probes_dir) / f"{model.name}" / f"layer_{layer}" / "probe.pth"
     if not probe_path.exists():
         print(f"Probe for layer {layer} not found, training...")
         train_and_save_probes(
@@ -227,7 +223,7 @@ def create_and_train_probe(
             model=model,
             train_dataset=train_dataset,
             test_dataset=test_dataset,
-            path=probes_dir,
+            path=probes_dir / f"{model.name}" / f"layer_{layer}",
             hook_point=hook_point,
             batch_size=batch_size,
             layer=layer,
@@ -242,14 +238,12 @@ def create_and_train_probe(
         train_activations=train_activations,
         test_activations=test_activations,
         num_classes=num_classes,
-        batch_size=32 * batch_size,
+        batch_size=batch_size,
         num_epochs=num_epochs,
         lr=lr,
         device=device,
     )
-
     save_probe_and_data(probe, probe_data, probes_dir, layer)
-    print("Probe saved successfully.\n")
 
 
 def train_and_save_probes(

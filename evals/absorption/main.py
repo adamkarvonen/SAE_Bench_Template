@@ -1,3 +1,4 @@
+from dataclasses import asdict
 import gc
 import json
 import os
@@ -6,12 +7,13 @@ import random
 import time
 from sae_lens import SAE
 import torch
-import tqdm
+from tqdm import tqdm
 import pandas as pd
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens.sae import TopK
 
-from evals.absorption import eval_config
+from evals.absorption import common, eval_config
+from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
 from utils import formatting_utils, activation_collection
 from transformer_lens import HookedTransformer
 
@@ -24,6 +26,7 @@ def run_eval(
     config: eval_config.EvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
+    force_rerun: bool = False,
 ):
     """config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
     It is saved in the results_dict for reproducibility.
@@ -47,7 +50,6 @@ def run_eval(
     )
 
     print(f"Running evaluation for layer {config.layer}")
-    hook_name = f"blocks.{config.layer}.hook_resid_post"
 
     for sae_release in selected_saes_dict:
         print(
@@ -71,49 +73,37 @@ def run_eval(
                 device=device,
             )[0]
             sae = sae.to(device=device)
+            sae = _fix_topk(sae, sae_name, sae_release)
 
-            if "topk" in sae_name:
-                if isinstance(sae.activation_fn, TopK):
-                    continue
-
-                sae = formatting_utils.fix_topk_saes(
-                    sae, sae_release, sae_name, data_dir="../"
-                )
-
-                assert isinstance(sae.activation_fn, TopK)
-
-            _, sae_test_accuracies = probe_training.train_probe_on_activations(
-                all_sae_train_acts_BF,
-                all_sae_test_acts_BF,
-                select_top_k=None,
-                use_sklearn=False,
+            run_k_sparse_probing_experiment(
+                model=model,
+                sae=sae,
+                layer=config.layer,
+                sae_name=sae_name,
+                force=force_rerun,
+                max_k_value=config.max_k_value,
+                f1_jump_threshold=config.f1_jump_threshold,
             )
 
             results_dict["custom_eval_results"][sae_name] = {}
 
-            for llm_result_key, llm_result_value in llm_results.items():
-                results_dict["custom_eval_results"][sae_name][
-                    llm_result_key
-                ] = llm_result_value
-
-            results_dict["custom_eval_results"][sae_name]["sae_test_accuracy"] = (
-                average_test_accuracy(sae_test_accuracies)
-            )
-
-            for k in config.k_values:
-                sae_top_k_probes, sae_top_k_test_accuracies = (
-                    probe_training.train_probe_on_activations(
-                        all_sae_train_acts_BF,
-                        all_sae_test_acts_BF,
-                        select_top_k=k,
-                    )
-                )
-                results_dict["custom_eval_results"][sae_name][
-                    f"sae_top_{k}_test_accuracy"
-                ] = average_test_accuracy(sae_top_k_test_accuracies)
-
     results_dict["custom_eval_config"] = asdict(config)
     return results_dict
+
+
+def _fix_topk(
+    sae: SAE,
+    sae_name: str,
+    sae_release: str,
+):
+    if "topk" in sae_name:
+        if isinstance(sae.activation_fn, TopK):
+            return sae
+
+        sae = formatting_utils.fix_topk_saes(sae, sae_release, sae_name, data_dir="../")
+
+        assert isinstance(sae.activation_fn, TopK)
+    return sae
 
 
 if __name__ == "__main__":

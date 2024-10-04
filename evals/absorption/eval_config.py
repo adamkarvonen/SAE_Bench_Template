@@ -10,6 +10,7 @@ class EvalConfig:
     context_length: int = 128
 
     sae_batch_size: int = 125
+    f1_jump_threshold: float = 0.03
 
     ## Uncomment to run Pythia SAEs
 
@@ -21,6 +22,8 @@ class EvalConfig:
     )
     model_name: str = "pythia-70m-deduped"
     layer: int = 4
+    # no idea what this means
+    trainer_ids: Optional[list[int]] = None
     include_checkpoints: bool = False
 
     ## Uncomment to run Gemma SAEs
