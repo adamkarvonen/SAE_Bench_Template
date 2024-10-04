@@ -7,8 +7,9 @@ import torch
 class EvalConfig:
     random_seed: int = 42
 
-    dataset_name: str = "bias_in_bios"
-    chosen_classes: list[str] = field(default_factory=lambda: ["0", "1", "2", "6", "9"])
+    dataset_names: list[str] = field(
+        default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
+    )
 
     probe_train_set_size: int = 4000
     probe_test_set_size: int = 1000

@@ -1,6 +1,6 @@
 This repo implements k-sparse probing, where k can be any integer less than the SAE's hidden dim.
 
-Estimated runtime:
+Estimated runtime per dataset (currently there are 2 datasets):
 
 - Pythia-70M: ~10 seconds to collect activations per layer with SAEs, ~20 seconds per SAE to perform probing
 - Gemma-2-2B: ~2 minutes to collect activations per layer with SAEs, ~20 seconds per SAE to perform probing
