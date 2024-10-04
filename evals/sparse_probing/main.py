@@ -12,8 +12,8 @@ from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 
-import eval_config
-import probe_training
+import evals.sparse_probing.eval_config as eval_config
+import evals.sparse_probing.probe_training as probe_training
 import utils.dataset_utils as dataset_utils
 import utils.activation_collection as activation_collection
 import utils.formatting_utils as formatting_utils
@@ -34,6 +34,10 @@ def run_eval(
     Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
     ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
     'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
+
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+
     # TODO: Make this nicer.
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
@@ -62,8 +66,12 @@ def run_eval(
     train_data = dataset_utils.filter_dataset(train_data, config.chosen_classes)
     test_data = dataset_utils.filter_dataset(test_data, config.chosen_classes)
 
-    train_data = dataset_utils.tokenize_data(train_data, model.tokenizer, config.context_length, device)
-    test_data = dataset_utils.tokenize_data(test_data, model.tokenizer, config.context_length, device)
+    train_data = dataset_utils.tokenize_data(
+        train_data, model.tokenizer, config.context_length, device
+    )
+    test_data = dataset_utils.tokenize_data(
+        test_data, model.tokenizer, config.context_length, device
+    )
 
     print(f"Running evaluation for layer {config.layer}")
     hook_name = f"blocks.{config.layer}.hook_resid_post"
@@ -156,6 +164,7 @@ def run_eval(
                 )
 
     results_dict["custom_eval_config"] = asdict(config)
+
     return results_dict
 
 
@@ -170,9 +179,6 @@ if __name__ == "__main__":
     print(f"Using device: {device}")
 
     config = eval_config.EvalConfig()
-
-    random.seed(config.random_seed)
-    torch.manual_seed(config.random_seed)
 
     # populate selected_saes_dict using config values
     for release in config.sae_releases:
@@ -201,7 +207,7 @@ if __name__ == "__main__":
     output_filename = (
         config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
     )
-    output_folder = "results" # at evals/<eval_name>
+    output_folder = "results"  # at evals/<eval_name>
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder, exist_ok=True)
