@@ -118,11 +118,6 @@ def run_eval(
             sae = sae.to(device=device)
 
             if "topk" in sae_name:
-                if isinstance(sae.activation_fn, TopK):
-                    continue
-
-                sae = formatting_utils.fix_topk_saes(sae, sae_release, sae_name, data_dir="../")
-
                 assert isinstance(sae.activation_fn, TopK)
 
             all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(

@@ -8,7 +8,8 @@ from sae_lens.sae import SAE, TopK
 
 
 def fix_topk_saes(sae: SAE, sae_release: str, sae_name: str, data_dir: str = "") -> SAE:
-    """Temporary workaround as the TopK SAEs are currently being loaded as Standard SAEs."""
+    """Temporary workaround as the TopK SAEs are currently being loaded as Standard SAEs.
+    DEPRECATED, fixed in sae_lens version 3.23.1"""
 
     if isinstance(sae.activation_fn, TopK):
         print(f"SAE {sae_name} already has TopK activation function.")
