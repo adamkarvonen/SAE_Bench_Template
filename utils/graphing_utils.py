@@ -10,8 +10,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from scipy import stats
-from matplotlib.lines import Line2D
 from matplotlib.colors import Normalize
+from matplotlib.lines import Line2D
 from typing import Optional, Dict, Any
 from collections import defaultdict
 
@@ -505,13 +505,6 @@ def plot_correlation_scatter(
     print(f"P-value: {p_value:.4f}")
 
 
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.lines import Line2D
-from collections import defaultdict
-from typing import Optional
-
-
 def plot_training_steps(
     results_dict: dict,
     metric_key: str,
@@ -519,6 +512,7 @@ def plot_training_steps(
     title: Optional[str] = None,
     y_label: Optional[str] = None,
     output_filename: Optional[str] = None,
+    break_fraction: float = 0.15  # Parameter to control break position
 ):
     # Initialize a defaultdict to store data for each trainer
     trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
@@ -531,89 +525,106 @@ def plot_training_steps(
         trainer_class = value["trainer_class"]
         trainer_label = label_lookup[trainer_class]
         layer = value["layer"]
-        tokens_per_step = value["buffer"]["out_batch_size"]
-        step = int(value[steps_key]) * tokens_per_step
+        step = int(value[steps_key])
         metric_scores = value[metric_key]
         trainer_key = f"{trainer_label} Layer {layer} Trainer {trainer}"
+        tokens_per_step = value['buffer']['out_batch_size']
 
         trainer_data[trainer_key]["steps"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
         trainer_data[trainer_key]["l0"] = value["l0"]
-        trainer_data[trainer_key]["trainer_class"] = trainer_class
+        trainer_data[trainer_key]['trainer_class'] = trainer_class
         all_steps.add(step)
         all_trainers.add(trainer_class)
 
     # Calculate average across all trainers
     average_trainer_data = {"steps": [], "metric_scores": []}
     for step in sorted(all_steps):
-        step_scores = [
-            data["metric_scores"][data["steps"].index(step)]
-            for data in trainer_data.values()
-            if step in data["steps"]
-        ]
-        if step_scores:
+        step_diffs = [data["metric_scores"][data["steps"].index(step)] for data in trainer_data.values() if step in data["steps"]]
+        if step_diffs:
             average_trainer_data["steps"].append(step)
-            average_trainer_data["metric_scores"].append(np.mean(step_scores))
+            average_trainer_data["metric_scores"].append(np.mean(step_diffs))
     trainer_data["Average"] = average_trainer_data
 
-    # Create the plot
-    fig, ax = plt.subplots(figsize=(12, 6))
+    # Create the plot with broken axis
+    fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(15, 6),
+                                   gridspec_kw={'width_ratios': [break_fraction, 1-break_fraction]})
+    fig.subplots_adjust(wspace=0.01)  # Adjust space between axes
+
+    # Calculate break point based on data
+    steps_break_point = min([s for s in all_steps if s > 0]) / 2
+    break_point = steps_break_point # / max(all_steps) * 100  # Convert to percentage
 
     for trainer_key, data in trainer_data.items():
         steps = data["steps"]
-        print("Training tokens:", sorted(steps))
         metric_scores = data["metric_scores"]
 
         if trainer_key == "Average":
-            color, trainer_class = "black", "Average"
-        elif data["trainer_class"] == "StandardTrainer":
-            color, trainer_class = "red", label_lookup[data["trainer_class"]]
+            color, trainer_class = 'black', 'Average'
+        elif data['trainer_class'] == 'StandardTrainer':
+            color, trainer_class = 'red', label_lookup[data['trainer_class']]
         else:
-            color, trainer_class = "blue", label_lookup[data["trainer_class"]]
+            color, trainer_class = 'blue', label_lookup[data['trainer_class']]
 
         sorted_data = sorted(zip(steps, metric_scores))
         steps, metric_scores = zip(*sorted_data)
 
-        ax.plot(
-            steps,
-            metric_scores,
-            marker="o",
-            label=trainer_class,
-            linewidth=4 if trainer_key == "Average" else 2,
-            color=color,
-            alpha=1 if trainer_key == "Average" else 0.3,
-            zorder=10 if trainer_key == "Average" else 1,
-        )
+        ax1.plot(steps, metric_scores, marker="o", label=trainer_class,
+                 linewidth=4 if trainer_key == "Average" else 2,
+                 color=color, alpha=1 if trainer_key == "Average" else 0.3,
+                 zorder=10 if trainer_key == "Average" else 1)
+        ax2.plot(steps, metric_scores, marker="o", label=trainer_class,
+                 linewidth=4 if trainer_key == "Average" else 2,
+                 color=color, alpha=1 if trainer_key == "Average" else 0.3,
+                 zorder=10 if trainer_key == "Average" else 1)
 
-    # Set x-axis to logarithmic scale
-    ax.set_xscale("log")
+    # Set up the broken axis
+    ax1.set_xlim(-break_point/4, break_point)
+    # ax2.set_xlim(break_point, 100)
+    ax2.set_xscale('log')
 
-    # Set x-axis to symlog scale
-    # ax.set_xscale("symlog", linthresh=100000)
+    # Hide the spines between ax1 and ax2
+    ax1.spines['right'].set_visible(False)
+    ax2.spines['left'].set_visible(False)
+    ax1.yaxis.tick_left()
+    ax2.yaxis.tick_right()
+    ax2.yaxis.set_label_position("right")
 
-    # # Adjust x-axis ticks
-    # major_ticks = [0] + [10**i for i in range(0, int(np.log10(max(all_steps))) + 1)]
-    # ax.set_xticks(major_ticks)
-    # ax.set_xticklabels([str(tick) for tick in major_ticks])
+    # Add break lines
+    d = .015  # Size of diagonal lines
+    kwargs = dict(transform=ax1.transAxes, color='k', clip_on=False, lw=4)
+
+    ax1.plot((1, 1), (-d, +d), **kwargs)        # top-right vertical
+    ax1.plot((1, 1), (1-d, 1+d), **kwargs)      # bottom-right vertical
+    kwargs.update(transform=ax2.transAxes)
+    ax2.plot((0, 0), (-d, +d), **kwargs)        # top-left vertical
+    ax2.plot((0, 0), (1-d, 1+d), **kwargs)      # bottom-left vertical
 
     # Set labels and title
     if not y_label:
         y_label = metric_key.replace("_", " ").capitalize()
-    ax.set_ylabel(y_label)
-    ax.set_xlabel("Training Tokens")
-    ax.set_title(title)
+    ax1.set_ylabel(y_label)
+    fig.text(0.5, 0.01, 'Training Tokens', ha='center', va='center')
+    fig.suptitle(title)
+
+    # Adjust x-axis ticks
+    # ax1.set_xticks([0])
+    # ax1.set_xticklabels(['0%'])
+    # ax2.set_xticks([0.1, 1, 10, 100])
+    # ax2.set_xticklabels([f'0.1%', '1%', '10%', '100%'])
 
     # Add grid
-    ax.grid(True, alpha=0.3)
+    ax1.grid(True, alpha=0.3)
+    ax2.grid(True, alpha=0.3)
 
     # Add custom legend
     legend_elements = []
-    legend_elements.append(Line2D([0], [0], color="black", lw=3, label="Average"))
-    if "StandardTrainer" in all_trainers:
-        legend_elements.append(Line2D([0], [0], color="red", lw=3, label="Standard"))
-    if "TrainerTopK" in all_trainers:
-        legend_elements.append(Line2D([0], [0], color="blue", lw=3, label="TopK"))
-    ax.legend(handles=legend_elements, loc="lower right")
+    legend_elements.append(Line2D([0], [0], color='black', lw=3, label='Average'))
+    if 'StandardTrainer' in all_trainers:
+        legend_elements.append(Line2D([0], [0], color='red', lw=3, label='Standard'))
+    if 'TrainerTopK' in all_trainers:
+        legend_elements.append(Line2D([0], [0], color='blue', lw=3, label='TopK'))
+    ax2.legend(handles=legend_elements, loc='lower right')
 
     plt.tight_layout()
 
@@ -623,11 +634,6 @@ def plot_training_steps(
     plt.show()
 
 
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from matplotlib.lines import Line2D
-# from collections import defaultdict
-# from typing import Optional
 
 # def plot_training_steps(
 #     results_dict: dict,
@@ -636,7 +642,6 @@ def plot_training_steps(
 #     title: Optional[str] = None,
 #     y_label: Optional[str] = None,
 #     output_filename: Optional[str] = None,
-#     break_fraction: float = 0.15  # Parameter to control break position
 # ):
 #     # Initialize a defaultdict to store data for each trainer
 #     trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
@@ -649,106 +654,89 @@ def plot_training_steps(
 #         trainer_class = value["trainer_class"]
 #         trainer_label = label_lookup[trainer_class]
 #         layer = value["layer"]
-#         step = int(value[steps_key])
+#         tokens_per_step = value["buffer"]["out_batch_size"]
+#         step = int(value[steps_key]) * tokens_per_step
 #         metric_scores = value[metric_key]
 #         trainer_key = f"{trainer_label} Layer {layer} Trainer {trainer}"
-#         tokens_per_step = value['buffer']['out_batch_size']
 
 #         trainer_data[trainer_key]["steps"].append(step)
 #         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
 #         trainer_data[trainer_key]["l0"] = value["l0"]
-#         trainer_data[trainer_key]['trainer_class'] = trainer_class
+#         trainer_data[trainer_key]["trainer_class"] = trainer_class
 #         all_steps.add(step)
 #         all_trainers.add(trainer_class)
 
 #     # Calculate average across all trainers
 #     average_trainer_data = {"steps": [], "metric_scores": []}
 #     for step in sorted(all_steps):
-#         step_diffs = [data["metric_scores"][data["steps"].index(step)] for data in trainer_data.values() if step in data["steps"]]
-#         if step_diffs:
+#         step_scores = [
+#             data["metric_scores"][data["steps"].index(step)]
+#             for data in trainer_data.values()
+#             if step in data["steps"]
+#         ]
+#         if step_scores:
 #             average_trainer_data["steps"].append(step)
-#             average_trainer_data["metric_scores"].append(np.mean(step_diffs))
+#             average_trainer_data["metric_scores"].append(np.mean(step_scores))
 #     trainer_data["Average"] = average_trainer_data
 
-#     # Create the plot with broken axis
-#     fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(15, 6),
-#                                    gridspec_kw={'width_ratios': [break_fraction, 1-break_fraction]})
-#     fig.subplots_adjust(wspace=0.01)  # Adjust space between axes
-
-#     # Calculate break point based on data
-#     steps_break_point = min([s for s in all_steps if s > 0]) / 2
-#     break_point = steps_break_point # / max(all_steps) * 100  # Convert to percentage
+#     # Create the plot
+#     fig, ax = plt.subplots(figsize=(12, 6))
 
 #     for trainer_key, data in trainer_data.items():
 #         steps = data["steps"]
+#         print("Training tokens:", sorted(steps))
 #         metric_scores = data["metric_scores"]
 
 #         if trainer_key == "Average":
-#             color, trainer_class = 'black', 'Average'
-#         elif data['trainer_class'] == 'StandardTrainer':
-#             color, trainer_class = 'red', label_lookup[data['trainer_class']]
+#             color, trainer_class = "black", "Average"
+#         elif data["trainer_class"] == "StandardTrainer":
+#             color, trainer_class = "red", label_lookup[data["trainer_class"]]
 #         else:
-#             color, trainer_class = 'blue', label_lookup[data['trainer_class']]
+#             color, trainer_class = "blue", label_lookup[data["trainer_class"]]
 
 #         sorted_data = sorted(zip(steps, metric_scores))
 #         steps, metric_scores = zip(*sorted_data)
 
-#         ax1.plot(steps, metric_scores, marker="o", label=trainer_class,
-#                  linewidth=4 if trainer_key == "Average" else 2,
-#                  color=color, alpha=1 if trainer_key == "Average" else 0.3,
-#                  zorder=10 if trainer_key == "Average" else 1)
-#         ax2.plot(steps, metric_scores, marker="o", label=trainer_class,
-#                  linewidth=4 if trainer_key == "Average" else 2,
-#                  color=color, alpha=1 if trainer_key == "Average" else 0.3,
-#                  zorder=10 if trainer_key == "Average" else 1)
+#         ax.plot(
+#             steps,
+#             metric_scores,
+#             marker="o",
+#             label=trainer_class,
+#             linewidth=4 if trainer_key == "Average" else 2,
+#             color=color,
+#             alpha=1 if trainer_key == "Average" else 0.3,
+#             zorder=10 if trainer_key == "Average" else 1,
+#         )
 
-#     # Set up the broken axis
-#     ax1.set_xlim(-break_point/4, break_point)
-#     # ax2.set_xlim(break_point, 100)
-#     ax2.set_xscale('log')
+#     # Set x-axis to logarithmic scale
+#     ax.set_xscale("log")
 
-#     # Hide the spines between ax1 and ax2
-#     ax1.spines['right'].set_visible(False)
-#     ax2.spines['left'].set_visible(False)
-#     ax1.yaxis.tick_left()
-#     ax2.yaxis.tick_right()
-#     ax2.yaxis.set_label_position("right")
+#     # Set x-axis to symlog scale
+#     # ax.set_xscale("symlog", linthresh=100000)
 
-#     # Add break lines
-#     d = .015  # Size of diagonal lines
-#     kwargs = dict(transform=ax1.transAxes, color='k', clip_on=False, lw=4)
-
-#     ax1.plot((1, 1), (-d, +d), **kwargs)        # top-right vertical
-#     ax1.plot((1, 1), (1-d, 1+d), **kwargs)      # bottom-right vertical
-#     kwargs.update(transform=ax2.transAxes)
-#     ax2.plot((0, 0), (-d, +d), **kwargs)        # top-left vertical
-#     ax2.plot((0, 0), (1-d, 1+d), **kwargs)      # bottom-left vertical
+#     # # Adjust x-axis ticks
+#     # major_ticks = [0] + [10**i for i in range(0, int(np.log10(max(all_steps))) + 1)]
+#     # ax.set_xticks(major_ticks)
+#     # ax.set_xticklabels([str(tick) for tick in major_ticks])
 
 #     # Set labels and title
 #     if not y_label:
 #         y_label = metric_key.replace("_", " ").capitalize()
-#     ax1.set_ylabel(y_label)
-#     fig.text(0.5, 0.01, 'Training Tokens', ha='center', va='center')
-#     fig.suptitle(title)
-
-#     # Adjust x-axis ticks
-#     # ax1.set_xticks([0])
-#     # ax1.set_xticklabels(['0%'])
-#     # ax2.set_xticks([0.1, 1, 10, 100])
-#     # ax2.set_xticklabels([f'0.1%', '1%', '10%', '100%'])
+#     ax.set_ylabel(y_label)
+#     ax.set_xlabel("Training Tokens")
+#     ax.set_title(title)
 
 #     # Add grid
-#     ax1.grid(True, alpha=0.3)
-#     ax2.grid(True, alpha=0.3)
+#     ax.grid(True, alpha=0.3)
 
 #     # Add custom legend
 #     legend_elements = []
-#     legend_elements.append(Line2D([0], [0], color='black', lw=3, label='Average'))
-#     if 'StandardTrainer' in all_trainers:
-#         legend_elements.append(Line2D([0], [0], color='red', lw=3, label='Standard'))
-#     if 'TrainerTopK' in all_trainers:
-#         legend_elements.append(Line2D([0], [0], color='blue', lw=3, label='TopK'))
-#     ax2.legend(handles=legend_elements, loc='lower right')
+#     legend_elements.append(Line2D([0], [0], color="black", lw=3, label="Average"))
+#     if "StandardTrainer" in all_trainers:
+#         legend_elements.append(Line2D([0], [0], color="red", lw=3, label="Standard"))
+#     if "TrainerTopK" in all_trainers:
+#         legend_elements.append(Line2D([0], [0], color="blue", lw=3, label="TopK"))
+#     ax.legend(handles=legend_elements, loc="lower right")
 
 #     plt.tight_layout()
 
