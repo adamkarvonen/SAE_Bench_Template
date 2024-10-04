@@ -104,3 +104,8 @@ dataset_metadata = {
         "column2_mapping": amazon_rating_dict,
     },
 }
+
+chosen_classes_per_dataset = {
+    "bias_in_bios": ["0", "1", "2", "6", "9"],
+    "amazon_reviews_1and5": ["1", "2", "3", "5", "6"],
+}
