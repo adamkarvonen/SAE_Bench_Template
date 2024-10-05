@@ -15,6 +15,6 @@ If ran in the current state, `cd` in to `evals/shift_and_tpp/` and run `python m
 
 `tests/test_shift_and_tpp.py` contains an end-to-end test of the evals. Running `pytest -s tests/test_shift_and_tpp` will verify that the actual results are within the specified tolerance of the expected results.
 
-If the random seed is set, it's fully deterministic and results match perfectly using `compare_run_results.ipynb`. If the random seed is not set, results will vary up to 0.03 for some outlier values, with a mean difference of 0.005.
+If the random seed is set, it's fully deterministic and results match perfectly using `compare_run_results.ipynb` or the end to end tests. For TPP, the maximum difference is 0.008. SHIFT's maximum difference is larger and requires investigation.
 
 TODO: See if this can be sped up, try reduce memory usage.
