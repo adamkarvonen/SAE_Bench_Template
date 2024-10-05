@@ -44,6 +44,7 @@ COLUMN1_VALS_LOOKUP = {
 }
 
 
+@torch.no_grad()
 def get_effects_per_class_precomputed_acts(
     sae: SAE,
     probe: probe_training.Probe,
@@ -442,6 +443,7 @@ def run_eval_single_dataset(
     ).T
 
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
 
@@ -535,7 +537,7 @@ def run_eval_single_dataset(
                 sae_id=sae_id,
                 device=device,
             )
-            sae = sae.to(device=device)
+            sae = sae.to(device=device, dtype=llm_dtype)
 
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
@@ -585,7 +587,8 @@ def run_eval(
 
     for dataset_name in config.dataset_names:
         if config.spurious_corr:
-            config.column1_vals_list = COLUMN1_VALS_LOOKUP[dataset_name]
+            if not config.column1_vals_list:
+                config.column1_vals_list = COLUMN1_VALS_LOOKUP[dataset_name]
             for column1_vals in config.column1_vals_list:
                 run_name = f"{dataset_name}_scr_{column1_vals[0]}_{column1_vals[1]}"
                 raw_results, llm_clean_accs = run_eval_single_dataset(
