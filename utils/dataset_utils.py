@@ -50,6 +50,10 @@ def get_balanced_dataset(
         prof_df = df[df[column1_name] == profession]
         min_count = prof_df[column2_name].value_counts().min()
 
+        unique_groups = prof_df[column2_name].unique()
+        if len(unique_groups) < 2:
+            continue  # Skip professions with less than two groups
+
         if min_count < min_samples_per_quadrant:
             continue
 

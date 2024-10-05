@@ -5,10 +5,8 @@ from typing import Optional
 @dataclass
 class EvalConfig:
     random_seed: int = 42
-    context_length: int = 128
-
-    sae_batch_size: int = 125
     f1_jump_threshold: float = 0.03
+    max_k_value: int = 10
 
     # double-check token_pos matches prompting_template for other tokenizers
     prompt_template: str = "{word} has the first letter:"
@@ -41,7 +39,5 @@ class EvalConfig:
     # layer: int = 19
     # trainer_ids: Optional[list[int]] = None
     # include_checkpoints: bool = False
-
-    max_k_value: int = 10
 
     selected_saes_dict: dict = field(default_factory=lambda: {})
