@@ -137,6 +137,9 @@ def run_eval_single_dataset(
                 all_sae_test_acts_BF,
                 select_top_k=None,
                 use_sklearn=False,
+                batch_size=250,
+                epochs=100,
+                lr=1e-2,
             )
 
             results_dict[sae_name] = {}

@@ -26,7 +26,7 @@ def get_all_llm_activations(
     model: HookedTransformer,
     batch_size: int,
     hook_name: str,
-) -> dict[str, Float[torch.Tensor, "batch_size seq_len d_model"]]:
+) -> dict[str, Float[torch.Tensor, "dataset_size seq_len d_model"]]:
     """VERY IMPORTANT NOTE: We zero out masked token activations in this function. Later, we ignore zeroed activations."""
     all_classes_acts_BLD = {}
 
