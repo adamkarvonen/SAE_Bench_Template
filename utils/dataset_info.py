@@ -4,6 +4,14 @@
 POSITIVE_CLASS_LABEL = 1
 NEGATIVE_CLASS_LABEL = 0
 
+# NOTE: These are going to be hardcoded, and won't change even if the underlying dataset or data labels change.
+# This is a bit confusing, but IMO male_professor / female_nurse is a bit easier to understand than e.g. class1_pos_class2_pos / class1_neg_class2_neg
+PAIRED_CLASS_KEYS = {
+    "male / female": "female_data_only",
+    "professor / nurse": "nurse_data_only",
+    "male_professor / female_nurse": "female_nurse_data_only",
+}
+
 profession_dict = {
     "accountant": 0,
     "architect": 1,
