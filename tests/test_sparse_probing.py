@@ -23,6 +23,7 @@ def test_end_to_end_matching_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
+    test_config.dataset_names = ["bias_in_bios"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
@@ -68,6 +69,7 @@ def test_end_to_end_different_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
+    test_config.dataset_names = ["bias_in_bios"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
