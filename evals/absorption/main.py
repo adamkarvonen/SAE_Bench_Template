@@ -1,11 +1,5 @@
-from collections import defaultdict
 from dataclasses import asdict
 import gc
-import json
-import os
-from pathlib import Path
-import random
-import time
 from sae_lens import SAE
 import torch
 from tqdm import tqdm
@@ -13,15 +7,11 @@ import pandas as pd
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens.sae import TopK
 
-from evals.absorption import common, eval_config
+from evals.absorption import eval_config
 from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
 from utils import formatting_utils, activation_collection
 from transformer_lens import HookedTransformer
-
-
-def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
-    return sum(test_accuracies.values()) / len(test_accuracies)
 
 
 def run_eval(
@@ -110,7 +100,7 @@ def run_eval(
                     "num_absorption": int(row["num_absorption"]),
                     "absorption_rate": float(row["absorption_rate"]),
                     "num_probe_true_positives": float(row["num_probe_true_positives"]),
-                    "num_feature_splits": int(row["split_feats"]),
+                    "num_feature_splits": int(row["num_split_feats"]),
                 }
 
     results_dict["custom_eval_config"] = asdict(config)
@@ -128,10 +118,18 @@ def _aggregate_results_df(
         .merge(
             df[["letter", "num_probe_true_positives", "split_feats"]]
             .groupby(["letter"])
-            .mean()
+            .agg(
+                {
+                    "num_probe_true_positives": "mean",
+                    "split_feats": lambda x: x.iloc[
+                        0
+                    ],  # Take the first split_feats list for each letter
+                }
+            )
             .reset_index()
         )
     )
+    agg_df["num_split_feats"] = agg_df["split_feats"].apply(len)
     agg_df["num_absorption"] = agg_df["is_absorption"]
     agg_df["absorption_rate"] = (
         agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
@@ -152,60 +150,3 @@ def _fix_topk(
 
         assert isinstance(sae.activation_fn, TopK)
     return sae
-
-
-if __name__ == "__main__":
-    start_time = time.time()
-
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-
-    config = eval_config.EvalConfig()
-
-    random.seed(config.random_seed)
-    torch.manual_seed(config.random_seed)
-
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
-
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
-
-    # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, config.selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
-    )
-    output_folder = "sparse_probing_results"
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
-
-    end_time = time.time()
-
-    print(f"Finished evaluation in {end_time - start_time} seconds")

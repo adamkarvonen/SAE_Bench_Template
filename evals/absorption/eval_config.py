@@ -5,8 +5,6 @@ from typing import Optional
 @dataclass
 class EvalConfig:
     random_seed: int = 42
-
-    train_portion: float = 0.5
     context_length: int = 128
 
     sae_batch_size: int = 125

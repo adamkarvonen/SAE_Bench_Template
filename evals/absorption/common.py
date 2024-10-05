@@ -201,6 +201,7 @@ def load_dfs_or_run(
     if force or not all(path.exists() for path in paths):
         dfs = fn()
         for df, path in zip(dfs, paths):
+            path.parent.mkdir(parents=True, exist_ok=True)
             df.to_parquet(path, index=False)
     else:
         print(f"{paths} exist(s), loading from disk")

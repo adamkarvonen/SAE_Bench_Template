@@ -163,10 +163,20 @@ def sae_k_sparse_metadata(
     norm_W_enc = sae.W_enc / torch.norm(sae.W_enc, dim=0, keepdim=True)
     norm_W_dec = sae.W_dec / torch.norm(sae.W_dec, dim=-1, keepdim=True)
     probe_dec_cos = (
-        (norm_probe_weights.to(norm_W_dec.device) @ norm_W_dec.T).cpu().float()
+        (
+            norm_probe_weights.to(dtype=norm_W_dec.dtype, device=norm_W_dec.device)
+            @ norm_W_dec.T
+        )
+        .cpu()
+        .float()
     )
     probe_enc_cos = (
-        (norm_probe_weights.to(norm_W_enc.device) @ norm_W_enc).cpu().float()
+        (
+            norm_probe_weights.to(dtype=norm_W_enc.dtype, device=norm_W_enc.device)
+            @ norm_W_enc
+        )
+        .cpu()
+        .float()
     )
 
     metadata: dict[str, float | str | float | np.ndarray] = {
