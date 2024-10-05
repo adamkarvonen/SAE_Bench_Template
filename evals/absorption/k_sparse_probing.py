@@ -18,7 +18,7 @@ from evals.absorption.common import (
     get_or_make_dir,
     load_df_or_run,
     load_dfs_or_run,
-    load_probe,
+    load_or_train_probe,
     load_probe_data_split_or_train,
 )
 from evals.absorption.probing import LinearProbe, train_multi_probe
@@ -242,20 +242,29 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
     layer: int,
     sae_name: str,
     max_k_value: int,
+    prompt_template: str,
+    prompt_token_pos: int,
     probes_dir: Path | str,
     verbose: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    with torch.no_grad():
-        if verbose:
-            print("Loading probe and training data", flush=True)
-        probe = load_probe(layer=layer, model_name=model.name, probes_dir=probes_dir)
-        train_activations, train_data = load_probe_data_split_or_train(
-            model,
-            probes_dir=probes_dir,
-            layer=layer,
-            split="train",
-            device="cpu",
-        )
+    if verbose:
+        print("Loading probe and training data", flush=True)
+    probe = load_or_train_probe(
+        model=model,
+        layer=layer,
+        probes_dir=probes_dir,
+        base_template=prompt_template,
+        pos_idx=prompt_token_pos,
+    )
+    train_activations, train_data = load_probe_data_split_or_train(
+        model,
+        base_template=prompt_template,
+        pos_idx=prompt_token_pos,
+        probes_dir=probes_dir,
+        layer=layer,
+        split="train",
+        device="cpu",
+    )
     if verbose:
         print("Training k-sparse probes", flush=True)
     k_sparse_probes = train_k_sparse_probes(
@@ -269,6 +278,8 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
             print("Loading validation data", flush=True)
         eval_activations, eval_data = load_probe_data_split_or_train(
             model,
+            base_template=prompt_template,
+            pos_idx=prompt_token_pos,
             probes_dir=probes_dir,
             layer=layer,
             split="test",
@@ -311,8 +322,7 @@ def build_metrics_df(results_df, metadata_df, max_k_value: int):
             "precision_probe": precision_probe,
             "letter": letter,
             "layer": metadata_df["layer"].iloc[0],
-            "sae_width": metadata_df["sae_width"].iloc[0],
-            "sae_l0": metadata_df["sae_l0"].iloc[0],
+            "sae_name": metadata_df["sae_name"].iloc[0],
         }
 
         for k in range(1, max_k_value + 1):
@@ -345,8 +355,7 @@ def build_metrics_df(results_df, metadata_df, max_k_value: int):
             auc_info[f"sparse_sae_k_{k}_weights"] = meta_row["weights"].iloc[0]
             auc_info[f"sparse_sae_k_{k}_bias"] = meta_row["bias"].iloc[0]
             auc_info["layer"] = meta_row["layer"].iloc[0]
-            auc_info["sae_width"] = meta_row["sae_width"].iloc[0]
-            auc_info["sae_l0"] = meta_row["sae_l0"].iloc[0]
+            auc_info["sae_name"] = meta_row["sae_name"].iloc[0]
         aucs.append(auc_info)
     return pd.DataFrame(aucs)
 
@@ -395,6 +404,8 @@ def run_k_sparse_probing_experiment(
     layer: int,
     sae_name: str,
     max_k_value: int,
+    prompt_template: str,
+    prompt_token_pos: int,
     experiment_dir: Path | str = RESULTS_DIR / SPARSE_PROBING_EXPERIMENT_NAME,
     probes_dir: Path | str = PROBES_DIR,
     force: bool = False,
@@ -422,6 +433,8 @@ def run_k_sparse_probing_experiment(
                 sae_name=sae_name,
                 layer=layer,
                 max_k_value=max_k_value,
+                prompt_template=prompt_template,
+                prompt_token_pos=prompt_token_pos,
             ),
             (raw_results_path, metadata_results_path),
             force=force,

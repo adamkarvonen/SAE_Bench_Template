@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import asdict
 import gc
 import json
@@ -13,6 +14,7 @@ from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_direc
 from sae_lens.sae import TopK
 
 from evals.absorption import common, eval_config
+from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
 from utils import formatting_utils, activation_collection
 from transformer_lens import HookedTransformer
@@ -83,12 +85,58 @@ def run_eval(
                 force=force_rerun,
                 max_k_value=config.max_k_value,
                 f1_jump_threshold=config.f1_jump_threshold,
+                prompt_template=config.prompt_template,
+                prompt_token_pos=config.prompt_token_pos,
             )
 
+            raw_df = run_feature_absortion_experiment(
+                model=model,
+                sae=sae,
+                layer=config.layer,
+                sae_name=sae_name,
+                force=force_rerun,
+                max_k_value=config.max_k_value,
+                feature_split_f1_jump_threshold=config.f1_jump_threshold,
+                prompt_template=config.prompt_template,
+                prompt_token_pos=config.prompt_token_pos,
+                batch_size=llm_batch_size,
+            )
+            agg_df = _aggregate_results_df(raw_df)
+
             results_dict["custom_eval_results"][sae_name] = {}
+            for _, row in agg_df.iterrows():
+                letter = row["letter"]
+                results_dict["custom_eval_results"][sae_name][letter] = {
+                    "num_absorption": int(row["num_absorption"]),
+                    "absorption_rate": float(row["absorption_rate"]),
+                    "num_probe_true_positives": float(row["num_probe_true_positives"]),
+                    "num_feature_splits": int(row["split_feats"]),
+                }
 
     results_dict["custom_eval_config"] = asdict(config)
     return results_dict
+
+
+def _aggregate_results_df(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+    agg_df = (
+        df[["letter", "is_absorption"]]
+        .groupby(["letter"])
+        .sum()
+        .reset_index()
+        .merge(
+            df[["letter", "num_probe_true_positives", "split_feats"]]
+            .groupby(["letter"])
+            .mean()
+            .reset_index()
+        )
+    )
+    agg_df["num_absorption"] = agg_df["is_absorption"]
+    agg_df["absorption_rate"] = (
+        agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
+    )
+    return agg_df
 
 
 def _fix_topk(

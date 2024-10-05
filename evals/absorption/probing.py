@@ -294,7 +294,6 @@ def gen_and_save_df_acts_probing(
     test_dataset: list[tuple[SpellingPrompt, int]],
     path: str | Path,
     hook_point: str,
-    layer: int,
     batch_size: int = 64,
     position_idx: int = -2,
 ) -> tuple[pd.DataFrame, pd.DataFrame, np.memmap, np.memmap]:
@@ -357,8 +356,7 @@ def gen_and_save_df_acts_probing(
 
         return df, act_tensor_memmap
 
-    layer_path = f"layer_{layer}"
-    task_dir = os.path.join(path, layer_path)
+    task_dir = path
     os.makedirs(task_dir, exist_ok=True)
 
     train_df, train_act_tensor = process_dataset(train_dataset, "train")
@@ -414,9 +412,8 @@ def train_linear_probe_for_task(
     return probe, probe_data
 
 
-def save_probe_and_data(probe, probe_data, probing_path, layer):
-    layer_path = f"layer_{layer}"
-    task_dir = os.path.join(probing_path, layer_path)
+def save_probe_and_data(probe, probe_data, probing_path):
+    task_dir = os.path.join(probing_path)
     os.makedirs(task_dir, exist_ok=True)
 
     probe_path = os.path.join(task_dir, "probe.pth")

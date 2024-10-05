@@ -21,8 +21,6 @@ from evals.absorption.probing import (
     train_linear_probe_for_task,
 )
 from evals.absorption.prompting import (
-    VERBOSE_FIRST_LETTER_TEMPLATE,
-    VERBOSE_FIRST_LETTER_TOKEN_POS,
     Formatter,
     first_letter_formatter,
 )
@@ -41,20 +39,26 @@ def dtype_to_str(dtype: torch.dtype | str) -> str:
 
 def load_or_train_probe(
     model: HookedTransformer,
+    base_template: str,
+    pos_idx: int,
     layer: int = 0,
     probes_dir: str | Path = PROBES_DIR,
     dtype: torch.dtype = DEFAULT_DTYPE,
     device: str = DEFAULT_DEVICE,
 ) -> LinearProbe:
-    probe_path = Path(probes_dir) / f"{model.name}" / f"layer_{layer}" / "probe.pth"
+    probe_path = (
+        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
+    )
     if not probe_path.exists():
         print(f"Probe for layer {layer} not found, training...")
         train_and_save_probes(
             model,
-            [layer],
-            probes_dir,
+            layers=[layer],
+            probes_dir=probes_dir,
+            base_template=base_template,
+            pos_idx=pos_idx,
         )
-    return load_probe(model.name, layer, probes_dir, dtype, device)
+    return load_probe(model.cfg.model_name, layer, probes_dir, dtype, device)
 
 
 def load_probe(
@@ -73,19 +77,25 @@ def load_probe(
 
 def load_probe_data_split_or_train(
     model: HookedTransformer,
+    base_template: str,
+    pos_idx: int,
     layer: int = 0,
     split: Literal["train", "test"] = "test",
     probes_dir: str | Path = PROBES_DIR,
     dtype: torch.dtype = DEFAULT_DTYPE,
     device: str = DEFAULT_DEVICE,
 ) -> tuple[torch.Tensor, list[tuple[str, int]]]:
-    probe_path = Path(probes_dir) / f"{model.name}" / f"layer_{layer}" / "probe.pth"
+    probe_path = (
+        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
+    )
     if not probe_path.exists():
         print(f"Probe for layer {layer} not found, training...")
         train_and_save_probes(
             model,
-            [layer],
-            probes_dir,
+            layers=[layer],
+            probes_dir=probes_dir,
+            base_template=base_template,
+            pos_idx=pos_idx,
         )
     return load_probe_data_split(
         model,  # type: ignore
@@ -107,17 +117,20 @@ def load_probe_data_split(
     device: str = DEFAULT_DEVICE,
 ) -> tuple[torch.Tensor, list[tuple[str, int]]]:
     np_data = np.load(
-        Path(probes_dir) / f"{model.name}" / f"layer_{layer}" / "data.npz",
+        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "data.npz",
     )
     df = pd.read_csv(
-        Path(probes_dir) / f"{model.name}" / f"layer_{layer}" / f"{split}_df.csv",
+        Path(probes_dir)
+        / f"{model.cfg.model_name}"
+        / f"layer_{layer}"
+        / f"{split}_df.csv",
         keep_default_na=False,
         na_values=[""],
     )
     activations = torch.from_numpy(np_data[f"X_{split}"]).to(device, dtype=dtype)
     labels = np_data[f"y_{split}"].tolist()
     return _parse_probe_data_split(
-        model.tokenizer, activations, split_labels=labels, df=df
+        model.tokenizer, activations, split_labels=labels, df=df  # type: ignore
     )
 
 
@@ -223,10 +236,9 @@ def create_and_train_probe(
             model=model,
             train_dataset=train_dataset,
             test_dataset=test_dataset,
-            path=probes_dir / f"{model.name}" / f"layer_{layer}",
+            path=Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}",
             hook_point=hook_point,
             batch_size=batch_size,
-            layer=layer,
             position_idx=pos_idx,
         )
     )
@@ -243,12 +255,18 @@ def create_and_train_probe(
         lr=lr,
         device=device,
     )
-    save_probe_and_data(probe, probe_data, probes_dir, layer)
+    save_probe_and_data(
+        probe,
+        probe_data,
+        probing_path=Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}",
+    )
 
 
 def train_and_save_probes(
     model: HookedTransformer,
     layers: list[int],
+    base_template: str,
+    pos_idx: int,
     probes_dir: str | Path = PROBES_DIR,
     batch_size=64,
     num_epochs=50,
@@ -268,6 +286,6 @@ def train_and_save_probes(
             num_epochs=num_epochs,
             lr=lr,
             device=device,
-            base_template=VERBOSE_FIRST_LETTER_TEMPLATE,
-            pos_idx=VERBOSE_FIRST_LETTER_TOKEN_POS,
+            base_template=base_template,
+            pos_idx=pos_idx,
         )

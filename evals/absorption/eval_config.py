@@ -12,6 +12,10 @@ class EvalConfig:
     sae_batch_size: int = 125
     f1_jump_threshold: float = 0.03
 
+    # double-check token_pos matches prompting_template for other tokenizers
+    prompt_template: str = "{word} has the first letter:"
+    prompt_token_pos: int = -6
+
     ## Uncomment to run Pythia SAEs
 
     sae_releases: list[str] = field(

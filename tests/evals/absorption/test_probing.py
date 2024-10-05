@@ -349,7 +349,6 @@ def test_gen_and_save_df_acts_probing(mock_to_csv, mock_model, tmp_path):
         train_dataset=dataset,
         path=tmp_path,
         hook_point="test_hook",
-        layer=0,
         batch_size=2,
         position_idx=-2,
     )
@@ -361,8 +360,8 @@ def test_gen_and_save_df_acts_probing(mock_to_csv, mock_model, tmp_path):
     assert mock_to_csv.called
 
     # Check if the memmap file was created
-    test_memmap_path = os.path.join(tmp_path, "layer_0", "test_act_tensor.dat")
-    train_memmap_path = os.path.join(tmp_path, "layer_0", "train_act_tensor.dat")
+    test_memmap_path = os.path.join(tmp_path, "test_act_tensor.dat")
+    train_memmap_path = os.path.join(tmp_path, "train_act_tensor.dat")
     assert os.path.exists(test_memmap_path)
     assert os.path.exists(train_memmap_path)
     assert train_memmap.shape == (2, 768)  # 2 samples, 768 dimensions
