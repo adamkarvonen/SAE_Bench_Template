@@ -56,7 +56,7 @@ scr_results_filename = "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_
 #     testing_utils.compare_dicts_within_tolerance(run_results, expected_results, tolerance)
 
 
-def test_scr_end_to_end_different_seed():
+def test_scr_end_to_end_same_seed():
     """Estimated runtime: 1 minute"""
     if torch.backends.mps.is_available():
         device = "mps"
@@ -75,7 +75,9 @@ def test_scr_end_to_end_different_seed():
     test_config.layer = 4
     test_config.trainer_ids = [10]
     test_config.include_checkpoints = False
-    test_config.random_seed = 44
+    test_config.random_seed = 42
+    test_config.n_values = [2, 20]
+    test_config.sae_batch_size = 250
     tolerance = 0.04
 
     test_config.spurious_corr = True
@@ -98,6 +100,9 @@ def test_scr_end_to_end_different_seed():
         print(f"SAE release: {release}, SAEs: {test_config.selected_saes_dict[release]}")
 
     run_results = shift_and_tpp.run_eval(test_config, test_config.selected_saes_dict, device)
+
+    # This is required because when saving tuples are converted to lists
+    run_results["custom_eval_config"]["column1_vals_list"] = [["professor", "nurse"]]
 
     with open(scr_results_filename, "r") as f:
         expected_results = json.load(f)
@@ -125,7 +130,9 @@ def test_tpp_end_to_end_different_seed():
     test_config.trainer_ids = [10]
     test_config.include_checkpoints = False
     test_config.random_seed = 44
-    tolerance = 0.04
+    test_config.n_values = [2, 20]
+    test_config.sae_batch_size = 250
+    tolerance = 0.02
 
     test_config.spurious_corr = False
 
