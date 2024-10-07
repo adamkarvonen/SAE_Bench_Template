@@ -4,8 +4,8 @@ import numpy as np
 from transformer_lens import HookedTransformer
 from sae.activation_store import ActivationsStore
 
-from .feature_activation import get_top_features
-from SAE_Bench_Template.evals.unlearning.utils.metrics import calculate_metrics_list
+from evals.unlearning.utils.feature_activation import get_top_features
+from evals.unlearning.utils.metrics import calculate_metrics_list
 from SAEBench.utils import load_sae
 
 # Constants
@@ -72,12 +72,8 @@ def run_metrics_calculation(model, sae, activation_store, forget_sparsity, retai
             notes=f'_sparsity_thres{retain_threshold}'
         )
 
-def main():
+def run_eval_single_sae(model, sae):
     args = parse_arguments()
-    model, sae = load_model_and_sae(args.sae_folder)
     activation_store = setup_activation_store(sae, model)
     forget_sparsity, retain_sparsity = load_sparsity_data(args.sae_folder)
     run_metrics_calculation(model, sae, activation_store, forget_sparsity, retain_sparsity, args.sae_folder)
-
-if __name__ == "__main__":
-    main()

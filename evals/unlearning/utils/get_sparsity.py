@@ -23,25 +23,6 @@ def parse_arguments():
     parser.add_argument('--sae_folder', type=str, required=True, help='Path to the SAE folder')
     return parser.parse_args()
 
-def check_existing_results(sae_folder):
-    forget_path = os.path.join(RESULT_DIR, sae_folder, FORGET_FILENAME)
-    retain_path = os.path.join(RESULT_DIR, sae_folder, RETAIN_FILENAME)
-    return os.path.exists(forget_path) and os.path.exists(retain_path)
-
-def ensure_sae_weights(sae_folder):
-    if not os.path.exists(os.path.join(WEIGHTS_DIR, sae_folder)):
-        download_sae_weights(sae_folder)
-
-def calculate_sparsity(model, sae, forget_tokens, retain_tokens):
-    feature_sparsity_forget = get_feature_activation_sparsity(model, sae, forget_tokens, batch_size=8)
-    feature_sparsity_retain = get_feature_activation_sparsity(model, sae, retain_tokens, batch_size=8)
-    return feature_sparsity_forget, feature_sparsity_retain
-
-def save_results(sae_folder, feature_sparsity_forget, feature_sparsity_retain):
-    output_dir = os.path.join(RESULT_DIR, sae_folder)
-    os.makedirs(output_dir, exist_ok=True)
-    np.savetxt(os.path.join(output_dir, FORGET_FILENAME), feature_sparsity_forget, fmt='%f')
-    np.savetxt(os.path.join(output_dir, RETAIN_FILENAME), feature_sparsity_retain, fmt='%f')
 
 def main():
     args = parse_arguments()
