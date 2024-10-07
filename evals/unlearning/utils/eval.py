@@ -6,7 +6,8 @@ from sae.activation_store import ActivationsStore
 
 from evals.unlearning.utils.feature_activation import get_top_features
 from evals.unlearning.utils.metrics import calculate_metrics_list
-from SAEBench.utils import load_sae
+
+from evals.unlearning.utils.feature_activation import save_feature_sparsity
 
 # Constants
 ROOT_DIR = '/root/unlearning/SAEBench'
@@ -72,8 +73,12 @@ def run_metrics_calculation(model, sae, activation_store, forget_sparsity, retai
             notes=f'_sparsity_thres{retain_threshold}'
         )
 
+
+
 def run_eval_single_sae(model, sae):
+    
     args = parse_arguments()
+    save_feature_sparsity(model, sae)
     activation_store = setup_activation_store(sae, model)
     forget_sparsity, retain_sparsity = load_sparsity_data(args.sae_folder)
     run_metrics_calculation(model, sae, activation_store, forget_sparsity, retain_sparsity, args.sae_folder)

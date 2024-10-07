@@ -147,9 +147,6 @@ def check_existing_results(sae_folder):
     retain_path = os.path.join(RESULT_DIR, sae_folder, RETAIN_FILENAME)
     return os.path.exists(forget_path) and os.path.exists(retain_path)
 
-def ensure_sae_weights(sae_folder):
-    if not os.path.exists(os.path.join(WEIGHTS_DIR, sae_folder)):
-        download_sae_weights(sae_folder)
 
 def calculate_sparsity(model, sae, forget_tokens, retain_tokens):
     feature_sparsity_forget = get_feature_activation_sparsity(model, sae, forget_tokens, batch_size=8)
@@ -161,3 +158,17 @@ def save_results(sae_folder, feature_sparsity_forget, feature_sparsity_retain):
     os.makedirs(output_dir, exist_ok=True)
     np.savetxt(os.path.join(output_dir, FORGET_FILENAME), feature_sparsity_forget, fmt='%f')
     np.savetxt(os.path.join(output_dir, RETAIN_FILENAME), feature_sparsity_retain, fmt='%f')
+
+
+def save_feature_sparsity(model, sae):
+    
+    # TODO: args.sae_folder
+    if check_existing_results(args.sae_folder):
+        print(f"Sparsity calculation for {args.sae_folder} is already done")
+        return
+
+    forget_tokens, retain_tokens = get_shuffled_forget_retain_tokens(model, batch_size=2048, seq_len=1024)
+    
+    feature_sparsity_forget, feature_sparsity_retain = calculate_sparsity(model, sae, forget_tokens, retain_tokens)
+    
+    save_results(args.sae_folder, feature_sparsity_forget, feature_sparsity_retain)

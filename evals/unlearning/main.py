@@ -11,32 +11,12 @@ from transformer_lens import HookedTransformer
 from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
-from evals.unlearning.utils.feature_activation import (
-    check_existing_results,
-    ensure_sae_weights,
-    get_shuffled_forget_retain_tokens,
-    calculate_sparsity,
-    save_results
-)
+
 
 import evals.unlearning.eval_config as eval_config
 import utils.eval as run_eval_single_sae
 import utils.activation_collection as activation_collection
 import utils.formatting_utils as formatting_utils
-
-def save_feature_sparsity(model, sae):
-
-    if check_existing_results(args.sae_folder):
-        print(f"Sparsity calculation for {args.sae_folder} is already done")
-        return
-
-    ensure_sae_weights(args.sae_folder)
-
-    forget_tokens, retain_tokens = get_shuffled_forget_retain_tokens(model, batch_size=2048, seq_len=1024)
-    
-    feature_sparsity_forget, feature_sparsity_retain = calculate_sparsity(model, sae, forget_tokens, retain_tokens)
-    
-    save_results(args.sae_folder, feature_sparsity_forget, feature_sparsity_retain)
 
 
 def run_eval(
@@ -85,7 +65,6 @@ def run_eval(
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
                 
-            save_feature_sparsity(model, sae)
             single_sae_eval_results = run_eval_single_sae(model, sae)
             results_dict[sae_name] = single_sae_eval_results
                 
