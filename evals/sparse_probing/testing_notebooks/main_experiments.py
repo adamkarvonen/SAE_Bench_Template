@@ -2,29 +2,26 @@
 
 import copy
 import json
-
-# TODO make import from shared directory more robust
-# I wanted to avoid the pip install -e . in the shared directory, but maybe that's the best way to do it
 import os
 import random
 import sys
 import time
 from dataclasses import asdict
 
-import eval_config
+
 import pandas as pd
-import probe_training
 import torch
 from sae_lens import SAE
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
+from evals.sparse_probing import probe_training
+from evals.sparse_probing import eval_config
+
 import sae_bench_utils
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_utils as dataset_utils
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import sae_bench_utils.formatting_utils as formatting_utils
 
 
@@ -88,12 +85,16 @@ train_data, test_data = dataset_utils.get_multi_label_train_test_data(
     config.probe_test_set_size,
     config.random_seed,
 )
+dataset_utils
+train_data = dataset_utils.filter_dataset(train_data, config.chosen_classes)
+test_data = dataset_utils.filter_dataset(test_data, config.chosen_classes)
 
-train_data = utils.filter_dataset(train_data, config.chosen_classes)
-test_data = utils.filter_dataset(test_data, config.chosen_classes)
-
-train_data = utils.tokenize_data(train_data, model.tokenizer, config.context_length, device)
-test_data = utils.tokenize_data(test_data, model.tokenizer, config.context_length, device)
+train_data = dataset_utils.tokenize_data(
+    train_data, model.tokenizer, config.context_length, device
+)
+test_data = dataset_utils.tokenize_data(
+    test_data, model.tokenizer, config.context_length, device
+)
 
 print(f"Running evaluation for layer {config.layer}")
 hook_name = f"blocks.{config.layer}.hook_resid_post"
@@ -105,8 +106,12 @@ all_test_acts_BLD = activation_collection.get_all_llm_activations(
     test_data, model, llm_batch_size, hook_name
 )
 
-all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
+all_train_acts_BD = activation_collection.create_meaned_model_activations(
+    all_train_acts_BLD
+)
+all_test_acts_BD = activation_collection.create_meaned_model_activations(
+    all_test_acts_BLD
+)
 
 llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
     all_train_acts_BD,
@@ -251,7 +256,9 @@ def train_sklearn_probe(
         )
     else:
         # Use L2 regularization
-        probe = LogisticRegression(penalty="l2", C=C, max_iter=max_iter, verbose=int(verbose))
+        probe = LogisticRegression(
+            penalty="l2", C=C, max_iter=max_iter, verbose=int(verbose)
+        )
 
     # Train the model
     probe.fit(train_inputs_np, train_labels_np)
