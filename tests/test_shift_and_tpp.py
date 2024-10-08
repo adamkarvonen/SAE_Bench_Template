@@ -1,13 +1,18 @@
-import torch
 import json
 
-import evals.shift_and_tpp.main as shift_and_tpp
-import evals.shift_and_tpp.eval_config as eval_config
-import utils.formatting_utils as formatting_utils
-import utils.testing_utils as testing_utils
+import torch
 
-tpp_results_filename = "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-scr_results_filename = "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
+import evals.shift_and_tpp.eval_config as eval_config
+import evals.shift_and_tpp.main as shift_and_tpp
+import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.testing_utils as testing_utils
+
+tpp_results_filename = (
+    "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
+)
+scr_results_filename = (
+    "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
+)
 
 
 # def test_end_to_end_matching_seed():
