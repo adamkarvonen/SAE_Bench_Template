@@ -10,7 +10,7 @@ from sae_lens.sae import TopK
 from evals.absorption import eval_config
 from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
-from utils import formatting_utils, activation_collection
+from sae_bench_utils import formatting_utils, activation_collection
 from transformer_lens import HookedTransformer
 
 
@@ -77,6 +77,7 @@ def run_eval(
                 f1_jump_threshold=config.f1_jump_threshold,
                 prompt_template=config.prompt_template,
                 prompt_token_pos=config.prompt_token_pos,
+                device=device,
             )
 
             raw_df = run_feature_absortion_experiment(
@@ -90,6 +91,7 @@ def run_eval(
                 prompt_template=config.prompt_template,
                 prompt_token_pos=config.prompt_token_pos,
                 batch_size=llm_batch_size,
+                device=device,
             )
             agg_df = _aggregate_results_df(raw_df)
 

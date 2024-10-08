@@ -184,7 +184,7 @@ class FeatureAbsorptionCalculator:
             batch_probe_projections = batch_acts @ probe_direction.to(
                 device=batch_sae_acts.device, dtype=batch_sae_acts.dtype
             )
-            for i, prompt in enumerate(tqdm(prompts, disable=not show_progress)):
+            for i, prompt in enumerate(tqdm(batch_prompts, disable=not show_progress)):
                 sae_acts = batch_sae_acts[i]
                 act_probe_proj = batch_probe_projections[i].cpu().item()
                 sae_act_probe_proj = batch_sae_probe_projections[i]

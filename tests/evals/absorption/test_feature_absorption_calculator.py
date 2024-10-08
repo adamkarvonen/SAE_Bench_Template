@@ -48,7 +48,7 @@ def test_FeatureAbsorptionCalculator_calculate_absorption_results_look_reasonabl
 ):
     words = [" cat", " chair", " car"]
     calculator = FeatureAbsorptionCalculator(
-        gpt2_model, icl_word_list=["dog"], topk_feats=10
+        gpt2_model, icl_word_list=["dog"], topk_feats=10, batch_size=2
     )
     probe_dir = normalize(torch.randn(768), dim=-1)
 

@@ -57,6 +57,7 @@ def load_or_train_probe(
             probes_dir=probes_dir,
             base_template=base_template,
             pos_idx=pos_idx,
+            device=device,
         )
     return load_probe(model.cfg.model_name, layer, probes_dir, dtype, device)
 
@@ -96,6 +97,7 @@ def load_probe_data_split_or_train(
             probes_dir=probes_dir,
             base_template=base_template,
             pos_idx=pos_idx,
+            device=device,
         )
     return load_probe_data_split(
         model,  # type: ignore
@@ -272,7 +274,7 @@ def train_and_save_probes(
     batch_size=64,
     num_epochs=50,
     lr=1e-2,
-    device=torch.device("cuda"),
+    device=DEFAULT_DEVICE,
 ):
     vocab = get_alpha_tokens(model.tokenizer)  # type: ignore
     for layer in tqdm(layers):
@@ -286,7 +288,7 @@ def train_and_save_probes(
             batch_size=batch_size,
             num_epochs=num_epochs,
             lr=lr,
-            device=device,
+            device=torch.device(device),
             base_template=base_template,
             pos_idx=pos_idx,
         )

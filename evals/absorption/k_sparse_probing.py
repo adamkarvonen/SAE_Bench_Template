@@ -22,7 +22,7 @@ from evals.absorption.common import (
     load_probe_data_split_or_train,
 )
 from evals.absorption.probing import LinearProbe, train_multi_probe
-from evals.absorption.util import DEFAULT_DEVICE, batchify
+from evals.absorption.util import batchify
 from evals.absorption.vocab import LETTERS
 
 EPS = 1e-6
@@ -56,6 +56,7 @@ class KSparseProbe(nn.Module):
 def train_sparse_multi_probe(
     x_train: torch.Tensor,  # tensor of shape (num_samples, input_dim)
     y_train: torch.Tensor,  # tensor of shape (num_samples, num_probes), with values in [0, 1]
+    device: torch.device,
     l1_decay: float = 0.01,  # l1 regularization strength
     num_probes: int | None = None,  # inferred from y_train if None
     batch_size: int = 4096,
@@ -65,7 +66,6 @@ def train_sparse_multi_probe(
     l2_decay: float = 1e-6,
     show_progress: bool = True,
     verbose: bool = False,
-    device: torch.device = DEFAULT_DEVICE,
 ) -> LinearProbe:
     """
     Train a multi-probe with L1 regularization on the weights.
@@ -255,6 +255,7 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
     prompt_template: str,
     prompt_token_pos: int,
     probes_dir: Path | str,
+    device: str,
     verbose: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     if verbose:
@@ -265,6 +266,7 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
         probes_dir=probes_dir,
         base_template=prompt_template,
         pos_idx=prompt_token_pos,
+        device=device,
     )
     train_activations, train_data = load_probe_data_split_or_train(
         model,
@@ -416,6 +418,7 @@ def run_k_sparse_probing_experiment(
     max_k_value: int,
     prompt_template: str,
     prompt_token_pos: int,
+    device: str,
     experiment_dir: Path | str = RESULTS_DIR / SPARSE_PROBING_EXPERIMENT_NAME,
     probes_dir: Path | str = PROBES_DIR,
     force: bool = False,
@@ -445,6 +448,7 @@ def run_k_sparse_probing_experiment(
                 max_k_value=max_k_value,
                 prompt_template=prompt_template,
                 prompt_token_pos=prompt_token_pos,
+                device=device,
             ),
             (raw_results_path, metadata_results_path),
             force=force,

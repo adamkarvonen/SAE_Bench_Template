@@ -157,9 +157,13 @@ def load_and_run_calculate_projections_and_cos_sims(
     layer: int,
     probes_dir: Path | str,
     sparse_probing_task_output_dir: Path,
+    device: str,
 ) -> pd.DataFrame:
     probe = load_probe(
-        model_name=model.cfg.model_name, layer=layer, probes_dir=probes_dir
+        model_name=model.cfg.model_name,
+        layer=layer,
+        probes_dir=probes_dir,
+        device=device,
     )
     likely_negs = get_stats_and_likely_false_negative_tokens(
         metrics_df, sae_name, layer, sparse_probing_task_output_dir
@@ -177,6 +181,7 @@ def run_feature_absortion_experiment(
     max_k_value: int,
     prompt_template: str,
     prompt_token_pos: int,
+    device: str,
     experiment_dir: Path | str = RESULTS_DIR / SPARSE_PROBING_EXPERIMENT_NAME,
     sparse_probing_experiment_dir: Path | str = RESULTS_DIR
     / SPARSE_PROBING_EXPERIMENT_NAME,
@@ -226,6 +231,7 @@ def run_feature_absortion_experiment(
             layer=layer,
             probes_dir=probes_dir,
             sparse_probing_task_output_dir=sparse_probing_task_output_dir,
+            device=device,
         ),
         df_path,
         force=force,
