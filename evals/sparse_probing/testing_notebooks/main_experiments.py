@@ -20,9 +20,9 @@ from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_direc
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
+import sae_bench_utils
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_utils as dataset_utils
-import utils
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import sae_bench_utils.formatting_utils as formatting_utils
