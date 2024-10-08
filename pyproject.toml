@@ -21,6 +21,7 @@ dependencies = [
     "jaxtyping>=0.2.25",
     "beartype>=0.14.1",
     "scikit-learn>=1.5.2",
+    "collectibles>=0.1.5",
 
     # Plotting stuff
     "seaborn>=0.13.2",
@@ -31,5 +32,6 @@ dependencies = [
     "pytest>=8.0.2",
     "nbformat>=5.10.4",
     "ipykernel>=6.29.5",
-    "nbstripout>=0.7.1"
+    "nbstripout>=0.7.1",
+    "loguru>=0.7.0",
 ]
