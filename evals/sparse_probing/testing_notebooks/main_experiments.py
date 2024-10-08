@@ -1,33 +1,28 @@
 # %%
 
+import copy
+import json
 import os
+import random
+import sys
 import time
+from dataclasses import asdict
+
+
+import pandas as pd
 import torch
+from sae_lens import SAE
+from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
-from sae_lens import SAE
-from dataclasses import asdict
-import pandas as pd
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
-import random
 
-
-import copy
-
-import utils.dataset_utils as dataset_utils
-import utils
-from evals.sparse_probing import eval_config
-import utils.activation_collection as activation_collection
 from evals.sparse_probing import probe_training
+from evals.sparse_probing import eval_config
 
-# TODO make import from shared directory more robust
-# I wanted to avoid the pip install -e . in the shared directory, but maybe that's the best way to do it
-import sys
-
-sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
-import utils.formatting_utils as formatting_utils
+import sae_bench_utils
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.formatting_utils as formatting_utils
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -90,14 +85,14 @@ train_data, test_data = dataset_utils.get_multi_label_train_test_data(
     config.probe_test_set_size,
     config.random_seed,
 )
+dataset_utils
+train_data = dataset_utils.filter_dataset(train_data, config.chosen_classes)
+test_data = dataset_utils.filter_dataset(test_data, config.chosen_classes)
 
-train_data = utils.filter_dataset(train_data, config.chosen_classes)
-test_data = utils.filter_dataset(test_data, config.chosen_classes)
-
-train_data = utils.tokenize_data(
+train_data = dataset_utils.tokenize_data(
     train_data, model.tokenizer, config.context_length, device
 )
-test_data = utils.tokenize_data(
+test_data = dataset_utils.tokenize_data(
     test_data, model.tokenizer, config.context_length, device
 )
 
@@ -128,15 +123,16 @@ llm_results = {"llm_test_accuracy": average_test_accuracy(llm_test_accuracies)}
 
 # %%
 
+from typing import Optional
+
 import torch
 import torch.nn as nn
-from typing import Optional
-from jaxtyping import Int, Float, jaxtyped, Bool
 from beartype import beartype
+from jaxtyping import Bool, Float, Int, jaxtyped
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):

@@ -1,13 +1,14 @@
+import copy
+from typing import Optional
+
 import torch
 import torch.nn as nn
-from typing import Optional
-from jaxtyping import Int, Float, jaxtyped, Bool
 from beartype import beartype
+from jaxtyping import Bool, Float, Int, jaxtyped
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-import copy
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):
@@ -21,21 +22,38 @@ class Probe(nn.Module):
 
 @jaxtyped(typechecker=beartype)
 def prepare_probe_data(
-    all_activations: dict[str, Float[torch.Tensor, "num_datapoints d_model"]],
-    class_idx: str,
-) -> tuple[Float[torch.Tensor, "batch_size d_model"], Int[torch.Tensor, "batch_size"]]:
-    positive_acts_BD = all_activations[class_idx]
+    all_activations: dict[str, Float[torch.Tensor, "num_datapoints_per_class ... d_model"]],
+    class_name: str,
+    spurious_corr: bool = False,
+) -> tuple[
+    Float[torch.Tensor, "num_datapoints_per_class_x_2 ... d_model"],
+    Int[torch.Tensor, "num_datapoints_per_class_x_2"],
+]:
+    """spurious_corr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
+    It's a bit unfortunate to introduce coupling between the metrics, but most of the code is reused between them.
+    The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model.
+    """
+    positive_acts_BD = all_activations[class_name]
     device = positive_acts_BD.device
 
     num_positive = len(positive_acts_BD)
 
-    # Collect all negative class activations and labels
-    negative_acts = []
-    for idx, acts in all_activations.items():
-        if idx != class_idx:
-            negative_acts.append(acts)
+    if spurious_corr:
+        if class_name in dataset_info.PAIRED_CLASS_KEYS.keys():
+            negative_acts = all_activations[dataset_info.PAIRED_CLASS_KEYS[class_name]]
+        elif class_name in dataset_info.PAIRED_CLASS_KEYS.values():
+            reversed_dict = {v: k for k, v in dataset_info.PAIRED_CLASS_KEYS.items()}
+            negative_acts = all_activations[reversed_dict[class_name]]
+        else:
+            raise ValueError(f"Class {class_name} not found in paired class keys.")
+    else:
+        # Collect all negative class activations and labels
+        negative_acts = []
+        for idx, acts in all_activations.items():
+            if idx != class_name:
+                negative_acts.append(acts)
 
-    negative_acts = torch.cat(negative_acts)
+        negative_acts = torch.cat(negative_acts)
 
     # Randomly select num_positive samples from negative class
     indices = torch.randperm(len(negative_acts))[:num_positive]
@@ -277,21 +295,33 @@ def train_probe_on_activations(
     test_activations: dict[str, Float[torch.Tensor, "test_dataset_size d_model"]],
     select_top_k: Optional[int] = None,
     use_sklearn: bool = True,
-) -> tuple[dict[str, Optional[LogisticRegression]], dict[str, float]]:
+    batch_size: int = 16,
+    epochs: int = 5,
+    lr: float = 1e-3,
+    verbose: bool = False,
+    early_stopping_patience: int = 10,
+    spurious_corr: bool = False,
+) -> tuple[dict[str, LogisticRegression | Probe], dict[str, float]]:
     """Train a probe on the given activations and return the probe and test accuracies for each profession.
     use_sklearn is a flag to use sklearn's LogisticRegression model instead of a custom PyTorch model.
-    We use sklearn by default. probe training on GPU is only for training a probe on all SAE features."""
+    We use sklearn by default. probe training on GPU is only for training a probe on all SAE features.
+    """
     torch.set_grad_enabled(True)
 
     probes, test_accuracies = {}, {}
 
     for profession in train_activations.keys():
-        train_acts, train_labels = prepare_probe_data(train_activations, profession)
-
-        test_acts, test_labels = prepare_probe_data(test_activations, profession)
+        train_acts, train_labels = prepare_probe_data(
+            train_activations, profession, spurious_corr
+        )
+        test_acts, test_labels = prepare_probe_data(
+            test_activations, profession, spurious_corr
+        )
 
         if select_top_k is not None:
-            activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)
+            activation_mask_D = get_top_k_mean_diff_mask(
+                train_acts, train_labels, select_top_k
+            )
             train_acts = apply_topk_mask_reduce_dim(train_acts, activation_mask_D)
             test_acts = apply_topk_mask_reduce_dim(test_acts, activation_mask_D)
 
@@ -314,13 +344,12 @@ def train_probe_on_activations(
                 test_acts,
                 test_labels,
                 dim=activation_dim,
-                batch_size=250,
-                epochs=100,
-                lr=1e-2,
-                verbose=False,
-                early_stopping_patience=10,
+                batch_size=batch_size,
+                epochs=epochs,
+                lr=lr,
+                verbose=verbose,
+                early_stopping_patience=early_stopping_patience,
             )
-            probe = None
 
         print(f"Test accuracy for {profession}: {test_accuracy}")
 
