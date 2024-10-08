@@ -1,10 +1,11 @@
-import torch
 import json
 
-import evals.sparse_probing.main as sparse_probing
+import torch
+
 import evals.sparse_probing.eval_config as eval_config
-import utils.formatting_utils as formatting_utils
-import utils.testing_utils as testing_utils
+import evals.sparse_probing.main as sparse_probing
+import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.testing_utils as testing_utils
 
 results_filename = "tests/test_data/sparse_probing_expected_results.json"
 
