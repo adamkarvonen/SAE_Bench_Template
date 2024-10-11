@@ -16,6 +16,7 @@ LLM_NAME_TO_BATCH_SIZE = {
 LLM_NAME_TO_DTYPE = {
     "pythia-70m-deduped": torch.float32,
     "gemma-2-2b": torch.bfloat16,
+    "gemma-2-2b-it": torch.bfloat16,
 }
 
 
