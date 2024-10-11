@@ -1,27 +1,27 @@
-import os
-import time
-import torch
-import einops
-import pandas as pd
-import random
 import gc
 import json
-from tqdm import tqdm
+import os
+import random
+import time
 from dataclasses import asdict
-from transformer_lens import HookedTransformer
 from typing import Optional
+
+import einops
+import pandas as pd
+import torch
 from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from tqdm import tqdm
+from transformer_lens import HookedTransformer
 
 import evals.shift_and_tpp.dataset_creation as dataset_creation
 import evals.shift_and_tpp.eval_config as eval_config
 import evals.sparse_probing.probe_training as probe_training
-import utils.dataset_utils as dataset_utils
-import utils.activation_collection as activation_collection
-import utils.formatting_utils as formatting_utils
-import utils.dataset_info as dataset_info
-
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.formatting_utils as formatting_utils
 
 COLUMN2_VALS_LOOKUP = {
     "bias_in_bios": ("male", "female"),
@@ -76,10 +76,16 @@ def get_effects_per_class_precomputed_acts(
         f_BLF = f_BLF * nonzero_acts_BL[:, :, None]  # zero out masked tokens
 
         # Get the average activation per input. We divide by the number of nonzero activations for the attention mask
-        average_sae_acts_BF = einops.reduce(f_BLF, "B L F -> B F", "sum") / nonzero_acts_B[:, None]
+        average_sae_acts_BF = (
+            einops.reduce(f_BLF, "B L F -> B F", "sum") / nonzero_acts_B[:, None]
+        )
 
-        pos_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL]
-        neg_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL]
+        pos_sae_acts_BF = average_sae_acts_BF[
+            labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL
+        ]
+        neg_sae_acts_BF = average_sae_acts_BF[
+            labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL
+        ]
 
         average_pos_sae_acts_F = einops.reduce(pos_sae_acts_BF, "B F -> F", "mean")
         average_neg_sae_acts_F = einops.reduce(neg_sae_acts_BF, "B F -> F", "mean")
@@ -246,7 +252,9 @@ def get_shift_probe_test_accuracy(
     for class_name in all_class_list:
         if class_name not in dataset_info.PAIRED_CLASS_KEYS:
             continue
-        spurious_class_names = [key for key in dataset_info.PAIRED_CLASS_KEYS if key != class_name]
+        spurious_class_names = [
+            key for key in dataset_info.PAIRED_CLASS_KEYS if key != class_name
+        ]
         test_acts, test_labels = probe_training.prepare_probe_data(
             all_activations, class_name, spurious_corr=True
         )
@@ -327,7 +335,9 @@ def get_spurious_correlation_plotting_dict(
             for threshold in class_accuracies[ablated_probe_class_id]:
                 clean_acc = llm_clean_accs[eval_data_class_id]
 
-                combined_class_name = f"{eval_probe_class_id} probe on {eval_data_class_id} data"
+                combined_class_name = (
+                    f"{eval_probe_class_id} probe on {eval_data_class_id} data"
+                )
 
                 original_acc = llm_clean_accs[combined_class_name]
 
@@ -387,9 +397,9 @@ def create_tpp_plotting_dict(
                     unintended_clean_acc = llm_clean_accs[unintended_class_id]
 
                     for threshold in class_accuracies[intended_class_id]:
-                        unintended_patched_acc = class_accuracies[intended_class_id][threshold][
-                            unintended_class_id
-                        ]
+                        unintended_patched_acc = class_accuracies[intended_class_id][
+                            threshold
+                        ][unintended_class_id]
                         unintended_diff = unintended_clean_acc - unintended_patched_acc
 
                         if threshold not in unintended_diffs:
@@ -409,12 +419,12 @@ def create_tpp_plotting_dict(
                 average_diff = average_intended_diff - average_unintended_diff
 
                 results[sae_name][f"tpp_threshold_{threshold}_total_metric"] = average_diff
-                results[sae_name][f"tpp_threshold_{threshold}_intended_diff_only"] = (
-                    average_intended_diff
-                )
-                results[sae_name][f"tpp_threshold_{threshold}_unintended_diff_only"] = (
-                    average_unintended_diff
-                )
+                results[sae_name][
+                    f"tpp_threshold_{threshold}_intended_diff_only"
+                ] = average_intended_diff
+                results[sae_name][
+                    f"tpp_threshold_{threshold}_unintended_diff_only"
+                ] = average_unintended_diff
 
     return results
 
@@ -661,7 +671,8 @@ if __name__ == "__main__":
     eval_type = "scr" if config.spurious_corr else "tpp"
 
     output_filename = (
-        config.model_name + f"_{eval_type}_layer_{config.layer}{checkpoints_str}_eval_results.json"
+        config.model_name
+        + f"_{eval_type}_layer_{config.layer}{checkpoints_str}_eval_results.json"
     )
     output_folder = "results"  # at evals/<eval_name>
 

@@ -1,26 +1,25 @@
-import sys
-import os
-import random
 import gc
-from collections import defaultdict
-import einops
 import math
-import numpy as np
+import os
 import pickle
-
-import torch as t
-from torch import nn
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
-from tqdm import tqdm
+import random
+import sys
+from collections import defaultdict
 from typing import Callable, Optional
 
-from datasets import load_dataset
 import datasets
+import einops
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch as t
+from datasets import load_dataset
+from sklearn.utils import shuffle
+from torch import nn
+from tqdm import tqdm
 
-import utils.dataset_info as dataset_info
-import utils.dataset_utils as dataset_utils
+import sae_bench_utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_utils as dataset_utils
 
 
 def get_spurious_corr_data(
@@ -46,24 +45,32 @@ def get_spurious_corr_data(
 
     # NOTE: This is a bit confusing. We select rows from the dataset based on column1_vals and column2_vals,
     # but below, we hardcode the keys as male / female, professor / nurse, etc
-    column1_pos_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][column1_pos]
-    column1_neg_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][column1_neg]
-    column2_pos_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][column2_pos]
-    column2_neg_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][column2_neg]
+    column1_pos_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][
+        column1_pos
+    ]
+    column1_neg_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][
+        column1_neg
+    ]
+    column2_pos_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][
+        column2_pos
+    ]
+    column2_neg_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][
+        column2_neg
+    ]
 
-    pos_neg = df[(df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_pos_idx)][
-        text_column_name
-    ].tolist()
-    neg_neg = df[(df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_neg_idx)][
-        text_column_name
-    ].tolist()
+    pos_neg = df[
+        (df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_pos_idx)
+    ][text_column_name].tolist()
+    neg_neg = df[
+        (df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_neg_idx)
+    ][text_column_name].tolist()
 
-    pos_pos = df[(df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_pos_idx)][
-        text_column_name
-    ].tolist()
-    neg_pos = df[(df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_neg_idx)][
-        text_column_name
-    ].tolist()
+    pos_pos = df[
+        (df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_pos_idx)
+    ][text_column_name].tolist()
+    neg_pos = df[
+        (df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_neg_idx)
+    ][text_column_name].tolist()
 
     min_count = min(
         len(pos_neg), len(neg_neg), len(pos_pos), len(neg_pos), min_samples_per_quadrant
@@ -94,7 +101,9 @@ def get_spurious_corr_data(
     rng.shuffle(neg_neg)
 
     # Assign to balanced_data
-    balanced_data["male / female"] = combined_pos  # male data only, to be combined with female data
+    balanced_data["male / female"] = (
+        combined_pos  # male data only, to be combined with female data
+    )
     balanced_data["female_data_only"] = combined_neg  # female data only
     balanced_data["professor / nurse"] = (
         pos_combined  # professor data only, to be combined with nurse data

@@ -1,13 +1,14 @@
+import copy
+from typing import Optional
+
 import torch
 import torch.nn as nn
-from typing import Optional
-from jaxtyping import Int, Float, jaxtyped, Bool
 from beartype import beartype
+from jaxtyping import Bool, Float, Int, jaxtyped
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-import copy
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):
@@ -30,7 +31,8 @@ def prepare_probe_data(
 ]:
     """spurious_corr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
     It's a bit unfortunate to introduce coupling between the metrics, but most of the code is reused between them.
-    The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model."""
+    The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model.
+    """
     positive_acts_BD = all_activations[class_name]
     device = positive_acts_BD.device
 
@@ -302,17 +304,24 @@ def train_probe_on_activations(
 ) -> tuple[dict[str, LogisticRegression | Probe], dict[str, float]]:
     """Train a probe on the given activations and return the probe and test accuracies for each profession.
     use_sklearn is a flag to use sklearn's LogisticRegression model instead of a custom PyTorch model.
-    We use sklearn by default. probe training on GPU is only for training a probe on all SAE features."""
+    We use sklearn by default. probe training on GPU is only for training a probe on all SAE features.
+    """
     torch.set_grad_enabled(True)
 
     probes, test_accuracies = {}, {}
 
     for profession in train_activations.keys():
-        train_acts, train_labels = prepare_probe_data(train_activations, profession, spurious_corr)
-        test_acts, test_labels = prepare_probe_data(test_activations, profession, spurious_corr)
+        train_acts, train_labels = prepare_probe_data(
+            train_activations, profession, spurious_corr
+        )
+        test_acts, test_labels = prepare_probe_data(
+            test_activations, profession, spurious_corr
+        )
 
         if select_top_k is not None:
-            activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)
+            activation_mask_D = get_top_k_mean_diff_mask(
+                train_acts, train_labels, select_top_k
+            )
             train_acts = apply_topk_mask_reduce_dim(train_acts, activation_mask_D)
             test_acts = apply_topk_mask_reduce_dim(test_acts, activation_mask_D)
 

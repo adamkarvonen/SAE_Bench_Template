@@ -1,5 +1,5 @@
-import utils.formatting_utils as formatting_utils
-import utils.testing_utils as testing_utils
+import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.testing_utils as testing_utils
 
 
 def test_average_results():

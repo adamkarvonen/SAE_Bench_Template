@@ -1,12 +1,12 @@
-from tqdm import tqdm
 from typing import Callable, Optional
-import torch
+
 import pandas as pd
-
-from transformers import AutoTokenizer
+import torch
 from datasets import load_dataset
+from tqdm import tqdm
+from transformers import AutoTokenizer
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 # Load and prepare dataset

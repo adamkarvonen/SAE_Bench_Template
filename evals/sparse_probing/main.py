@@ -1,23 +1,24 @@
-import os
-import time
-import torch
-import pandas as pd
-import random
 import gc
 import json
-from tqdm import tqdm
+import os
+import random
+import time
 from dataclasses import asdict
-from transformer_lens import HookedTransformer
+
+import pandas as pd
+import torch
 from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from tqdm import tqdm
+from transformer_lens import HookedTransformer
 
 import evals.sparse_probing.eval_config as eval_config
 import evals.sparse_probing.probe_training as probe_training
-import utils.dataset_utils as dataset_utils
-import utils.activation_collection as activation_collection
-import utils.formatting_utils as formatting_utils
-import utils.dataset_info as dataset_info
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.formatting_utils as formatting_utils
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -80,7 +81,9 @@ def run_eval_single_dataset(
         test_data, model, llm_batch_size, hook_name
     )
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
+    all_train_acts_BD = activation_collection.create_meaned_model_activations(
+        all_train_acts_BLD
+    )
     all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
 
     llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
@@ -92,12 +95,16 @@ def run_eval_single_dataset(
     llm_results = {"llm_test_accuracy": average_test_accuracy(llm_test_accuracies)}
 
     for k in config.k_values:
-        llm_top_k_probes, llm_top_k_test_accuracies = probe_training.train_probe_on_activations(
-            all_train_acts_BD,
-            all_test_acts_BD,
-            select_top_k=k,
+        llm_top_k_probes, llm_top_k_test_accuracies = (
+            probe_training.train_probe_on_activations(
+                all_train_acts_BD,
+                all_test_acts_BD,
+                select_top_k=k,
+            )
         )
-        llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(llm_top_k_test_accuracies)
+        llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
+            llm_top_k_test_accuracies
+        )
 
     for sae_release in selected_saes_dict:
         print(
@@ -147,7 +154,9 @@ def run_eval_single_dataset(
             for llm_result_key, llm_result_value in llm_results.items():
                 results_dict[sae_name][llm_result_key] = llm_result_value
 
-            results_dict[sae_name]["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
+            results_dict[sae_name]["sae_test_accuracy"] = average_test_accuracy(
+                sae_test_accuracies
+            )
 
             for k in config.k_values:
                 sae_top_k_probes, sae_top_k_test_accuracies = (
