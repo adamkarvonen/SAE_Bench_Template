@@ -617,7 +617,7 @@ def modify_model(model,
 
     # Hook point
     if 'custom_hook_point' not in ablate_params or ablate_params['custom_hook_point'] is None:
-        hook_point = sae.cfg.hook_point
+        hook_point = sae.cfg.hook_name
     else:
         hook_point = ablate_params['custom_hook_point']
     
@@ -845,12 +845,13 @@ def calculate_metrics_list(
         intervention_method = ablate_params['intervention_method']
         multiplier = ablate_params['multiplier']
         n_features = len(ablate_params['features_to_ablate'])
-        layer = sae.cfg.hook_point.split('.')[1]
+        layer = sae.cfg.hook_layer
 
         save_file_name = f'{intervention_method}_multiplier{multiplier}_nfeatures{n_features}_layer{layer}_retainthres{retain_threshold}.pkl'
-        
-        if os.path.exists(os.path.join(save_metrics_dir, save_file_name)):
-            with open(os.path.join(save_metrics_dir, save_file_name), 'rb') as f:
+        full_path = os.path.join(save_metrics_dir, save_file_name)
+
+        if os.path.exists(full_path):
+            with open(full_path, 'rb') as f:
                 ablated_metrics = pickle.load(f)
             metrics_list.append(ablated_metrics)
             continue
@@ -872,8 +873,8 @@ def calculate_metrics_list(
             modified_ablate_metrics = ablated_metrics.copy()
             modified_ablate_metrics['ablate_params'] = ablate_params
             
-                
-            with open(os.path.join(save_metrics_dir, save_file_name), 'wb') as f:
+            os.makedirs(os.path.dirname(full_path), exist_ok=True) 
+            with open(full_path, 'wb') as f:
                 pickle.dump(modified_ablate_metrics, f)
         
 
