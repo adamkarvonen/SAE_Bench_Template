@@ -24,7 +24,7 @@ class EvalConfig:
             "sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
         ]
     )
-    model_name: str = "gemma-2-2b"
+    model_name: str = "gemma-2-2b-it"
     layer: int = 3
     trainer_ids: Optional[list[int]] = None
     include_checkpoints: bool = False

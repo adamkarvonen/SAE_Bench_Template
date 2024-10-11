@@ -1,3 +1,4 @@
+# %%
 import os
 import time
 import torch
@@ -11,14 +12,13 @@ from transformer_lens import HookedTransformer
 from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
-
+from evals.unlearning.utils.eval import run_eval_single_sae
 
 import evals.unlearning.eval_config as eval_config
-import utils.eval as run_eval_single_sae
 import utils.activation_collection as activation_collection
 import utils.formatting_utils as formatting_utils
 
-
+# %%
 def run_eval(
     config: eval_config.EvalConfig,
     selected_saes_dict: dict[str, list[str]],
@@ -29,17 +29,17 @@ def run_eval(
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
 
-    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+    # llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     model = HookedTransformer.from_pretrained_no_processing(
-        config.model_name, device=device, dtype=llm_dtype
+        config.model_name, device=device
     )
 
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
     ).T
     
-    # TODO: add eval results
     for sae_release in selected_saes_dict:
+        
         print(
             f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
         )
@@ -50,6 +50,12 @@ def run_eval(
             selected_saes_dict[sae_release],
             desc="Running SAE evaluation on all selected SAEs",
         ):
+            # sae_release = 'gemma-scope-2b-pt-res'
+            # sae_name = 'layer_3/width_16k/average_l0_59'
+            
+            if not sae_release == 'gemma-scope-2b-pt-res' and sae_name == 'layer_3/width_16k/average_l0_59':
+                continue
+            
             gc.collect()
             torch.cuda.empty_cache()
 
@@ -65,18 +71,18 @@ def run_eval(
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
                 
-            single_sae_eval_results = run_eval_single_sae(model, sae)
+            single_sae_eval_results = run_eval_single_sae(model, sae, sae_name)
             results_dict[sae_name] = single_sae_eval_results
                 
     
-    results_dict["custom_eval_config"] = asdict(config)
-    results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
-        results_dict, config.dataset_names
-    )
+    # results_dict["custom_eval_config"] = asdict(config)
+    # results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
+    #     results_dict, config.dataset_names
+    # )
 
     return results_dict
 
-
+# %%
 if __name__ == "__main__":
     start_time = time.time()
 
@@ -129,3 +135,5 @@ if __name__ == "__main__":
     end_time = time.time()
 
     print(f"Finished evaluation in {end_time - start_time} seconds")
+
+# %%

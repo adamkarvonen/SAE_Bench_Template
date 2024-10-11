@@ -10,6 +10,10 @@ import numpy as np
 import random
 import os
 
+FORGET_FILENAME = 'feature_sparsity_forget.txt'
+RETAIN_FILENAME = 'feature_sparsity_retain.txt'
+
+SPARSITIES_DIR = 'results/sparsities'
 
 def get_forget_retain_data(forget_corpora='bio-forget-corpus', retain_corpora='wikitext', min_len=50, max_len=2000, batch_size=4):
 
@@ -23,7 +27,7 @@ def get_forget_retain_data(forget_corpora='bio-forget-corpus', retain_corpora='w
         raise Exception("Unknown retain corpora")
     
     forget_dataset = []
-    for line in open(f"../wmdp/data/{forget_corpora}.jsonl", "r"):
+    for line in open(f"./data/{forget_corpora}.jsonl", "r"):
         if "bio-forget-corpus" in forget_corpora:
             raw_text = json.loads(line)['text']
         else:
@@ -56,7 +60,7 @@ def tokenize_dataset(model, dataset, seq_len=1024, max_batch=32):
         tokens, "(batch seq) -> batch seq", batch=num_batches, seq=seq_len
     )
     # change first token to bos
-    tokens[:, 0] = model.config.bos_token_id
+    tokens[:, 0] = model.tokenizer.bos_token_id
     return tokens.to("cuda")
 
 
@@ -95,21 +99,13 @@ def gather_residual_activations(model, target_layer, inputs):
 
 def get_feature_activation_sparsity(model, sae, tokens, batch_size=4):
     mean_acts = []
-    if hasattr(sae, 'cfg'):
-        if hasattr(sae.cfg, 'hook_point'):
-            layer = int(sae.cfg.hook_point.split('.')[1])
-        elif hasattr(sae.cfg, 'layer'):
-            layer = sae.cfg.layer
-        else:
-            raise Exception("No hook_point or layer in sae.cfg")
-    else:
-        raise Exception("No cfg in sae")
+    layer = int(sae.cfg.hook_layer)
 
     for i in tqdm(range(0, tokens.shape[0], batch_size)):
         with torch.no_grad():
-            # _, cache = model.run_with_cache(tokens[i:i + batch_size], names_filter=sae.cfg.hook_name)
-            # resid: Float[Tensor, 'batch pos d_model'] = cache[sae.cfg.hook_name]
-            resid: Float[Tensor, 'batch pos d_model'] = gather_residual_activations(model, layer, tokens[i:i + batch_size])
+            _, cache = model.run_with_cache(tokens[i:i + batch_size], names_filter=sae.cfg.hook_name)
+            resid: Float[Tensor, 'batch pos d_model'] = cache[sae.cfg.hook_name]
+            # resid: Float[Tensor, 'batch pos d_model'] = gather_residual_activations(model, layer, tokens[i:i + batch_size])
             resid = resid.to(torch.float)
             
             act: Float[Tensor, 'batch pos d_sae'] = sae.encode(resid)
@@ -134,7 +130,7 @@ def get_top_features(forget_score, retain_score, retain_threshold=0.01):
     modified_forget_score = forget_score.copy()
     modified_forget_score[high_retain_score_features] = 0
     top_features = modified_forget_score.argsort()[::-1]
-    print(top_features[:20])
+    # print(top_features[:20])
 
     n_non_zero_features = np.count_nonzero(modified_forget_score)
     top_features_non_zero = top_features[:n_non_zero_features]
@@ -143,8 +139,8 @@ def get_top_features(forget_score, retain_score, retain_threshold=0.01):
 
 
 def check_existing_results(sae_folder):
-    forget_path = os.path.join(RESULT_DIR, sae_folder, FORGET_FILENAME)
-    retain_path = os.path.join(RESULT_DIR, sae_folder, RETAIN_FILENAME)
+    forget_path = os.path.join(SPARSITIES_DIR, sae_folder, FORGET_FILENAME)
+    retain_path = os.path.join(SPARSITIES_DIR, sae_folder, RETAIN_FILENAME)
     return os.path.exists(forget_path) and os.path.exists(retain_path)
 
 
@@ -154,21 +150,26 @@ def calculate_sparsity(model, sae, forget_tokens, retain_tokens):
     return feature_sparsity_forget, feature_sparsity_retain
 
 def save_results(sae_folder, feature_sparsity_forget, feature_sparsity_retain):
-    output_dir = os.path.join(RESULT_DIR, sae_folder)
+    output_dir = os.path.join(SPARSITIES_DIR, sae_folder)
     os.makedirs(output_dir, exist_ok=True)
     np.savetxt(os.path.join(output_dir, FORGET_FILENAME), feature_sparsity_forget, fmt='%f')
     np.savetxt(os.path.join(output_dir, RETAIN_FILENAME), feature_sparsity_retain, fmt='%f')
 
 
-def save_feature_sparsity(model, sae):
+def load_sparsity_data(sae_folder):
+    forget_sparsity = np.loadtxt(os.path.join(SPARSITIES_DIR, sae_folder, FORGET_FILENAME), dtype=float)
+    retain_sparsity = np.loadtxt(os.path.join(SPARSITIES_DIR, sae_folder, RETAIN_FILENAME), dtype=float)
+    return forget_sparsity, retain_sparsity
+
+
+def save_feature_sparsity(model, sae, sae_name):
     
-    # TODO: args.sae_folder
-    if check_existing_results(args.sae_folder):
-        print(f"Sparsity calculation for {args.sae_folder} is already done")
+    if check_existing_results(sae_name):
+        print(f"Sparsity calculation for {sae_name} is already done")
         return
 
     forget_tokens, retain_tokens = get_shuffled_forget_retain_tokens(model, batch_size=2048, seq_len=1024)
     
     feature_sparsity_forget, feature_sparsity_retain = calculate_sparsity(model, sae, forget_tokens, retain_tokens)
     
-    save_results(args.sae_folder, feature_sparsity_forget, feature_sparsity_retain)
+    save_results(sae_name, feature_sparsity_forget, feature_sparsity_retain)

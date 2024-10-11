@@ -9,9 +9,6 @@ from datasets import load_dataset
 from torch.utils.data import DataLoader
 from transformer_lens import HookedTransformer
 
-from sae.utils import log
-
-
 
 
 
@@ -57,10 +54,10 @@ class ActivationsStore:
 
 
         if create_dataloader:
-            log("creating data loader")
-            log("buffer")
+            print("creating data loader")
+            print("buffer")
             self.storage_buffer = self.generate_buffer(self.cfg.n_batches_in_store_buffer // 2)
-            log("dataloader")
+            print("dataloader")
             self.dataloader = self.get_data_loader()
 
     def get_next_tokenized_data(self):
@@ -219,10 +216,6 @@ class ActivationsStore:
         # Iteratively add each batch to buffer
         for buffer_index in range(0, total_size, self.cfg.store_batch_size):
             batch_tokens = self.get_batch_tokenized_data()
-            # for j, ctx in enumerate(batch_tokens):
-            #     log("Batch", buffer_index/self.cfg.store_batch_size, "Context", j)
-            #     log(self.model.to_string(ctx))
-            # log()
             batch_activations = self.get_batch_activations(batch_tokens)
             buffer[buffer_index : buffer_index + self.cfg.store_batch_size] = batch_activations
 

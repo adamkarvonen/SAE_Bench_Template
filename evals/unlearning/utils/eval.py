@@ -2,44 +2,20 @@ import argparse
 import os
 import numpy as np
 from transformer_lens import HookedTransformer
-from sae.activation_store import ActivationsStore
+from evals.unlearning.utils.activation_store import ActivationsStore
 
-from evals.unlearning.utils.feature_activation import get_top_features
+from evals.unlearning.utils.feature_activation import get_top_features, load_sparsity_data, save_feature_sparsity
 from evals.unlearning.utils.metrics import calculate_metrics_list
 
-from evals.unlearning.utils.feature_activation import save_feature_sparsity
 
-# Constants
-ROOT_DIR = '/root/unlearning/SAEBench'
-RESULT_DIR = os.path.join(ROOT_DIR, 'results')
-WEIGHTS_DIR = os.path.join(ROOT_DIR, 'weights')
 
-FORGET_FILENAME = 'feature_sparsity_forget.txt'
-RETAIN_FILENAME = 'feature_sparsity_retain.txt'
-
-def parse_arguments():
-    parser = argparse.ArgumentParser(description='Run SAE analysis with specified folder')
-    parser.add_argument('--sae_folder', type=str, required=True, help='Path to the SAE folder')
-    return parser.parse_args()
-
-def load_model_and_sae(sae_folder):
-    sae = load_sae(sae_folder)
-    model = HookedTransformer.from_pretrained('google/gemma-2-2b-it')
-    return model, sae
-
-def setup_activation_store(sae, model):
-    sae.cfg.dataset = "Skylion007/openwebtext"
-    sae.cfg.n_batches_in_store_buffer = 8
-    return ActivationsStore(sae.cfg, model, create_dataloader=False)
-
-def load_sparsity_data(sae_folder):
-    forget_sparsity = np.loadtxt(os.path.join(RESULT_DIR, sae_folder, FORGET_FILENAME), dtype=float)
-    retain_sparsity = np.loadtxt(os.path.join(RESULT_DIR, sae_folder, RETAIN_FILENAME), dtype=float)
-    return forget_sparsity, retain_sparsity
+# def setup_activation_store(sae, model):
+#     sae.cfg.dataset = "Skylion007/openwebtext"
+#     sae.cfg.n_batches_in_store_buffer = 8
+#     return ActivationsStore(sae.cfg, model, create_dataloader=False)
 
 def run_metrics_calculation(model, sae, activation_store, forget_sparsity, retain_sparsity, sae_folder):
-    save_metrics_dir = os.path.join(RESULT_DIR, sae_folder)
-    all_dataset_names = ['loss_added', 'wmdp-bio', 'high_school_us_history', 'college_computer_science', 
+    all_dataset_names = ['wmdp-bio', 'high_school_us_history', 'college_computer_science', 
                          'high_school_geography', 'human_aging', 'college_biology']
 
     for retain_threshold in [0.01]:
@@ -51,15 +27,17 @@ def run_metrics_calculation(model, sae, activation_store, forget_sparsity, retai
         
         n_features_lst = [10, 20, 50]
         # n_features_lst = [10, 20, 50, 100, 500, 1000, 2000, 5000]
-        multipliers = [0, 1, 5, 10, 50, 100]
-        # multipliers = [0]
+        multipliers = [50, 100]
+        # multipliers = [0, 1, 5, 10, 50, 100]
         
         sweep = {
             'features_to_ablate': [np.array(top_features_custom[:n]) for n in n_features_lst],
             'multiplier': multipliers,
         }
-
-        calculate_metrics_list(
+        
+        save_metrics_dir = os.path.join('results/metrics', sae_folder)
+        
+        metrics_lst = calculate_metrics_list(
             model,
             sae,
             main_ablate_params,
@@ -70,15 +48,22 @@ def run_metrics_calculation(model, sae, activation_store, forget_sparsity, retai
             target_metric='correct',
             save_metrics=True,
             save_metrics_dir=save_metrics_dir,
-            notes=f'_sparsity_thres{retain_threshold}'
+            retain_threshold=retain_threshold,
         )
+        
+        return metrics_lst
 
 
 
-def run_eval_single_sae(model, sae):
+def run_eval_single_sae(model, sae, sae_name):
     
-    args = parse_arguments()
-    save_feature_sparsity(model, sae)
-    activation_store = setup_activation_store(sae, model)
-    forget_sparsity, retain_sparsity = load_sparsity_data(args.sae_folder)
-    run_metrics_calculation(model, sae, activation_store, forget_sparsity, retain_sparsity, args.sae_folder)
+    # calculate feature sparsity
+    save_feature_sparsity(model, sae, sae_name)
+    forget_sparsity, retain_sparsity = load_sparsity_data(sae_name)
+    
+    # do intervention and calculate eval metrics
+    # activation_store = setup_activation_store(sae, model)
+    activation_store = None
+    results = run_metrics_calculation(model, sae, activation_store, forget_sparsity, retain_sparsity, sae_name)
+    
+    return results

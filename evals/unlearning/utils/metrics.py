@@ -11,8 +11,8 @@ from tqdm import tqdm
 from datasets import load_dataset
 from functools import partial
 from jaxtyping import Float
-from unlearning.var import GEMMA_INST_FORMAT, MIXTRAL_INST_FORMAT, PRE_WMDP_BIO, PRE_QUESTION_FORMAT, MCQ_BATCH_SIZE
-from unlearning.intervention import anthropic_remove_resid_SAE_features, remove_resid_SAE_features, anthropic_clamp_resid_SAE_features, anthropic_clamp_jump_relu_resid_SAE_features
+from evals.unlearning.utils.var import GEMMA_INST_FORMAT, MIXTRAL_INST_FORMAT, PRE_WMDP_BIO, PRE_QUESTION_FORMAT, MCQ_BATCH_SIZE
+from evals.unlearning.utils.intervention import anthropic_clamp_resid_SAE_features
 
 from transformer_lens import HookedTransformer
 import itertools
@@ -81,7 +81,7 @@ def calculate_MCQ_metrics(
     if target_metric is not None:
         model_name = model.cfg.model_name
         full_dataset_name = f'mmlu-{dataset_name.replace("_", "-")}' if dataset_name != 'wmdp-bio' else dataset_name
-        question_subset_file = f'../data/question_ids/{model_name}/{split}/{full_dataset_name}_{target_metric}.csv'
+        question_subset_file = f'data/question_ids/{model_name}/{split}/{full_dataset_name}_{target_metric}.csv'
                     
     if question_subset_file is not None:
         question_subset = np.genfromtxt(question_subset_file, ndmin=1, dtype=int)
@@ -138,18 +138,18 @@ def calculate_MCQ_metrics(
     metrics['is_correct'] =  is_correct.cpu().numpy()
 
     metrics['output_probs'] = output_probs.to(torch.float16).cpu().numpy()
-    metrics['actual_answers'] = actual_answers.cpu().numpy()
+    # metrics['actual_answers'] = actual_answers.cpu().numpy()
     
-    metrics['predicted_answers'] = predicted_answers.cpu().numpy()
-    metrics['predicted_probs'] = predicted_probs.to(torch.float16).cpu().numpy()
-    metrics['predicted_probs_of_correct_answers'] = predicted_prob_of_correct_answers.to(torch.float16).cpu().numpy()
-    metrics['mean_predicted_prob_of_correct_answers'] = float(np.mean(predicted_prob_of_correct_answers.to(torch.float16).cpu().numpy()))
-    metrics['mean_predicted_probs'] = float(np.mean(predicted_probs.to(torch.float16).cpu().numpy()))
+    # metrics['predicted_answers'] = predicted_answers.cpu().numpy()
+    # metrics['predicted_probs'] = predicted_probs.to(torch.float16).cpu().numpy()
+    # metrics['predicted_probs_of_correct_answers'] = predicted_prob_of_correct_answers.to(torch.float16).cpu().numpy()
+    # metrics['mean_predicted_prob_of_correct_answers'] = float(np.mean(predicted_prob_of_correct_answers.to(torch.float16).cpu().numpy()))
+    # metrics['mean_predicted_probs'] = float(np.mean(predicted_probs.to(torch.float16).cpu().numpy()))
     
-    unique, counts = np.unique(metrics['predicted_answers'], return_counts=True)
-    metrics['value_counts'] = dict(zip([int(x) for x in unique], [int(x) for x in counts]))
+    # unique, counts = np.unique(metrics['predicted_answers'], return_counts=True)
+    # metrics['value_counts'] = dict(zip([int(x) for x in unique], [int(x) for x in counts]))
     
-    metrics['sum_abcd'] = metrics['output_probs'].sum(axis=1)
+    # metrics['sum_abcd'] = metrics['output_probs'].sum(axis=1)
     
     return metrics
 
@@ -583,15 +583,19 @@ def modify_model(model,
     
     # Select intervention function
     if ablate_params['intervention_method'] == "scale_feature_activation":
-        ablation_method = anthropic_remove_resid_SAE_features
+        # ablation_method = anthropic_remove_resid_SAE_features
+        raise NotImplementedError
     elif ablate_params['intervention_method'] == "remove_from_residual_stream":
-        ablation_method = remove_resid_SAE_features
+        # ablation_method = remove_resid_SAE_features
+        raise NotImplementedError
     elif ablate_params['intervention_method'] == "clamp_feature_activation":
         ablation_method = anthropic_clamp_resid_SAE_features
     elif ablate_params['intervention_method'] == "clamp_feature_activation_jump":
-        ablation_method = anthropic_clamp_jump_relu_resid_SAE_features
+        # ablation_method = anthropic_clamp_jump_relu_resid_SAE_features
+        raise NotImplementedError
     elif ablate_params['intervention_method'] == "clamp_feature_activation_random":
-        ablation_method = partial(anthropic_clamp_resid_SAE_features, random=True)
+        # ablation_method = partial(anthropic_clamp_resid_SAE_features, random=True)
+        raise NotImplementedError
 
     # Hook function
     features_to_ablate =  ablate_params['features_to_ablate']
@@ -679,7 +683,7 @@ def get_baseline_metrics(model,
                          metric_param,
                          recompute=False,
                          split='all',
-                         output_dir='../data/baseline_metrics'):
+                         output_dir='./data/baseline_metrics'):
     """
     Compute the baseline metrics or retrieve if pre-computed and saved
     """
@@ -796,7 +800,7 @@ def calculate_metrics_list(
     verbose=False,
     save_metrics=False,
     save_metrics_dir=None,
-    notes='',
+    retain_threshold=None,
 ):
     """
     Calculate metrics for combinations of ablations
@@ -843,9 +847,7 @@ def calculate_metrics_list(
         n_features = len(ablate_params['features_to_ablate'])
         layer = sae.cfg.hook_point.split('.')[1]
 
-        if save_metrics_dir is None: 
-            save_metrics_dir = f'../data/unlearn_results/{model.cfg.model_name}/sae/'
-        save_file_name = f'{intervention_method}_{multiplier}x_{n_features}features_layer{layer}{notes}.pkl'
+        save_file_name = f'{intervention_method}_multiplier{multiplier}_nfeatures{n_features}_layer{layer}_retainthres{retain_threshold}.pkl'
         
         if os.path.exists(os.path.join(save_metrics_dir, save_file_name)):
             with open(os.path.join(save_metrics_dir, save_file_name), 'rb') as f:
