@@ -1,5 +1,6 @@
 from dataclasses import asdict
 import gc
+import statistics
 from sae_lens import SAE
 import torch
 from tqdm import tqdm
@@ -96,14 +97,26 @@ def run_eval(
             agg_df = _aggregate_results_df(raw_df)
 
             results_dict["custom_eval_results"][sae_name] = {}
+            absorption_rates = []
+            num_split_features = []
             for _, row in agg_df.iterrows():
                 letter = row["letter"]
-                results_dict["custom_eval_results"][sae_name][letter] = {
+                absorption_rates.append(row["absorption_rate"])
+                num_split_features.append(row["num_split_feats"])
+                results_dict["custom_eval_results"][sae_name][
+                    f"absorption_first_letter_{letter}"
+                ] = {
                     "num_absorption": int(row["num_absorption"]),
                     "absorption_rate": float(row["absorption_rate"]),
                     "num_probe_true_positives": float(row["num_probe_true_positives"]),
-                    "num_feature_splits": int(row["num_split_feats"]),
+                    "num_split_features": int(row["num_split_feats"]),
                 }
+            results_dict["custom_eval_results"][sae_name]["mean_absorption_rate"] = (
+                statistics.mean(absorption_rates)
+            )
+            results_dict["custom_eval_results"][sae_name]["mean_num_split_features"] = (
+                statistics.mean(num_split_features)
+            )
 
     results_dict["custom_eval_config"] = asdict(config)
     return results_dict
