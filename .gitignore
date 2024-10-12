@@ -22,3 +22,8 @@
 Pipfile
 Pipfile.lock
 poetry.lock
+
+auth/*
+
+evals/ravel/data/
+evals/ravel/models/
