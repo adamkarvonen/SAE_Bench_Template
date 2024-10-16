@@ -65,7 +65,7 @@ def run_eval(
                 sae_id=sae_id,
                 device=device,
             )[0]
-            sae = sae.to(device=device)
+            sae = sae.to(device=device, dtype=llm_dtype)
             sae = _fix_topk(sae, sae_name, sae_release)
 
             run_k_sparse_probing_experiment(
@@ -111,8 +111,8 @@ def run_eval(
                     "num_probe_true_positives": float(row["num_probe_true_positives"]),
                     "num_split_features": int(row["num_split_feats"]),
                 }
-            results_dict["custom_eval_results"][sae_name]["mean_absorption_rate"] = (
-                statistics.mean(absorption_rates)
+            results_dict["custom_eval_results"][sae_name]["mean_absorption_rate"] = statistics.mean(
+                absorption_rates
             )
             results_dict["custom_eval_results"][sae_name]["mean_num_split_features"] = (
                 statistics.mean(num_split_features)
@@ -146,9 +146,7 @@ def _aggregate_results_df(
     )
     agg_df["num_split_feats"] = agg_df["split_feats"].apply(len)
     agg_df["num_absorption"] = agg_df["is_absorption"]
-    agg_df["absorption_rate"] = (
-        agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
-    )
+    agg_df["absorption_rate"] = agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
     return agg_df
 
 
