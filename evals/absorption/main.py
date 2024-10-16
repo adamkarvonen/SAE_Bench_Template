@@ -163,3 +163,62 @@ def _fix_topk(
 
         assert isinstance(sae.activation_fn, TopK)
     return sae
+
+
+# This main function will produce the same results as the shift, tpp, and sparse probing main functions
+if __name__ == "__main__":
+    import time
+    import os
+    import json
+
+    start_time = time.time()
+
+    if torch.backends.mps.is_available():
+        device = "mps"
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    print(f"Using device: {device}")
+
+    config = eval_config.EvalConfig()
+
+    # populate selected_saes_dict using config values
+    for release in config.sae_releases:
+        if "gemma-scope" in release:
+            config.selected_saes_dict[release] = (
+                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
+            )
+        else:
+            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
+                sae_names=release,
+                layers=[config.layer],
+                include_checkpoints=config.include_checkpoints,
+                trainer_ids=config.trainer_ids,
+            )
+
+        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
+
+    # run the evaluation on all selected SAEs
+    results_dict = run_eval(config, config.selected_saes_dict, device)
+
+    # create output filename and save results
+    checkpoints_str = ""
+    if config.include_checkpoints:
+        checkpoints_str = "_with_checkpoints"
+
+    output_filename = (
+        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
+    )
+    output_folder = "evals/absorption/results"  # at evals/<eval_name>
+
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder, exist_ok=True)
+
+    output_location = os.path.join(output_folder, output_filename)
+
+    with open(output_location, "w") as f:
+        json.dump(results_dict, f)
+
+    end_time = time.time()
+
+    print(f"Finished evaluation in {end_time - start_time} seconds")
