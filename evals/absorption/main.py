@@ -11,29 +11,32 @@ from sae_lens.sae import TopK
 from evals.absorption import eval_config
 from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
-from sae_bench_utils import formatting_utils, activation_collection
+from sae_bench_utils import formatting_utils, activation_collection, get_eval_uuid, get_sae_lens_version, get_sae_bench_version
 from transformer_lens import HookedTransformer
+import uuid
+from datetime import datetime
+import json
+import os
+import numpy as np
 
 
 def run_eval(
     config: eval_config.EvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
+    output_path: str,
     force_rerun: bool = False,
 ):
-    """config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
-    It is saved in the results_dict for reproducibility.
-    selected_saes_dict: dict[str, list[str]] is a dict of SAE release name: list of SAE names to evaluate.
-    Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
-    ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
-    'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_version = get_sae_bench_version()
+
     # TODO: Make this nicer.
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
     ).T
 
     results_dict = {}
-    results_dict["custom_eval_results"] = {}
 
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
@@ -68,7 +71,7 @@ def run_eval(
             sae = sae.to(device=device, dtype=llm_dtype)
             sae = _fix_topk(sae, sae_name, sae_release)
 
-            run_k_sparse_probing_experiment(
+            k_sparse_probing_results = run_k_sparse_probing_experiment(
                 model=model,
                 sae=sae,
                 layer=config.layer,
@@ -96,29 +99,60 @@ def run_eval(
             )
             agg_df = _aggregate_results_df(raw_df)
 
-            results_dict["custom_eval_results"][sae_name] = {}
+            sae_results = {}
             absorption_rates = []
             num_split_features = []
             for _, row in agg_df.iterrows():
                 letter = row["letter"]
                 absorption_rates.append(row["absorption_rate"])
                 num_split_features.append(row["num_split_feats"])
-                results_dict["custom_eval_results"][sae_name][
-                    f"absorption_first_letter_{letter}"
-                ] = {
+                sae_results[f"absorption_first_letter_{letter}"] = {
                     "num_absorption": int(row["num_absorption"]),
                     "absorption_rate": float(row["absorption_rate"]),
                     "num_probe_true_positives": float(row["num_probe_true_positives"]),
                     "num_split_features": int(row["num_split_feats"]),
                 }
-            results_dict["custom_eval_results"][sae_name]["mean_absorption_rate"] = statistics.mean(
-                absorption_rates
-            )
-            results_dict["custom_eval_results"][sae_name]["mean_num_split_features"] = (
-                statistics.mean(num_split_features)
-            )
+            sae_results["mean_absorption_rate"] = statistics.mean(absorption_rates)
+            sae_results["mean_num_split_features"] = statistics.mean(num_split_features)
 
-    results_dict["custom_eval_config"] = asdict(config)
+            # Create artifacts subfolder
+            artifacts_folder = os.path.join(output_path, "artifacts")
+            os.makedirs(artifacts_folder, exist_ok=True)
+
+            # Save k_sparse_probing_results as a separate JSON
+            k_sparse_probing_file = f"{sae_release}_{sae_name}_k_sparse_probing.json"
+            k_sparse_probing_file = k_sparse_probing_file.replace('/', '_')  # Replace '/' with '_' to avoid nested directories
+            k_sparse_probing_path = os.path.join(artifacts_folder, k_sparse_probing_file)
+            
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(k_sparse_probing_path), exist_ok=True)
+            k_sparse_probing_results.to_json(k_sparse_probing_path, orient='records', indent=4)
+
+            sae_eval_result = {
+                "eval_instance_id": eval_instance_id,
+                "sae_lens_release": sae_release,
+                "sae_lens_id": sae_id,
+                "eval_type_id": "absorption",
+                "sae_lens_version": sae_lens_version,
+                "sae_bench_version": sae_bench_version,
+                "date_time": datetime.now().isoformat(),
+                "eval_config": asdict(config),
+                "eval_results": sae_results,
+                "eval_artifacts": {
+                    "k_sparse_probing_results": os.path.relpath(k_sparse_probing_path, output_path)
+                }
+            }
+
+            results_dict[f"{sae_release}_{sae_name}"] = sae_eval_result
+
+            # Save individual SAE result
+            sae_result_file = f"{sae_release}_{sae_name}_eval_results.json"
+            sae_result_file = sae_result_file.replace('/', '_')
+            sae_result_path = os.path.join(output_path, sae_result_file)
+            
+            with open(sae_result_path, 'w') as f:
+                json.dump(sae_eval_result, f, indent=4)
+
     return results_dict
 
 
@@ -169,7 +203,6 @@ def _fix_topk(
 if __name__ == "__main__":
     import time
     import os
-    import json
 
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
@@ -200,26 +233,12 @@ if __name__ == "__main__":
 
         print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
 
+    # create output folder
+    output_folder = "evals/absorption/results"
+    os.makedirs(output_folder, exist_ok=True)
+
     # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, config.selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
-    )
-    output_folder = "evals/absorption/results"  # at evals/<eval_name>
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
+    results_dict = run_eval(config, config.selected_saes_dict, device, output_folder)
 
     end_time = time.time()
 
