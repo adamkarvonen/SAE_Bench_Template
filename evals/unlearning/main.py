@@ -15,8 +15,8 @@ from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_direc
 from evals.unlearning.utils.eval import run_eval_single_sae
 
 import evals.unlearning.eval_config as eval_config
-import utils.activation_collection as activation_collection
-import utils.formatting_utils as formatting_utils
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.formatting_utils as formatting_utils
 
 
 # %%
