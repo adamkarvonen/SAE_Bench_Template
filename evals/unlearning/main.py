@@ -30,8 +30,10 @@ def run_eval(
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
 
-    # llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-    model = HookedTransformer.from_pretrained_no_processing(config.model_name, device=device)
+    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+    model = HookedTransformer.from_pretrained_no_processing(
+        config.model_name, device=device, dtype=llm_dtype
+    )
 
     sae_map_df = pd.DataFrame.from_records(
         {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
@@ -51,11 +53,11 @@ def run_eval(
             # sae_release = 'gemma-scope-2b-pt-res'
             # sae_name = 'layer_3/width_16k/average_l0_59'
 
-            if (
-                not sae_release == "gemma-scope-2b-pt-res"
-                and sae_name == "layer_3/width_16k/average_l0_59"
-            ):
-                continue
+            # if (
+            #     not sae_release == "gemma-scope-2b-pt-res"
+            #     and sae_name == "layer_3/width_16k/average_l0_59"
+            # ):
+            #     continue
 
             gc.collect()
             torch.cuda.empty_cache()
@@ -67,7 +69,7 @@ def run_eval(
                 sae_id=sae_id,
                 device=device,
             )
-            sae = sae.to(device=device)
+            sae = sae.to(device=device, dtype=llm_dtype)
 
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
