@@ -1,0 +1,213 @@
+Summary table:
+┌──────────┬───────────────────────────────────────────────────────────────────────────┬────────────────┬────────────────┬──────────┐
+│   latent │ explanation                                                               │ predictions    │ correct seqs   │    score │
+├──────────┼───────────────────────────────────────────────────────────────────────────┼────────────────┼────────────────┼──────────┤
+│        9 │ the phrase 'new' in various contexts of rules, policies, and measures     │ [4, 6, 7, 10]  │ [4, 6, 7, 10]  │ 1        │
+│       11 │ variations of the substring 'rel' within different contexts and concepts  │ [4, 7, 8, 11]  │ [4, 7, 8, 11]  │ 1        │
+│       15 │ phrases related to debit and credit card transactions and associated fees │ [4, 9, 11, 14] │ [4, 9, 11, 14] │ 1        │
+│    16873 │ texts related to belief, righteousness, and spiritual guidance            │ [2, 7, 10]     │ [2, 7, 8, 10]  │ 0.928571 │
+└──────────┴───────────────────────────────────────────────────────────────────────────┴────────────────┴────────────────┴──────────┘
+
+Worst scoring idx 16873, score = 0.9285714285714286
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1.  Testament:<< Ver>><<ily>><<,>><< ver>><<ily>><<,>><< I>><< say>><<        │
+│           │ unto>><< you>><<,>><< Except>><< a>><< corn>><< of>><< wheat>><< fall>><< into>><< the>> 2. <<↵>><<And>><< do>><<        │
+│           │ not>><< marry>><< poly>>the<<istic>><< women>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><<         │
+│           │ slave>><< woman>><< is>><< better>><< than>> 3. << testimony>><< to>><< all>><< nations>><<,>><< and>><< then>><<        │
+│           │ the>><< end>><< will>><< come>><<">>↵↵I have played this CD for record 4. << thou>><< to>><< me>><<?>><< And>><<         │
+│           │ Jesus>><< answering>><< said>><< unto>><< him>><<,>><< S>><<uffer>><< it>><< to>><< be>><< so>><< now>><<:>><< for>><<   │
+│           │ thus>> 5. << ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>><< to>><<      │
+│           │ be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>> 6.  of Matthew 3:14–15:<< ">><<But>><< John>><< forb>><<ad>><<        │
+│           │ him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>> 7. << it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>><< │
+│           │ it>><< bec>><<omet>><<h>><< us>><< to>><< fulfil>><< all>><< righteousness>><<",>> and<< he>><< finished>> 8. <<         │
+│           │ need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>><< com>><<est>><< thou>><< to>><< me>><<?>><< And>><<  │
+│           │ Jesus>><< answering>><< said>><< unto>><< him>> 9. << men>><< [>><<to>><< your>><< women>><<]>><< until>><< they>><<     │
+│           │ believe>><<.>><< And>><< a>><< believing>><< slave>><< is>><< better>><< than>><< a>> poly<<the>><<ist>> 10. << to>><<   │
+│           │ Paradise>><< and>><< to>><< forgiveness>><<,>><< by>><< His>><< permission>><<.>><< And>><< He>><< makes>><< clear>><<   │
+│           │ His>><< verses>><< to>><< the>><< people>><< that>><< perhaps>> 11. <<ist>><<,>><< even>><< though>><< she>><< might>><< │
+│           │ please>><< you>><<.>><< And>><< do>><< not>><< marry>><< poly>><<the>><<istic>><< men>><< [>><<to>><< your>><< women>>   │
+│           │ 12. <<eth>> alone<<:>><< but>><< if>><< it>><< dies>><<,>><< it>><< bring>><<eth>><< forth>><< much>><< fruit>><<.>><<   │
+│           │ John>><< 12>><<:>><<24>><<↵>><<↵>> 13. << you>><<.>><< Those>><< invite>><< [>><<you>><<]>><< to>><< the>><<             │
+│           │ Fire>><<,>><< but>><< Allah>><< invites>><< to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>> 14. << your>><< │
+│           │ dreams>><< and>><< fresh>><< hopes>><< for>><< all>><< of>><< us>><< and>><< may>><< the>><< light>><< guide>><< us>><<  │
+│           │ safely>> home<<.>><< We>><< have>><< much>> 15.  Ami Shah, and was also<< greeted>> and congratulated<< by>>             │
+│           │ Biden.↵↵Also present were Obama's old                                                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on texts related to belief, righteousness, and spiritual guidance.                                 │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                                                                                         │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    15.723 │ Testament:<< Ver>><<ily>><<,>><< ver>><<ily>><<,>><< I>><< say>><< unto>><< you>><<,>><< Except>><< a>><< corn>><< of>><< wheat>><< fall>><< into>><< the>>                                      │
+│    15.400 │ <<↵>><<And>><< do>><< not>><< marry>><< poly>>the<<istic>><< women>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><< slave>><< woman>><< is>><< better>><< than>>              │
+│    14.111 │ << testimony>><< to>><< all>><< nations>><<,>><< and>><< then>><< the>><< end>><< will>><< come>><<">>↵↵I have played this CD for record                                                         │
+│    14.069 │ << thou>><< to>><< me>><<?>><< And>><< Jesus>><< answering>><< said>><< unto>><< him>><<,>><< S>><<uffer>><< it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>>                             │
+│    13.461 │ << ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>>                                     │
+│    13.461 │ of Matthew 3:14–15:<< ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>>                                                                              │
+│    12.801 │ << it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>><< it>><< bec>><<omet>><<h>><< us>><< to>><< fulfil>><< all>><< righteousness>><<",>> and<< he>><< finished>>                          │
+│    12.377 │ << need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>><< com>><<est>><< thou>><< to>><< me>><<?>><< And>><< Jesus>><< answering>><< said>><< unto>><< him>>                       │
+│    11.644 │ << men>><< [>><<to>><< your>><< women>><<]>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><< slave>><< is>><< better>><< than>><< a>> poly<<the>><<ist>>                       │
+│    10.594 │ << to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>><< His>><< permission>><<.>><< And>><< He>><< makes>><< clear>><< His>><< verses>><< to>><< the>><< people>><< that>><< perhaps>> │
+│    10.487 │ <<ist>><<,>><< even>><< though>><< she>><< might>><< please>><< you>><<.>><< And>><< do>><< not>><< marry>><< poly>><<the>><<istic>><< men>><< [>><<to>><< your>><< women>>                      │
+│    10.154 │ <<eth>> alone<<:>><< but>><< if>><< it>><< dies>><<,>><< it>><< bring>><<eth>><< forth>><< much>><< fruit>><<.>><< John>><< 12>><<:>><<24>><<↵>><<↵>>                                            │
+│    10.066 │ << you>><<.>><< Those>><< invite>><< [>><<you>><<]>><< to>><< the>><< Fire>><<,>><< but>><< Allah>><< invites>><< to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>>                   │
+│     5.072 │ << your>><< dreams>><< and>><< fresh>><< hopes>><< for>><< all>><< of>><< us>><< and>><< may>><< the>><< light>><< guide>><< us>><< safely>> home<<.>><< We>><< have>><< much>>                  │
+│     1.930 │ Ami Shah, and was also<< greeted>> and congratulated<< by>> Biden.↵↵Also present were Obama's old                                                                                                │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "1, 2, 6, 13". Try not to be overly specific in your interpretation of the explanation. If you think there are no   │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on texts related to belief, righteousness, and spiritual guidance.  Here are  │
+│           │ the examples:  1.  said. A number of tornadoes have careered across prairie farmland, a large hailstorm forced 2. aqara  │
+│           │ 2:221 =↵↵And do not marry polytheistic women until they believe. And 3.  strategy will be released later this year.↵↵The │
+│           │ company also claimed that this is the perfect time AMD 4.  Hornets are in a win-now-or-everybody-might-be-fired mode.    │
+│           │ Cho 5.  baby girl is ready for a good time, Freshman daughter drop off, 6.  expressed as floating-point numbers are a    │
+│           │ really lousy way to analyze and evaluate polynomials unless the 7.  marry polytheistic women until they believe. And a   │
+│           │ believing slave woman is better than a polytheist 8.  says: "And this gospel of the kingdom will be preached in the      │
+│           │ whole world as a testimony to all 9. ? Make sure youre in the loop – take five seconds to sign up for our FREE Agg 10.   │
+│           │ Suffer it to be so now: for thus it becometh us to fulfil all righteousness", and 11.  entities.↵↵José Manuel Barroso,   │
+│           │ President of the European Commission, has already endorsed 12.  locally.↵↵In total, Lee Unkrich and Adrian Molinas Coco  │
+│           │ plucked 13.  drops to historic low in new poll↵↵They are part of a remarkably picturesque and politically purple patch   │
+│           │ 14.  and can act as competitive differentiation in the market.↵↵A third type of balance to seek is across                │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 2, 7, 10                                                                                                                 │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                  │
+├───────────┼───────────┼──────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ said. A number of tornadoes have careered across prairie farmland, a large hailstorm forced               │
+│    15.400 │ Y         │ Y            │ aqara 2:221 =↵↵And do not marry polytheistic women until they believe. And                                │
+│     0.000 │           │              │ strategy will be released later this year.↵↵The company also claimed that this is the perfect time AMD    │
+│     0.000 │           │              │ Hornets are in a win-now-or-everybody-might-be-fired mode. Cho                                            │
+│     0.000 │           │              │ baby girl is ready for a good time, Freshman daughter drop off,                                           │
+│     0.000 │           │              │ expressed as floating-point numbers are a really lousy way to analyze and evaluate polynomials unless the │
+│    14.124 │ Y         │ Y            │ marry polytheistic women until they believe. And a believing slave woman is better than a polytheist      │
+│    18.166 │ Y         │              │ says: "And this gospel of the kingdom will be preached in the whole world as a testimony to all           │
+│     0.000 │           │              │ ? Make sure youre in the loop – take five seconds to sign up for our FREE Agg                             │
+│    12.874 │ Y         │ Y            │ Suffer it to be so now: for thus it becometh us to fulfil all righteousness", and                         │
+│     0.000 │           │              │ entities.↵↵José Manuel Barroso, President of the European Commission, has already endorsed                │
+│     0.000 │           │              │ locally.↵↵In total, Lee Unkrich and Adrian Molinas Coco plucked                                           │
+│     0.000 │           │              │ drops to historic low in new poll↵↵They are part of a remarkably picturesque and politically purple patch │
+│     0.000 │           │              │ and can act as competitive differentiation in the market.↵↵A third type of balance to seek is across      │
+└───────────┴───────────┴──────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Best scoring idx 9, score = 1.0
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1. .↵↵Airline industry↵↵Under the<< new>> rules, payment surcharges will have │
+│           │ to reflect the 2. The government did not however give details on how the<< new>> system would work.↵↵In Uruguay about $  │
+│           │ 3.  School Committee chairwoman, Rebecca Stone, said the<< new>> policy was approved in the spring after discussion      │
+│           │ began over 4.  of Maywoods firehouses. The<< new>> flag mysteriously disappeared early Aug. 23. The order 5.             │
+│           │ 145m.↵↵Enforcement↵↵The<< new>> rules are being brought in earlier than the rest of 6.  require building cases for       │
+│           │ criminal prosecution.↵↵The<< new>> rules, which were passed by the City Council in 7.  be gradual, Gatens added.↵↵The<<  │
+│           │ new>> Roadmap lays out a three-phase plan. 8.  such a crime.↵↵Sun explained that the<< new>> criteria would convict the  │
+│           │ offenders not only for the damage 9.  its privacy policy this year.↵↵But the<< new>> Microsoft policy does allow for     │
+│           │ such targeted advertising. Microsoft 10.  in the U.K. / Germany), the<< new>> version is similar to the existing         │
+│           │ incarnation in most respects 11.  a "largely complementary" footprint and that the<< new>> company will "take its place  │
+│           │ as one of the 12. Con International, Matt will both write and pencil the<< new>> Dark Horse monthly Dept. H, a murder    │
+│           │ mystery 13.  Kriss Kringle in his place. The<< new>> guy was doing just fine - but the women missed 14. ↵Griffin picked  │
+│           │ up about 10 pounds for the<< new>> role -- a feat his brother said wasn't difficult 15. pre-criminal space.↵↵These<<     │
+│           │ new>> measures have a terrifying potential to be used zealously                                                          │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on the phrase 'new' in various contexts of rules, policies, and measures.                          │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                   │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    43.451 │ .↵↵Airline industry↵↵Under the<< new>> rules, payment surcharges will have to reflect the                                  │
+│    42.861 │ The government did not however give details on how the<< new>> system would work.↵↵In Uruguay about $                      │
+│    42.159 │ School Committee chairwoman, Rebecca Stone, said the<< new>> policy was approved in the spring after discussion began over │
+│    41.990 │ of Maywoods firehouses. The<< new>> flag mysteriously disappeared early Aug. 23. The order                                 │
+│    41.921 │ 145m.↵↵Enforcement↵↵The<< new>> rules are being brought in earlier than the rest of                                        │
+│    41.077 │ require building cases for criminal prosecution.↵↵The<< new>> rules, which were passed by the City Council in              │
+│    40.424 │ be gradual, Gatens added.↵↵The<< new>> Roadmap lays out a three-phase plan.                                                │
+│    40.388 │ such a crime.↵↵Sun explained that the<< new>> criteria would convict the offenders not only for the damage                 │
+│    40.284 │ its privacy policy this year.↵↵But the<< new>> Microsoft policy does allow for such targeted advertising. Microsoft        │
+│    40.114 │ in the U.K. / Germany), the<< new>> version is similar to the existing incarnation in most respects                        │
+│    35.471 │ a "largely complementary" footprint and that the<< new>> company will "take its place as one of the                        │
+│    30.504 │ Con International, Matt will both write and pencil the<< new>> Dark Horse monthly Dept. H, a murder mystery                │
+│    28.822 │ Kriss Kringle in his place. The<< new>> guy was doing just fine - but the women missed                                     │
+│    25.595 │ ↵Griffin picked up about 10 pounds for the<< new>> role -- a feat his brother said wasn't difficult                        │
+│    25.591 │ pre-criminal space.↵↵These<< new>> measures have a terrifying potential to be used zealously                               │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "1, 4, 11, 14". Try not to be overly specific in your interpretation of the explanation. If you think there are no  │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on the phrase 'new' in various contexts of rules, policies, and measures.     │
+│           │ Here are the examples:  1. . In the Islamic Statement, women are given the role not only of the wife of a  2. were       │
+│           │ opened too far."↵↵"This had to do with doing maintenance," Loughmiller said 3.  that shed get a whopping majority, only  │
+│           │ to discover once the votes were in that she 4.  areas, including the Mediterranean.↵↵Although the new US rules apply to  │
+│           │ all types of boat built from 5. identifiable, decomposing body on the beach.↵↵About the 2008 death of Brad Renfro 6. o   │
+│           │ planned before the crisis in public finances. The new policy announced in April by the unlamented former 7.  in five     │
+│           │ California cities.↵↵The new division shakes out this way:↵↵Ana 8.  the mainstream media, academia and the Democratic     │
+│           │ Party -- that the Trump election had unleashed an unprecedented amount of anti 9.  expression of additional genes [ 13   │
+│           │ 32 ]. Furthermore, IL-4 and IL-13 lead to an increased 10.  the Canadian Centre for Policy Alternatives, said the new    │
+│           │ TPP agreement is the same as the old flawed one 11.  surprisingly powerful machine, with 512MB of RAM and a CPU faster   │
+│           │ than the original Pi. Pi Zero is 12.  those choices we should never talk down or attack the fundamental philosophies on  │
+│           │ which progressive Scottish politics are based - the 13.  was designated Single Of The Week from NME, and did well on the │
+│           │ Indie singles charts, as did 14.  webpage, this is something I wanted to avoid. I wanted the consumers of the component  │
+│           │ to not even need                                                                                                         │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 4, 6, 7, 10                                                                                                              │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                                              │
+├───────────┼───────────┼──────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ . In the Islamic Statement, women are given the role not only of the wife of a                                                        │
+│     0.000 │           │              │ were opened too far."↵↵"This had to do with doing maintenance," Loughmiller said                                                      │
+│     0.000 │           │              │ that shed get a whopping majority, only to discover once the votes were in that she                                                   │
+│    42.104 │ Y         │ Y            │ areas, including the Mediterranean.↵↵Although the new US rules apply to all types of boat built from                                  │
+│     0.000 │           │              │ identifiable, decomposing body on the beach.↵↵About the 2008 death of Brad Renfro                                                     │
+│    42.177 │ Y         │ Y            │ o planned before the crisis in public finances. The new policy announced in April by the unlamented former                            │
+│    40.274 │ Y         │ Y            │ in five California cities.↵↵The new division shakes out this way:↵↵Ana                                                                │
+│     0.000 │           │              │ the mainstream media, academia and the Democratic Party -- that the Trump election had unleashed an unprecedented amount of anti      │
+│     0.000 │           │              │ expression of additional genes [ 13 32 ]. Furthermore, IL-4 and IL-13 lead to an increased                                            │
+│    41.242 │ Y         │ Y            │ the Canadian Centre for Policy Alternatives, said the new TPP agreement is the same as the old flawed one                             │
+│     0.000 │           │              │ surprisingly powerful machine, with 512MB of RAM and a CPU faster than the original Pi. Pi Zero is                                    │
+│     0.000 │           │              │ those choices we should never talk down or attack the fundamental philosophies on which progressive Scottish politics are based - the │
+│     0.000 │           │              │ was designated Single Of The Week from NME, and did well on the Indie singles charts, as did                                          │
+│     0.000 │           │              │ webpage, this is something I wanted to avoid. I wanted the consumers of the component to not even need                                │
+└───────────┴───────────┴──────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
