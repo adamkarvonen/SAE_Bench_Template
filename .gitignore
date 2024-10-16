@@ -25,3 +25,6 @@ poetry.lock
 !/sparse_probing/results/example_gemma-2-2b_layer_19_with_checkpoints_eval_results.json
 
 evals/absorption/results/
+
+# unlearning: the forget dataset cannot be uploaded
+*/unlearning/data/bio-forget-corpus.jsonl
