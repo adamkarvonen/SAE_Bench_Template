@@ -14,8 +14,13 @@
 */.coverage
 *.pyc
 
+Pipfile
+Pipfile.lock
+poetry.lock
+
 */images/
 */results/
 !/sparse_probing/results/example_pythia-70m-deduped_layer_4_eval_results.json
 !/sparse_probing/results/example_gemma-2-2b_layer_19_eval_results.json
 !/sparse_probing/results/example_gemma-2-2b_layer_19_with_checkpoints_eval_results.json
+evals/absorption/results/

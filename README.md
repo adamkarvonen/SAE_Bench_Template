@@ -34,4 +34,10 @@ For the purpose of validating evaluation outputs, we have `compare_run_results.i
 
 Once evaluations have been completed, please submit them as pull requests to this repo.
 
+## Eval Format
+
+Ideally, we would like to see something like `evals.sparse_probing.main.py`, which contains a `run_eval()` function. This function takes in hyperparameters and a `selected_saes_dict`, which is a dict of `sae_release` : `list[sae_names]` (as shown in template.ipynb).
+
+All evals and submodules will share the same dependencies, which are set in pyproject.toml.
+
 For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recovered and getting a set of tokens from The Pile, refer to this notebook: https://github.com/jbloomAus/SAELens/blob/main/tutorials/basic_loading_and_analysing.ipynb

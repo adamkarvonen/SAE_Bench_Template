@@ -8,7 +8,8 @@ from sae_lens.sae import SAE, TopK
 
 
 def fix_topk_saes(sae: SAE, sae_release: str, sae_name: str, data_dir: str = "") -> SAE:
-    """Temporary workaround as the TopK SAEs are currently being loaded as Standard SAEs."""
+    """Temporary workaround as the TopK SAEs are currently being loaded as Standard SAEs.
+    DEPRECATED, fixed in sae_lens version 3.23.1"""
 
     if isinstance(sae.activation_fn, TopK):
         print(f"SAE {sae_name} already has TopK activation function.")
@@ -238,3 +239,34 @@ def filter_by_l0_threshold(results: dict, l0_threshold: Optional[int]) -> dict:
         # Replace the original results with the filtered results
         results = filtered_results
     return results
+
+
+def average_results_dictionaries(
+    results_dict: dict[str, dict[str, dict[str, float]]], dataset_names: list[str]
+) -> dict[str, dict[str, float]]:
+    """If we have multiple dicts of results from separate datasets, get an average performance over all datasets.
+    Results_dict is dataset -> sae_name -> dict of metric_name : float result"""
+    averaged_results = {}
+    aggregated_results = {}
+
+    for dataset_name in dataset_names:
+        dataset_results = results_dict[f"{dataset_name}_results"]
+
+        for sae_name, sae_metrics in dataset_results.items():
+            if sae_name not in aggregated_results:
+                aggregated_results[sae_name] = {}
+
+            for metric_name, metric_value in sae_metrics.items():
+                if metric_name not in aggregated_results[sae_name]:
+                    aggregated_results[sae_name][metric_name] = []
+
+                aggregated_results[sae_name][metric_name].append(metric_value)
+
+    # Compute averages
+    for sae_name in aggregated_results:
+        averaged_results[sae_name] = {}
+        for metric_name, values in aggregated_results[sae_name].items():
+            average_value = sum(values) / len(values)
+            averaged_results[sae_name][metric_name] = average_value
+
+    return averaged_results

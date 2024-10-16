@@ -1,12 +1,12 @@
-from tqdm import tqdm
 from typing import Callable, Optional
-import torch
+
 import pandas as pd
-
-from transformers import AutoTokenizer
+import torch
 from datasets import load_dataset
+from tqdm import tqdm
+from transformers import AutoTokenizer
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 # Load and prepare dataset
@@ -49,6 +49,10 @@ def get_balanced_dataset(
     for profession in tqdm(df[column1_name].unique()):
         prof_df = df[df[column1_name] == profession]
         min_count = prof_df[column2_name].value_counts().min()
+
+        unique_groups = prof_df[column2_name].unique()
+        if len(unique_groups) < 2:
+            continue  # Skip professions with less than two groups
 
         if min_count < min_samples_per_quadrant:
             continue

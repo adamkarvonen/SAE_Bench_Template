@@ -1,23 +1,41 @@
 from dataclasses import dataclass, field
 from typing import Optional
-import torch
 
 
 @dataclass
 class EvalConfig:
     random_seed: int = 42
 
-    dataset_names: list[str] = field(
-        default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
-    )
+    # dataset_names: list[str] = field(
+    #     default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
+    # )
 
-    probe_train_set_size: int = 4000
-    probe_test_set_size: int = 1000
+    dataset_names: list[str] = field(default_factory=lambda: ["bias_in_bios"])
+    column1_vals_list: list[tuple[str, str]] = field(
+        default_factory=list
+    )  # This will be populated in run_eval()
+    spurious_corr: bool = False
+
+    # Load datset and probes
+    train_set_size: int = 4000
+    test_set_size: int = 1000  # This is limited as the test set is smaller than the train set
+
     context_length: int = 128
+    probe_train_batch_size: int = (
+        16  # We don't want probe batch size to be close to the train set size
+    )
+    probe_test_batch_size: int = min(500, test_set_size)
+    probe_epochs: int = 5
+    probe_lr: float = 1e-3
 
-    sae_batch_size: int = 125
+    sae_batch_size: int = 250
 
-    ## Uncomment to run Pythia SAEs
+    # This is for spurrious correlation removal
+    chosen_class_indices = [
+        "male / female",
+        "professor / nurse",
+        "male_professor / female_nurse",
+    ]
 
     sae_releases: list[str] = field(
         default_factory=lambda: [
@@ -45,6 +63,6 @@ class EvalConfig:
     # trainer_ids: Optional[list[int]] = None
     # include_checkpoints: bool = False
 
-    k_values: list[int] = field(default_factory=lambda: [1, 2, 5, 10, 20, 50, 100])
+    n_values: list[int] = field(default_factory=lambda: [2, 5, 10, 20, 50, 100, 500, 1000, 2000])
 
     selected_saes_dict: dict = field(default_factory=lambda: {})

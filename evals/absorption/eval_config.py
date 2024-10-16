@@ -1,21 +1,16 @@
 from dataclasses import dataclass, field
 from typing import Optional
-import torch
 
 
 @dataclass
 class EvalConfig:
     random_seed: int = 42
+    f1_jump_threshold: float = 0.03
+    max_k_value: int = 10
 
-    dataset_names: list[str] = field(
-        default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
-    )
-
-    probe_train_set_size: int = 4000
-    probe_test_set_size: int = 1000
-    context_length: int = 128
-
-    sae_batch_size: int = 125
+    # double-check token_pos matches prompting_template for other tokenizers
+    prompt_template: str = "{word} has the first letter:"
+    prompt_token_pos: int = -6
 
     ## Uncomment to run Pythia SAEs
 
@@ -27,8 +22,8 @@ class EvalConfig:
     )
     model_name: str = "pythia-70m-deduped"
     layer: int = 4
-    trainer_ids: Optional[list[int]] = field(default_factory=lambda: list(range(20)))
-    trainer_ids: Optional[list[int]] = field(default_factory=lambda: [10])
+    # no idea what this means
+    trainer_ids: Optional[list[int]] = None
     include_checkpoints: bool = False
 
     ## Uncomment to run Gemma SAEs
@@ -44,7 +39,5 @@ class EvalConfig:
     # layer: int = 19
     # trainer_ids: Optional[list[int]] = None
     # include_checkpoints: bool = False
-
-    k_values: list[int] = field(default_factory=lambda: [1, 2, 5, 10, 20, 50, 100])
 
     selected_saes_dict: dict = field(default_factory=lambda: {})
