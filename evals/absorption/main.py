@@ -171,6 +171,8 @@ if __name__ == "__main__":
     import os
     import json
 
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
     start_time = time.time()
 
     if torch.backends.mps.is_available():
