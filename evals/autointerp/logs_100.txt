@@ -1,0 +1,304 @@
+Summary table:
+┌──────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────┬─────────────────┬──────────┐
+│   latent │ explanation                                                                                              │ predictions              │ correct seqs    │    score │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────────┼─────────────────┼──────────┤
+│     9892 │ references to violence or incidents involving guns and police responses                                  │ [7, 14]                  │ [2, 7, 10, 14]  │ 0.857143 │
+│     9496 │ variations of the word 'initiate' and related terms regarding the start of actions or processes          │ [1, 5, 12, 14]           │ [1, 5, 12, 14]  │ 1        │
+│    11747 │ names and phrases containing the substring 'McG' and its variations                                      │ [1, 2, 10, 13]           │ [1, 2, 3, 13]   │ 0.857143 │
+│    10979 │ the concept of 'vector' in programming and its associated functions                                      │ [6, 9, 11, 13]           │ [6, 9, 11, 13]  │ 1        │
+│    12387 │ instances of the substring 'Indon' when discussing Indonesia or related topics                           │ [2]                      │ [1, 2, 5, 9]    │ 0.785714 │
+│    12306 │ concepts related to memory impairment and cognitive functions in various contexts                        │ [3, 5, 14]               │ [1, 3, 5, 14]   │ 0.928571 │
+│    11045 │ the surname 'Singh' and other specific names like 'Hussein' and 'Herrera'                                │ [5, 12]                  │ [3, 5, 9, 12]   │ 0.857143 │
+│    10566 │ variations of the substring 'ht' and similar letter combinations                                         │ [1, 3, 6, 13]            │ [6, 7, 8, 13]   │ 0.714286 │
+│    10764 │ the concepts of knowledge and understanding expressed through various forms of the word "know"           │ [5, 6, 12, 13]           │ [5, 6, 12, 13]  │ 1        │
+│    12609 │ the phrase 'acts as' in various contexts                                                                 │ [3, 6]                   │ [2, 3, 6, 8]    │ 0.857143 │
+│     9805 │ the conjunction 'or' in varied contexts suggesting alternatives or choices                               │ [1, 2, 8, 10, 11]        │ [1, 2, 8, 11]   │ 0.928571 │
+│    12069 │ phrases indicating quantities or counts of people, items, or groups                                      │ [1, 9, 10, 12, 14]       │ [1, 10, 12, 14] │ 0.928571 │
+│    13862 │ phrases related to official duties and responsibilities under oath or accountability                     │ [6, 12]                  │ [2, 6, 11, 14]  │ 0.714286 │
+│    12904 │ the word 'newly' followed by various contexts indicating recent developments or changes                  │ [1, 4, 7, 10]            │ [1, 4, 7, 10]   │ 1        │
+│    13040 │ variations of the phrase "just in" and related expressions indicating timing and presence                │ [1, 7, 10, 14]           │ [1, 7, 10, 14]  │ 1        │
+│    14130 │ the concept of winning titles or elections                                                               │ [5, 7, 10, 12]           │ [5, 7, 10, 12]  │ 1        │
+│    13868 │ text related to enjoyment and leisure activities such as movies and events                               │ [6, 10, 11]              │ [6, 7, 10, 11]  │ 0.928571 │
+│    13300 │ the phrase 'either' indicating uncertainty or hesitation in statements                                   │ [5, 6, 8, 9]             │ [5, 6, 8, 9]    │ 1        │
+│    14798 │ comparisons indicated by the substring "than in"                                                         │ [5, 11]                  │ [1, 5, 7, 11]   │ 0.857143 │
+│    14697 │ specific names, titles, and scientific terms related to biology and media                                │ [1, 2, 5, 6, 11, 13]     │ [1, 8, 10, 11]  │ 0.571429 │
+│    13976 │ variations of the word "clown" and concepts related to funerals or death                                 │ []                       │ [1, 10, 11, 13] │ 0.714286 │
+│    13589 │ forms of the verb "to be" and related expressions about possibility and necessity                        │ [2, 3, 6, 9, 10, 11, 12] │ [1, 4, 6, 11]   │ 0.5      │
+│    11260 │ words describing mildness or positivity such as mild benign and pleasant                                 │ [5, 7, 8, 10]            │ [5, 7, 8, 10]   │ 1        │
+│    15987 │ phrases related to subscriptions, payments, and promotional marketing                                    │ [11]                     │ [3, 5, 9, 11]   │ 0.785714 │
+│    16011 │ phrases related to increasing scores, setting up, or progressing in various contexts                     │ [2, 7, 11]               │ [1, 7, 8, 11]   │ 0.785714 │
+│    15767 │ specific pronouns or demonstratives such as these that indicate focus or emphasis                        │ [1, 3, 9, 10, 12]        │ [1, 8, 10, 14]  │ 0.642857 │
+│    16288 │ names of venues and facilities related to sports and events                                              │ [5, 11, 13]              │ [1, 5, 11, 13]  │ 0.928571 │
+│    16233 │ phrases expressing influence or the ability to affect someone's feelings or actions                      │ [2, 4, 8, 10, 14]        │ [2, 4, 13, 14]  │ 0.785714 │
+│    15698 │ the word 'like' followed by examples or analogous phrases throughout the text                            │ [2, 7, 12, 13, 14]       │ [2, 7, 13, 14]  │ 0.928571 │
+│    16309 │ phrases related to terms of agreements or conditions in various contexts                                 │ [7, 9, 11, 13]           │ [7, 9, 11, 13]  │ 1        │
+│    16339 │ terms related to scale and levels in various contexts                                                    │ [4, 5, 7, 9, 14]         │ [4, 7, 9, 14]   │ 0.928571 │
+│    16332 │ terms related to previous studies and research findings                                                  │ [3, 7, 13, 14]           │ [3, 7, 13, 14]  │ 1        │
+│    17006 │ social media interactions and expressions of admiration or support                                       │ [3, 5, 6, 12]            │ [3, 5, 6, 12]   │ 1        │
+│      905 │ the word "I" indicating personal thoughts or opinions                                                    │ [1, 3, 5, 13]            │ [1, 3, 11, 13]  │ 0.857143 │
+│      257 │ terms related to economic political and business contexts and their implications                         │ [2, 4, 9, 10, 12, 14]    │ [9, 10, 12, 13] │ 0.714286 │
+│    17079 │ the term "think tank" in various contexts related to research and analysis                               │ [4, 7, 8, 10]            │ [4, 7, 8, 10]   │ 1        │
+│     1379 │ the word 'Thumbnails' and coding syntax in technical contexts                                            │ []                       │ [1, 7, 10, 11]  │ 0.714286 │
+│    15021 │ the term 'external' in various contexts related to features and influences                               │ [5, 7, 9, 13]            │ [5, 7, 9, 13]   │ 1        │
+│    15532 │ words related to popular culture and various geographic and cultural concepts                            │ [2, 6, 8, 11, 14]        │ [2, 3, 9, 10]   │ 0.5      │
+│    17229 │ references to African Americans and their societal issues and experiences                                │ [1, 3, 4, 14]            │ [1, 3, 4, 14]   │ 1        │
+│     2003 │ variations of the word 'motor' and related automotive terms                                              │ [2, 3, 5, 10]            │ [2, 3, 5, 10]   │ 1        │
+│     2092 │ numerical estimates of large groups of people affected by events or actions                              │ [5, 7, 8, 13]            │ [5, 7, 8, 13]   │ 1        │
+│    17786 │ numerical data and section identifiers within various formats and contexts                               │ [2, 5, 8, 14]            │ [2, 5, 8, 14]   │ 1        │
+│     2741 │ words related to various types of clothing and fashion items                                             │ [3, 4, 12, 14]           │ [3, 4, 12, 14]  │ 1        │
+│    18377 │ the phrase "wait" in various contexts indicating pauses or anticipation                                  │ [2, 3, 7, 8]             │ [2, 3, 7, 8]    │ 1        │
+│     2848 │ character names, titles of works, and specific phrases in creative contexts                              │ [2, 6, 8, 10]            │ [2, 6, 8, 10]   │ 1        │
+│    19165 │ the concept of Las Vegas and related events or locations                                                 │ [6, 8, 9, 10]            │ [6, 8, 9, 10]   │ 1        │
+│     1239 │ verbs that indicate actions or states of being in various contexts                                       │ [2, 5, 6, 10, 12]        │ [3, 5, 7, 14]   │ 0.5      │
+│    18478 │ various abbreviations and specialized terms across different contexts                                    │ [2, 9, 10, 11, 14]       │ [2, 6, 10, 14]  │ 0.785714 │
+│    18234 │ terms related to various types of public buildings and expansions or developments involving them         │ [8, 10, 12]              │ [8, 10, 11, 12] │ 0.928571 │
+│    18497 │ the word 'keep' and variations of 'their' and 'the' in various contexts                                  │ [3, 4, 6, 9, 10, 11, 14] │ [4, 6, 11, 14]  │ 0.785714 │
+│     3213 │ the phrase 'According to' followed by various sources or reports                                         │ [3, 6, 7, 13]            │ [3, 6, 7, 13]   │ 1        │
+│     3257 │ numerical data and performance metrics related to teams and rankings                                     │ [8, 11, 12]              │ [2, 9, 11, 12]  │ 0.785714 │
+│    19537 │ variations of the name 'Tress' and related terms in multiple contexts                                    │ [4, 6, 12]               │ [4, 6, 12, 14]  │ 0.928571 │
+│    19176 │ the substring "mid" in various contexts indicating time periods or midpoints                             │ [5, 6, 9, 13]            │ [5, 6, 9, 13]   │ 1        │
+│    17904 │ words and concepts related to writing, inscriptions, and marks on surfaces                               │ [4, 5, 11, 14]           │ [4, 5, 11, 14]  │ 1        │
+│     2774 │ names of people places and organizations along with specific terms related to language and nationality   │ [2, 3, 4, 7, 9]          │ [2, 6, 7, 14]   │ 0.642857 │
+│     3428 │ the concept of challenges, difficulties, or measures regarding inequality and resistance                 │ [9, 11]                  │ [1, 9, 10, 11]  │ 0.857143 │
+│     2157 │ numerical values and substrings related to statistics and data points                                    │ [5, 6, 8, 10]            │ [5, 6, 8, 10]   │ 1        │
+│    20428 │ the concept of allegations and accusations in various contexts                                           │ [4, 6, 7, 9]             │ [4, 6, 7, 9]    │ 1        │
+│    20537 │ words related to loss of consciousness and medical emergencies                                           │ [3, 9, 11, 12]           │ [3, 9, 11, 12]  │ 1        │
+│    20934 │ various forms of the word 'vote' and related concepts of voting and elections                            │ [1, 2, 12, 13]           │ [1, 2, 12, 13]  │ 1        │
+│     3768 │ the word "then" in conditional statements                                                                │ [1, 5, 13, 14]           │ [1, 5, 13, 14]  │ 1        │
+│     3801 │ names of individuals or references to notable figures or characters                                      │ [4, 6, 12, 14]           │ [7, 9, 10, 13]  │ 0.428571 │
+│     3432 │ the phrase 'impact on' in various contexts                                                               │ [6, 12, 14]              │ [6, 7, 12, 14]  │ 0.928571 │
+│     3560 │ words containing the letter sequence 'c' and a few specific contexts related to them                     │ [2, 6, 7, 8, 10, 13, 14] │ [1, 7, 8, 10]   │ 0.642857 │
+│    20809 │ substrings found in names and titles across various contexts                                             │ [3, 6, 13, 14]           │ [1, 8, 12, 14]  │ 0.571429 │
+│     3896 │ specific substrings like "ourn", "ount", "ople", "ourners", "grieve", and "present" in                   │ [7, 13]                  │ [1, 3, 7, 13]   │ 0.857143 │
+│    20917 │ terms related to possession or ownership, particularly the word "their" in various contexts              │ [3, 5, 8, 13]            │ [3, 5, 8, 13]   │ 1        │
+│     4073 │ variations of the substring "ide," the concept of sides, and context related to nightlife and activities │ [5, 8, 12]               │ [5, 8, 9, 12]   │ 0.928571 │
+│    22259 │ references to concrete masonry units and their specifications in construction contexts                   │ []                       │ [8, 11, 12, 13] │ 0.714286 │
+│    22181 │ threatening language and concepts related to violence and intimidation                                   │ [2, 5, 10, 12]           │ [4, 5, 6, 12]   │ 0.714286 │
+│     4862 │ names and expressions of uncertainty or emotional response in dialogues                                  │ [2, 4, 6, 7]             │ [4, 5, 6, 7]    │ 0.857143 │
+│    21004 │ demographic statistics and disparities in coverage or representation among different racial groups       │ [5, 7, 14]               │ [5, 7, 9, 14]   │ 0.928571 │
+│     5458 │ substrings of names and their variations across different contexts                                       │ [1, 3, 4, 6, 9, 11]      │ [3, 4, 9, 11]   │ 0.857143 │
+│    22515 │ the substring 'Mo' in various contexts and names                                                         │ [4, 7, 9, 14]            │ [4, 7, 9, 14]   │ 1        │
+│    21956 │ the word 'source' in various contexts related to origins or causes                                       │ [3, 5, 8, 11]            │ [3, 5, 8, 11]   │ 1        │
+│     5100 │ words starting with specific letters and certain phrases related to digital and creative contexts        │ [1, 4, 6, 9, 12]         │ [3, 6, 11, 14]  │ 0.5      │
+│    22279 │ the word 'contain' and its variations in various contexts                                                │ [1, 3, 5, 13]            │ [1, 3, 5, 13]   │ 1        │
+│    22924 │ words related to specific locations or names containing the substring 'ork'                              │ [2, 12]                  │ [2, 5, 6, 12]   │ 0.857143 │
+│     5457 │ medical and scientific terms related to illnesses and elements like disease and chemicals                │ [1, 3, 11]               │ [1, 4, 9, 12]   │ 0.642857 │
+│     4795 │ the word 'if' in context of uncertainty or questioning                                                   │ [1, 5, 7, 9]             │ [1, 5, 7, 9]    │ 1        │
+│    23003 │ words related to making or creating effects and processes                                                │ [3, 5, 12]               │ [2, 3, 5, 12]   │ 0.928571 │
+│     4958 │ the substring 'plan' and its variants in various contexts                                                │ [1, 2, 5, 11]            │ [1, 2, 5, 11]   │ 1        │
+│    23409 │ the word 'how' and concepts related to processes and methods                                             │ [6, 8, 9, 13]            │ [1, 6, 8, 13]   │ 0.857143 │
+│    24571 │ location names and associated events or organizations                                                    │ [1, 2, 3, 8, 9, 13]      │ [1, 2, 9, 13]   │ 0.857143 │
+│     6289 │ the phrase 'son in law' and related family terms                                                         │ [11, 12]                 │ [1, 5, 11, 12]  │ 0.857143 │
+│     6489 │ references to the Philippines and the political figure Rodrigo Duterte                                   │ [9, 10]                  │ [1, 9, 10, 12]  │ 0.857143 │
+│     6487 │ the word "Turkey" and variants primarily in political and military contexts                              │ [5, 6, 7, 11]            │ [5, 6, 7, 11]   │ 1        │
+│     6618 │ the word 'form' in various contexts related to documents and processes                                   │ [6, 9, 12]               │ [4, 6, 9, 12]   │ 0.928571 │
+│     6608 │ the words related to proof or evidence, such as proven, unproven, and demonstrably                       │ [4, 6, 8, 13]            │ [4, 6, 8, 13]   │ 1        │
+│     6790 │ aggressive actions and physical confrontations in various contexts                                       │ [3, 9, 10, 13]           │ [3, 9, 10, 13]  │ 1        │
+│     7243 │ names and proper nouns with specific substring patterns                                                  │ [3, 8, 12, 13]           │ [3, 8, 12, 13]  │ 1        │
+│     8549 │ the term 'protesters' in various contexts of civic action and demonstrations                             │ [2, 10, 13, 14]          │ [2, 10, 13, 14] │ 1        │
+│     7213 │ the term 'Civil' related to various civil rights and conflicts                                           │ [4, 8, 9, 12]            │ [4, 8, 9, 12]   │ 1        │
+│    24076 │ the word 'interest' in various contexts of engagement and concern                                        │ [4, 5, 8, 9]             │ [4, 5, 8, 9]    │ 1        │
+│     7118 │ the substring 'ek' within various words and names                                                        │ [1, 6, 9]                │ [1, 6, 9, 10]   │ 0.928571 │
+│     8404 │ navigational and interaction elements in online media and articles                                       │ [2, 3, 5, 9]             │ [2, 3, 5, 9]    │ 1        │
+│     7074 │ social media platform names and prompts related to sharing content                                       │ [10, 11]                 │ [7, 9, 10, 11]  │ 0.857143 │
+│    11850 │ names of major companies and utilities related to energy and manufacturing sectors                       │ [2, 3, 12]               │ [2, 3, 5, 12]   │ 0.928571 │
+└──────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┴─────────────────┴──────────┘
+
+Worst scoring idx 3801, score = 0.42857142857142855
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1.  the honorary degree of Doctor of Business Administration at the<<         │
+│           │ Robert>><< Gordon>> University in Aberdeen, thanks largely to his company 2.  scored the Best Film and Screenplay prizes │
+│           │ at the<< David>> di<< Don>>atello awards. The story unfolds at 3.  medicine unit at the country's largest hospital,      │
+│           │ the<< John>> F<< Kennedy>> Memorial Medical Center in Monrovia. 4.  first-come, first-served basis in the<< John>><<     │
+│           │ Paul>><< Jones>> Arena, University Hall and<< McC>>ue Center 5. LV basketball team because its offices are located in    │
+│           │ the<< Thomas>> &<< Mack>> and its practice facility is located right next 6.  the small town of Mayberry on The<< Andy>> │
+│           │ Griffith Show on TV in the 1960s 7.  Independent)↵↵—Please make note of The<< Mary>> Sues general comment policy.—↵↵ 8.  │
+│           │ is back when he used to do bits on the<< David>> Lettermans show when Letterman was 9.  Chuck Na, one of two men who     │
+│           │ attended the<< George>> Mason event. I was bullied a lot 10.  interred in the Tikhvin Cemetery at the<< Alexander>>      │
+│           │ Nevsky Convent,[111] near his favourite 11. aid Cleaves in February and two shows by the<< Glenn>> Miller Orchestra in   │
+│           │ early March.↵↵Updated at 12.  could look like.↵↵Number26, a<< Peter>> Thiel-backed German startup thats setting 13.      │
+│           │ from \( f(x) \) to the<< Taylor>> series \( T_{10}(x) \ 14.  get the chance to. Herman will go spot for<< Ryan>> Preece  │
+│           │ on occasion like he did on Mother 15.  phyle was originally created in the fictional setting of<< Neal>> Stephensons     │
+│           │ The<< Diamond>> Age, and David                                                                                           │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on names of individuals or references to notable figures or characters.                            │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                                    │
+├───────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    14.672 │ the honorary degree of Doctor of Business Administration at the<< Robert>><< Gordon>> University in Aberdeen, thanks largely to his company │
+│    14.549 │ scored the Best Film and Screenplay prizes at the<< David>> di<< Don>>atello awards. The story unfolds at                                   │
+│    14.428 │ medicine unit at the country's largest hospital, the<< John>> F<< Kennedy>> Memorial Medical Center in Monrovia.                            │
+│    14.203 │ first-come, first-served basis in the<< John>><< Paul>><< Jones>> Arena, University Hall and<< McC>>ue Center                               │
+│    12.835 │ LV basketball team because its offices are located in the<< Thomas>> &<< Mack>> and its practice facility is located right next             │
+│    12.738 │ the small town of Mayberry on The<< Andy>> Griffith Show on TV in the 1960s                                                                 │
+│    12.408 │ Independent)↵↵—Please make note of The<< Mary>> Sues general comment policy.—↵↵                                                             │
+│    12.154 │ is back when he used to do bits on the<< David>> Lettermans show when Letterman was                                                         │
+│    12.095 │ Chuck Na, one of two men who attended the<< George>> Mason event. I was bullied a lot                                                       │
+│    11.963 │ interred in the Tikhvin Cemetery at the<< Alexander>> Nevsky Convent,[111] near his favourite                                               │
+│    10.736 │ aid Cleaves in February and two shows by the<< Glenn>> Miller Orchestra in early March.↵↵Updated at                                         │
+│    10.275 │ could look like.↵↵Number26, a<< Peter>> Thiel-backed German startup thats setting                                                           │
+│     4.967 │ from \( f(x) \) to the<< Taylor>> series \( T_{10}(x) \                                                                                     │
+│     1.701 │ get the chance to. Herman will go spot for<< Ryan>> Preece on occasion like he did on Mother                                                │
+│     1.615 │ phyle was originally created in the fictional setting of<< Neal>> Stephensons The<< Diamond>> Age, and David                                │
+└───────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "2, 3, 6, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on names of individuals or references to notable figures or characters.  Here │
+│           │ are the examples:  1.  PlayStation Vita portable, but early 2013 is obviously a different matter. Sony Japan announced   │
+│           │ today that both the Wi 2.  africanos y de los países delHubo tal migración que surgió un 3.  advocacy organizations in   │
+│           │ Southern California.<|endoftext|>Liver regeneration is the process by which the liver is able to replace 4.  of towns    │
+│           │ are going through," Niemeyer says of the budget cuts. "None of these things 5.  England no natural left-sided option,    │
+│           │ and with them struggling to keep the ball in the centre of the 6.  Amaro Jr. insists it's only the media that is making  │
+│           │ an issue of this. "Honestly," 7. -American stars in both radio and television. The Steve Harvey Show, Family Feud, and   │
+│           │ Little Big 8.  the Pixel Visual Core co-processor built into the company's Pixel 2 smartphones for the first time.↵ 9.   │
+│           │ to UNLV basketball, the primary tenant of the Thomas & Mack Center: headaches. Lots and lots of 10. bing the influence   │
+│           │ of big-money donors in the John A. Wilson Building.↵↵And, happiness 11.  of systems and zpk2ss_cascade(z,p,k) — converts │
+│           │ Z 12. , understand the Koran, the hadith (the traditions and habits of Muhammad) or the sunna ( 13. rose.↵↵Study         │
+│           │ Limitations↵↵The Roger Adams papers and other documents used in this research provide 14. .↵↵From the beginning, a       │
+│           │ conservative bloc of lawmakers has urged leadership to ignore Obamas                                                     │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 4, 6, 12, 14                                                                                                             │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                                           │
+├───────────┼───────────┼──────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ PlayStation Vita portable, but early 2013 is obviously a different matter. Sony Japan announced today that both the Wi             │
+│     0.000 │           │              │ africanos y de los países delHubo tal migración que surgió un                                                                      │
+│     0.000 │           │              │ advocacy organizations in Southern California.<|endoftext|>Liver regeneration is the process by which the liver is able to replace │
+│     0.000 │           │ Y            │ of towns are going through," Niemeyer says of the budget cuts. "None of these things                                               │
+│     0.000 │           │              │ England no natural left-sided option, and with them struggling to keep the ball in the centre of the                               │
+│     0.000 │           │ Y            │ Amaro Jr. insists it's only the media that is making an issue of this. "Honestly,"                                                 │
+│    12.714 │ Y         │              │ -American stars in both radio and television. The Steve Harvey Show, Family Feud, and Little Big                                   │
+│     0.000 │           │              │ the Pixel Visual Core co-processor built into the company's Pixel 2 smartphones for the first time.↵                               │
+│    13.336 │ Y         │              │ to UNLV basketball, the primary tenant of the Thomas & Mack Center: headaches. Lots and lots of                                    │
+│    14.544 │ Y         │              │ bing the influence of big-money donors in the John A. Wilson Building.↵↵And, happiness                                             │
+│     0.000 │           │              │ of systems and zpk2ss_cascade(z,p,k) — converts Z                                                                                  │
+│     0.000 │           │ Y            │ , understand the Koran, the hadith (the traditions and habits of Muhammad) or the sunna (                                          │
+│    12.708 │ Y         │              │ rose.↵↵Study Limitations↵↵The Roger Adams papers and other documents used in this research provide                                 │
+│     0.000 │           │ Y            │ .↵↵From the beginning, a conservative bloc of lawmakers has urged leadership to ignore Obamas                                      │
+└───────────┴───────────┴──────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Best scoring idx 9496, score = 1.0
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1. ↵↵These internal documents show that the SRF<< initiated>> CHD research in │
+│           │ 1965 to protect market share and 2.  (or other player covering home plate), or otherwise<< initiate>><< an>> avoidable   │
+│           │ collision.↵↵Video 3. ↵↵In crowd sourcing, the original group that<< initiated>><< the>> project is allowed to keep       │
+│           │ intellectual property and distribution 4.  of processing and presenting the antigen to T cells to<< initiate>><< an>>    │
+│           │ immune response [ 16 ]. The helminth 5. Readers might be surprised to discover that women usually<< initiated>> major    │
+│           │ changes in the anti-abortion movement.  6.  Our policy is to forward e-mails<< initiated>> from and received by private  │
+│           │ e-mail accounts to 7.  Robert de Courcy Laffan, that first<< initiated>><< the>> annual birthday procession and laying   │
+│           │ of flowers on Shakespeare 8.  Major League Baseball confirmed that the collision Rizzo<< initiated>> was illegal, but    │
+│           │ then opted not to discipline him 9.  Employment Effects of Two Northwest Minimum Wage<< Initi>><<atives>>. Economic      │
+│           │ Inquiry. 45(1 10.  of Nov. 3, 2011, during political demonstrations<< initiated>> by the Occupy Oakland movement, the    │
+│           │ complaint 11.  After the response was entered, the next trial was<< initiated>> by pressing the space bar. There were 20 │
+│           │ trials 12.  said hes met with the department and<< instituted>> more de-escalation training to make 13. .↵↵To that end,  │
+│           │ the administration has<< instituted>> several other transparency initiatives. It has followed through on 14.  J. Edgar   │
+│           │ Hoover ordered the agency to acquire and<< commence>> regular training with automatic shoulder weapons, including the    │
+│           │ Thompson 15.  people praying as they walk."↵↵RAMha<<iti>> in Port-au-Prince tweets: "I                                   │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on variations of the word 'initiate' and related terms regarding the start of actions or           │
+│           │ processes.                                                                                                               │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                                │
+├───────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    33.651 │ ↵↵These internal documents show that the SRF<< initiated>> CHD research in 1965 to protect market share and                             │
+│    33.492 │ (or other player covering home plate), or otherwise<< initiate>><< an>> avoidable collision.↵↵Video                                     │
+│    31.308 │ ↵↵In crowd sourcing, the original group that<< initiated>><< the>> project is allowed to keep intellectual property and distribution    │
+│    31.226 │ of processing and presenting the antigen to T cells to<< initiate>><< an>> immune response [ 16 ]. The helminth                         │
+│    30.588 │ Readers might be surprised to discover that women usually<< initiated>> major changes in the anti-abortion movement.                    │
+│    30.148 │ Our policy is to forward e-mails<< initiated>> from and received by private e-mail accounts to                                          │
+│    29.706 │ Robert de Courcy Laffan, that first<< initiated>><< the>> annual birthday procession and laying of flowers on Shakespeare               │
+│    28.958 │ Major League Baseball confirmed that the collision Rizzo<< initiated>> was illegal, but then opted not to discipline him                │
+│    28.577 │ Employment Effects of Two Northwest Minimum Wage<< Initi>><<atives>>. Economic Inquiry. 45(1                                            │
+│    28.308 │ of Nov. 3, 2011, during political demonstrations<< initiated>> by the Occupy Oakland movement, the complaint                            │
+│    25.233 │ After the response was entered, the next trial was<< initiated>> by pressing the space bar. There were 20 trials                        │
+│    15.639 │ said hes met with the department and<< instituted>> more de-escalation training to make                                                 │
+│    12.571 │ .↵↵To that end, the administration has<< instituted>> several other transparency initiatives. It has followed through on                │
+│    10.688 │ J. Edgar Hoover ordered the agency to acquire and<< commence>> regular training with automatic shoulder weapons, including the Thompson │
+│     4.830 │ people praying as they walk."↵↵RAMha<<iti>> in Port-au-Prince tweets: "I                                                                │
+└───────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "4, 5, 7, 12". Try not to be overly specific in your interpretation of the explanation. If you think there are no   │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on variations of the word 'initiate' and related terms regarding the start of │
+│           │ actions or processes.  Here are the examples:  1.  the first spacecraft due to management errors, NASA had initiated a   │
+│           │ crash review of the Mars Polar Lander to 2. 't repay. We need tourism to come back, we need the economy to come back and │
+│           │ we need a 3.  and/or transmit any story or audio content published on this site under the terms of this license, but 4.  │
+│           │ pull a protester forward and begin beating him over the head with sticks. Theres video of it 5.  of factual errors       │
+│           │ regarding the National Broadband Network project initiated by Labor, which has been continued as the Coalition 6.  that  │
+│           │ there was "no adequate explanation" for the black-white IQ gap.[162][163] In 7.  while only 21 percent do. Among         │
+│           │ moderates, the numbers are even worse with 70 percent reporting they lack confidence 8.  legitimacy to two opposing      │
+│           │ viewpoints. On the other hand, some integrative complexity scores are driven by elaborative 9.  Sherpao of QWP objected  │
+│           │ over the delay, saying that the assembly had passed resolutions asking the federal 10.  force.↵↵The city has already     │
+│           │ paid out millions in police misconduct lawsuits.↵↵Ortega 11. downe/Leinster), Paul OConnell (Young Munster) (capt),      │
+│           │ Peter 12.  Rizzo crosses the baseline to his left and initiates contact, deviating from his path to the 13.  he told     │
+│           │ reporters at the legislature Tuesday as the NDP government released the final year-end numbers.↵↵ 14.  One can only      │
+│           │ infer that because the Cultural Revolution was initiated by Mao--rather than a mass popular movement from                │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 1, 5, 12, 14                                                                                                             │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                                         │
+├───────────┼───────────┼──────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    30.255 │ Y         │ Y            │ the first spacecraft due to management errors, NASA had initiated a crash review of the Mars Polar Lander to                     │
+│     0.000 │           │              │ 't repay. We need tourism to come back, we need the economy to come back and we need a                                           │
+│     0.000 │           │              │ and/or transmit any story or audio content published on this site under the terms of this license, but                           │
+│     0.000 │           │              │ pull a protester forward and begin beating him over the head with sticks. Theres video of it                                     │
+│    28.859 │ Y         │ Y            │ of factual errors regarding the National Broadband Network project initiated by Labor, which has been continued as the Coalition │
+│     0.000 │           │              │ that there was "no adequate explanation" for the black-white IQ gap.[162][163] In                                                │
+│     0.000 │           │              │ while only 21 percent do. Among moderates, the numbers are even worse with 70 percent reporting they lack confidence             │
+│     0.000 │           │              │ legitimacy to two opposing viewpoints. On the other hand, some integrative complexity scores are driven by elaborative           │
+│     0.000 │           │              │ Sherpao of QWP objected over the delay, saying that the assembly had passed resolutions asking the federal                       │
+│     0.000 │           │              │ force.↵↵The city has already paid out millions in police misconduct lawsuits.↵↵Ortega                                            │
+│     0.000 │           │              │ downe/Leinster), Paul OConnell (Young Munster) (capt), Peter                                                                     │
+│    35.404 │ Y         │ Y            │ Rizzo crosses the baseline to his left and initiates contact, deviating from his path to the                                     │
+│     0.000 │           │              │ he told reporters at the legislature Tuesday as the NDP government released the final year-end numbers.↵↵                        │
+│    28.650 │ Y         │ Y            │ One can only infer that because the Cultural Revolution was initiated by Mao--rather than a mass popular movement from           │
+└───────────┴───────────┴──────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
