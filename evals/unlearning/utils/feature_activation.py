@@ -10,6 +10,9 @@ import numpy as np
 import random
 import os
 
+from sae_lens import SAE
+from transformer_lens import HookedTransformer
+
 FORGET_FILENAME = "feature_sparsity_forget.txt"
 RETAIN_FILENAME = "feature_sparsity_retain.txt"
 
@@ -17,12 +20,12 @@ SPARSITIES_DIR = "results/sparsities"
 
 
 def get_forget_retain_data(
-    forget_corpora="bio-forget-corpus",
-    retain_corpora="wikitext",
-    min_len=50,
-    max_len=2000,
-    batch_size=4,
-):
+    forget_corpora: str = "bio-forget-corpus",
+    retain_corpora: str = "wikitext",
+    min_len: int = 50,
+    max_len: int = 2000,
+    batch_size: int = 4,
+) -> tuple[list[str], list[str]]:
     retain_dataset = []
     if retain_corpora == "wikitext":
         raw_retain = load_dataset("wikitext", "wikitext-2-raw-v1", split="test")
@@ -44,7 +47,9 @@ def get_forget_retain_data(
     return forget_dataset, retain_dataset
 
 
-def tokenize_dataset(model, dataset, seq_len=1024, max_batch=32):
+def tokenize_dataset(
+    model: HookedTransformer, dataset: list[str], seq_len: int = 1024, max_batch: int = 32
+):
     # just for quick testing on smaller tokens
     # dataset = dataset[:max_batch]
     full_text = model.tokenizer.eos_token.join(dataset)
@@ -69,11 +74,11 @@ def tokenize_dataset(model, dataset, seq_len=1024, max_batch=32):
 
 
 def get_shuffled_forget_retain_tokens(
-    model,
-    forget_corpora="bio-forget-corpus",
-    retain_corpora="wikitext",
-    batch_size=2048,
-    seq_len=1024,
+    model: HookedTransformer,
+    forget_corpora: str = "bio-forget-corpus",
+    retain_corpora: str = "wikitext",
+    batch_size: int = 2048,
+    seq_len: int = 1024,
 ):
     """
     get shuffled forget tokens and retain tokens, with given batch size and sequence length
@@ -96,7 +101,7 @@ def get_shuffled_forget_retain_tokens(
     return shuffled_forget_tokens[:batch_size], shuffled_retain_tokens[:batch_size]
 
 
-def gather_residual_activations(model, target_layer, inputs):
+def gather_residual_activations(model: HookedTransformer, target_layer: int, inputs):
     target_act = None
 
     def gather_target_act_hook(mod, inputs, outputs):
@@ -110,7 +115,9 @@ def gather_residual_activations(model, target_layer, inputs):
     return target_act
 
 
-def get_feature_activation_sparsity(model, sae, tokens, batch_size=4):
+def get_feature_activation_sparsity(
+    model: HookedTransformer, sae: SAE, tokens, batch_size: int = 4
+):
     mean_acts = []
     layer = int(sae.cfg.hook_layer)
 
@@ -159,12 +166,14 @@ def check_existing_results(sae_folder):
     return os.path.exists(forget_path) and os.path.exists(retain_path)
 
 
-def calculate_sparsity(model, sae, forget_tokens, retain_tokens):
+def calculate_sparsity(
+    model: HookedTransformer, sae: SAE, forget_tokens, retain_tokens, batch_size: int
+):
     feature_sparsity_forget = get_feature_activation_sparsity(
-        model, sae, forget_tokens, batch_size=8
+        model, sae, forget_tokens, batch_size=batch_size
     )
     feature_sparsity_retain = get_feature_activation_sparsity(
-        model, sae, retain_tokens, batch_size=8
+        model, sae, retain_tokens, batch_size=batch_size
     )
     return feature_sparsity_forget, feature_sparsity_retain
 
@@ -176,7 +185,7 @@ def save_results(sae_folder, feature_sparsity_forget, feature_sparsity_retain):
     np.savetxt(os.path.join(output_dir, RETAIN_FILENAME), feature_sparsity_retain, fmt="%f")
 
 
-def load_sparsity_data(sae_folder):
+def load_sparsity_data(sae_folder: str) -> tuple[np.ndarray, np.ndarray]:
     forget_sparsity = np.loadtxt(
         os.path.join(SPARSITIES_DIR, sae_folder, FORGET_FILENAME), dtype=float
     )
@@ -186,17 +195,24 @@ def load_sparsity_data(sae_folder):
     return forget_sparsity, retain_sparsity
 
 
-def save_feature_sparsity(model, sae, sae_name):
+def save_feature_sparsity(
+    model: HookedTransformer,
+    sae: SAE,
+    sae_name: str,
+    dataset_size: int,
+    seq_len: int,
+    batch_size: int,
+):
     if check_existing_results(sae_name):
         print(f"Sparsity calculation for {sae_name} is already done")
         return
 
     forget_tokens, retain_tokens = get_shuffled_forget_retain_tokens(
-        model, batch_size=2048, seq_len=1024
+        model, batch_size=dataset_size, seq_len=seq_len
     )
 
     feature_sparsity_forget, feature_sparsity_retain = calculate_sparsity(
-        model, sae, forget_tokens, retain_tokens
+        model, sae, forget_tokens, retain_tokens, batch_size
     )
 
     save_results(sae_name, feature_sparsity_forget, feature_sparsity_retain)

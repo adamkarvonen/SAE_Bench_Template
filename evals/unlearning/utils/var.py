@@ -10,5 +10,3 @@ PRE_WMDP_CYBER = (
 PRE_QUESTION_FORMAT = (
     "The following are multiple choice questions (with answers) about {subject}.\n"
 )
-
-MCQ_BATCH_SIZE = 6

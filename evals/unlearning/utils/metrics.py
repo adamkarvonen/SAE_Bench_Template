@@ -6,63 +6,65 @@ import os
 import time
 import pickle
 import os
-
+from transformer_lens import HookedTransformer
+from sae_lens import SAE
+import itertools
+from itertools import permutations
+import torch.nn.functional as F
+import gc
+import json
 from tqdm import tqdm
 from datasets import load_dataset
 from functools import partial
 from jaxtyping import Float
+from typing import Any, Optional
+
+
 from evals.unlearning.utils.var import (
     GEMMA_INST_FORMAT,
     MIXTRAL_INST_FORMAT,
     PRE_WMDP_BIO,
     PRE_QUESTION_FORMAT,
-    MCQ_BATCH_SIZE,
 )
 from evals.unlearning.utils.intervention import anthropic_clamp_resid_SAE_features
-
-from transformer_lens import HookedTransformer
-import itertools
-from itertools import permutations
-import torch.nn.functional as F
-import gc
-
-import json
 
 all_permutations = list(permutations([0, 1, 2, 3]))
 
 
 def calculate_MCQ_metrics(
-    model,
-    dataset_name="wmdp-bio",
-    target_metric=None,
-    question_subset=None,
-    question_subset_file=None,
-    permutations=[[0, 1, 2, 3]],
-    verbose=True,
-    without_question=False,
-    prompt_format=None,
-    split="all",
-    **kwargs,
-):
+    model: HookedTransformer,
+    mcq_batch_size: int,
+    dataset_name: str = "wmdp-bio",
+    target_metric: Optional[str] = None,
+    question_subset: Optional[list[int]] = None,
+    question_subset_file: Optional[str] = None,
+    permutations: list[list[int]] = [[0, 1, 2, 3]],
+    verbose: bool = True,
+    without_question: bool = False,
+    prompt_format: Optional[str] = None,
+    split: str = "all",
+    **kwargs: Any,
+) -> dict[str, Any]:
     """
     Calculate metrics for a multiple-choice question (MCQ) dataset using a given model.
 
     Parameters:
     ----------
-    model : object
+    model : HookedTransformer
     dataset_name : str, default='wmdp-bio' - Or the dataset_name of MMLU
-    target_metric : str, optional - Name of the metric used to select a subset of questions
-    question_subset : list of int, optional - A list of indices specifying the subset of questions to be used
-    question_subset_file : str, optional - Path to a file containing the indices for a subset of the questions to be used. Overrides question_subset if provided
-    permutations : list of lists, default=[[0, 1, 2, 3]] - List of permutations to be applied to the question indices
+    target_metric : Optional[str] - Name of the metric used to select a subset of questions
+    question_subset : Optional[List[int]] - A list of indices specifying the subset of questions to be used
+    question_subset_file : Optional[str] - Path to a file containing the indices for a subset of the questions to be used. Overrides question_subset if provided
+    permutations : List[List[int]], default=[[0, 1, 2, 3]] - List of permutations to be applied to the question indices
     verbose : bool, default=True
     without_question : bool, default=False - Evaluate the model without instruction and question if True
-    prompt_format : str, optional - The format of the prompt to be used. Can be None, 'GEMMA_INST_FORMAT' or 'MIXTRAL_INST_FORMAT'
-    **kwargs : additional arguments
+    prompt_format : Optional[str] - The format of the prompt to be used. Can be None, 'GEMMA_INST_FORMAT' or 'MIXTRAL_INST_FORMAT'
+    split : str, default='all'
+    **kwargs : Any - Additional arguments
 
     Returns:
     -------
-    metrics : dict - A dictionary containing the calculated metrics for the dataset.
+    metrics : Dict[str, Any] - A dictionary containing the calculated metrics for the dataset.
     """
 
     metrics = {}
@@ -145,7 +147,7 @@ def calculate_MCQ_metrics(
 
     actual_answers = answers
 
-    batch_size = np.minimum(len(prompts), MCQ_BATCH_SIZE)
+    batch_size = np.minimum(len(prompts), mcq_batch_size)
     n_batches = len(prompts) // batch_size
 
     if len(prompts) > batch_size * n_batches:
@@ -772,7 +774,8 @@ def compute_loss_added(
 
 
 def get_baseline_metrics(
-    model,
+    model: HookedTransformer,
+    mcq_batch_size: int,
     dataset_name,
     metric_param,
     recompute=False,
@@ -810,7 +813,7 @@ def get_baseline_metrics(
 
     else:
         baseline_metrics = calculate_MCQ_metrics(
-            model, dataset_name=dataset_name, split=split, **metric_param
+            model, mcq_batch_size, dataset_name=dataset_name, split=split, **metric_param
         )
 
         metrics = baseline_metrics.copy()
@@ -827,8 +830,9 @@ def get_baseline_metrics(
 
 
 def modify_and_calculate_metrics(
-    model,
-    sae,
+    model: HookedTransformer,
+    mcq_batch_size: int,
+    sae: SAE,
     dataset_names=["wmdp-bio"],
     metric_params={"wmdp-bio": {"target_metric": "correct"}},
     n_batch_loss_added=2,
@@ -863,7 +867,7 @@ def modify_and_calculate_metrics(
             metric_param = {"target_metric": "correct", "verbose": verbose}
 
         dataset_metrics = calculate_MCQ_metrics(
-            model, dataset_name=dataset_name, split=split, **metric_param
+            model, mcq_batch_size, dataset_name=dataset_name, split=split, **metric_param
         )
         metrics_for_current_ablation[dataset_name] = dataset_metrics
 
@@ -886,8 +890,9 @@ def generate_ablate_params_list(main_ablate_params, sweep):
 
 
 def calculate_metrics_list(
-    model,
-    sae,
+    model: HookedTransformer,
+    mcq_batch_size: int,
+    sae: SAE,
     main_ablate_params,
     sweep,
     dataset_names=["wmdp-bio"],
@@ -920,7 +925,9 @@ def calculate_metrics_list(
 
             # metrics[dataset_name] = dataset_metrics
 
-            baseline_metric = get_baseline_metrics(model, dataset_name, metric_param, split=split)
+            baseline_metric = get_baseline_metrics(
+                model, mcq_batch_size, dataset_name, metric_param, split=split
+            )
 
             baseline_metrics[dataset_name] = baseline_metric
 
@@ -950,6 +957,7 @@ def calculate_metrics_list(
 
         ablated_metrics = modify_and_calculate_metrics(
             model,
+            mcq_batch_size,
             sae,
             dataset_names=dataset_names,
             metric_params=metric_params,
