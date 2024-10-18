@@ -156,7 +156,6 @@ def run_eval(
 
             results_dict["custom_eval_results"][sae_name] = {
                 "unlearning_score": unlearning_score,
-                "metadata": single_sae_eval_results,
             }
 
     results_dict["custom_eval_config"] = asdict(config)

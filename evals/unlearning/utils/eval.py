@@ -64,7 +64,7 @@ def run_metrics_calculation(
             retain_threshold=retain_threshold,
         )
 
-        return metrics_lst
+    return metrics_lst
 
 
 def run_eval_single_sae(
