@@ -4,7 +4,6 @@ import numpy as np
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
 
-from evals.unlearning.utils.activation_store import ActivationsStore
 from evals.unlearning.utils.feature_activation import (
     get_top_features,
     load_sparsity_data,
@@ -12,11 +11,6 @@ from evals.unlearning.utils.feature_activation import (
 )
 from evals.unlearning.utils.metrics import calculate_metrics_list
 import evals.unlearning.eval_config as eval_config
-
-# def setup_activation_store(sae, model):
-#     sae.cfg.dataset = "Skylion007/openwebtext"
-#     sae.cfg.n_batches_in_store_buffer = 8
-#     return ActivationsStore(sae.cfg, model, create_dataloader=False)
 
 
 def run_metrics_calculation(
