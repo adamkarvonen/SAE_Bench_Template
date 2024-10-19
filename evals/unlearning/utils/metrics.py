@@ -113,6 +113,8 @@ def calculate_MCQ_metrics(
     # changing prompt_format
     if model.cfg.model_name in ["gemma-2-9b-it", "gemma-2-2b-it"]:
         prompt_format = "GEMMA_INST_FORMAT"
+    else:
+        raise Exception("Model prompt format not found.")
 
     if permutations is None:
         prompts = [
@@ -200,31 +202,6 @@ def calculate_MCQ_metrics(
     # metrics['sum_abcd'] = metrics['output_probs'].sum(axis=1)
 
     return metrics
-
-
-def get_output_probs_topk(model, prompts, batch_size=2, n_batches=100, k=10):
-    """
-    Computes output probabilities for topk outputs given a language model
-    and list of prompts
-    """
-    with torch.no_grad():
-        topk_output_probs = []
-        topk_output_inds = []
-
-        for i in tqdm(range(n_batches)):
-            prompt_batch = prompts[i * batch_size : i * batch_size + batch_size]
-            token_batch = model.to_tokens(prompt_batch, padding_side="left").to("cuda")
-            vals, inds = (
-                model(token_batch, return_type="logits")[:, -1].softmax(-1).topk(k=k, dim=-1)
-            )
-
-            topk_output_probs.append(vals)
-            topk_output_inds.append(inds)
-
-        topk_output_probs = torch.vstack(topk_output_probs)
-        topk_output_inds = torch.vstack(topk_output_inds)
-
-    return topk_output_probs, topk_output_inds
 
 
 def get_output_probs_abcd(model, prompts, batch_size=2, n_batches=100, verbose=True):
@@ -332,91 +309,6 @@ def convert_wmdp_data_to_prompt(
     return prompt
 
 
-def get_tokens_from_dataset(
-    model,
-    dataset_path=("cais/wmdp", "wmdp-bio"),
-    question_subset=None,
-    question_subset_file=None,
-    permutations=[[0, 1, 2, 3]],
-    context_len=1024,
-):
-    """
-    Calculates the metric for the Weapons Mass Destruction Proxy - Bio dataset
-    model: language model input
-    question_subset: list of indices for subset of the questions to be used (optional)
-    """
-    metrics = {}
-
-    dataset = load_dataset(*dataset_path, split="test")
-
-    answers = [x["answer"] for x in dataset]
-    questions = [x["question"] for x in dataset]
-    choices_list = [x["choices"] for x in dataset]
-
-    # Load template from file
-    if question_subset_file is not None:
-        question_subset = np.genfromtxt(question_subset_file)
-
-    # Only keep desired subset of questions
-    if question_subset is not None:
-        answers = [answers[int(i)] for i in question_subset if i < len(answers)]
-        questions = [questions[int(i)] for i in question_subset if i < len(questions)]
-        choices_list = [choices_list[int(i)] for i in question_subset if i < len(choices_list)]
-
-    if permutations is None:
-        prompts = [
-            convert_wmdp_data_to_prompt(question, choices, prompt_format=None)
-            for question, choices in zip(questions, choices_list)
-        ]
-    else:
-        prompts = [
-            [
-                convert_wmdp_data_to_prompt(
-                    question, choices, prompt_format=None, permute_choices=p
-                )
-                for p in permutations
-            ]
-            for question, choices in zip(questions, choices_list)
-        ]
-        prompts = [item for sublist in prompts for item in sublist]
-
-        answers = [[p.index(answer) for p in permutations] for answer in answers]
-        answers = [item for sublist in answers for item in sublist]
-
-    with torch.no_grad():
-        token_batch: Float[torch.Tensor, "n_questions seq_len"] = model.to_tokens(
-            prompts, padding_side="right"
-        ).to("cuda")
-        padding = torch.full(
-            (token_batch.shape[0], context_len - token_batch.shape[1]), model.tokenizer.pad_token_id
-        ).to("cuda")
-        tokens = torch.hstack((token_batch, padding))
-
-    return tokens
-
-
-def get_loss_added_hf(model, activation_store, n_batch=2):
-    activation_store.iterable_dataset = iter(activation_store.dataset)
-
-    with torch.no_grad():
-        loss_diffs = []
-        per_token_loss_diffs = []
-        token_list = []
-
-        for _ in tqdm(range(n_batch)):
-            tokens = activation_store.get_batch_tokenized_data()
-
-            logits = model(tokens, return_type="logits")
-            loss_per_token = get_per_token_loss(logits, tokens)
-
-            per_token_loss_diff = loss_per_token
-
-            per_token_loss_diffs.append(per_token_loss_diff)
-            token_list.append(tokens)
-
-        return torch.vstack(per_token_loss_diffs), torch.vstack(token_list)
-
-
 def get_per_token_loss(logits, tokens):
     log_probs = F.log_softmax(logits, dim=-1)
     # Use torch.gather to find the log probs of the correct tokens
@@ -424,218 +316,6 @@ def get_per_token_loss(logits, tokens):
     # None and [..., 0] needed because the tensor used in gather must have the same rank.
     predicted_log_probs = log_probs[..., :-1, :].gather(dim=-1, index=tokens[..., 1:, None])[..., 0]
     return -predicted_log_probs
-
-
-def get_loss_added_rmu_model(rmu_model, base_model, activation_store, n_batch=2):
-    activation_store.iterable_dataset = iter(activation_store.dataset)
-
-    with torch.no_grad():
-        loss_diffs = []
-        per_token_loss_diffs = []
-        token_list = []
-
-        for _ in tqdm(range(n_batch)):
-            tokens = activation_store.get_batch_tokenized_data()
-
-            base_logits = base_model(tokens, return_type="logits")
-            base_loss_per_token = get_per_token_loss(base_logits, tokens)
-            # base_loss = base_model(tokens, return_type="loss")
-            # base_loss_per_token = utils.lm_cross_entropy_loss(base_logits, tokens, per_token=True)
-
-            rmu_logits = rmu_model(tokens, return_type="logits")
-            rmu_loss_per_token = get_per_token_loss(rmu_logits, tokens)
-            # rmu_loss = rmu_model(tokens, return_type="loss")
-            # rmu_loss_per_token = utils.lm_cross_entropy_loss(rmu_logits, tokens, per_token=True)
-
-            loss_diff = rmu_loss_per_token.mean() - base_loss_per_token.mean()
-            per_token_loss_diff = rmu_loss_per_token - base_loss_per_token
-
-            loss_diffs.append(loss_diff)
-            per_token_loss_diffs.append(per_token_loss_diff)
-            token_list.append(tokens)
-
-        return (
-            torch.tensor(loss_diffs),
-            torch.vstack(per_token_loss_diffs),
-            torch.vstack(token_list),
-        )
-
-
-def get_loss_added_rmu_model_hf(rmu_model, base_model, activation_store, n_batch=2):
-    raise NotImplementedError
-
-    activation_store.iterable_dataset = iter(activation_store.dataset)
-
-    with torch.no_grad():
-        loss_diffs = []
-        per_token_loss_diffs = []
-        token_list = []
-
-        for _ in tqdm(range(n_batch)):
-            tokens = activation_store.get_batch_tokenized_data()
-
-            base_logits = base_model(tokens, return_type="logits")
-            base_loss_per_token = get_per_token_loss(base_logits, tokens)
-            # base_loss = base_model(tokens, return_type="loss")
-            # base_loss_per_token = utils.lm_cross_entropy_loss(base_logits, tokens, per_token=True)
-
-            rmu_logits = rmu_model(tokens, return_type="logits")
-            rmu_loss_per_token = get_per_token_loss(rmu_logits, tokens)
-            # rmu_loss = rmu_model(tokens, return_type="loss")
-            # rmu_loss_per_token = utils.lm_cross_entropy_loss(rmu_logits, tokens, per_token=True)
-
-            loss_diff = rmu_loss_per_token.mean() - base_loss_per_token.mean()
-            per_token_loss_diff = rmu_loss_per_token - base_loss_per_token
-
-            loss_diffs.append(loss_diff)
-            per_token_loss_diffs.append(per_token_loss_diff)
-            token_list.append(tokens)
-
-        return torch.tensor(loss_diffs), _, _
-
-
-def convert_wmdp_data_to_prompt_hf(
-    question,
-    choices,
-    prompt_format=None,
-    pre_question=PRE_WMDP_BIO,
-    few_shot=False,
-    permute_choices=None,
-):
-    """
-    datapoint: datapoint containing question and choices
-    prompt_format: can be None (default), GEMMA_INST_FORMAT or MIXTRAL_INST_FORMAT
-    """
-
-    pre_answers = ["A. ", "B. ", "C. ", "D. "]
-    pre_answers = ["\n" + x for x in pre_answers]
-    post_answers = "\nAnswer:"
-    if permute_choices is not None:
-        choices = [choices[i] for i in permute_choices]
-    answers = r"".join([item for pair in zip(pre_answers, choices) for item in pair])
-
-    if few_shot:
-        assert few_shot_datapoint is not None, "please provide few_shot_datapoint"
-        assert prompt_format is None, "few shot is for base model only"
-
-        choices = ["A", "B", "C", "D"]
-        few_shot_choices = r"".join(
-            [item for pair in zip(pre_answers, few_shot_datapoint["choices"]) for item in pair]
-        )
-        few_shot_answer = f"\nAnswer: {choices[few_shot_datapoint['answer']]}\n"
-        few_shot_full = r"".join(
-            [few_shot_datapoint["question"], few_shot_choices, few_shot_answer]
-        )
-
-        prompt = r"".join(
-            [pre_question, few_shot_full, datapoint["question"], answers, post_answers]
-        )
-
-    elif prompt_format is None:
-        prompt = r"".join([pre_question, question, answers, post_answers])
-        # prompt = r"".join([question, answers, post_answers])
-
-    elif prompt_format == "GEMMA_INST_FORMAT":
-        prompt = r"".join([pre_question, question, answers])
-        prompt = GEMMA_INST_FORMAT.format(prompt=prompt)
-        prompt = prompt + "Answer:"
-
-    elif prompt_format == "MIXTRAL_INST_FORMAT":
-        prompt = r"".join([pre_question, question, answers, post_answers])
-        prompt = MIXTRAL_INST_FORMAT.format(prompt=prompt)
-        # prompt = prompt + "Answer:"
-
-    return prompt
-
-
-def calculate_wmdp_bio_metrics_hf(
-    model,
-    tokenizer,
-    question_subset=None,
-    question_subset_file=None,
-    permutations=[[0, 1, 2, 3]],
-    batch_size=6,
-):
-    """
-    Calculates the metric for the Weapons Mass Destruction Proxy - Bio dataset
-    model: language model input
-    question_subset: list of indices for subset of the questions to be used (optional)
-    """
-    metrics = {}
-
-    dataset = load_dataset("cais/wmdp", "wmdp-bio")
-
-    answers = [x["answer"] for x in dataset["test"]]
-    questions = [x["question"] for x in dataset["test"]]
-    choices_list = [x["choices"] for x in dataset["test"]]
-
-    # Load template from file
-    if question_subset_file is not None:
-        question_subset = np.genfromtxt(question_subset_file)
-
-    # Only keep desired subset of questions
-    if question_subset is not None:
-        answers = [answers[int(i)] for i in question_subset if i < len(answers)]
-        questions = [questions[int(i)] for i in question_subset if i < len(questions)]
-        choices_list = [choices_list[int(i)] for i in question_subset if i < len(choices_list)]
-
-    if permutations is None:
-        prompts = [
-            convert_wmdp_data_to_prompt_hf(question, choices, prompt_format=None)
-            for question, choices in zip(questions, choices_list)
-        ]
-    else:
-        prompts = [
-            [
-                convert_wmdp_data_to_prompt_hf(
-                    question, choices, prompt_format=None, permute_choices=p
-                )
-                for p in permutations
-            ]
-            for question, choices in zip(questions, choices_list)
-        ]
-        prompts = [item for sublist in prompts for item in sublist]
-
-        answers = [[p.index(answer) for p in permutations] for answer in answers]
-        answers = [item for sublist in answers for item in sublist]
-
-    actual_answers = answers
-
-    batch_size = np.minimum(len(prompts), batch_size)
-    n_batches = int(np.ceil(len(prompts) / batch_size))
-
-    output_probs = get_output_probs_abcd_hf(
-        model, tokenizer, prompts, batch_size=batch_size, n_batches=n_batches
-    )
-
-    predicted_answers = output_probs.argmax(dim=1)
-    predicted_probs = output_probs.max(dim=1)[0]
-
-    n_predicted_answers = len(predicted_answers)
-    actual_answers = torch.tensor(actual_answers)[:n_predicted_answers].to("cuda")
-
-    predicted_prob_of_correct_answers = output_probs[
-        torch.arange(len(actual_answers)), actual_answers
-    ]
-
-    is_correct = (actual_answers == predicted_answers).to(torch.float)
-    mean_correct = is_correct.mean()
-
-    metrics["mean_correct"] = float(mean_correct.item())
-    metrics["total_correct"] = int(np.sum(is_correct.cpu().numpy()))
-    metrics["is_correct"] = is_correct.cpu().numpy()
-
-    metrics["output_probs"] = output_probs.cpu().numpy()
-    metrics["actual_answers"] = actual_answers.cpu().numpy()
-
-    metrics["predicted_answers"] = predicted_answers.cpu().numpy()
-    metrics["predicted_probs"] = predicted_probs.cpu().numpy()
-    metrics["predicted_probs_of_correct_answers"] = predicted_prob_of_correct_answers.cpu().numpy()
-    metrics["mean_predicted_prob_of_correct_answers"] = float(
-        np.mean(predicted_prob_of_correct_answers.cpu().numpy())
-    )
-
-    return metrics
 
 
 def get_output_probs_abcd_hf(model, tokenizer, prompts, batch_size=1, n_batches=100, verbose=True):
@@ -897,7 +577,6 @@ def calculate_metrics_list(
     sweep,
     dataset_names=["wmdp-bio"],
     metric_params={"wmdp-bio": {"target_metric": "correct"}},
-    include_baseline_metrics=True,
     n_batch_loss_added=2,
     activation_store=None,
     split="all",
@@ -913,28 +592,32 @@ def calculate_metrics_list(
 
     metrics_list = []
 
-    # First get baseline metrics if required
-    if include_baseline_metrics:
-        baseline_metrics = {}
+    # First get baseline metrics and ensure that target question ids exist
+    baseline_metrics = {}
 
-        for dataset_name in [x for x in dataset_names if x != "loss_added"]:
-            if dataset_name in metric_params:
-                metric_param = metric_params[dataset_name]
-            else:
-                metric_param = {"target_metric": target_metric, "verbose": False}
+    for dataset_name in [x for x in dataset_names if x != "loss_added"]:
+        # Ensure that target question ids exist
+        save_target_question_ids(
+            model, mcq_batch_size, dataset_name, output_dir="./data/question_ids"
+        )
 
-            # metrics[dataset_name] = dataset_metrics
+        if dataset_name in metric_params:
+            metric_param = metric_params[dataset_name]
+        else:
+            metric_param = {"target_metric": target_metric, "verbose": False}
 
-            baseline_metric = get_baseline_metrics(
-                model, mcq_batch_size, dataset_name, metric_param, split=split
-            )
+        # metrics[dataset_name] = dataset_metrics
 
-            baseline_metrics[dataset_name] = baseline_metric
+        baseline_metric = get_baseline_metrics(
+            model, mcq_batch_size, dataset_name, metric_param, split=split
+        )
 
-        if "loss_added" in dataset_names:
-            baseline_metrics["loss_added"] = 0
+        baseline_metrics[dataset_name] = baseline_metric
 
-        metrics_list.append(baseline_metrics)
+    if "loss_added" in dataset_names:
+        baseline_metrics["loss_added"] = 0
+
+    metrics_list.append(baseline_metrics)
 
     # Now do all ablatation combinations and get metrics each time
     ablate_params_list = generate_ablate_params_list(main_ablate_params, sweep)
@@ -1025,3 +708,111 @@ def create_df_from_metrics(metrics_list):
     df = pd.DataFrame(df_data, columns=columns)
 
     return df
+
+
+def save_target_question_ids(
+    model: HookedTransformer,
+    mcq_batch_size: int,
+    dataset_name: str,
+    output_dir: str = "../data/question_ids",
+    train_ratio: float = 0.5,
+):
+    """
+    Find and save the question ids where the model
+    1. correct: all permutations correct
+    2. correct-iff-question: all permutations correct iff with instruction and questions
+    3. correct-no-tricks: all permutations correct and without tricks
+    """
+
+    full_dataset_name = (
+        f'mmlu-{dataset_name.replace("_", "-")}' if dataset_name != "wmdp-bio" else dataset_name
+    )
+    model_name = model.cfg.model_name
+
+    # Check if the files already exist
+    file_paths = [
+        os.path.join(output_dir, f"{model_name}/{split}/{full_dataset_name}_{q_type}.csv")
+        for q_type in ["correct", "correct-iff-question", "correct-no-tricks"]
+        for split in ["train", "test", "all"]
+    ]
+
+    if all(os.path.exists(file_path) for file_path in file_paths):
+        print(
+            f"All target question ids for {model_name} on {dataset_name} already exist. No need to generate target ids."
+        )
+        return
+
+    print(f"Saving target question ids for {model_name} on {dataset_name}...")
+
+    metrics = calculate_MCQ_metrics(
+        model, mcq_batch_size, dataset_name, permutations=all_permutations
+    )
+    metrics_wo_question = calculate_MCQ_metrics(
+        model, mcq_batch_size, dataset_name, permutations=all_permutations, without_question=True
+    )
+
+    # find all permutations correct
+    all_types = {
+        "correct": (correct_ids := _find_all_permutation_correct_ans(metrics)),
+        "correct-iff-question": _find_correct_iff_question(correct_ids, metrics_wo_question),
+        "correct-no-tricks": _find_correct_no_tricks(correct_ids, dataset_name),
+    }
+
+    for q_type, q_ids in all_types.items():
+        train, test = _split_train_test(q_ids, train_ratio=train_ratio)
+        splits = {"train": train, "test": test, "all": q_ids}
+
+        for split, ids in splits.items():
+            file_name = os.path.join(
+                output_dir, f"{model.cfg.model_name}/{split}/{full_dataset_name}_{q_type}.csv"
+            )
+            os.makedirs(os.path.dirname(file_name), exist_ok=True)
+            np.savetxt(file_name, ids, fmt="%d")
+            print(f"{file_name} saved, with {len(ids)} questions")
+
+
+def _find_all_permutation_correct_ans(metrics):
+    each_question_acc = metrics["is_correct"].reshape(-1, 24)
+    questions_correct = each_question_acc.sum(axis=1) == 24
+    correct_question_id = np.where(questions_correct)[0]
+
+    return correct_question_id
+
+
+def _find_correct_iff_question(correct_questions, metrics_wo_question):
+    each_question_acc_wo_question = metrics_wo_question["is_correct"].reshape(-1, 24)
+    correct_wo_question = np.where(each_question_acc_wo_question.sum(axis=1) == 24)[0]
+    questions_correct_iff_question = list(set(correct_questions) - set(correct_wo_question))
+
+    return np.array(questions_correct_iff_question)
+
+
+def load_dataset_from_name(dataset_name: str):
+    if dataset_name == "wmdp-bio":
+        dataset = load_dataset("cais/wmdp", "wmdp-bio", split="test")
+    else:
+        dataset = load_dataset("cais/mmlu", dataset_name, split="test")
+    return dataset
+
+
+def _find_correct_no_tricks(correct_questions, dataset_name):
+    dataset = load_dataset_from_name(dataset_name)
+    choices_list = [x["choices"] for x in dataset]
+
+    def matches_pattern(s):
+        pattern = r"^(Both )?(A|B|C|D) (and|&) (A|B|C|D)$"
+        return bool(re.match(pattern, s)) or s == "All of the above"
+
+    correct_no_tricks = []
+    for question_id in correct_questions:
+        if not any(matches_pattern(choice) for choice in choices_list[question_id]):
+            correct_no_tricks.append(question_id)
+
+    return np.array(correct_no_tricks)
+
+
+def _split_train_test(questions_ids, train_ratio=0.5):
+    """shuffle then split the questions ids into train and test"""
+    questions_ids = np.random.permutation(questions_ids)
+    split = int(len(questions_ids) * train_ratio)
+    return questions_ids[:split], questions_ids[split:]
