@@ -147,7 +147,7 @@ def run_eval(
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
 
-            single_sae_eval_results = run_eval_single_sae(model, sae, sae_name, config)
+            run_eval_single_sae(model, sae, sae_name, config)
 
             sae_folder = os.path.join("results/metrics", sae_name)
 
