@@ -10,17 +10,21 @@ from sae_lens import SAE
 
 def encode_subset(self: SAE, x: torch.Tensor, latents: torch.Tensor | None = None) -> torch.Tensor:
     """
-    Calculate SAE latents from inputs. Includes optional `latents` argument to only calculate a subset. Note that
-    this won't make sense for topk SAEs, because we need to compute all hidden values to apply the topk masking.
+    Calculate SAE latents from inputs. Includes optional `latents` argument to only calculate a subset.
     """
-    if self.cfg.activation_fn_str == "topk":
-        assert latents is None, "Computing a slice of SAE hidden values doesn't make sense in topk SAEs."
-
-    return {
+    # Get the encoding function for this SAE architecture
+    encode_fn = {
         "standard": encode_standard,
         "gated": encode_gated,
         "jumprelu": encode_jumprelu,
-    }[self.cfg.architecture](self, x, latents)
+    }[self.cfg.architecture]
+
+    # If the activation function is topk, we're required to compute all activations before slicing
+    return (
+        encode_fn(self, x, latents=None)[..., latents]
+        if self.cfg.activation_fn_str == "topk"
+        else encode_fn(self, x, latents)
+    )
 
 
 def encode_gated(
