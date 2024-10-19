@@ -12,7 +12,7 @@ import numpy as np
 
 
 def anthropic_clamp_resid_SAE_features(
-    resid: Float[Tensor, "batch seq d_model"], 
+    resid: Float[Tensor, "batch seq d_model"],
     hook: HookPoint,
     sae: SAE,
     features_to_ablate: list[int],
@@ -26,9 +26,8 @@ def anthropic_clamp_resid_SAE_features(
     """
 
     if len(features_to_ablate) > 0:
-
         with torch.no_grad():
-            #adjust feature activations with scaling (multiplier = 0 just ablates the feature)
+            # adjust feature activations with scaling (multiplier = 0 just ablates the feature)
             if isinstance(sae, SAE):
                 reconstruction = sae(resid)
                 feature_activations = sae.encode(resid)
@@ -49,36 +48,46 @@ def anthropic_clamp_resid_SAE_features(
             error = resid - reconstruction
 
             non_zero_features = feature_activations[:, :, features_to_ablate] > 0
-            
-            
+
             if not random:
-                    
                 if isinstance(multiplier, float) or isinstance(multiplier, int):
-                    feature_activations[:, :, features_to_ablate] = torch.where(non_zero_features, -multiplier, feature_activations[:, :, features_to_ablate])
+                    feature_activations[:, :, features_to_ablate] = torch.where(
+                        non_zero_features,
+                        -multiplier,
+                        feature_activations[:, :, features_to_ablate],
+                    )
                 else:
-                    feature_activations[:, :, features_to_ablate] = torch.where(non_zero_features,
-                                                                                -multiplier.unsqueeze(dim=0).unsqueeze(dim=0),
-                                                                                feature_activations[:, :, features_to_ablate])    
-                
+                    feature_activations[:, :, features_to_ablate] = torch.where(
+                        non_zero_features,
+                        -multiplier.unsqueeze(dim=0).unsqueeze(dim=0),
+                        feature_activations[:, :, features_to_ablate],
+                    )
+
             # set the next feature id's activations to the multiplier only if the previous feature id's
             # activations are positive
             else:
                 assert isinstance(multiplier, float) or isinstance(multiplier, int)
-                
-                next_features_to_ablate = [(f + 1) % feature_activations.shape[-1] for f in features_to_ablate]
+
+                next_features_to_ablate = [
+                    (f + 1) % feature_activations.shape[-1] for f in features_to_ablate
+                ]
                 feature_activations[:, :, next_features_to_ablate] = torch.where(
                     feature_activations[:, :, features_to_ablate] > 0,
                     -multiplier,
-                    feature_activations[:, :, next_features_to_ablate]
-                )   
-                
+                    feature_activations[:, :, next_features_to_ablate],
+                )
+
             try:
-                modified_reconstruction = einops.einsum(feature_activations, sae.W_dec, "... d_sae, d_sae d_in -> ... d_in")\
+                modified_reconstruction = (
+                    einops.einsum(
+                        feature_activations, sae.W_dec, "... d_sae, d_sae d_in -> ... d_in"
+                    )
                     + sae.b_dec
+                )
             except:
                 # SAEBench doesn't have W_dec and b_dec
                 modified_reconstruction = sae.decode(feature_activations)
-            
+
             # Unscale outputs if needed:
             # if sae.input_scaling_factor is not None:
             #     modified_reconstruction = modified_reconstruction / sae.input_scaling_factor
