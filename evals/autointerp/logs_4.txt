@@ -1,14 +1,14 @@
 Summary table:
-┌──────────┬───────────────────────────────────────────────────────────────────────────┬────────────────┬────────────────┬──────────┐
-│   latent │ explanation                                                               │ predictions    │ correct seqs   │    score │
-├──────────┼───────────────────────────────────────────────────────────────────────────┼────────────────┼────────────────┼──────────┤
-│        9 │ the phrase 'new' in various contexts of rules, policies, and measures     │ [4, 6, 7, 10]  │ [4, 6, 7, 10]  │ 1        │
-│       11 │ variations of the substring 'rel' within different contexts and concepts  │ [4, 7, 8, 11]  │ [4, 7, 8, 11]  │ 1        │
-│       15 │ phrases related to debit and credit card transactions and associated fees │ [4, 9, 11, 14] │ [4, 9, 11, 14] │ 1        │
-│    16873 │ texts related to belief, righteousness, and spiritual guidance            │ [2, 7, 10]     │ [2, 7, 8, 10]  │ 0.928571 │
-└──────────┴───────────────────────────────────────────────────────────────────────────┴────────────────┴────────────────┴──────────┘
+┌──────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────┬────────────────┬────────────────┬─────────┐
+│   latent │ explanation                                                                                                 │ predictions    │ correct seqs   │   score │
+├──────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┼────────────────┼────────────────┼─────────┤
+│       15 │ terms related to credit and debit card transactions and associated fees                                     │ [4, 9, 11, 14] │ [4, 9, 11, 14] │       1 │
+│    16873 │ theological concepts related to belief, righteousness, and the significance of baptism                      │ [2, 7, 8, 10]  │ [2, 7, 8, 10]  │       1 │
+│       11 │ variations of the substring 'rel' in different contexts related to relationships, religion, and reliability │ [4, 7, 8, 11]  │ [4, 7, 8, 11]  │       1 │
+│        9 │ the term 'new' in various contexts indicating updates or changes to policies and systems                    │ [4, 6, 7, 10]  │ [4, 6, 7, 10]  │       1 │
+└──────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┴────────────────┴────────────────┴─────────┘
 
-Worst scoring idx 16873, score = 0.9285714285714286
+Worst scoring idx 15, score = 1.0
 Generation phase
 ┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
@@ -25,95 +25,88 @@ Generation phase
 │           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
 │           │ and "This neuron activates on text about government economic policy".                                                    │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ user      │ The activating documents are given below:  1.  Testament:<< Ver>><<ily>><<,>><< ver>><<ily>><<,>><< I>><< say>><<        │
-│           │ unto>><< you>><<,>><< Except>><< a>><< corn>><< of>><< wheat>><< fall>><< into>><< the>> 2. <<↵>><<And>><< do>><<        │
-│           │ not>><< marry>><< poly>>the<<istic>><< women>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><<         │
-│           │ slave>><< woman>><< is>><< better>><< than>> 3. << testimony>><< to>><< all>><< nations>><<,>><< and>><< then>><<        │
-│           │ the>><< end>><< will>><< come>><<">>↵↵I have played this CD for record 4. << thou>><< to>><< me>><<?>><< And>><<         │
-│           │ Jesus>><< answering>><< said>><< unto>><< him>><<,>><< S>><<uffer>><< it>><< to>><< be>><< so>><< now>><<:>><< for>><<   │
-│           │ thus>> 5. << ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>><< to>><<      │
-│           │ be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>> 6.  of Matthew 3:14–15:<< ">><<But>><< John>><< forb>><<ad>><<        │
-│           │ him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>> 7. << it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>><< │
-│           │ it>><< bec>><<omet>><<h>><< us>><< to>><< fulfil>><< all>><< righteousness>><<",>> and<< he>><< finished>> 8. <<         │
-│           │ need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>><< com>><<est>><< thou>><< to>><< me>><<?>><< And>><<  │
-│           │ Jesus>><< answering>><< said>><< unto>><< him>> 9. << men>><< [>><<to>><< your>><< women>><<]>><< until>><< they>><<     │
-│           │ believe>><<.>><< And>><< a>><< believing>><< slave>><< is>><< better>><< than>><< a>> poly<<the>><<ist>> 10. << to>><<   │
-│           │ Paradise>><< and>><< to>><< forgiveness>><<,>><< by>><< His>><< permission>><<.>><< And>><< He>><< makes>><< clear>><<   │
-│           │ His>><< verses>><< to>><< the>><< people>><< that>><< perhaps>> 11. <<ist>><<,>><< even>><< though>><< she>><< might>><< │
-│           │ please>><< you>><<.>><< And>><< do>><< not>><< marry>><< poly>><<the>><<istic>><< men>><< [>><<to>><< your>><< women>>   │
-│           │ 12. <<eth>> alone<<:>><< but>><< if>><< it>><< dies>><<,>><< it>><< bring>><<eth>><< forth>><< much>><< fruit>><<.>><<   │
-│           │ John>><< 12>><<:>><<24>><<↵>><<↵>> 13. << you>><<.>><< Those>><< invite>><< [>><<you>><<]>><< to>><< the>><<             │
-│           │ Fire>><<,>><< but>><< Allah>><< invites>><< to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>> 14. << your>><< │
-│           │ dreams>><< and>><< fresh>><< hopes>><< for>><< all>><< of>><< us>><< and>><< may>><< the>><< light>><< guide>><< us>><<  │
-│           │ safely>> home<<.>><< We>><< have>><< much>> 15.  Ami Shah, and was also<< greeted>> and congratulated<< by>>             │
-│           │ Biden.↵↵Also present were Obama's old                                                                                    │
+│ user      │ The activating documents are given below:  1.  to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>.  │
+│           │ He says he plans to donate a portion 2. , the original amount is released back to your credit<< card>>, but some banks   │
+│           │ take upwards of 10 working days 3.  pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of   │
+│           │ excessive payment sur 4. A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The │
+│           │ 5.  revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing 6. olving │
+│           │ credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. 7. pin       │
+│           │ device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £ 8. , or £2.10 if using a credit<<      │
+│           │ card>>.↵↵The figures, produced in 2011, 9.  Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least │
+│           │ in their headline prices.↵↵ 10.  the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal  │
+│           │ Reserve said Thursday that 11.  banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre │
+│           │ a 12.  cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex 13.  have been      │
+│           │ asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically, 14.  confirmed that       │
+│           │ Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient 15. ↵Old Navy↵↵Radio        │
+│           │ Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                                                  │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ assistant │ This neuron activates on texts related to belief, righteousness, and spiritual guidance.                                 │
+│ assistant │ This neuron activates on terms related to credit and debit card transactions and associated fees.                        │
 └───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│   Top act │ Sequence                                                                                                                                                                                         │
-├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│    15.723 │ Testament:<< Ver>><<ily>><<,>><< ver>><<ily>><<,>><< I>><< say>><< unto>><< you>><<,>><< Except>><< a>><< corn>><< of>><< wheat>><< fall>><< into>><< the>>                                      │
-│    15.400 │ <<↵>><<And>><< do>><< not>><< marry>><< poly>>the<<istic>><< women>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><< slave>><< woman>><< is>><< better>><< than>>              │
-│    14.111 │ << testimony>><< to>><< all>><< nations>><<,>><< and>><< then>><< the>><< end>><< will>><< come>><<">>↵↵I have played this CD for record                                                         │
-│    14.069 │ << thou>><< to>><< me>><<?>><< And>><< Jesus>><< answering>><< said>><< unto>><< him>><<,>><< S>><<uffer>><< it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>>                             │
-│    13.461 │ << ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>>                                     │
-│    13.461 │ of Matthew 3:14–15:<< ">><<But>><< John>><< forb>><<ad>><< him>><<,>><< saying>><<,>><< I>><< have>><< a>><< need>>                                                                              │
-│    12.801 │ << it>><< to>><< be>><< so>><< now>><<:>><< for>><< thus>><< it>><< bec>><<omet>><<h>><< us>><< to>><< fulfil>><< all>><< righteousness>><<",>> and<< he>><< finished>>                          │
-│    12.377 │ << need>><< to>><< be>><< bapt>><<ised>><< of>><< thee>><<,>><< and>><< com>><<est>><< thou>><< to>><< me>><<?>><< And>><< Jesus>><< answering>><< said>><< unto>><< him>>                       │
-│    11.644 │ << men>><< [>><<to>><< your>><< women>><<]>><< until>><< they>><< believe>><<.>><< And>><< a>><< believing>><< slave>><< is>><< better>><< than>><< a>> poly<<the>><<ist>>                       │
-│    10.594 │ << to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>><< His>><< permission>><<.>><< And>><< He>><< makes>><< clear>><< His>><< verses>><< to>><< the>><< people>><< that>><< perhaps>> │
-│    10.487 │ <<ist>><<,>><< even>><< though>><< she>><< might>><< please>><< you>><<.>><< And>><< do>><< not>><< marry>><< poly>><<the>><<istic>><< men>><< [>><<to>><< your>><< women>>                      │
-│    10.154 │ <<eth>> alone<<:>><< but>><< if>><< it>><< dies>><<,>><< it>><< bring>><<eth>><< forth>><< much>><< fruit>><<.>><< John>><< 12>><<:>><<24>><<↵>><<↵>>                                            │
-│    10.066 │ << you>><<.>><< Those>><< invite>><< [>><<you>><<]>><< to>><< the>><< Fire>><<,>><< but>><< Allah>><< invites>><< to>><< Paradise>><< and>><< to>><< forgiveness>><<,>><< by>>                   │
-│     5.072 │ << your>><< dreams>><< and>><< fresh>><< hopes>><< for>><< all>><< of>><< us>><< and>><< may>><< the>><< light>><< guide>><< us>><< safely>> home<<.>><< We>><< have>><< much>>                  │
-│     1.930 │ Ami Shah, and was also<< greeted>> and congratulated<< by>> Biden.↵↵Also present were Obama's old                                                                                                │
-└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                           │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    51.329 │ to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>. He says he plans to donate a portion      │
+│    47.245 │ , the original amount is released back to your credit<< card>>, but some banks take upwards of 10 working days     │
+│    46.221 │ pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of excessive payment sur           │
+│    45.020 │ A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The                    │
+│    43.863 │ revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing         │
+│    43.799 │ olving credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. │
+│    43.656 │ pin device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £                              │
+│    41.237 │ , or £2.10 if using a credit<< card>>.↵↵The figures, produced in 2011,                                             │
+│    39.815 │ Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least in their headline prices.↵↵           │
+│    39.747 │ the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal Reserve said Thursday that  │
+│    19.952 │ banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre a                         │
+│    14.123 │ cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex                      │
+│    13.361 │ have been asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically,           │
+│     8.593 │ confirmed that Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient        │
+│     1.823 │ ↵Old Navy↵↵Radio Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                           │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 Scoring phase
 ┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
 │           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
 │           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
 │           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
-│           │ like "1, 2, 6, 13". Try not to be overly specific in your interpretation of the explanation. If you think there are no   │
+│           │ like "2, 5, 7, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
 │           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
 │           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ user      │ Here is the explanation: this neuron fires on texts related to belief, righteousness, and spiritual guidance.  Here are  │
-│           │ the examples:  1.  said. A number of tornadoes have careered across prairie farmland, a large hailstorm forced 2. aqara  │
-│           │ 2:221 =↵↵And do not marry polytheistic women until they believe. And 3.  strategy will be released later this year.↵↵The │
-│           │ company also claimed that this is the perfect time AMD 4.  Hornets are in a win-now-or-everybody-might-be-fired mode.    │
-│           │ Cho 5.  baby girl is ready for a good time, Freshman daughter drop off, 6.  expressed as floating-point numbers are a    │
-│           │ really lousy way to analyze and evaluate polynomials unless the 7.  marry polytheistic women until they believe. And a   │
-│           │ believing slave woman is better than a polytheist 8.  says: "And this gospel of the kingdom will be preached in the      │
-│           │ whole world as a testimony to all 9. ? Make sure youre in the loop – take five seconds to sign up for our FREE Agg 10.   │
-│           │ Suffer it to be so now: for thus it becometh us to fulfil all righteousness", and 11.  entities.↵↵José Manuel Barroso,   │
-│           │ President of the European Commission, has already endorsed 12.  locally.↵↵In total, Lee Unkrich and Adrian Molinas Coco  │
-│           │ plucked 13.  drops to historic low in new poll↵↵They are part of a remarkably picturesque and politically purple patch   │
-│           │ 14.  and can act as competitive differentiation in the market.↵↵A third type of balance to seek is across                │
+│ user      │ Here is the explanation: this neuron fires on terms related to credit and debit card transactions and associated fees.   │
+│           │ Here are the examples:  1.  from romance to friendships to family to co-workers. Ready for a commitment? Then Like us 2. │
+│           │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when 3. It was a remarkable           │
+│           │ breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award 4. t his ankle joint, but │
+│           │ his credit card snapping.↵↵JUSTIN HODGES↵ 5. ages, he found that the kinds of antioxidants in pomegranates do. His       │
+│           │ theory: there are 6.  about one-third of Americans hold both liberal and conservative views, depending on the specific   │
+│           │ issue. Another Pew 7.  they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking 8.  bra. Grab your seam ripper.   │
+│           │ We need to remove the stitches from inside of the elastic.↵ 9.  are beginning to report fraudulent charges on the linked │
+│           │ credit cards.↵↵Unlike the breach a few years back 10.  happened was not long for the world.↵↵During that rest, Thomas    │
+│           │ began thinking in the long- 11.  be charged 53 pence extra if using a debit card, or £2.10 if using a credit 12. Wish    │
+│           │ You Were Listed. Patanjali has pitchforked itself into the top 13. .↵↵Although Queen was originally charged with second- │
+│           │ degree rape and contributing to the delinquency of a 14.  he has hundreds of pages of sales records and credit card      │
+│           │ receipts that prove they're lying. Merkel has requested                                                                  │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ assistant │ 2, 7, 10                                                                                                                 │
+│ assistant │ 4, 9, 11, 14                                                                                                             │
 └───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────────┬───────────┬──────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                  │
-├───────────┼───────────┼──────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│     0.000 │           │              │ said. A number of tornadoes have careered across prairie farmland, a large hailstorm forced               │
-│    15.400 │ Y         │ Y            │ aqara 2:221 =↵↵And do not marry polytheistic women until they believe. And                                │
-│     0.000 │           │              │ strategy will be released later this year.↵↵The company also claimed that this is the perfect time AMD    │
-│     0.000 │           │              │ Hornets are in a win-now-or-everybody-might-be-fired mode. Cho                                            │
-│     0.000 │           │              │ baby girl is ready for a good time, Freshman daughter drop off,                                           │
-│     0.000 │           │              │ expressed as floating-point numbers are a really lousy way to analyze and evaluate polynomials unless the │
-│    14.124 │ Y         │ Y            │ marry polytheistic women until they believe. And a believing slave woman is better than a polytheist      │
-│    18.166 │ Y         │              │ says: "And this gospel of the kingdom will be preached in the whole world as a testimony to all           │
-│     0.000 │           │              │ ? Make sure youre in the loop – take five seconds to sign up for our FREE Agg                             │
-│    12.874 │ Y         │ Y            │ Suffer it to be so now: for thus it becometh us to fulfil all righteousness", and                         │
-│     0.000 │           │              │ entities.↵↵José Manuel Barroso, President of the European Commission, has already endorsed                │
-│     0.000 │           │              │ locally.↵↵In total, Lee Unkrich and Adrian Molinas Coco plucked                                           │
-│     0.000 │           │              │ drops to historic low in new poll↵↵They are part of a remarkably picturesque and politically purple patch │
-│     0.000 │           │              │ and can act as competitive differentiation in the market.↵↵A third type of balance to seek is across      │
-└───────────┴───────────┴──────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                            │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ from romance to friendships to family to co-workers. Ready for a commitment? Then Like us                           │
+│     0.000 │           │              │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when                             │
+│     0.000 │           │              │ It was a remarkable breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award  │
+│    43.382 │ Y         │ Y            │ t his ankle joint, but his credit card snapping.↵↵JUSTIN HODGES↵                                                    │
+│     0.000 │           │              │ ages, he found that the kinds of antioxidants in pomegranates do. His theory: there are                             │
+│     0.000 │           │              │ about one-third of Americans hold both liberal and conservative views, depending on the specific issue. Another Pew │
+│     0.000 │           │              │ they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking                                                     │
+│     0.000 │           │              │ bra. Grab your seam ripper. We need to remove the stitches from inside of the elastic.↵                             │
+│    40.256 │ Y         │ Y            │ are beginning to report fraudulent charges on the linked credit cards.↵↵Unlike the breach a few years back          │
+│     0.000 │           │              │ happened was not long for the world.↵↵During that rest, Thomas began thinking in the long-                          │
+│    34.820 │ Y         │ Y            │ be charged 53 pence extra if using a debit card, or £2.10 if using a credit                                         │
+│     0.000 │           │              │ Wish You Were Listed. Patanjali has pitchforked itself into the top                                                 │
+│     0.000 │           │              │ .↵↵Although Queen was originally charged with second-degree rape and contributing to the delinquency of a           │
+│    44.726 │ Y         │ Y            │ he has hundreds of pages of sales records and credit card receipts that prove they're lying. Merkel has requested   │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-Best scoring idx 9, score = 1.0
+Best scoring idx 15, score = 1.0
 Generation phase
 ┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
@@ -130,84 +123,83 @@ Generation phase
 │           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
 │           │ and "This neuron activates on text about government economic policy".                                                    │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ user      │ The activating documents are given below:  1. .↵↵Airline industry↵↵Under the<< new>> rules, payment surcharges will have │
-│           │ to reflect the 2. The government did not however give details on how the<< new>> system would work.↵↵In Uruguay about $  │
-│           │ 3.  School Committee chairwoman, Rebecca Stone, said the<< new>> policy was approved in the spring after discussion      │
-│           │ began over 4.  of Maywoods firehouses. The<< new>> flag mysteriously disappeared early Aug. 23. The order 5.             │
-│           │ 145m.↵↵Enforcement↵↵The<< new>> rules are being brought in earlier than the rest of 6.  require building cases for       │
-│           │ criminal prosecution.↵↵The<< new>> rules, which were passed by the City Council in 7.  be gradual, Gatens added.↵↵The<<  │
-│           │ new>> Roadmap lays out a three-phase plan. 8.  such a crime.↵↵Sun explained that the<< new>> criteria would convict the  │
-│           │ offenders not only for the damage 9.  its privacy policy this year.↵↵But the<< new>> Microsoft policy does allow for     │
-│           │ such targeted advertising. Microsoft 10.  in the U.K. / Germany), the<< new>> version is similar to the existing         │
-│           │ incarnation in most respects 11.  a "largely complementary" footprint and that the<< new>> company will "take its place  │
-│           │ as one of the 12. Con International, Matt will both write and pencil the<< new>> Dark Horse monthly Dept. H, a murder    │
-│           │ mystery 13.  Kriss Kringle in his place. The<< new>> guy was doing just fine - but the women missed 14. ↵Griffin picked  │
-│           │ up about 10 pounds for the<< new>> role -- a feat his brother said wasn't difficult 15. pre-criminal space.↵↵These<<     │
-│           │ new>> measures have a terrifying potential to be used zealously                                                          │
+│ user      │ The activating documents are given below:  1.  to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>.  │
+│           │ He says he plans to donate a portion 2. , the original amount is released back to your credit<< card>>, but some banks   │
+│           │ take upwards of 10 working days 3.  pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of   │
+│           │ excessive payment sur 4. A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The │
+│           │ 5.  revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing 6. olving │
+│           │ credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. 7. pin       │
+│           │ device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £ 8. , or £2.10 if using a credit<<      │
+│           │ card>>.↵↵The figures, produced in 2011, 9.  Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least │
+│           │ in their headline prices.↵↵ 10.  the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal  │
+│           │ Reserve said Thursday that 11.  banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre │
+│           │ a 12.  cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex 13.  have been      │
+│           │ asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically, 14.  confirmed that       │
+│           │ Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient 15. ↵Old Navy↵↵Radio        │
+│           │ Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                                                  │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ assistant │ This neuron activates on the phrase 'new' in various contexts of rules, policies, and measures.                          │
+│ assistant │ This neuron activates on terms related to credit and debit card transactions and associated fees.                        │
 └───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│   Top act │ Sequence                                                                                                                   │
-├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│    43.451 │ .↵↵Airline industry↵↵Under the<< new>> rules, payment surcharges will have to reflect the                                  │
-│    42.861 │ The government did not however give details on how the<< new>> system would work.↵↵In Uruguay about $                      │
-│    42.159 │ School Committee chairwoman, Rebecca Stone, said the<< new>> policy was approved in the spring after discussion began over │
-│    41.990 │ of Maywoods firehouses. The<< new>> flag mysteriously disappeared early Aug. 23. The order                                 │
-│    41.921 │ 145m.↵↵Enforcement↵↵The<< new>> rules are being brought in earlier than the rest of                                        │
-│    41.077 │ require building cases for criminal prosecution.↵↵The<< new>> rules, which were passed by the City Council in              │
-│    40.424 │ be gradual, Gatens added.↵↵The<< new>> Roadmap lays out a three-phase plan.                                                │
-│    40.388 │ such a crime.↵↵Sun explained that the<< new>> criteria would convict the offenders not only for the damage                 │
-│    40.284 │ its privacy policy this year.↵↵But the<< new>> Microsoft policy does allow for such targeted advertising. Microsoft        │
-│    40.114 │ in the U.K. / Germany), the<< new>> version is similar to the existing incarnation in most respects                        │
-│    35.471 │ a "largely complementary" footprint and that the<< new>> company will "take its place as one of the                        │
-│    30.504 │ Con International, Matt will both write and pencil the<< new>> Dark Horse monthly Dept. H, a murder mystery                │
-│    28.822 │ Kriss Kringle in his place. The<< new>> guy was doing just fine - but the women missed                                     │
-│    25.595 │ ↵Griffin picked up about 10 pounds for the<< new>> role -- a feat his brother said wasn't difficult                        │
-│    25.591 │ pre-criminal space.↵↵These<< new>> measures have a terrifying potential to be used zealously                               │
-└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                           │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    51.329 │ to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>. He says he plans to donate a portion      │
+│    47.245 │ , the original amount is released back to your credit<< card>>, but some banks take upwards of 10 working days     │
+│    46.221 │ pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of excessive payment sur           │
+│    45.020 │ A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The                    │
+│    43.863 │ revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing         │
+│    43.799 │ olving credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. │
+│    43.656 │ pin device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £                              │
+│    41.237 │ , or £2.10 if using a credit<< card>>.↵↵The figures, produced in 2011,                                             │
+│    39.815 │ Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least in their headline prices.↵↵           │
+│    39.747 │ the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal Reserve said Thursday that  │
+│    19.952 │ banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre a                         │
+│    14.123 │ cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex                      │
+│    13.361 │ have been asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically,           │
+│     8.593 │ confirmed that Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient        │
+│     1.823 │ ↵Old Navy↵↵Radio Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                           │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 Scoring phase
 ┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
 │           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
 │           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
 │           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
-│           │ like "1, 4, 11, 14". Try not to be overly specific in your interpretation of the explanation. If you think there are no  │
+│           │ like "2, 5, 7, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
 │           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
 │           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ user      │ Here is the explanation: this neuron fires on the phrase 'new' in various contexts of rules, policies, and measures.     │
-│           │ Here are the examples:  1. . In the Islamic Statement, women are given the role not only of the wife of a  2. were       │
-│           │ opened too far."↵↵"This had to do with doing maintenance," Loughmiller said 3.  that shed get a whopping majority, only  │
-│           │ to discover once the votes were in that she 4.  areas, including the Mediterranean.↵↵Although the new US rules apply to  │
-│           │ all types of boat built from 5. identifiable, decomposing body on the beach.↵↵About the 2008 death of Brad Renfro 6. o   │
-│           │ planned before the crisis in public finances. The new policy announced in April by the unlamented former 7.  in five     │
-│           │ California cities.↵↵The new division shakes out this way:↵↵Ana 8.  the mainstream media, academia and the Democratic     │
-│           │ Party -- that the Trump election had unleashed an unprecedented amount of anti 9.  expression of additional genes [ 13   │
-│           │ 32 ]. Furthermore, IL-4 and IL-13 lead to an increased 10.  the Canadian Centre for Policy Alternatives, said the new    │
-│           │ TPP agreement is the same as the old flawed one 11.  surprisingly powerful machine, with 512MB of RAM and a CPU faster   │
-│           │ than the original Pi. Pi Zero is 12.  those choices we should never talk down or attack the fundamental philosophies on  │
-│           │ which progressive Scottish politics are based - the 13.  was designated Single Of The Week from NME, and did well on the │
-│           │ Indie singles charts, as did 14.  webpage, this is something I wanted to avoid. I wanted the consumers of the component  │
-│           │ to not even need                                                                                                         │
+│ user      │ Here is the explanation: this neuron fires on terms related to credit and debit card transactions and associated fees.   │
+│           │ Here are the examples:  1.  from romance to friendships to family to co-workers. Ready for a commitment? Then Like us 2. │
+│           │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when 3. It was a remarkable           │
+│           │ breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award 4. t his ankle joint, but │
+│           │ his credit card snapping.↵↵JUSTIN HODGES↵ 5. ages, he found that the kinds of antioxidants in pomegranates do. His       │
+│           │ theory: there are 6.  about one-third of Americans hold both liberal and conservative views, depending on the specific   │
+│           │ issue. Another Pew 7.  they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking 8.  bra. Grab your seam ripper.   │
+│           │ We need to remove the stitches from inside of the elastic.↵ 9.  are beginning to report fraudulent charges on the linked │
+│           │ credit cards.↵↵Unlike the breach a few years back 10.  happened was not long for the world.↵↵During that rest, Thomas    │
+│           │ began thinking in the long- 11.  be charged 53 pence extra if using a debit card, or £2.10 if using a credit 12. Wish    │
+│           │ You Were Listed. Patanjali has pitchforked itself into the top 13. .↵↵Although Queen was originally charged with second- │
+│           │ degree rape and contributing to the delinquency of a 14.  he has hundreds of pages of sales records and credit card      │
+│           │ receipts that prove they're lying. Merkel has requested                                                                  │
 ├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ assistant │ 4, 6, 7, 10                                                                                                              │
+│ assistant │ 4, 9, 11, 14                                                                                                             │
 └───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────────┬───────────┬──────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                                              │
-├───────────┼───────────┼──────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│     0.000 │           │              │ . In the Islamic Statement, women are given the role not only of the wife of a                                                        │
-│     0.000 │           │              │ were opened too far."↵↵"This had to do with doing maintenance," Loughmiller said                                                      │
-│     0.000 │           │              │ that shed get a whopping majority, only to discover once the votes were in that she                                                   │
-│    42.104 │ Y         │ Y            │ areas, including the Mediterranean.↵↵Although the new US rules apply to all types of boat built from                                  │
-│     0.000 │           │              │ identifiable, decomposing body on the beach.↵↵About the 2008 death of Brad Renfro                                                     │
-│    42.177 │ Y         │ Y            │ o planned before the crisis in public finances. The new policy announced in April by the unlamented former                            │
-│    40.274 │ Y         │ Y            │ in five California cities.↵↵The new division shakes out this way:↵↵Ana                                                                │
-│     0.000 │           │              │ the mainstream media, academia and the Democratic Party -- that the Trump election had unleashed an unprecedented amount of anti      │
-│     0.000 │           │              │ expression of additional genes [ 13 32 ]. Furthermore, IL-4 and IL-13 lead to an increased                                            │
-│    41.242 │ Y         │ Y            │ the Canadian Centre for Policy Alternatives, said the new TPP agreement is the same as the old flawed one                             │
-│     0.000 │           │              │ surprisingly powerful machine, with 512MB of RAM and a CPU faster than the original Pi. Pi Zero is                                    │
-│     0.000 │           │              │ those choices we should never talk down or attack the fundamental philosophies on which progressive Scottish politics are based - the │
-│     0.000 │           │              │ was designated Single Of The Week from NME, and did well on the Indie singles charts, as did                                          │
-│     0.000 │           │              │ webpage, this is something I wanted to avoid. I wanted the consumers of the component to not even need                                │
-└───────────┴───────────┴──────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                            │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ from romance to friendships to family to co-workers. Ready for a commitment? Then Like us                           │
+│     0.000 │           │              │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when                             │
+│     0.000 │           │              │ It was a remarkable breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award  │
+│    43.382 │ Y         │ Y            │ t his ankle joint, but his credit card snapping.↵↵JUSTIN HODGES↵                                                    │
+│     0.000 │           │              │ ages, he found that the kinds of antioxidants in pomegranates do. His theory: there are                             │
+│     0.000 │           │              │ about one-third of Americans hold both liberal and conservative views, depending on the specific issue. Another Pew │
+│     0.000 │           │              │ they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking                                                     │
+│     0.000 │           │              │ bra. Grab your seam ripper. We need to remove the stitches from inside of the elastic.↵                             │
+│    40.256 │ Y         │ Y            │ are beginning to report fraudulent charges on the linked credit cards.↵↵Unlike the breach a few years back          │
+│     0.000 │           │              │ happened was not long for the world.↵↵During that rest, Thomas began thinking in the long-                          │
+│    34.820 │ Y         │ Y            │ be charged 53 pence extra if using a debit card, or £2.10 if using a credit                                         │
+│     0.000 │           │              │ Wish You Were Listed. Patanjali has pitchforked itself into the top                                                 │
+│     0.000 │           │              │ .↵↵Although Queen was originally charged with second-degree rape and contributing to the delinquency of a           │
+│    44.726 │ Y         │ Y            │ he has hundreds of pages of sales records and credit card receipts that prove they're lying. Merkel has requested   │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
