@@ -49,10 +49,7 @@ def run_eval_single_dataset(
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
-    train_df, test_df = dataset_utils.load_huggingface_dataset(dataset_name)
     train_data, test_data = dataset_utils.get_multi_label_train_test_data(
-        train_df,
-        test_df,
         dataset_name,
         config.probe_train_set_size,
         config.probe_test_set_size,
@@ -202,45 +199,47 @@ if __name__ == "__main__":
 
     print(f"Using device: {device}")
 
-    config = eval_config.EvalConfig()
+    for layer in [3]:
+        config = eval_config.EvalConfig()
+        config.layer = layer
 
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
+        # populate selected_saes_dict using config values
+        for release in config.sae_releases:
+            if "gemma-scope" in release:
+                config.selected_saes_dict[release] = (
+                    formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
+                )
+            else:
+                config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
+                    sae_names=release,
+                    layers=[config.layer],
+                    include_checkpoints=config.include_checkpoints,
+                    trainer_ids=config.trainer_ids,
+                )
 
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
+            print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
 
-    # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, config.selected_saes_dict, device)
+        # run the evaluation on all selected SAEs
+        results_dict = run_eval(config, config.selected_saes_dict, device)
 
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
+        # create output filename and save results
+        checkpoints_str = ""
+        if config.include_checkpoints:
+            checkpoints_str = "_with_checkpoints"
 
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
-    )
-    output_folder = "results"  # at evals/<eval_name>
+        output_filename = (
+            config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
+        )
+        output_folder = "results"  # at evals/<eval_name>
 
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder, exist_ok=True)
 
-    output_location = os.path.join(output_folder, output_filename)
+        output_location = os.path.join(output_folder, output_filename)
 
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
+        with open(output_location, "w") as f:
+            json.dump(results_dict, f)
 
-    end_time = time.time()
+        end_time = time.time()
 
-    print(f"Finished evaluation in {end_time - start_time} seconds")
+        print(f"Finished evaluation in {end_time - start_time} seconds")

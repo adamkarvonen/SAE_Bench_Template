@@ -1,34 +1,66 @@
 from typing import Callable, Optional
-
+from collections import defaultdict
 import pandas as pd
 import torch
 from datasets import load_dataset
 from tqdm import tqdm
 from transformers import AutoTokenizer
+import random
 
 import sae_bench_utils.dataset_info as dataset_info
 
 
-# Load and prepare dataset
-def load_huggingface_dataset(dataset_name: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    if "bias_in_bios" in dataset_name:
-        dataset = load_dataset("LabHC/bias_in_bios")
-        train_df = pd.DataFrame(dataset["train"])
-        test_df = pd.DataFrame(dataset["test"])
-    elif dataset_name == "amazon_reviews_all_ratings":
+def split_dataset(
+    dataset_name: str,
+    chosen_classes: list[str],
+    train_size: int,
+    test_size: int,
+    random_seed: int,
+    label_key: str,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    """Used for datasets like github-code which do not have a predefined split."""
+
+    random.seed(random_seed)
+
+    # Filter out languages that are not in the dataset
+    if dataset_name == "codeparrot/github-code":
         dataset = load_dataset(
-            "canrager/amazon_reviews_mcauley",
-            config_name="dataset_all_categories_and_ratings_train1000_test250",
+            dataset_name,
+            streaming=True,
+            split="train",
+            trust_remote_code=True,
+            languages=chosen_classes,
         )
-    elif "amazon_reviews_1and5" in dataset_name:
-        dataset = load_dataset(
-            "canrager/amazon_reviews_mcauley_1and5",
-        )
-        train_df = pd.DataFrame(dataset["train"])
-        test_df = pd.DataFrame(dataset["test"])
     else:
-        raise ValueError(f"Unknown dataset name: {dataset_name}")
-    return train_df, test_df
+        dataset = load_dataset(dataset_name, streaming=True, split="train", trust_remote_code=True)
+
+    total_size = train_size + test_size
+
+    all_samples = defaultdict(list)
+
+    # Collect samples for each language
+    for sample in dataset:
+        if sample[label_key] in chosen_classes:
+            all_samples[sample[label_key]].append(sample)
+
+            # Check if we have collected enough samples for all languages
+            if all(len(all_samples[lang]) > total_size for lang in chosen_classes):
+                break
+
+    # Split samples into train and test sets
+    train_samples = {}
+    test_samples = {}
+
+    for lang in chosen_classes:
+        lang_samples = all_samples[lang]
+
+        random.shuffle(lang_samples)
+        train_samples[lang] = lang_samples[:train_size]
+        test_samples[lang] = lang_samples[train_size : train_size + test_size]
+        assert len(train_samples[lang]) == train_size
+        assert len(test_samples[lang]) == test_size
+
+    return train_samples, test_samples
 
 
 def get_balanced_dataset(
@@ -37,47 +69,115 @@ def get_balanced_dataset(
     min_samples_per_quadrant: int,
     random_seed: int,
 ) -> dict[str, list[str]]:
-    """Returns a dataset of, in the case of bias_in_bios, a key of profession idx,
-    and a value of a list of bios (strs) of len min_samples_per_quadrant * 2."""
+    """This function is used for the amazon reviews dataset and the bias_in_bios dataset, which have two columns.
 
-    if "_class_set" in dataset_name:
-        dataset_name = dataset_name.split("_class_set")[0]
+    Returns a balanced dataset as a dictionary, where each key corresponds to a unique value
+    in one column, and each value is a list of text entries balanced across categories
+    in the other column.
+
+    Examples: For the 'bias_in_bios' dataset where `column1` is 'Profession' and `column2` is 'Gender':
+        - If `balance_by_column1` is `True`:
+            - Balances bios for each profession by gender.
+            - Returns a dict with professions as keys and lists of bios as values.
+    """
 
     text_column_name = dataset_info.dataset_metadata[dataset_name]["text_column_name"]
     column1_name = dataset_info.dataset_metadata[dataset_name]["column1_name"]
     column2_name = dataset_info.dataset_metadata[dataset_name]["column2_name"]
 
-    balanced_df_list = []
+    balanced_data = {}
 
     for profession in tqdm(df[column1_name].unique()):
         prof_df = df[df[column1_name] == profession]
+        unique_groups = prof_df[column2_name].unique()
         min_count = prof_df[column2_name].value_counts().min()
 
-        unique_groups = prof_df[column2_name].unique()
         if len(unique_groups) < 2:
             continue  # Skip professions with less than two groups
 
         if min_count < min_samples_per_quadrant:
             continue
 
-        balanced_prof_df = pd.concat(
-            [
-                group.sample(n=min_samples_per_quadrant, random_state=random_seed)
-                for _, group in prof_df.groupby(column2_name)
-            ]
-        ).reset_index(drop=True)
-        balanced_df_list.append(balanced_prof_df)
+        sampled_texts = []
+        for _, group_df in prof_df.groupby(column2_name):
+            sampled_group = group_df.sample(n=min_samples_per_quadrant, random_state=random_seed)
+            sampled_texts.extend(sampled_group[text_column_name].tolist())
 
-    balanced_df = pd.concat(balanced_df_list).reset_index(drop=True)
-    grouped = balanced_df.groupby(column1_name)[text_column_name].apply(list)
+        balanced_data[str(profession)] = sampled_texts
 
-    str_data = {str(key): texts for key, texts in grouped.items()}
+        assert len(balanced_data[str(profession)]) == min_samples_per_quadrant * 2
 
-    balanced_data = {label: texts for label, texts in str_data.items()}
+    return balanced_data
 
-    for key in balanced_data.keys():
-        balanced_data[key] = balanced_data[key][: min_samples_per_quadrant * 2]
-        assert len(balanced_data[key]) == min_samples_per_quadrant * 2
+
+def get_bias_in_bios_or_amazon_product_dataset(
+    dataset_name: str, train_set_size: int, test_set_size: int, random_seed: int
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    dataset_name = dataset_name.split("_class_set")[0]
+
+    dataset = load_dataset(dataset_name)
+    train_df = pd.DataFrame(dataset["train"])
+    test_df = pd.DataFrame(dataset["test"])
+
+    # 4 is because male / female split for each profession, 2 quadrants per profession, 2 professions for binary task
+    minimum_train_samples_per_quadrant = train_set_size // 4
+    minimum_test_samples_per_quadrant = test_set_size // 4
+
+    train_data = get_balanced_dataset(
+        train_df, dataset_name, minimum_train_samples_per_quadrant, random_seed
+    )
+    test_data = get_balanced_dataset(
+        test_df, dataset_name, minimum_test_samples_per_quadrant, random_seed
+    )
+
+    return train_data, test_data
+
+
+def get_amazon_sentiment_dataset(
+    dataset_name: str, train_set_size: int, test_set_size: int, random_seed: int
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    dataset_name = dataset_name.split("_sentiment")[0]
+    dataset = load_dataset(dataset_name)
+    train_df = pd.DataFrame(dataset["train"])
+    test_df = pd.DataFrame(dataset["test"])
+
+    minimum_train_samples_per_category = train_set_size // 2
+    minimum_test_samples_per_category = test_set_size // 2
+
+    train_data = get_balanced_amazon_sentiment_dataset(
+        train_df, minimum_train_samples_per_category, random_seed
+    )
+    test_data = get_balanced_amazon_sentiment_dataset(
+        test_df, minimum_test_samples_per_category, random_seed
+    )
+
+    return train_data, test_data
+
+
+def get_balanced_amazon_sentiment_dataset(
+    df: pd.DataFrame,
+    min_samples_per_category: int,
+    random_seed: int,
+) -> dict[str, list[str]]:
+    text_column_name = "text"
+    column2_name = "rating"
+
+    balanced_data = {}
+
+    unique_ratings = df[column2_name].unique()
+
+    for rating in unique_ratings:
+        # Filter dataframe for current rating
+        df_rating = df[df[column2_name] == rating]
+
+        sampled_texts = (
+            df_rating[text_column_name]
+            .sample(n=min_samples_per_category, random_state=random_seed)
+            .tolist()
+        )
+        assert len(sampled_texts) == min_samples_per_category
+
+        balanced_data[str(rating)] = sampled_texts
 
     return balanced_data
 
@@ -103,30 +203,32 @@ def ensure_shared_keys(train_data: dict, test_data: dict) -> tuple[dict, dict]:
 
 
 def get_multi_label_train_test_data(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
     dataset_name: str,
     train_set_size: int,
     test_set_size: int,
     random_seed: int,
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     """Returns a dict of [class_name, list[str]]"""
-    # 4 is because male / gender for each profession
-    minimum_train_samples_per_quadrant = train_set_size // 4
-    minimum_test_samples_per_quadrant = test_set_size // 4
 
-    train_data = get_balanced_dataset(
-        train_df,
-        dataset_name,
-        minimum_train_samples_per_quadrant,
-        random_seed=random_seed,
-    )
-    test_data = get_balanced_dataset(
-        test_df,
-        dataset_name,
-        minimum_test_samples_per_quadrant,
-        random_seed=random_seed,
-    )
+    if "bias_in_bios" in dataset_name or "canrager/amazon_reviews_mcauley_1and5" == dataset_name:
+        train_data, test_data = get_bias_in_bios_or_amazon_product_dataset(
+            dataset_name, train_set_size, test_set_size, random_seed
+        )
+    elif dataset_name == "canrager/amazon_reviews_mcauley_1and5_sentiment":
+        train_data, test_data = get_amazon_sentiment_dataset(
+            dataset_name, train_set_size, test_set_size, random_seed
+        )
+    elif dataset_name == "codeparrot/github-code":
+        train_data, test_data = split_dataset(
+            dataset_name,
+            dataset_info.chosen_classes_per_dataset[dataset_name],
+            train_set_size,
+            test_set_size,
+            random_seed,
+            label_key="language",
+        )
+    else:
+        raise ValueError(f"Dataset {dataset_name} not supported")
 
     train_data, test_data = ensure_shared_keys(train_data, test_data)
 

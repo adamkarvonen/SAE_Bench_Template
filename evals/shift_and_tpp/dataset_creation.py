@@ -45,32 +45,24 @@ def get_spurious_corr_data(
 
     # NOTE: This is a bit confusing. We select rows from the dataset based on column1_vals and column2_vals,
     # but below, we hardcode the keys as male / female, professor / nurse, etc
-    column1_pos_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][
-        column1_pos
-    ]
-    column1_neg_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][
-        column1_neg
-    ]
-    column2_pos_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][
-        column2_pos
-    ]
-    column2_neg_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][
-        column2_neg
-    ]
+    column1_pos_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][column1_pos]
+    column1_neg_idx = dataset_info.dataset_metadata[dataset_name]["column1_mapping"][column1_neg]
+    column2_pos_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][column2_pos]
+    column2_neg_idx = dataset_info.dataset_metadata[dataset_name]["column2_mapping"][column2_neg]
 
-    pos_neg = df[
-        (df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_pos_idx)
-    ][text_column_name].tolist()
-    neg_neg = df[
-        (df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_neg_idx)
-    ][text_column_name].tolist()
+    pos_neg = df[(df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_pos_idx)][
+        text_column_name
+    ].tolist()
+    neg_neg = df[(df[column1_name] == column1_neg_idx) & (df[column2_name] == column2_neg_idx)][
+        text_column_name
+    ].tolist()
 
-    pos_pos = df[
-        (df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_pos_idx)
-    ][text_column_name].tolist()
-    neg_pos = df[
-        (df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_neg_idx)
-    ][text_column_name].tolist()
+    pos_pos = df[(df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_pos_idx)][
+        text_column_name
+    ].tolist()
+    neg_pos = df[(df[column1_name] == column1_pos_idx) & (df[column2_name] == column2_neg_idx)][
+        text_column_name
+    ].tolist()
 
     min_count = min(
         len(pos_neg), len(neg_neg), len(pos_pos), len(neg_pos), min_samples_per_quadrant
@@ -101,9 +93,7 @@ def get_spurious_corr_data(
     rng.shuffle(neg_neg)
 
     # Assign to balanced_data
-    balanced_data["male / female"] = (
-        combined_pos  # male data only, to be combined with female data
-    )
+    balanced_data["male / female"] = combined_pos  # male data only, to be combined with female data
     balanced_data["female_data_only"] = combined_neg  # female data only
     balanced_data["professor / nurse"] = (
         pos_combined  # professor data only, to be combined with nurse data
@@ -122,8 +112,6 @@ def get_spurious_corr_data(
 
 
 def get_train_test_data(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
     dataset_name: str,
     spurious_corr: bool,
     train_set_size: int,
@@ -132,6 +120,11 @@ def get_train_test_data(
     column1_vals: Optional[tuple[str, str]] = None,
     column2_vals: Optional[tuple[str, str]] = None,
 ) -> tuple[dict, dict]:
+    dataset_name = dataset_name.split("_class_set")[0]
+    dataset = load_dataset(dataset_name)
+    train_df = pd.DataFrame(dataset["train"])
+    test_df = pd.DataFrame(dataset["test"])
+
     # 4 is because male / gender for each profession
     minimum_train_samples_per_quadrant = train_set_size // 4
     minimum_test_samples_per_quadrant = test_set_size // 4
