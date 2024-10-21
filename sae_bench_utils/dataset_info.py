@@ -95,7 +95,7 @@ amazon_rating_dict = {
 }
 
 dataset_metadata = {
-    "bias_in_bios": {
+    "LabHC/bias_in_bios": {
         "text_column_name": "hard_text",
         "column1_name": "profession",
         "column2_name": "gender",
@@ -103,7 +103,7 @@ dataset_metadata = {
         "column1_mapping": profession_dict,
         "column2_mapping": gender_dict,
     },
-    "amazon_reviews_1and5": {
+    "canrager/amazon_reviews_mcauley_1and5": {
         "text_column_name": "text",
         "column1_name": "category",
         "column2_name": "rating",
@@ -115,8 +115,10 @@ dataset_metadata = {
 
 # These classes are selected as they have at least 4000 samples in the training set when balanced by gender / rating
 chosen_classes_per_dataset = {
-    "bias_in_bios_class_set1": ["0", "1", "2", "6", "9"],
-    "bias_in_bios_class_set2": ["11", "13", "14", "18", "19"],
-    "bias_in_bios_class_set3": ["20", "21", "22", "25", "26"],
-    "amazon_reviews_1and5": ["1", "2", "3", "5", "6"],
+    "LabHC/bias_in_bios_class_set1": ["0", "1", "2", "6", "9"],
+    "LabHC/bias_in_bios_class_set2": ["11", "13", "14", "18", "19"],
+    "LabHC/bias_in_bios_class_set3": ["20", "21", "22", "25", "26"],
+    "canrager/amazon_reviews_mcauley_1and5": ["1", "2", "3", "5", "6"],
+    "canrager/amazon_reviews_mcauley_1and5_sentiment": ["1.0", "5.0"],
+    "codeparrot/github-code": ["C", "Python", "HTML", "Java", "PHP"],
 }

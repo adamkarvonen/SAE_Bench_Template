@@ -24,13 +24,14 @@ def test_end_to_end_matching_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
     test_config.include_checkpoints = False
     test_config.random_seed = 42
     tolerance = 0.0
+    test_config.k_values = [1, 2, 5, 10, 20, 50, 100]
 
     # populate selected_saes_dict using config values
     for release in test_config.sae_releases:
@@ -70,13 +71,14 @@ def test_end_to_end_different_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
     test_config.include_checkpoints = False
     test_config.random_seed = 44
     tolerance = 0.04
+    test_config.k_values = [1, 2, 5, 10, 20, 50, 100]
 
     # populate selected_saes_dict using config values
     for release in test_config.sae_releases:

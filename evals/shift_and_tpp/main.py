@@ -24,18 +24,18 @@ import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.formatting_utils as formatting_utils
 
 COLUMN2_VALS_LOOKUP = {
-    "bias_in_bios": ("male", "female"),
-    "amazon_reviews_1and5": (1.0, 5.0),
+    "LabHC/bias_in_bios_class_set1": ("male", "female"),
+    "canrager/amazon_reviews_mcauley_1and5": (1.0, 5.0),
 }
 
 COLUMN1_VALS_LOOKUP = {
-    "bias_in_bios": [
+    "LabHC/bias_in_bios_class_set1": [
         ("professor", "nurse"),
-        # ("architect", "journalist"),
-        # ("surgeon", "psychologist"),
-        # ("attorney", "teacher"),
+        ("architect", "journalist"),
+        ("surgeon", "psychologist"),
+        ("attorney", "teacher"),
     ],
-    "amazon_reviews_1and5": [
+    "canrager/amazon_reviews_mcauley_1and5": [
         ("Books", "CDs_and_Vinyl"),
         ("Software", "Electronics"),
         ("Pet_Supplies", "Office_Products"),
@@ -447,10 +447,7 @@ def run_eval_single_dataset(
 
     column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
 
-    train_df, test_df = dataset_utils.load_huggingface_dataset(dataset_name)
     train_data, test_data = dataset_creation.get_train_test_data(
-        train_df,
-        test_df,
         dataset_name,
         config.spurious_corr,
         config.train_set_size,

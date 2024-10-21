@@ -7,12 +7,8 @@ import evals.shift_and_tpp.main as shift_and_tpp
 import sae_bench_utils.formatting_utils as formatting_utils
 import sae_bench_utils.testing_utils as testing_utils
 
-tpp_results_filename = (
-    "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-)
-scr_results_filename = (
-    "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
-)
+tpp_results_filename = "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
+scr_results_filename = "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
 
 
 # def test_end_to_end_matching_seed():
@@ -75,7 +71,7 @@ def test_scr_end_to_end_same_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
@@ -129,7 +125,7 @@ def test_tpp_end_to_end_different_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
