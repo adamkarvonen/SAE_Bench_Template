@@ -72,18 +72,15 @@ def run_eval_single_dataset(
     )
 
     print(f"Running evaluation for layer {config.layer}")
-    hook_name = f"blocks.{config.layer}.hook_resid_post"
 
     all_train_acts_BLD = activation_collection.get_all_llm_activations(
-        train_data, model, llm_batch_size, hook_name
+        train_data, model, llm_batch_size, config.layer
     )
     all_test_acts_BLD = activation_collection.get_all_llm_activations(
-        test_data, model, llm_batch_size, hook_name
+        test_data, model, llm_batch_size, config.layer
     )
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(
-        all_train_acts_BLD
-    )
+    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
     all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
 
     llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
@@ -95,16 +92,12 @@ def run_eval_single_dataset(
     llm_results = {"llm_test_accuracy": average_test_accuracy(llm_test_accuracies)}
 
     for k in config.k_values:
-        llm_top_k_probes, llm_top_k_test_accuracies = (
-            probe_training.train_probe_on_activations(
-                all_train_acts_BD,
-                all_test_acts_BD,
-                select_top_k=k,
-            )
+        llm_top_k_probes, llm_top_k_test_accuracies = probe_training.train_probe_on_activations(
+            all_train_acts_BD,
+            all_test_acts_BD,
+            select_top_k=k,
         )
-        llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
-            llm_top_k_test_accuracies
-        )
+        llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(llm_top_k_test_accuracies)
 
     for sae_release in selected_saes_dict:
         print(
@@ -154,9 +147,7 @@ def run_eval_single_dataset(
             for llm_result_key, llm_result_value in llm_results.items():
                 results_dict[sae_name][llm_result_key] = llm_result_value
 
-            results_dict[sae_name]["sae_test_accuracy"] = average_test_accuracy(
-                sae_test_accuracies
-            )
+            results_dict[sae_name]["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
 
             for k in config.k_values:
                 sae_top_k_probes, sae_top_k_test_accuracies = (
