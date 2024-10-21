@@ -113,7 +113,10 @@ dataset_metadata = {
     },
 }
 
+# These classes are selected as they have at least 4000 samples in the training set when balanced by gender / rating
 chosen_classes_per_dataset = {
-    "bias_in_bios": ["0", "1", "2", "6", "9"],
+    "bias_in_bios_class_set1": ["0", "1", "2", "6", "9"],
+    "bias_in_bios_class_set2": ["11", "13", "14", "18", "19"],
+    "bias_in_bios_class_set3": ["20", "21", "22", "25", "26"],
     "amazon_reviews_1and5": ["1", "2", "3", "5", "6"],
 }

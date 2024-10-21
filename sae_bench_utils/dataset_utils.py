@@ -11,7 +11,7 @@ import sae_bench_utils.dataset_info as dataset_info
 
 # Load and prepare dataset
 def load_huggingface_dataset(dataset_name: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    if dataset_name == "bias_in_bios":
+    if "bias_in_bios" in dataset_name:
         dataset = load_dataset("LabHC/bias_in_bios")
         train_df = pd.DataFrame(dataset["train"])
         test_df = pd.DataFrame(dataset["test"])
@@ -20,7 +20,7 @@ def load_huggingface_dataset(dataset_name: str) -> tuple[pd.DataFrame, pd.DataFr
             "canrager/amazon_reviews_mcauley",
             config_name="dataset_all_categories_and_ratings_train1000_test250",
         )
-    elif dataset_name == "amazon_reviews_1and5":
+    elif "amazon_reviews_1and5" in dataset_name:
         dataset = load_dataset(
             "canrager/amazon_reviews_mcauley_1and5",
         )
@@ -39,6 +39,9 @@ def get_balanced_dataset(
 ) -> dict[str, list[str]]:
     """Returns a dataset of, in the case of bias_in_bios, a key of profession idx,
     and a value of a list of bios (strs) of len min_samples_per_quadrant * 2."""
+
+    if "_class_set" in dataset_name:
+        dataset_name = dataset_name.split("_class_set")[0]
 
     text_column_name = dataset_info.dataset_metadata[dataset_name]["text_column_name"]
     column1_name = dataset_info.dataset_metadata[dataset_name]["column1_name"]

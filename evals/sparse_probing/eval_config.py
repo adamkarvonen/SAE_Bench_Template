@@ -8,7 +8,12 @@ class EvalConfig:
     random_seed: int = 42
 
     dataset_names: list[str] = field(
-        default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
+        default_factory=lambda: [
+            "bias_in_bios_class_set1",
+            "bias_in_bios_class_set2",
+            "bias_in_bios_class_set3",
+            "amazon_reviews_1and5",
+        ]
     )
 
     probe_train_set_size: int = 4000
