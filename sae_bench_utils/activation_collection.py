@@ -116,3 +116,12 @@ def get_sae_meaned_activations(
         all_sae_activations_BF[class_name] = all_acts_BF
 
     return all_sae_activations_BF
+
+
+def filter_final_token_activations(activations: dict[str, torch.Tensor], tokenized_data: dict[str, dict[str, torch.Tensor]]) -> dict[str, torch.Tensor]:
+    '''Given a batch of llm_activations including right padding, return the activations of the final token in each sequence'''
+    filtered_activations = {}
+    for key, data in tokenized_data.items():
+        last_token_indices = data['attention_mask'].sum(dim=1) - 1
+        filtered_activations[key] = activations[key][torch.arange(activations[key].size(0)), last_token_indices]
+    return filtered_activations
