@@ -127,7 +127,7 @@ def run_eval_single_dataset(
                 sae_id=sae_id,
                 device=device,
             )
-            sae = sae.to(device=device)
+            sae = sae.to(device=device, dtype=llm_dtype)
 
             if "topk" in sae_name:
                 assert isinstance(sae.activation_fn, TopK)
