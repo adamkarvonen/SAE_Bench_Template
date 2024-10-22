@@ -121,4 +121,6 @@ chosen_classes_per_dataset = {
     "canrager/amazon_reviews_mcauley_1and5": ["1", "2", "3", "5", "6"],
     "canrager/amazon_reviews_mcauley_1and5_sentiment": ["1.0", "5.0"],
     "codeparrot/github-code": ["C", "Python", "HTML", "Java", "PHP"],
+    "fancyzhx/ag_news": ["0", "1", "2", "3"],
+    "Helsinki-NLP/europarl": ["en", "fr", "de", "es", "nl"],
 }
