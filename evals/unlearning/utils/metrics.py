@@ -18,6 +18,9 @@ from datasets import load_dataset
 from functools import partial
 from jaxtyping import Float
 from typing import Any, Optional
+import requests
+from requests.exceptions import HTTPError
+import time
 
 
 from evals.unlearning.utils.var import (
@@ -29,6 +32,28 @@ from evals.unlearning.utils.var import (
 from evals.unlearning.utils.intervention import anthropic_clamp_resid_SAE_features
 
 all_permutations = list(permutations([0, 1, 2, 3]))
+
+
+def load_dataset_with_retries(
+    dataset_path: str, dataset_name: str, split: str, retries: int = 5, delay: int = 20
+):
+    """
+    Tries to load the dataset with a specified number of retries and delay between attempts.
+
+    Raises:
+    - HTTPError: If the dataset cannot be loaded after the given number of retries.
+    """
+    for attempt in range(retries):
+        try:
+            dataset = load_dataset(dataset_path, dataset_name, split=split)
+            return dataset  # Successful load
+        except HTTPError as e:
+            if attempt < retries - 1:
+                print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay} seconds...")
+                time.sleep(delay)  # Wait before retrying
+            else:
+                print(f"Failed to load dataset after {retries} attempts.")
+                raise
 
 
 def calculate_MCQ_metrics(
@@ -73,11 +98,11 @@ def calculate_MCQ_metrics(
     assert isinstance(dataset_name, str)
     if dataset_name == "wmdp-bio":
         pre_question = PRE_WMDP_BIO
-        dataset = load_dataset("cais/wmdp", "wmdp-bio", split="test")
+        dataset = load_dataset_with_retries("cais/wmdp", "wmdp-bio", split="test")
     else:
         pre_question = PRE_QUESTION_FORMAT.format(subject=dataset_name.replace("_", " "))
         # pre_question = 'The following are multiple choice questions (with answers) about history'
-        dataset = load_dataset("cais/mmlu", dataset_name, split="test")
+        dataset = load_dataset_with_retries("cais/mmlu", dataset_name, split="test")
 
     answers = [x["answer"] for x in dataset]
     questions = [x["question"] for x in dataset]

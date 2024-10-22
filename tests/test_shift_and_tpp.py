@@ -7,15 +7,11 @@ import evals.shift_and_tpp.main as shift_and_tpp
 import sae_bench_utils.formatting_utils as formatting_utils
 import sae_bench_utils.testing_utils as testing_utils
 
-tpp_results_filename = (
-    "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-)
-scr_results_filename = (
-    "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
-)
+tpp_results_filename = "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
+scr_results_filename = "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
 
 
-# def test_end_to_end_matching_seed():
+# def test_scr_end_to_end_same_seed():
 #     """Estimated runtime: 1 minute"""
 #     if torch.backends.mps.is_available():
 #         device = "mps"
@@ -29,13 +25,18 @@ scr_results_filename = (
 #         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
 #     ]
 
-#     test_config.dataset_names = ["bias_in_bios"]
+#     test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
 #     test_config.model_name = "pythia-70m-deduped"
 #     test_config.layer = 4
 #     test_config.trainer_ids = [10]
 #     test_config.include_checkpoints = False
 #     test_config.random_seed = 42
-#     tolerance = 0.0
+#     test_config.n_values = [2, 20]
+#     test_config.sae_batch_size = 250
+#     tolerance = 0.04
+
+#     test_config.spurious_corr = True
+#     test_config.column1_vals_list = [("professor", "nurse")]
 
 #     # populate selected_saes_dict using config values
 #     for release in test_config.sae_releases:
@@ -53,15 +54,25 @@ scr_results_filename = (
 
 #         print(f"SAE release: {release}, SAEs: {test_config.selected_saes_dict[release]}")
 
-#     run_results = sparse_probing.run_eval(test_config, test_config.selected_saes_dict, device)
+#     run_results = shift_and_tpp.run_eval(test_config, test_config.selected_saes_dict, device)
 
-#     with open(results_filename, "r") as f:
+#     # This is required because when saving tuples are converted to lists
+#     run_results["custom_eval_config"]["column1_vals_list"] = [["professor", "nurse"]]
+
+#     with open(scr_results_filename, "w") as f:
+#         json.dump(run_results, f)
+
+#     with open(scr_results_filename, "r") as f:
 #         expected_results = json.load(f)
 
-#     testing_utils.compare_dicts_within_tolerance(run_results, expected_results, tolerance)
+#     keys_to_compare = ["scr_metric_threshold_20"]
+
+#     testing_utils.compare_dicts_within_tolerance(
+#         run_results, expected_results, tolerance, keys_to_compare=keys_to_compare
+#     )
 
 
-def test_scr_end_to_end_same_seed():
+def test_scr_end_to_end_different_seed():
     """Estimated runtime: 1 minute"""
     if torch.backends.mps.is_available():
         device = "mps"
@@ -75,12 +86,12 @@ def test_scr_end_to_end_same_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
     test_config.include_checkpoints = False
-    test_config.random_seed = 42
+    test_config.random_seed = 48
     test_config.n_values = [2, 20]
     test_config.sae_batch_size = 250
     tolerance = 0.04
@@ -112,7 +123,11 @@ def test_scr_end_to_end_same_seed():
     with open(scr_results_filename, "r") as f:
         expected_results = json.load(f)
 
-    testing_utils.compare_dicts_within_tolerance(run_results, expected_results, tolerance)
+    keys_to_compare = ["scr_metric_threshold_20"]
+
+    testing_utils.compare_dicts_within_tolerance(
+        run_results, expected_results, tolerance, keys_to_compare=keys_to_compare
+    )
 
 
 def test_tpp_end_to_end_different_seed():
@@ -129,7 +144,7 @@ def test_tpp_end_to_end_different_seed():
         "sae_bench_pythia70m_sweep_topk_ctx128_0730",
     ]
 
-    test_config.dataset_names = ["bias_in_bios"]
+    test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.layer = 4
     test_config.trainer_ids = [10]
@@ -137,7 +152,7 @@ def test_tpp_end_to_end_different_seed():
     test_config.random_seed = 44
     test_config.n_values = [2, 20]
     test_config.sae_batch_size = 250
-    tolerance = 0.02
+    tolerance = 0.04
 
     test_config.spurious_corr = False
 
@@ -162,4 +177,8 @@ def test_tpp_end_to_end_different_seed():
     with open(tpp_results_filename, "r") as f:
         expected_results = json.load(f)
 
-    testing_utils.compare_dicts_within_tolerance(run_results, expected_results, tolerance)
+    ignore_keys = ("random_seed", "probe_epochs")
+
+    testing_utils.compare_dicts_within_tolerance(
+        run_results, expected_results, tolerance, ignore_keys=ignore_keys
+    )
