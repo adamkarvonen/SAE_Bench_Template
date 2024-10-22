@@ -1,0 +1,300 @@
+Summary table:
+┌──────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────────────┬─────────────────┬──────────┐
+│   latent │ explanation                                                                                                        │ predictions             │ correct seqs    │    score │
+├──────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼─────────────────────────┼─────────────────┼──────────┤
+│    17931 │ words and substrings indicating grades and rankings                                                                │ []                      │ [1, 2, 3, 13]   │ 0.714286 │
+│    17792 │ the word 'Wonder' and variations of 'wonder' in various contexts                                                   │ [8, 10, 11, 12]         │ [8, 10, 11, 12] │ 1        │
+│    18063 │ references to Hong Kong and its political and social issues                                                        │ [2, 6, 11, 14]          │ [2, 6, 11, 14]  │ 1        │
+│      460 │ phrases where someone is quoted saying something or expressing opinions                                            │ [2, 7, 10, 14]          │ [2, 7, 10, 14]  │ 1        │
+│     1326 │ terms related to construction materials and concepts of delays and filters                                         │ []                      │ [4, 6, 8, 10]   │ 0.714286 │
+│    18105 │ proper nouns and references to publications or media outlets                                                       │ [1, 5, 9, 12]           │ [5, 8, 9, 12]   │ 0.857143 │
+│    17979 │ references to the UK government and political figures related to Brexit discussions                                │ [4, 12, 14]             │ [3, 5, 7, 14]   │ 0.642857 │
+│    17938 │ the phrase 'enough to' followed by verbs indicating capability or potential outcomes                               │ [2, 10, 13, 14]         │ [2, 10, 13, 14] │ 1        │
+│       37 │ the phrase 'from the field' in sports statistics and performance descriptions                                      │ [5, 6, 7, 11, 14]       │ [4, 6, 11, 14]  │ 0.785714 │
+│     1080 │ specific titles and brand names that have notable cultural or commercial significance                              │ [7, 9, 13]              │ [5, 7, 9, 14]   │ 0.785714 │
+│    18343 │ phrases related to making decisions and choices                                                                    │ [5, 6, 13, 14]          │ [5, 6, 13, 14]  │ 1        │
+│    18596 │ the concept of events or appearances at various locations and gatherings                                           │ [3, 6, 8]               │ [2, 3, 6, 8]    │ 0.928571 │
+│    18862 │ the concept of voting and election results                                                                         │ [4, 6, 8, 13]           │ [4, 6, 8, 13]   │ 1        │
+│     2416 │ the phrase 'by the' in various contexts related to reports and organizations                                       │ [2, 5, 9, 10]           │ [2, 9, 10, 14]  │ 0.857143 │
+│    19116 │ mentions of video games and gaming culture                                                                         │ [1, 4, 13, 14]          │ [1, 4, 13, 14]  │ 1        │
+│     2636 │ names of news organizations and formal entities appearing in various contexts                                      │ [2, 10, 11, 14]         │ [1, 8, 10, 11]  │ 0.714286 │
+│     2063 │ pronouns and demonstratives indicating presence and involvement in discussions                                     │ [1, 3, 8, 10, 12, 13]   │ [3, 8, 12, 13]  │ 0.857143 │
+│    19255 │ the phrase 'by the time' and related temporal expressions                                                          │ [1, 6, 13, 14]          │ [1, 5, 13, 14]  │ 0.857143 │
+│     2988 │ phrases indicating sources or officials providing information or statements                                        │ [1, 5, 12, 14]          │ [1, 5, 12, 14]  │ 1        │
+│    19539 │ names and specific first names mentioned in various contexts                                                       │ [1, 3, 4, 14]           │ [1, 3, 4, 14]   │ 1        │
+│     3056 │ the word 'Deputy' and related titles in governmental and organizational contexts                                   │ [6, 9, 11, 13]          │ [6, 9, 11, 13]  │ 1        │
+│    19765 │ references to politicians designated by "Rep" followed by their names                                              │ [1, 5, 11, 12]          │ [1, 5, 11, 12]  │ 1        │
+│    20050 │ the substring 'Du' in names and certain contexts                                                                   │ [1, 3, 5, 14]           │ [1, 3, 5, 14]   │ 1        │
+│    20017 │ the substring 'np' indicating usage of a numerical computing library in code snippets                              │ [1, 2, 7, 11]           │ [1, 2, 7, 11]   │ 1        │
+│     3236 │ the conjunction 'and' indicating connections between words and ideas                                               │ [1, 2, 3, 4, 8, 10, 14] │ [1, 3, 4, 14]   │ 0.785714 │
+│     3107 │ concepts related to beliefs, identities, and societal norms or criticisms                                          │ [1, 8, 10, 13]          │ [6, 8, 12, 13]  │ 0.714286 │
+│    19723 │ phrases expressing anticipation or evaluation of actions and emotions related to individuals and groups            │ [2, 5, 6, 11, 14]       │ [5, 6, 11, 14]  │ 0.928571 │
+│    20079 │ ordinal numbers and phrases indicating time or order                                                               │ [1, 10, 11]             │ [1, 7, 10, 11]  │ 0.928571 │
+│     3002 │ names of places and people with specific letter sequences or endings                                               │ [1, 6, 9, 11, 13, 14]   │ [1, 3, 11, 13]  │ 0.714286 │
+│     3573 │ various word substrings related to activities or roles in different contexts                                       │ [1, 2, 7, 10, 13]       │ [8, 11, 12, 13] │ 0.5      │
+│    20262 │ references to specific ammunition calibers and programming tools                                                   │ [11, 13, 14]            │ [8, 11, 13, 14] │ 0.928571 │
+│     4563 │ words related to obligations and responsibilities in various contexts                                              │ [1, 5, 12, 14]          │ [1, 5, 12, 14]  │ 1        │
+│    20488 │ mentions of political figures and their titles, especially related to Trump and other presidents                   │ [3, 9]                  │ [3, 9, 11, 12]  │ 0.857143 │
+│     2040 │ temporal references indicating upcoming days or periods such as day week month and fall                            │ [1, 9, 10, 11, 13]      │ [1, 10, 11, 13] │ 0.928571 │
+│     4089 │ variations of the substring 'disp' in words related to evaluation and reasoning                                    │ [4, 5, 8, 9, 12]        │ [4, 8, 9, 12]   │ 0.928571 │
+│    22412 │ sentences that express actions, decisions, or inquiries about choices or guidance                                  │ [4, 12]                 │ [1, 6, 11, 12]  │ 0.714286 │
+│     4669 │ concepts of credibility, legitimacy, and prestige in various contexts                                              │ [1, 4, 10]              │ [1, 4, 7, 10]   │ 0.928571 │
+│    21894 │ words related to struggle and resistance against challenges or abuses                                              │ [1, 4, 9, 12]           │ [1, 4, 9, 12]   │ 1        │
+│    20985 │ variations of the word 'get' and its implications of change or progression in contexts                             │ [6, 9, 11, 14]          │ [6, 9, 11, 14]  │ 1        │
+│     4815 │ concepts related to fairness equity and distribution across various contexts                                       │ [5, 7, 11]              │ [5, 6, 7, 11]   │ 0.928571 │
+│     6025 │ possessive forms of names and titles indicating ownership or association                                           │ []                      │ [1, 7, 10, 14]  │ 0.714286 │
+│     4579 │ the substring 'Sch' at the beginning of proper nouns and significant terms                                         │ [2, 8, 10, 12, 13]      │ [2, 8, 12, 13]  │ 0.928571 │
+│    23107 │ substrings related to the concept of 'ce' and 'CI' in various contexts                                             │ [6, 14]                 │ [4, 5, 6, 14]   │ 0.857143 │
+│    23056 │ the term 'Land' and variations in the context of Land Rover and associated entities                                │ [1, 2, 9, 13]           │ [1, 2, 9, 13]   │ 1        │
+│     6118 │ the concept of peatlands and their environmental significance                                                      │ [3, 9, 10]              │ [3, 9, 10, 13]  │ 0.928571 │
+│    23273 │ words related to various stages and concepts of withdrawal and survival                                            │ [7, 9]                  │ [3, 6, 11, 14]  │ 0.571429 │
+│    23152 │ political events and advocacy for social issues and rights                                                         │ [10, 11, 13, 14]        │ [1, 10, 12, 14] │ 0.714286 │
+│     6260 │ forms of the word 'store' and related concepts of saving or retaining information                                  │ [2, 3, 5, 10]           │ [2, 3, 5, 10]   │ 1        │
+│     6205 │ references to the character Batman and related DC Comics elements                                                  │ [2, 3, 5, 9]            │ [2, 3, 5, 9]    │ 1        │
+│     6658 │ the word 'prevent' and its variants indicating a focus on avoiding negative outcomes                               │ [5, 7, 10, 12]          │ [5, 7, 10, 12]  │ 1        │
+│    23915 │ the concept of exerting effort or influence through the word "push" and its variants                               │ [1, 7, 11, 14]          │ [1, 7, 11, 14]  │ 1        │
+│    23929 │ terms indicating time intervals or transitional phases                                                             │ [2, 6, 7, 10, 14]       │ [2, 6, 7, 14]   │ 0.928571 │
+│     7264 │ the substring 'TF' indicating transfer functions in technical and programming contexts                             │ [9, 10, 12, 13]         │ [9, 10, 12, 13] │ 1        │
+│     6700 │ the name "Moore" and possibly other names in the context of individuals or references                              │ [5, 7, 10]              │ [5, 7, 8, 10]   │ 0.928571 │
+│     7933 │ the concept of war and related terminology                                                                         │ [1, 3, 7, 13]           │ [1, 3, 7, 13]   │ 1        │
+│    23583 │ the name 'Ryan' in various contexts related to individuals and events                                              │ [4, 5, 8, 9]            │ [4, 5, 8, 9]    │ 1        │
+│     7992 │ the word 'also' and similar conjunctions indicating addition or inclusion                                          │ [6, 8, 10]              │ [5, 6, 8, 10]   │ 0.928571 │
+│     7818 │ the words 'sometimes' and 'often' indicating variability or frequency in actions or feelings                       │ [3, 6, 7, 13]           │ [3, 6, 7, 13]   │ 1        │
+│     8208 │ words and phrases related to propaganda and its promotion                                                          │ [1, 3, 5, 7]            │ [1, 3, 5, 7]    │ 1        │
+│     8484 │ the word 'staff' in various contexts related to employment or assistance                                           │ [9, 10, 11, 12]         │ [9, 10, 11, 12] │ 1        │
+│     8535 │ phrases that indicate a degree or extent of something                                                              │ [2, 5, 12]              │ [7, 9, 11, 13]  │ 0.5      │
+│     9877 │ phrases indicating a specific timeframe or circumstances surrounding events                                        │ [4, 9, 12]              │ [1, 6, 9, 10]   │ 0.642857 │
+│     9513 │ official agreements, certifications, events, and Congresses, particularly those related to standards and practices │ [1, 11, 13]             │ [1, 5, 11, 13]  │ 0.928571 │
+│     9425 │ the concept of surrendering to authority or adversaries                                                            │ [5, 8, 13]              │ [5, 7, 8, 13]   │ 0.928571 │
+│     9538 │ the contraction "we're" indicating a group perspective or collective experience                                    │ [3, 4, 14]              │ [3, 4, 12, 14]  │ 0.928571 │
+│     9235 │ names or titles that start with specific substrings or refer to particular concepts                                │ [2, 3, 10, 12]          │ [2, 8, 10, 12]  │ 0.857143 │
+│    10162 │ the word 'unless' indicating conditional situations or exceptions                                                  │ [2, 4, 10, 14]          │ [2, 4, 10, 14]  │ 1        │
+│    10361 │ text discussing single-payer health care systems and related economic concepts                                     │ [3, 6, 10, 14]          │ [3, 6, 10, 14]  │ 1        │
+│     7157 │ various forms of the word "lying" and related concepts of deception and dishonesty                                 │ [6, 8, 9, 10]           │ [6, 8, 9, 10]   │ 1        │
+│    10487 │ terms related to brain size and function in the context of intelligence and development                            │ [7, 8, 11]              │ [1, 7, 8, 11]   │ 0.928571 │
+│    10388 │ the names of prominent football clubs and players, particularly focusing on Real Madrid and Barcelona              │ [4, 5, 12]              │ [4, 5, 6, 12]   │ 0.928571 │
+│    11593 │ variations of the word 'clean' and related concepts of cleaning and maintenance                                    │ [4, 5, 8, 9]            │ [4, 5, 8, 9]    │ 1        │
+│    10656 │ the substring '<<`>>' in technical and informal messages                                                           │ [1, 9, 12]              │ [1, 9, 10, 12]  │ 0.928571 │
+│    10903 │ the word 'the' along with other common nouns in various contexts                                                   │ [2, 3, 5, 8, 11]        │ [5, 6, 9, 13]   │ 0.5      │
+│    10916 │ the substring 'P' within various contexts and sentences                                                            │ [2, 4, 10]              │ [2, 6, 8, 10]   │ 0.785714 │
+│    11732 │ political criticism and controversial news events                                                                  │ [1, 9, 11, 12]          │ [1, 2, 9, 11]   │ 0.857143 │
+│     9938 │ words indicating reporting, analysis, and formal declarations in various contexts                                  │ [5, 9, 10]              │ [5, 8, 9, 10]   │ 0.928571 │
+│    10819 │ the concept of political reelection campaigns                                                                      │ [1, 6, 7, 10]           │ [1, 6, 7, 10]   │ 1        │
+│    12623 │ the phrase 'the' followed by nouns indicating creation or establishment                                            │ [3, 4, 9, 12]           │ [4, 7, 9, 11]   │ 0.714286 │
+│    12612 │ proper nouns and names in various contexts                                                                         │ [1, 5, 8, 11, 13, 14]   │ [1, 5, 7, 11]   │ 0.714286 │
+│    13268 │ words related to asking and expressing desires or possibilities                                                    │ [2, 4, 10, 14]          │ [2, 4, 9, 10]   │ 0.857143 │
+│    14679 │ alphanumeric identifiers and numerical values in various contexts                                                  │ [3, 4, 6, 10, 12]       │ [3, 5, 6, 12]   │ 0.785714 │
+│    13068 │ various languages and their representations in text                                                                │ [4, 7, 9, 14]           │ [4, 7, 9, 14]   │ 1        │
+│    13781 │ financial amounts denoted with currency symbols                                                                    │ [3, 4, 5, 12]           │ [3, 4, 5, 12]   │ 1        │
+│    15471 │ terms indicating certainty or possibility such as always probably still and honestly                               │ [3, 7, 9, 11]           │ [1, 3, 7, 11]   │ 0.857143 │
+│    14581 │ the phrase 'while' indicating contrasts or additional points in sentences                                          │ [2, 3, 12]              │ [2, 3, 5, 12]   │ 0.928571 │
+│    15630 │ conjunctions indicating actions and events occurring simultaneously or in relation to each other                   │ []                      │ [2, 7, 13, 14]  │ 0.714286 │
+│     3299 │ verbs indicating permission, ability, or prevention                                                                │ [2, 5, 10, 13, 14]      │ [4, 6, 10, 12]  │ 0.5      │
+│    15617 │ phrases indicating uncertainty or hope for future developments                                                     │ [6, 9, 10, 14]          │ [6, 9, 10, 14]  │ 1        │
+│    14226 │ the phrases related to the order of actions typically expressed as "first thing" or "last thing"                   │ [3, 5, 6, 13, 14]       │ [3, 5, 6, 13]   │ 0.928571 │
+│    16537 │ proper nouns and specific named entities or concepts in various contexts                                           │ [3, 6, 8, 12, 14]       │ [1, 3, 4, 9]    │ 0.5      │
+│    15922 │ the concept of organized units or groups undertaking specific tasks or operations                                  │ [10, 11, 13]            │ [5, 10, 11, 13] │ 0.928571 │
+│    16753 │ names and proper nouns related to sports and politics                                                              │ [7, 10, 13]             │ [6, 7, 10, 13]  │ 0.928571 │
+│    17451 │ scientific concepts related to spectroscopy and infrared properties of gases                                       │ [13]                    │ [2, 3, 13, 14]  │ 0.785714 │
+│    16644 │ the word 'taste' and related concepts of flavor and preference                                                     │ [6, 8, 9, 10]           │ [6, 8, 9, 10]   │ 1        │
+│    17083 │ words containing the substring 'ug' and related phonetic variations                                                │ [2, 5, 12]              │ [2, 5, 6, 12]   │ 0.928571 │
+│    17704 │ terms related to rules, rights, and responsibilities regarding content and contests                                │ [3, 4, 9, 11]           │ [3, 4, 9, 11]   │ 1        │
+│    16032 │ names of significant political figures and officials                                                               │ [1, 6, 13]              │ [1, 6, 8, 13]   │ 0.928571 │
+│    14506 │ the phrase 'stands at' indicating measurements or rankings                                                         │ [7, 9, 13]              │ [7, 9, 10, 13]  │ 0.928571 │
+│    16173 │ phrases related to "rise" and "the" in various contexts                                                            │ [1, 2, 12]              │ [1, 2, 12, 13]  │ 0.928571 │
+└──────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────────┴─────────────────┴──────────┘
+
+Worst scoring idx 3573, score = 0.5
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1. ia, describes it as a place to find a<< babys>>itter, a plumber or a       │
+│           │ missing cat, 2. ↵↵Lawyers for Mr. Trump told the<< canv>>assing board, which is made up of two Democrats 3.  student of  │
+│           │ the game coming into the system without the<< handic>>aps that McCoy endured his first season as a starter 4.            │
+│           │ Additionally, it was not hard to see during this<< resh>>uffle from the weibo posts of various team managers 5.  to      │
+│           │ counteract the emergence of Donald Trump, who has<< resh>>aped not just the Republican race in his own dumb 6.  it was a │
+│           │ seven episode web series. Did they<< resh>>oot the entire thing or did they put the scenes 7.  global market for tissue  │
+│           │ engineering and regeneration products such as<< scaff>>olds, tissue implants,<< biom>>imetic materials reached 8.        │
+│           │ tissues by combining cells from the body with highly porous<< scaff>>old<< biom>>aterials, which act as templates for 9. │
+│           │ ruthless cheap shot. Lists his likes as parking in<< handic>>apped spots and stealing from the blind.↵↵ 10.  - The       │
+│           │ Talibans reliance on extortion and<< kidn>>appings, along with narcotics and illegal mining operations, 11.  note,       │
+│           │ signed by the Pakistani Taliban, said that<< worsh>>ipping Sufi saints was blasphemy and forbidden by Islam 12.  with    │
+│           │ toppings that is ready after adding water and<< microw>>aving for 4 minutes. Hmmm... That ... 13. 47 Tyndall opted to    │
+│           │ become a mathematics and<< surve>>ying teacher at (Queenwood College), a boarding 14.  pre-revolutionary Iran, and       │
+│           │ Afghanistan where they<< bart>>ered the van for six horses. They made their 15.  By the twelfth century, reports         │
+│           │ Saenger,<< murm>>uring monks had become a relic of the past.                                                             │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on various word substrings related to activities or roles in different contexts.                   │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                                │
+├───────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    17.854 │ ia, describes it as a place to find a<< babys>>itter, a plumber or a missing cat,                                                       │
+│    16.450 │ ↵↵Lawyers for Mr. Trump told the<< canv>>assing board, which is made up of two Democrats                                                │
+│    15.541 │ student of the game coming into the system without the<< handic>>aps that McCoy endured his first season as a starter                   │
+│    15.465 │ Additionally, it was not hard to see during this<< resh>>uffle from the weibo posts of various team managers                            │
+│    14.867 │ to counteract the emergence of Donald Trump, who has<< resh>>aped not just the Republican race in his own dumb                          │
+│    14.597 │ it was a seven episode web series. Did they<< resh>>oot the entire thing or did they put the scenes                                     │
+│    14.432 │ global market for tissue engineering and regeneration products such as<< scaff>>olds, tissue implants,<< biom>>imetic materials reached │
+│    14.408 │ tissues by combining cells from the body with highly porous<< scaff>>old<< biom>>aterials, which act as templates for                   │
+│    14.364 │ ruthless cheap shot. Lists his likes as parking in<< handic>>apped spots and stealing from the blind.↵↵                                 │
+│    13.874 │ - The Talibans reliance on extortion and<< kidn>>appings, along with narcotics and illegal mining operations,                           │
+│    12.395 │ note, signed by the Pakistani Taliban, said that<< worsh>>ipping Sufi saints was blasphemy and forbidden by Islam                       │
+│     9.229 │ with toppings that is ready after adding water and<< microw>>aving for 4 minutes. Hmmm... That ...                                      │
+│     4.876 │ 47 Tyndall opted to become a mathematics and<< surve>>ying teacher at (Queenwood College), a boarding                                   │
+│     4.741 │ pre-revolutionary Iran, and Afghanistan where they<< bart>>ered the van for six horses. They made their                                 │
+│     3.459 │ By the twelfth century, reports Saenger,<< murm>>uring monks had become a relic of the past.                                            │
+└───────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "1, 3, 9, 11". Try not to be overly specific in your interpretation of the explanation. If you think there are no   │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on various word substrings related to activities or roles in different        │
+│           │ contexts.  Here are the examples:  1. oinette that everyone associates with the 18th century.↵↵This is a Casaquain from  │
+│           │ the 2. esty is an orientation of the heart, first and foremost. It begins with putting God first. To look 3.  as leaning │
+│           │ towards conservative content (see Simons, 1968), and other academics have noted (e.g 4.  the high side for IEMs and a    │
+│           │ few very high sensitivity headphones. Drive capability is limited by the 5.  LinkedIn and HP, and Switch produces video  │
+│           │ in a variety of different styles. The Canadian based production house is 6.  I can see medium-deep skin tones using this │
+│           │ as a very easy inner corner highlight shadow.↵↵ 7. I love the way you see people who dont like or agree with that        │
+│           │ lifestyle are always 8.  replacement of the iron sights with a smaller version and reshaping the butt to a fish tail.↵↵  │
+│           │ 9.  a new console and having new blend shape tech, we wanted to rebuild our facial system from the ground up 10.         │
+│           │ abortion and gay marriage. He will frame these as civil rights matters, then go for the gut by questioning 11. . Our     │
+│           │ genitals are not discarded, they are simply reshaped.↵↵Myth 3. So you 12. , courts can determine not only whether a      │
+│           │ given map handicaps one party's voters, but also how much 13. 't think I could do - you have time to rehearse and learn. │
+│           │ In movies, they want you 14.  there from all the witnesses, so I don't understand why he hasn't been charged."↵↵Father   │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 1, 2, 7, 10, 13                                                                                                          │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                            │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │ Y            │ oinette that everyone associates with the 18th century.↵↵This is a Casaquain from the                               │
+│     0.000 │           │ Y            │ esty is an orientation of the heart, first and foremost. It begins with putting God first. To look                  │
+│     0.000 │           │              │ as leaning towards conservative content (see Simons, 1968), and other academics have noted (e.g                     │
+│     0.000 │           │              │ the high side for IEMs and a few very high sensitivity headphones. Drive capability is limited by the               │
+│     0.000 │           │              │ LinkedIn and HP, and Switch produces video in a variety of different styles. The Canadian based production house is │
+│     0.000 │           │              │ I can see medium-deep skin tones using this as a very easy inner corner highlight shadow.↵↵                         │
+│     0.000 │           │ Y            │ I love the way you see people who dont like or agree with that lifestyle are always                                 │
+│    15.450 │ Y         │              │ replacement of the iron sights with a smaller version and reshaping the butt to a fish tail.↵↵                      │
+│     0.000 │           │              │ a new console and having new blend shape tech, we wanted to rebuild our facial system from the ground up            │
+│     0.000 │           │ Y            │ abortion and gay marriage. He will frame these as civil rights matters, then go for the gut by questioning          │
+│    15.111 │ Y         │              │ . Our genitals are not discarded, they are simply reshaped.↵↵Myth 3. So you                                         │
+│    16.971 │ Y         │              │ , courts can determine not only whether a given map handicaps one party's voters, but also how much                 │
+│    15.068 │ Y         │ Y            │ 't think I could do - you have time to rehearse and learn. In movies, they want you                                 │
+│     0.000 │           │              │ there from all the witnesses, so I don't understand why he hasn't been charged."↵↵Father                            │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Best scoring idx 17792, score = 1.0
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1.  Batman/Teenage Mutant Ninja Turtles crossover, a<< Wonder>> Woman '77     │
+│           │ movie (presumably with Lynda 2.  a fictional universe that's almost 74 years old (<< Wonder>> Woman's origin ,           │
+│           │ Superman's pal, Flash's 3. 's main attraction.↵↵JTA wrote of<< Wonder>>'s reported change of heart:↵↵"<<Wonder>> 4.  to  │
+│           │ South Africa in the time of apartheid, which<< Wonder>> himself was arrested for protesting in 1985.↵↵ 5. dressed        │
+│           │ Catwoman, naked-in-bed<< Wonder>> Woman and bikinied Starfire, why 6.  he pulls over Cassie "Don't Call Me<< Wonder>>    │
+│           │ Girl" Sandsmark, while White -Hood 7.  according to a source who has read email exchanges between<< Wonder>>s            │
+│           │ representatives and organizers of the event." 8.  have not been individually verified.<|endoftext|>Stevie<< Wonder>>     │
+│           │ will cancel his scheduled appearance at a US fundraiser for 9. s deep mannish voice extolled the<< wonders>> of Playtex  │
+│           │ tampons, and I tried to 10.  though, it looks like a superb testament to the<< wonders>> of parity.↵↵3. NL West↵ 11.  of │
+│           │ faith can be compensated by the newer and finer<< wonders>> that we have before us, as well as by 12.  is Germany on     │
+│           │ December 7.↵↵WON<<DER>>↵↵Lionsgate Lionsgate/Participant 13.  Centre: This non-profit community resource brings the<<    │
+│           │ wonders>> of space to Earth. See real rocket engines and 14. en Europese arbeidsmarkt z<<onder>> sociale dumping in de   │
+│           │ rijkere lid 15.  be another reason to come down. It has the<< wow>> factor.↵↵The Guild Hall lottery                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on the word 'Wonder' and variations of 'wonder' in various contexts.                               │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                                       │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    55.859 │ Batman/Teenage Mutant Ninja Turtles crossover, a<< Wonder>> Woman '77 movie (presumably with Lynda                             │
+│    55.616 │ a fictional universe that's almost 74 years old (<< Wonder>> Woman's origin , Superman's pal, Flash's                          │
+│    54.747 │ 's main attraction.↵↵JTA wrote of<< Wonder>>'s reported change of heart:↵↵"<<Wonder>>                                          │
+│    53.021 │ to South Africa in the time of apartheid, which<< Wonder>> himself was arrested for protesting in 1985.↵↵                      │
+│    52.625 │ dressed Catwoman, naked-in-bed<< Wonder>> Woman and bikinied Starfire, why                                                     │
+│    49.700 │ he pulls over Cassie "Don't Call Me<< Wonder>> Girl" Sandsmark, while White -Hood                                              │
+│    44.878 │ according to a source who has read email exchanges between<< Wonder>>s representatives and organizers of the event."           │
+│    42.236 │ have not been individually verified.<|endoftext|>Stevie<< Wonder>> will cancel his scheduled appearance at a US fundraiser for │
+│    15.008 │ s deep mannish voice extolled the<< wonders>> of Playtex tampons, and I tried to                                               │
+│    14.743 │ though, it looks like a superb testament to the<< wonders>> of parity.↵↵3. NL West↵                                            │
+│    14.019 │ of faith can be compensated by the newer and finer<< wonders>> that we have before us, as well as by                           │
+│    13.018 │ is Germany on December 7.↵↵WON<<DER>>↵↵Lionsgate Lionsgate/Participant                                                         │
+│    12.761 │ Centre: This non-profit community resource brings the<< wonders>> of space to Earth. See real rocket engines and               │
+│    11.589 │ en Europese arbeidsmarkt z<<onder>> sociale dumping in de rijkere lid                                                          │
+│     1.671 │ be another reason to come down. It has the<< wow>> factor.↵↵The Guild Hall lottery                                             │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "2, 3, 4, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on the word 'Wonder' and variations of 'wonder' in various contexts.  Here    │
+│           │ are the examples:  1.  with:↵↵Robyn, for many of us, words like sin and even 2.  deploy. So we needed to be able to run  │
+│           │ something on that image. It was partially for security. 3. , Im available to play, and I want to get back in action as   │
+│           │ soon as I 4.  2008; Conway et al., 2011). Thus, it is possible that liberals and conservatives differ on what topics 5.  │
+│           │ , so they lean more to the left. On the other hand, these individuals distrust institutions, believing them 6. ) =       │
+│           │ \prod\limits_{k=1}^{10} (x-\frac{ 7. ," Farr said.↵↵Blanchard estimates the restoration of the facades to cost at least  │
+│           │ 8.  D'Amour, a route sales driver for Wonder Bread, opened the Y Cash Market with his brother 9.  instead of focusing on │
+│           │ changes to the setting (in my campaign, small colonies were being resettled or 10.  as did Lionsgate/Participants        │
+│           │ Wonder. And, Paddington 2 is thisclose 11. , panel 4). I don't care how expert Wonder Woman is, that's definitely not a  │
+│           │ proper dress 12.  in trying to fulfil her potential, and in the wonders of nature and the marvels of the cosmos. 13.     │
+│           │ The diagram shows one of them.↵↵Troitsky, 1909 a b c d e f g 14.  a kid. So, really the aberration was the first two     │
+│           │ Weezer records. I was very                                                                                               │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 8, 10, 11, 12                                                                                                            │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                    │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ with:↵↵Robyn, for many of us, words like sin and even                                                       │
+│     0.000 │           │              │ deploy. So we needed to be able to run something on that image. It was partially for security.              │
+│     0.000 │           │              │ , Im available to play, and I want to get back in action as soon as I                                       │
+│     0.000 │           │              │ 2008; Conway et al., 2011). Thus, it is possible that liberals and conservatives differ on what topics      │
+│     0.000 │           │              │ , so they lean more to the left. On the other hand, these individuals distrust institutions, believing them │
+│     0.000 │           │              │ ) = \prod\limits_{k=1}^{10} (x-\frac{                                                                       │
+│     0.000 │           │              │ ," Farr said.↵↵Blanchard estimates the restoration of the facades to cost at least                          │
+│    54.717 │ Y         │ Y            │ D'Amour, a route sales driver for Wonder Bread, opened the Y Cash Market with his brother                   │
+│     0.000 │           │              │ instead of focusing on changes to the setting (in my campaign, small colonies were being resettled or       │
+│    56.624 │ Y         │ Y            │ as did Lionsgate/Participants Wonder. And, Paddington 2 is thisclose                                        │
+│    52.333 │ Y         │ Y            │ , panel 4). I don't care how expert Wonder Woman is, that's definitely not a proper dress                   │
+│    16.735 │ Y         │ Y            │ in trying to fulfil her potential, and in the wonders of nature and the marvels of the cosmos.              │
+│     0.000 │           │              │ The diagram shows one of them.↵↵Troitsky, 1909 a b c d e f g                                                │
+│     0.000 │           │              │ a kid. So, really the aberration was the first two Weezer records. I was very                               │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
