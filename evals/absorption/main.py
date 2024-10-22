@@ -187,7 +187,7 @@ def _fix_topk(
     return sae
 
 
-def parse_arguments():
+def arg_parser():
     parser = argparse.ArgumentParser(description="Run absorption evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--f1_jump_threshold", type=float, default=0.03, help="F1 jump threshold")
@@ -200,7 +200,7 @@ def parse_arguments():
     parser.add_argument("--output_folder", type=str, default="evals/absorption/results", help="Output folder")
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
 
-    return parser.parse_args()
+    return parser
 
 
 def setup_environment():
@@ -246,7 +246,7 @@ if __name__ == "__main__":
     
     
     '''
-    args = parse_arguments()
+    args = arg_parser().parse_args()
     device = setup_environment()
     
     start_time = time.time()

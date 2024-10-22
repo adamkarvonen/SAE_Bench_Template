@@ -1,14 +1,14 @@
 import json
 import os
-import uuid
 import tempfile
-import shutil
-
+from evals.absorption.eval_config import EvalConfig
+from sae_bench_utils.testing_utils import validate_eval_cli_interface
 import torch
 
 import evals.absorption.eval_config as eval_config
 import evals.absorption.main as absorption
 from sae_bench_utils.sae_selection_utils import get_saes_from_regex
+from sae_bench_utils.testing_utils import validate_eval_output_format
 
 test_data_dir = "tests/test_data/absorption"
 expected_results_filename = os.path.join(test_data_dir, "absorption_expected_results.json")
@@ -17,6 +17,22 @@ expected_probe_results_filename = os.path.join(test_data_dir, "absorption_expect
 TEST_RELEASE = "sae_bench_pythia70m_sweep_topk_ctx128_0730"
 TEST_SAE_NAME = "blocks.4.hook_resid_post__trainer_10"
 TEST_TOLERANCE = 0.02
+
+
+
+def test_absorption_cli_interface():
+    parser = absorption.arg_parser()
+    
+    # Additional required args specific to absorption eval (but aren't in the config)
+    additional_required = {
+        "force_rerun",
+    }
+    
+    validate_eval_cli_interface(
+        parser,
+        eval_config_cls=EvalConfig,
+        additional_required_args=additional_required
+    )
 
 def test_end_to_end_different_seed():
     """Estimated runtime: 2 minutes"""
@@ -40,27 +56,23 @@ def test_end_to_end_different_seed():
         )
         selected_saes_dict = get_saes_from_regex(TEST_RELEASE, TEST_SAE_NAME)
         print(f"Selected SAEs: {selected_saes_dict}")
-        run_results = absorption.run_eval(test_config, selected_saes_dict, device, test_data_dir)
+        
+        run_results = absorption.run_eval(
+            config=test_config,
+            selected_saes_dict=selected_saes_dict,
+            device=device,
+            output_path=test_data_dir,
+            force_rerun=False,
+        )
+
+        path_to_eval_results = os.path.join(test_data_dir, f"{TEST_RELEASE}_{TEST_SAE_NAME}_eval_results.json")
+        validate_eval_output_format(path_to_eval_results, eval_type="absorption")
 
         # New checks for the updated JSON structure
         assert isinstance(run_results, dict), "run_results should be a dictionary"
         
-        for key, value in run_results.items():
-            assert isinstance(value, dict), f"Each item in run_results should be a dictionary, but {key} is not"
-            assert "eval_instance_id" in value, f"eval_instance_id missing in {key}"
-            assert "sae_lens_release" in value, f"sae_lens_release missing in {key}"
-            assert "sae_lens_id" in value, f"sae_lens_id missing in {key}"
-            assert "eval_type_id" in value, f"eval_type_id missing in {key}"
-            assert "sae_lens_version" in value, f"sae_lens_version missing in {key}"
-            assert "sae_bench_version" in value, f"sae_bench_version missing in {key}"
-            assert "date_time" in value, f"date_time missing in {key}"
-            assert "eval_config" in value, f"eval_config missing in {key}"
-            assert "eval_results" in value, f"eval_results missing in {key}"
-            assert "eval_artifacts" in value, f"eval_artifacts missing in {key}"
-
-            assert value["eval_type_id"] == "absorption", f"eval_type_id should be 'absorption', but got {value['eval_type_id']}"
-            assert uuid.UUID(value["eval_instance_id"]), f"eval_instance_id should be a valid UUID, but got {value['eval_instance_id']}"
-
+        # check that k_sparse_probing_results artifact exists
+        for _, value in run_results.items():
             # Check if k_sparse_probing_results artifact exists
             k_sparse_probing_path = os.path.join(test_data_dir, value["eval_artifacts"]["k_sparse_probing_results"])
             assert os.path.exists(k_sparse_probing_path), f"k_sparse_probing_results artifact not found at {k_sparse_probing_path}"
@@ -72,7 +84,7 @@ def test_end_to_end_different_seed():
         # Load expected results and compare
         with open(expected_results_filename, "r") as f:
             expected_results = json.load(f)
-
+            
         expected_mean_absorption_rate = expected_results["eval_results"]["mean_absorption_rate"]
 
         assert abs(actual_mean_absorption_rate - expected_mean_absorption_rate) < TEST_TOLERANCE
