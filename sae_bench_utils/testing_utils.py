@@ -158,6 +158,7 @@ def compare_dicts_within_tolerance(
     path: str = "",
     all_diffs=None,
     ignore_keys: tuple[str] = ("random_seed",),
+    keys_to_compare: Optional[list[str]] = None,
 ):
     """
     Recursively compare two nested dictionaries and assert that all numeric values
@@ -169,6 +170,8 @@ def compare_dicts_within_tolerance(
     :param path: The current path in the nested structure (used for error messages)
     :param all_diffs: List to collect all differences (used internally for recursion)
     :param ignore_keys: Tuple of keys to ignore in the comparison
+    :param keys_to_compare: Optional list of keys to compare. If provided, only compare
+                          values whose leaf key name matches one in this list
     """
 
     if all_diffs is None:
@@ -177,6 +180,10 @@ def compare_dicts_within_tolerance(
     assert isinstance(
         actual, type(expected)
     ), f"Type mismatch at {path}: {type(actual)} != {type(expected)}"
+
+    if not isinstance(actual, dict) and keys_to_compare is not None:
+        if path.split(".")[-1] not in keys_to_compare:
+            return
 
     if isinstance(actual, dict):
         assert set(actual.keys()) == set(
@@ -189,7 +196,13 @@ def compare_dicts_within_tolerance(
                 continue
 
             compare_dicts_within_tolerance(
-                actual[key], expected[key], tolerance, new_path, all_diffs
+                actual[key],
+                expected[key],
+                tolerance,
+                new_path,
+                all_diffs,
+                ignore_keys,
+                keys_to_compare,
             )
     elif isinstance(actual, (int, float)):
         diff = abs(actual - expected)

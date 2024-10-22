@@ -1,11 +1,11 @@
 This repo implements k-sparse probing, where k can be any integer less than the SAE's hidden dim.
 
-Estimated runtime per dataset (currently there are 2 datasets):
+Estimated runtime per dataset (currently there are 6 datasets):
 
 - Pythia-70M: ~10 seconds to collect activations per layer with SAEs, ~20 seconds per SAE to perform probing
 - Gemma-2-2B: ~2 minutes to collect activations per layer with SAEs, ~20 seconds per SAE to perform probing
 
-Using Gemma-2-2B, at current batch sizes, I see a peak GPU memory usage of 22 GB.
+Using Gemma-2-2B, at current batch sizes, I see a peak GPU memory usage of 22 GB. This fits on a 3090.
 
 All configuration arguments and hyperparameters are located in `eval_config.py`. The full eval config is saved to the results json file.
 

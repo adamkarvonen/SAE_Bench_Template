@@ -7,10 +7,13 @@ class EvalConfig:
     random_seed: int = 42
 
     # dataset_names: list[str] = field(
-    #     default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
+    #     default_factory=lambda: [
+    #         "LabHC/bias_in_bios_class_set1",
+    #         "canrager/amazon_reviews_mcauley_1and5",
+    #     ]
     # )
 
-    dataset_names: list[str] = field(default_factory=lambda: ["bias_in_bios"])
+    dataset_names: list[str] = field(default_factory=lambda: ["LabHC/bias_in_bios_class_set1"])
     column1_vals_list: list[tuple[str, str]] = field(
         default_factory=list
     )  # This will be populated in run_eval()
@@ -25,10 +28,10 @@ class EvalConfig:
         16  # We don't want probe batch size to be close to the train set size
     )
     probe_test_batch_size: int = min(500, test_set_size)
-    probe_epochs: int = 5
+    probe_epochs: int = 20
     probe_lr: float = 1e-3
 
-    sae_batch_size: int = 250
+    sae_batch_size: int = 125
 
     # This is for spurrious correlation removal
     chosen_class_indices = [
@@ -63,6 +66,6 @@ class EvalConfig:
     # trainer_ids: Optional[list[int]] = None
     # include_checkpoints: bool = False
 
-    n_values: list[int] = field(default_factory=lambda: [2, 5, 10, 20, 50, 100, 500, 1000, 2000])
+    n_values: list[int] = field(default_factory=lambda: [2, 5, 10, 20, 50, 100, 500])
 
     selected_saes_dict: dict = field(default_factory=lambda: {})

@@ -16,6 +16,7 @@ LLM_NAME_TO_BATCH_SIZE = {
 LLM_NAME_TO_DTYPE = {
     "pythia-70m-deduped": torch.float32,
     "gemma-2-2b": torch.bfloat16,
+    "gemma-2-2b-it": torch.bfloat16,
 }
 
 
@@ -25,10 +26,12 @@ def get_all_llm_activations(
     tokenized_inputs_dict: dict[str, dict[str, Int[torch.Tensor, "dataset_size seq_len"]]],
     model: HookedTransformer,
     batch_size: int,
-    hook_name: str,
+    layer: int,
 ) -> dict[str, Float[torch.Tensor, "dataset_size seq_len d_model"]]:
     """VERY IMPORTANT NOTE: We zero out masked token activations in this function. Later, we ignore zeroed activations."""
     all_classes_acts_BLD = {}
+
+    hook_name = f"blocks.{layer}.hook_resid_post"
 
     for class_name in tokenized_inputs_dict:
         all_acts_BLD = []
@@ -48,7 +51,7 @@ def get_all_llm_activations(
                 acts_BLD = resid_BLD
 
             model.run_with_hooks(
-                tokens_BL, return_type=None, fwd_hooks=[(hook_name, activation_hook)]
+                tokens_BL, stop_at_layer=layer + 1, fwd_hooks=[(hook_name, activation_hook)]
             )
 
             acts_BLD = acts_BLD * attention_mask_BL[:, :, None]
