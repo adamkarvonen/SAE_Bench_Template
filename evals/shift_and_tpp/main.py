@@ -314,6 +314,12 @@ def get_spurious_correlation_plotting_dict(
 
         dirs = [1, 2]
 
+        dir1_class_name = f"{eval_probe_class_id} probe on professor / nurse data"
+        dir2_class_name = f"{eval_probe_class_id} probe on male / female data"
+
+        dir1_acc = llm_clean_accs[dir1_class_name]
+        dir2_acc = llm_clean_accs[dir2_class_name]
+
         for dir in dirs:
             if dir == 1:
                 ablated_probe_class_id = "male / female"
@@ -339,6 +345,12 @@ def get_spurious_correlation_plotting_dict(
                 metric_key = f"scr_dir{dir}_threshold_{threshold}"
 
                 results[sae_name][metric_key] = changed_acc
+
+                scr_metric_key = f"scr_metric_threshold_{threshold}"
+                if dir1_acc < dir2_acc and dir == 1:
+                    results[sae_name][scr_metric_key] = changed_acc
+                elif dir1_acc > dir2_acc and dir == 2:
+                    results[sae_name][scr_metric_key] = changed_acc
 
     return results
 
