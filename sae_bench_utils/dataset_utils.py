@@ -10,29 +10,147 @@ import random
 import sae_bench_utils.dataset_info as dataset_info
 
 
-def split_dataset(
+def gather_dataset_from_df(
+    df: pd.DataFrame,
+    chosen_classes: list[str],
+    min_samples_per_category: int,
+    label_key: str,
+    text_key: str,
+    random_seed: int,
+) -> dict[str, list[str]]:
+    random.seed(random_seed)
+
+    data = {}
+
+    for chosen_class in chosen_classes:
+        class_df = df[df[label_key] == chosen_class]
+
+        sampled_texts = (
+            class_df[text_key].sample(n=min_samples_per_category, random_state=random_seed).tolist()
+        )
+        assert len(sampled_texts) == min_samples_per_category
+
+        data[str(chosen_class)] = sampled_texts
+
+    return data
+
+
+def get_ag_news_dataset(
+    dataset_name: str,
+    chosen_classes: list[str],
+    train_set_size: int,
+    test_set_size: int,
+    random_seed: int,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    random.seed(random_seed)
+
+    dataset = load_dataset(dataset_name, streaming=False)
+    train_df = pd.DataFrame(dataset["train"])
+    test_df = pd.DataFrame(dataset["test"])
+
+    # It's a binary classification task, so we need to halve the train and test sizes
+    train_size = train_set_size // 2
+    test_size = test_set_size // 2
+
+    # convert str to int, as labels are stored as ints
+    chosen_classes = [int(chosen_class) for chosen_class in chosen_classes]
+
+    train_data = gather_dataset_from_df(
+        train_df, chosen_classes, train_size, "label", "text", random_seed
+    )
+    test_data = gather_dataset_from_df(
+        test_df, chosen_classes, test_size, "label", "text", random_seed
+    )
+
+    return train_data, test_data
+
+
+def get_europarl_dataset(
+    dataset_name: str,
+    chosen_languages: list[str],
+    train_size: int,
+    test_size: int,
+    random_seed: int,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    random.seed(random_seed)
+    label_key = "translation"
+    language_pairs = {
+        "en": "en-fr",
+        "fr": "fr-it",
+        "de": "de-en",
+        "es": "es-fr",
+        "nl": "nl-pt",
+    }
+
+    # It's a binary classification task, so we need to halve the train and test sizes
+    train_size = train_size // 2
+    test_size = test_size // 2
+
+    samples_per_language = train_size + test_size
+
+    samples_by_language = defaultdict(list)
+
+    print(f"Loading dataset {dataset_name}, this usually takes ~10 seconds")
+
+    for language, language_pair in language_pairs.items():
+        # Filter out languages that are not in the dataset
+        dataset = load_dataset(
+            dataset_name,
+            language_pair,
+            streaming=True,
+            split="train",
+        )
+
+        # Collect samples for each language
+        for sample in dataset:
+            # Extract the text in the target language
+            text = sample[label_key][language]
+            samples_by_language[language].append(text)
+
+            # Check if we have enough samples for all languages
+            if len(samples_by_language[language]) > samples_per_language:
+                break
+
+    # Split samples into train and test sets
+    train_samples = {}
+    test_samples = {}
+
+    for language in chosen_languages:
+        lang_samples = samples_by_language[language]
+
+        random.shuffle(lang_samples)
+        train_samples[language] = lang_samples[:train_size]
+        test_samples[language] = lang_samples[train_size : train_size + test_size]
+        assert len(train_samples[language]) == train_size
+        assert len(test_samples[language]) == test_size
+
+    return train_samples, test_samples
+
+
+def get_github_code_dataset(
     dataset_name: str,
     chosen_classes: list[str],
     train_size: int,
     test_size: int,
     random_seed: int,
-    label_key: str,
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
-    """Used for datasets like github-code which do not have a predefined split."""
-
     random.seed(random_seed)
+    label_key = "language"
+
+    # It's a binary classification task, so we need to halve the train and test sizes
+    train_size = train_size // 2
+    test_size = test_size // 2
+
+    print(f"Loading dataset {dataset_name}, this usually takes ~30 seconds")
 
     # Filter out languages that are not in the dataset
-    if dataset_name == "codeparrot/github-code":
-        dataset = load_dataset(
-            dataset_name,
-            streaming=True,
-            split="train",
-            trust_remote_code=True,
-            languages=chosen_classes,
-        )
-    else:
-        dataset = load_dataset(dataset_name, streaming=True, split="train", trust_remote_code=True)
+    dataset = load_dataset(
+        dataset_name,
+        streaming=True,
+        split="train",
+        trust_remote_code=True,
+        languages=chosen_classes,
+    )
 
     total_size = train_size + test_size
 
@@ -41,7 +159,17 @@ def split_dataset(
     # Collect samples for each language
     for sample in dataset:
         if sample[label_key] in chosen_classes:
-            all_samples[sample[label_key]].append(sample)
+            code = sample["code"]
+
+            # Many code files begin with a license, so we sample from the middle of the file
+            if len(code) > 1000:
+                # Get the maximum valid starting position
+                max_start = len(code) - 1000
+                # Start sampling from at least 20% into the file to avoid licenses
+                min_start = min(int(len(code) * 0.2), max_start)
+                start_pos = random.randint(min_start, max_start)
+                code = code[start_pos : start_pos + 1000]
+            all_samples[sample[label_key]].append(code)
 
             # Check if we have collected enough samples for all languages
             if all(len(all_samples[lang]) > total_size for lang in chosen_classes):
@@ -219,13 +347,28 @@ def get_multi_label_train_test_data(
             dataset_name, train_set_size, test_set_size, random_seed
         )
     elif dataset_name == "codeparrot/github-code":
-        train_data, test_data = split_dataset(
+        train_data, test_data = get_github_code_dataset(
             dataset_name,
             dataset_info.chosen_classes_per_dataset[dataset_name],
             train_set_size,
             test_set_size,
             random_seed,
-            label_key="language",
+        )
+    elif dataset_name == "fancyzhx/ag_news":
+        train_data, test_data = get_ag_news_dataset(
+            dataset_name,
+            dataset_info.chosen_classes_per_dataset[dataset_name],
+            train_set_size,
+            test_set_size,
+            random_seed,
+        )
+    elif dataset_name == "Helsinki-NLP/europarl":
+        train_data, test_data = get_europarl_dataset(
+            dataset_name,
+            dataset_info.chosen_classes_per_dataset[dataset_name],
+            train_set_size,
+            test_set_size,
+            random_seed,
         )
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
