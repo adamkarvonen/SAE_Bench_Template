@@ -5,35 +5,32 @@ from sae_lens import SAE
 import torch
 from tqdm import tqdm
 import pandas as pd
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens.sae import TopK
 
 from evals.absorption import eval_config
 from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
-from sae_bench_utils import formatting_utils, activation_collection
+from sae_bench_utils import formatting_utils, activation_collection, get_eval_uuid, get_sae_lens_version, get_sae_bench_version
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 from transformer_lens import HookedTransformer
-
+from datetime import datetime
+import json
+import os
+import time
+import argparse
 
 def run_eval(
     config: eval_config.EvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
+    output_path: str,
     force_rerun: bool = False,
 ):
-    """config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
-    It is saved in the results_dict for reproducibility.
-    selected_saes_dict: dict[str, list[str]] is a dict of SAE release name: list of SAE names to evaluate.
-    Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
-    ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
-    'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
-    # TODO: Make this nicer.
-    sae_map_df = pd.DataFrame.from_records(
-        {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
-    ).T
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_version = get_sae_bench_version()
 
     results_dict = {}
-    results_dict["custom_eval_results"] = {}
 
     llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
@@ -42,23 +39,17 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    print(f"Running evaluation for layer {config.layer}")
-
     for sae_release in selected_saes_dict:
         print(
             f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
         )
-        sae_id_to_name_map = sae_map_df.saes_map[sae_release]
-        sae_name_to_id_map = {v: k for k, v in sae_id_to_name_map.items()}
 
-        for sae_name in tqdm(
+        for sae_id in tqdm(
             selected_saes_dict[sae_release],
             desc="Running SAE evaluation on all selected SAEs",
         ):
             gc.collect()
             torch.cuda.empty_cache()
-
-            sae_id = sae_name_to_id_map[sae_name]
 
             sae = SAE.from_pretrained(
                 release=sae_release,
@@ -66,13 +57,13 @@ def run_eval(
                 device=device,
             )[0]
             sae = sae.to(device=device, dtype=llm_dtype)
-            sae = _fix_topk(sae, sae_name, sae_release)
+            sae = _fix_topk(sae, sae_id, sae_release)
 
-            run_k_sparse_probing_experiment(
+            k_sparse_probing_results = run_k_sparse_probing_experiment(
                 model=model,
                 sae=sae,
-                layer=config.layer,
-                sae_name=sae_name,
+                layer=sae.cfg.hook_layer,
+                sae_name=sae_id,
                 force=force_rerun,
                 max_k_value=config.max_k_value,
                 f1_jump_threshold=config.f1_jump_threshold,
@@ -84,8 +75,8 @@ def run_eval(
             raw_df = run_feature_absortion_experiment(
                 model=model,
                 sae=sae,
-                layer=config.layer,
-                sae_name=sae_name,
+                layer=sae.cfg.hook_layer,
+                sae_name=sae_id,
                 force=force_rerun,
                 max_k_value=config.max_k_value,
                 feature_split_f1_jump_threshold=config.f1_jump_threshold,
@@ -96,29 +87,60 @@ def run_eval(
             )
             agg_df = _aggregate_results_df(raw_df)
 
-            results_dict["custom_eval_results"][sae_name] = {}
+            sae_results = {}
             absorption_rates = []
             num_split_features = []
             for _, row in agg_df.iterrows():
                 letter = row["letter"]
                 absorption_rates.append(row["absorption_rate"])
                 num_split_features.append(row["num_split_feats"])
-                results_dict["custom_eval_results"][sae_name][
-                    f"absorption_first_letter_{letter}"
-                ] = {
+                sae_results[f"absorption_first_letter_{letter}"] = {
                     "num_absorption": int(row["num_absorption"]),
                     "absorption_rate": float(row["absorption_rate"]),
                     "num_probe_true_positives": float(row["num_probe_true_positives"]),
                     "num_split_features": int(row["num_split_feats"]),
                 }
-            results_dict["custom_eval_results"][sae_name]["mean_absorption_rate"] = statistics.mean(
-                absorption_rates
-            )
-            results_dict["custom_eval_results"][sae_name]["mean_num_split_features"] = (
-                statistics.mean(num_split_features)
-            )
+            sae_results["mean_absorption_rate"] = statistics.mean(absorption_rates)
+            sae_results["mean_num_split_features"] = statistics.mean(num_split_features)
 
-    results_dict["custom_eval_config"] = asdict(config)
+            # Create artifacts subfolder
+            artifacts_folder = os.path.join(output_path, "artifacts")
+            os.makedirs(artifacts_folder, exist_ok=True)
+
+            # Save k_sparse_probing_results as a separate JSON
+            k_sparse_probing_file = f"{sae_release}_{sae_id}_k_sparse_probing.json"
+            k_sparse_probing_file = k_sparse_probing_file.replace('/', '_')  # Replace '/' with '_' to avoid nested directories
+            k_sparse_probing_path = os.path.join(artifacts_folder, k_sparse_probing_file)
+            
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(k_sparse_probing_path), exist_ok=True)
+            k_sparse_probing_results.to_json(k_sparse_probing_path, orient='records', indent=4)
+
+            sae_eval_result = {
+                "eval_instance_id": eval_instance_id,
+                "sae_lens_release": sae_release,
+                "sae_lens_id": sae_id,
+                "eval_type_id": "absorption",
+                "sae_lens_version": sae_lens_version,
+                "sae_bench_version": sae_bench_version,
+                "date_time": datetime.now().isoformat(),
+                "eval_config": asdict(config),
+                "eval_results": sae_results,
+                "eval_artifacts": {
+                    "k_sparse_probing_results": os.path.relpath(k_sparse_probing_path, output_path)
+                }
+            }
+
+            results_dict[f"{sae_release}_{sae_id}"] = sae_eval_result
+
+            # Save individual SAE result
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace('/', '_')
+            sae_result_path = os.path.join(output_path, sae_result_file)
+            
+            with open(sae_result_path, 'w') as f:
+                json.dump(sae_eval_result, f, indent=4)
+
     return results_dict
 
 
@@ -165,15 +187,24 @@ def _fix_topk(
     return sae
 
 
-# This main function will produce the same results as the shift, tpp, and sparse probing main functions
-if __name__ == "__main__":
-    import time
-    import os
-    import json
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run absorption evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--f1_jump_threshold", type=float, default=0.03, help="F1 jump threshold")
+    parser.add_argument("--max_k_value", type=int, default=10, help="Maximum k value")
+    parser.add_argument("--prompt_template", type=str, default="{word} has the first letter:", help="Prompt template")
+    parser.add_argument("--prompt_token_pos", type=int, default=-6, help="Prompt token position")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument("--sae_regex_pattern", type=str, required=True, help="Regex pattern for SAE selection")
+    parser.add_argument("--sae_block_pattern", type=str, required=True, help="Regex pattern for SAE block selection")
+    parser.add_argument("--output_folder", type=str, default="evals/absorption/results", help="Output folder")
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
 
+    return parser
+
+
+def setup_environment():
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-
-    start_time = time.time()
 
     if torch.backends.mps.is_available():
         device = "mps"
@@ -181,46 +212,53 @@ if __name__ == "__main__":
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     print(f"Using device: {device}")
+    return device
 
-    config = eval_config.EvalConfig()
 
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
+def create_config_and_selected_saes(args):
+    config = eval_config.EvalConfig(
+        random_seed=args.random_seed,
+        f1_jump_threshold=args.f1_jump_threshold,
+        max_k_value=args.max_k_value,
+        prompt_template=args.prompt_template,
+        prompt_token_pos=args.prompt_token_pos,
+        model_name=args.model_name,
+    )
+    
 
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+if __name__ == "__main__":
+    '''
+    python evals/absorption/main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped \
+    --output_folder results
+    
+    
+    '''
+    args = arg_parser().parse_args()
+    device = setup_environment()
+    
+    start_time = time.time()
+
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
 
     # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, config.selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
-    )
-    output_folder = "evals/absorption/results"  # at evals/<eval_name>
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
+    results_dict = run_eval(config, selected_saes_dict, device, args.output_folder, args.force_rerun)
 
     end_time = time.time()
 
-    print(f"Finished evaluation in {end_time - start_time} seconds")
+    print(f"Finished evaluation in {end_time - start_time:.2f} seconds")
