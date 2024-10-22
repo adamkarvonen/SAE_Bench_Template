@@ -134,6 +134,14 @@ def get_github_code_dataset(
     test_size: int,
     random_seed: int,
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    """Following the Neurons in a Haystack paper, we skip the first 50 tokens of each code snippet to avoid the license header.
+    We use characters instead of tokens to avoid tokenization issues."""
+    tokens_to_skip = 50
+    ctx_len = 128
+    chars_per_token = 3
+    ctx_len_chars = ctx_len * chars_per_token
+    chars_to_skip = tokens_to_skip * chars_per_token
+
     random.seed(random_seed)
     label_key = "language"
 
@@ -161,15 +169,11 @@ def get_github_code_dataset(
         if sample[label_key] in chosen_classes:
             code = sample["code"]
 
-            # Many code files begin with a license, so we sample from the middle of the file
-            if len(code) > 1000:
-                # Get the maximum valid starting position
-                max_start = len(code) - 1000
-                # Start sampling from at least 20% into the file to avoid licenses
-                min_start = min(int(len(code) * 0.2), max_start)
-                start_pos = random.randint(min_start, max_start)
-                code = code[start_pos : start_pos + 1000]
-            all_samples[sample[label_key]].append(code)
+            # In "Neurons in a Haystack", the authors skipped the first 50 tokens to avoid the license header
+            # This is using characters so it's tokenizer agnostic
+            if len(code) > (ctx_len_chars + chars_to_skip):
+                code = code[chars_to_skip:]
+                all_samples[sample[label_key]].append(code)
 
             # Check if we have collected enough samples for all languages
             if all(len(all_samples[lang]) > total_size for lang in chosen_classes):
