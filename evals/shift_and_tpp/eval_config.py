@@ -31,7 +31,7 @@ class EvalConfig:
     probe_epochs: int = 20
     probe_lr: float = 1e-3
 
-    sae_batch_size: int = 250
+    sae_batch_size: int = 125
 
     # This is for spurrious correlation removal
     chosen_class_indices = [
