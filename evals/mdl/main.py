@@ -1,27 +1,22 @@
-import gc
 import json
 import os
 import random
-import select
 import sys
 import time
 from dataclasses import asdict, dataclass
-from typing import Any, Callable, Optional, Protocol
+from typing import Any, Optional, Protocol
 
 import torch as t
+import torch.nn.functional as F
 from collectibles import ListCollection
 from einops import rearrange
-from eval_config import EvalConfig
 from loguru import logger
 from sae_lens import SAE, ActivationsStore
 from sae_lens.sae import TopK
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from torch import nn
-from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
-sys.path.append("/Users/Kola/Documents/VSCode/open_source/SAE_Bench_Template/sae_bench_utils")
-
+from evals.mdl.eval_config import EvalConfig
 from sae_bench_utils import activation_collection, formatting_utils
 
 
@@ -30,7 +25,8 @@ class Decodable(Protocol):
 
 
 def build_bins(
-    feature_activations_BsF: t.Tensor,
+    min_pos_activations_F: t.Tensor,
+    max_activations_F: t.Tensor,
     bin_precision: Optional[float] = None,  # 0.2,
     num_bins: Optional[int] = None,  # 16)
 ) -> list[t.Tensor]:
@@ -39,9 +35,9 @@ def build_bins(
     if bin_precision is None and num_bins is None:
         raise ValueError("Either bin_precision or num_bins should be provided")
 
-    _, num_features = feature_activations_BsF.shape
+    num_features = len(max_activations_F)
 
-    max_activations_F = t.max(feature_activations_BsF, dim=-1).values
+    assert len(max_activations_F) == num_features
 
     # positive_mask_BsF = feature_activations_BsF > 0
     # masked_activations_BsF = t.where(positive_mask_BsF, feature_activations_BsF, t.inf)
@@ -62,6 +58,7 @@ def build_bins(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item() + 2 * bin_precision,
                 bin_precision,
+                device=max_activations_F.device,
             )
             bins_F_list_Bi.append(bins)
 
@@ -74,23 +71,45 @@ def build_bins(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item(),
                 num_bins + 1,
+                device=max_activations_F.device,
             )
             bins_F_list_Bi.append(bins)
 
         return bins_F_list_Bi
 
 
-def _calculate_dl(
-    feature_activations_BsF: t.Tensor,
+def calculate_dl(
+    num_features: int,
     bins_F_list_Bi: list[t.Tensor],
+    device: str,
+    activations_store: ActivationsStore,
+    sae: SAE,
+    k: int,
 ) -> float:
-    _bs, num_features = feature_activations_BsF.shape
 
-    bool_prob_F = (feature_activations_BsF > 0).float().mean(dim=0)
+    float_entropy_F = t.zeros(num_features, device=device)
+    bool_entropy_F = t.zeros(num_features, device=device)
 
-    bool_entropy_F = t.zeros(num_features)
+    x_BSN = activations_store.get_buffer(config.sae_batch_size)
+    feature_activations_BsF = sae.encode(x_BSN).squeeze()
+
+    if feature_activations_BsF.ndim == 2:
+        feature_activations_BsF = feature_activations_BsF
+    elif feature_activations_BsF.ndim == 3:
+        feature_activations_BsF = rearrange(
+            feature_activations_BsF,
+            "batch seq_len num_features -> (batch seq_len) num_features",
+        )
+    else:
+        raise ValueError("feature_activations should be 2D or 3D tensor")
+
     for feature_idx in range(num_features):
-        bool_prob = bool_prob_F[feature_idx]
+        # BOOL entropy
+        bool_prob = t.zeros(1, device=device)
+
+        bool_prob_F = (feature_activations_BsF > 0).float().mean(dim=0)
+        bool_prob = bool_prob + bool_prob_F[feature_idx]
+
         if bool_prob == 0 or bool_prob == 1:
             bool_entropy = 0
         else:
@@ -99,26 +118,30 @@ def _calculate_dl(
             )
         bool_entropy_F[feature_idx] = bool_entropy
 
-    float_entropy_F = t.zeros(num_features)
+        # FLOAT entropy
+        num_bins = len(bins_F_list_Bi[feature_idx]) - 1
+        counts_Bi = t.zeros(num_bins, device="cpu")
 
-    for feature_idx in range(num_features):
         feature_activations_Bs = feature_activations_BsF[:, feature_idx]
         bins = bins_F_list_Bi[feature_idx]
 
-        counts, _bin_edges = t.histogram(feature_activations_Bs, bins=bins)
+        temp_counts_Bi, _bin_edges = t.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
+        counts_Bi = counts_Bi + temp_counts_Bi
 
-        probs_Bi = counts / counts.sum()
+        counts_Bi = counts_Bi.to(device)
+
+        probs_Bi = counts_Bi / counts_Bi.sum()
         probs_Bi = probs_Bi[(probs_Bi > 0) & (probs_Bi < 1)]
 
         if len(probs_Bi) == 0:
             float_entropy = 0
         else:
             # H[p] = -sum(p * log2(p))
-            float_entropy = -t.sum(probs_Bi * t.log2(probs_Bi))
+            float_entropy = -t.sum(probs_Bi * t.log2(probs_Bi)).item()
 
         float_entropy_F[feature_idx] = float_entropy
 
-    total_entropy_F = bool_entropy_F + bool_prob_F * float_entropy
+    total_entropy_F = bool_entropy_F.cuda() + bool_prob_F.cuda() * float_entropy
 
     description_length = total_entropy_F.sum().item()
 
@@ -133,7 +156,7 @@ def quantize_features_to_bin_midpoints(
     """
     _, num_features = features_BF.shape
 
-    quantized_features_BF = t.empty_like(features_BF)
+    quantized_features_BF = t.empty_like(features_BF, device=features_BF.device)
 
     for feature_idx in range(num_features):
         # Extract the feature values and bin edges for the current histogram
@@ -153,55 +176,65 @@ def quantize_features_to_bin_midpoints(
     return quantized_features_BF
 
 
-def calculate_dl(
-    feature_activations: t.Tensor,
-    k: Optional[int] = None,
-    *,
-    bin_precision: Optional[float] = None,
-    num_bins: Optional[int] = None,
-    bins: Optional[list[t.Tensor]] = None,
-) -> float:
-    if feature_activations.ndim == 2:
-        feature_activations_BsF = feature_activations
-    elif feature_activations.ndim == 3:
-        feature_activations_BsF = rearrange(
-            feature_activations,
-            "batch seq_len num_features -> (batch seq_len) num_features",
-        )
-    else:
-        raise ValueError("feature_activations should be 2D or 3D tensor")
+# def calculate_dl(
+#     activations_store: ActivationsStore,
+#     sae: SAE,
+#     bins: list[t.Tensor],
+#     k: Optional[int] = None,
+# ) -> float:
+#     for i in range(10):
+#         x_BSN = activations_store.get_buffer(config.sae_batch_size)
+#         feature_activations_BsF = sae.encode(x_BSN).squeeze()
 
-    if k is not None:
-        feature_activations_BsF = t.topk(feature_activations_BsF, k=k, dim=-1).values
+#         if feature_activations_BsF.ndim == 2:
+#             feature_activations_BsF = feature_activations_BsF
+#         elif feature_activations_BsF.ndim == 3:
+#             feature_activations_BsF = rearrange(
+#                 feature_activations_BsF,
+#                 "batch seq_len num_features -> (batch seq_len) num_features",
+#             )
+#         else:
+#             raise ValueError("feature_activations should be 2D or 3D tensor")
 
-    bins = (
-        build_bins(feature_activations_BsF, bin_precision, num_bins) if bins is None else bins
-    )
-    entropy = _calculate_dl(feature_activations_BsF, bins)
-    return entropy
+#         if k is not None:
+#             topk_fn = TopK(k)
+#             feature_activations_BsF = topk_fn(feature_activations_BsF)
+
+#         entropy = _calculate_dl_single(feature_activations_BsF, bins)
+#     return entropy
 
 
 def check_quantised_features_reach_mse_threshold(
-    feature_activations_BsF: t.Tensor,
     bins_F_list_Bi: list[t.Tensor],
+    activations_store: ActivationsStore,
+    sae: SAE,
     mse_threshold: float,
-    x_BsF: t.Tensor,
     autoencoder: SAE,
     k: Optional[int] = None,
 ) -> tuple[bool, float]:
 
-    if k is not None:
-        feature_activations_BsF = t.topk(feature_activations_BsF, k=k, dim=-1).values
+    mse_losses: list[t.Tensor] = []
 
-    quantised_feature_activations_BsF = quantize_features_to_bin_midpoints(
-        feature_activations_BsF, bins_F_list_Bi
-    )
-    reconstructed_x_BsF: t.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
+    for i in range(1):
+        x_BSN = activations_store.get_buffer(config.sae_batch_size)
+        feature_activations_BSF = sae.encode(x_BSN).squeeze()
 
-    mse_criterion = nn.MSELoss()
-    mse_loss: t.Tensor = mse_criterion(reconstructed_x_BsF, x_BsF)
+        if k is not None:
+            topk_fn = TopK(k)
+            feature_activations_BSF = topk_fn(feature_activations_BSF)
 
-    within_threshold = bool((mse_loss < mse_threshold).item())
+        quantised_feature_activations_BsF = quantize_features_to_bin_midpoints(
+            feature_activations_BSF, bins_F_list_Bi
+        )
+
+        reconstructed_x_BSN: t.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
+
+        mse_loss: t.Tensor = F.mse_loss(reconstructed_x_BSN, x_BSN.squeeze(), reduction="mean")
+        mse_loss = t.sqrt(mse_loss) / sae.cfg.d_in
+        mse_losses.append(mse_loss)
+
+    avg_mse_loss = t.mean(t.stack(mse_losses))
+    within_threshold = bool((avg_mse_loss < mse_threshold).item())
 
     return within_threshold, mse_loss.item()
 
@@ -225,7 +258,10 @@ class MDLEvalResult:
     mse_loss: float
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+
+        out = asdict(self)
+        out["bins"] = []
+        return out
 
 
 class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
@@ -241,17 +277,22 @@ class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
         all_description_lengths = t.tensor(self.description_length)
         threshold_mask = t.tensor(self.within_threshold)
 
-        min_dl_idx = int(t.argmin(all_description_lengths[threshold_mask]).item())
+        viable_description_lengths = all_description_lengths[threshold_mask]
+        if len(viable_description_lengths) > 0:
+            min_dl_idx = int(t.argmin(viable_description_lengths).item())
+            return self[min_dl_idx]
 
-        return self[min_dl_idx]
+        else:
+            min_dl_idx = int(t.argmin(all_description_lengths).item())
+            return self[min_dl_idx]
 
 
 def _run_single_eval(
     config: EvalConfig,
     sae: SAE,
-    dataset_name: str,
     model: HookedTransformer,
     device: str,
+    dataset_name: str = "HuggingFaceFW/fineweb",
 ) -> MDLEvalResult:
     mdl_eval_results_list: list[MDLEvalResult] = []
 
@@ -279,50 +320,104 @@ def _run_single_eval(
     # test_data = dataset_utils.tokenize_data(
     #     test_data, model.tokenizer, config.context_length, device
     # )
+    sae.cfg.dataset_trust_remote_code = True
+    sae = sae.to(device)
+    model = model.to(device)  # type: ignore
 
     activations_store = ActivationsStore.from_sae(
-        model, sae, config.sae_batch_size, dataset="EleutherAI/pile", device=device
+        model, sae, config.sae_batch_size, dataset=dataset_name, device=device
     )
 
     # print(f"Running evaluation for layer {config.layer}")
     # hook_name = f"blocks.{config.layer}.hook_resid_post"
+    num_features = sae.cfg.d_sae
 
-    neuron_activations_BSN = activations_store.get_buffer(config.sae_batch_size)
+    def get_min_max_activations() -> tuple[t.Tensor, t.Tensor]:
+        min_pos_activations_1F = t.zeros(1, num_features, device=device)
+        max_activations_1F = t.zeros(1, num_features, device=device) + 100
 
-    feature_activations_BSF = sae.encode(neuron_activations_BSN)
+        for _ in range(10):
+            neuron_activations_BSN = activations_store.get_buffer(config.sae_batch_size)
+
+            feature_activations_BsF = sae.encode(neuron_activations_BSN).squeeze()
+
+            cat_feature_activations_BsF = t.cat(
+                [
+                    feature_activations_BsF,
+                    min_pos_activations_1F,
+                    max_activations_1F,
+                ],
+                dim=0,
+            )
+            min_pos_activations_1F = t.min(
+                cat_feature_activations_BsF, dim=0
+            ).values.unsqueeze(0)
+            max_activations_1F = t.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
+
+        min_pos_activations_F = min_pos_activations_1F.squeeze()
+        max_activations_F = max_activations_1F.squeeze()
+
+        return min_pos_activations_F, max_activations_F
+
+    min_pos_activations_F, max_activations_F = get_min_max_activations()
+
+    print("num_bins_values", config.num_bins_values)
+    print("k_values", config.k_values)
 
     for num_bins in config.num_bins_values:
         for k in config.k_values:
-            bins = build_bins(feature_activations_BSF, num_bins=num_bins)
+            assert k is not None
+
+            bins = build_bins(min_pos_activations_F, max_activations_F, num_bins=num_bins)
+
+            # print("Built bins")
 
             within_threshold, mse_loss = check_quantised_features_reach_mse_threshold(
-                feature_activations_BsF=feature_activations_BSF,
                 bins_F_list_Bi=bins,
+                activations_store=activations_store,
+                sae=sae,
                 mse_threshold=config.mse_epsilon_threshold,
-                x_BsF=feature_activations_BSF,
                 autoencoder=sae,
                 k=k,
             )
+            if not within_threshold:
+                logger.warning(
+                    f"mse_loss for num_bins = {num_bins} and k = {k} is {mse_loss}, which is not within threshold"
+                )
+                continue
 
-        description_length = calculate_dl(feature_activations_BSF, num_bins=2)
+            # print("Checked threshold")
 
-        mdl_eval_results_list.append(
-            MDLEvalResult(
-                num_bins=num_bins,
-                bins=bins,
+            description_length = calculate_dl(
+                num_features=num_features,
+                bins_F_list_Bi=bins,
+                device=device,
+                activations_store=activations_store,
+                sae=sae,
                 k=k,
-                description_length=description_length,
-                within_threshold=within_threshold,
-                mse_loss=mse_loss,
             )
-        )
+
+            logger.info(
+                f"Description length: {description_length} for num_bins = {num_bins} and k = {k}"
+            )
+
+            mdl_eval_results_list.append(
+                MDLEvalResult(
+                    num_bins=num_bins,
+                    bins=bins,
+                    k=k,
+                    description_length=description_length,
+                    within_threshold=within_threshold,
+                    mse_loss=mse_loss,
+                )
+            )
 
     mdl_eval_results = MDLEvalResultsCollection(mdl_eval_results_list)
 
     minimum_viable_eval_result = mdl_eval_results.pick_minimum_viable()
 
     minimum_viable_description_length = minimum_viable_eval_result.description_length
-    logger.debug(minimum_viable_description_length)
+    logger.info(minimum_viable_description_length)
 
     return minimum_viable_eval_result
 
@@ -345,19 +440,34 @@ def run_eval(
     for dataset_name in config.dataset_names:
         for sae_release_name, sae_specific_names in selected_saes_dict.items():
             for sae_specific_name in sae_specific_names:
-                sae, _, _ = SAE.from_pretrained(
-                    sae_release_name, sae_specific_name, device=device
-                )
+                try:
+                    sae, _, _ = SAE.from_pretrained(
+                        sae_release_name, sae_specific_name, device=device
+                    )
+                except ValueError as e:
+                    logger.error(
+                        f"Error loading SAE {sae_specific_name} from {sae_release_name}: {e}"
+                    )
+                    sae_specific_name = "blocks.3.hook_resid_post__trainer_10"
+                    sae, _, _ = SAE.from_pretrained(
+                        sae_release_name, sae_specific_name, device=device
+                    )
 
-                eval_result = _run_single_eval(config, sae, dataset_name, model, device)
+                eval_result = _run_single_eval(
+                    config=config,
+                    sae=sae,
+                    model=model,
+                    dataset_name=dataset_name,
+                    device=device,
+                )
                 results_dict[f"{dataset_name}_{sae_specific_name}_results"] = (
                     eval_result.to_dict()
                 )
 
     results_dict["custom_eval_config"] = asdict(config)
-    results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
-        results_dict, config.dataset_names
-    )
+    # results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
+    #     results_dict, config.dataset_names
+    # )
 
     return results_dict
 
@@ -374,17 +484,20 @@ if __name__ == "__main__":
     # print(minimum_viable_description_length)
     # pass
 
-    start_time = time.time()
-
     if t.backends.mps.is_available():
-        # device = "mps"
-        device = "cpu"
+        device = "mps"
     else:
         device = "cuda" if t.cuda.is_available() else "cpu"
+    logger.info(f"Using device: {device}")
 
-    print(f"Using device: {device}")
+    start_time = time.time()
 
-    config = EvalConfig()
+    config = EvalConfig(
+        k_values=[12, 16, 24, 32],
+        num_bins_values=[8, 12, 16, 32, 64, 128],
+        mse_epsilon_threshold=0.2,
+    )
+    logger.info(config)
 
     # populate selected_saes_dict using config values
     for release in config.sae_releases:

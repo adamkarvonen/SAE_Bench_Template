@@ -4,15 +4,16 @@ from typing import Optional
 
 @dataclass
 class EvalConfig:
-    k_values: list[Optional[int]] = field(default_factory=lambda: [16, 24, 32, None])
+    k_values: list[Optional[int]] = field(default_factory=lambda: [16, 24, 32])
     num_bins_values: list[int] = field(default_factory=lambda: [4, 6, 8, 12, 16, 32])
 
     random_seed: int = 42
-    dataset_names: list[str] = field(default_factory=lambda: ["the-pile"])
+    dataset_names: list[str] = field(default_factory=lambda: ["HuggingFaceFW/fineweb"])
 
     context_length: int = 128
 
-    sae_batch_size: int = 250
+    sae_batch_size: int = 64
+    # sae_batch_size: int = 4
 
     selected_saes_dict: dict = field(default_factory=lambda: {})
 
