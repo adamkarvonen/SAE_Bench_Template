@@ -1,33 +1,28 @@
 # %%
 
+import copy
+import json
 import os
+import random
+import sys
 import time
+from dataclasses import asdict
+
+
+import pandas as pd
 import torch
+from sae_lens import SAE
+from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
-from sae_lens import SAE
-import json
-from dataclasses import asdict
-import pandas as pd
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
-import random
 
+from evals.sparse_probing import probe_training
+from evals.sparse_probing import eval_config
 
-import copy
-
-import utils.dataset_utils as dataset_utils
-import utils
-import eval_config
-import utils.activation_collection as activation_collection
-import probe_training
-
-# TODO make import from shared directory more robust
-# I wanted to avoid the pip install -e . in the shared directory, but maybe that's the best way to do it
-import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-import utils.formatting_utils as formatting_utils
+import sae_bench_utils
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.formatting_utils as formatting_utils
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -51,8 +46,8 @@ torch.manual_seed(config.random_seed)
 # populate selected_saes_dict
 for release in config.sae_releases:
     if "gemma-scope" in release:
-        config.selected_saes_dict[release] = formatting_utils.find_gemmascope_average_l0_sae_names(
-            config.layer
+        config.selected_saes_dict[release] = (
+            formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
         )
     else:
         config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
@@ -90,12 +85,16 @@ train_data, test_data = dataset_utils.get_multi_label_train_test_data(
     config.probe_test_set_size,
     config.random_seed,
 )
+dataset_utils
+train_data = dataset_utils.filter_dataset(train_data, config.chosen_classes)
+test_data = dataset_utils.filter_dataset(test_data, config.chosen_classes)
 
-train_data = utils.filter_dataset(train_data, config.chosen_classes)
-test_data = utils.filter_dataset(test_data, config.chosen_classes)
-
-train_data = utils.tokenize_data(train_data, model.tokenizer, config.context_length, device)
-test_data = utils.tokenize_data(test_data, model.tokenizer, config.context_length, device)
+train_data = dataset_utils.tokenize_data(
+    train_data, model.tokenizer, config.context_length, device
+)
+test_data = dataset_utils.tokenize_data(
+    test_data, model.tokenizer, config.context_length, device
+)
 
 print(f"Running evaluation for layer {config.layer}")
 hook_name = f"blocks.{config.layer}.hook_resid_post"
@@ -107,8 +106,12 @@ all_test_acts_BLD = activation_collection.get_all_llm_activations(
     test_data, model, llm_batch_size, hook_name
 )
 
-all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
+all_train_acts_BD = activation_collection.create_meaned_model_activations(
+    all_train_acts_BLD
+)
+all_test_acts_BD = activation_collection.create_meaned_model_activations(
+    all_test_acts_BLD
+)
 
 llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
     all_train_acts_BD,
@@ -120,15 +123,16 @@ llm_results = {"llm_test_accuracy": average_test_accuracy(llm_test_accuracies)}
 
 # %%
 
+from typing import Optional
+
 import torch
 import torch.nn as nn
-from typing import Optional
-from jaxtyping import Int, Float, jaxtyped, Bool
 from beartype import beartype
+from jaxtyping import Bool, Float, Int, jaxtyped
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-import utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_info as dataset_info
 
 
 class Probe(nn.Module):
@@ -252,7 +256,9 @@ def train_sklearn_probe(
         )
     else:
         # Use L2 regularization
-        probe = LogisticRegression(penalty="l2", C=C, max_iter=max_iter, verbose=int(verbose))
+        probe = LogisticRegression(
+            penalty="l2", C=C, max_iter=max_iter, verbose=int(verbose)
+        )
 
     # Train the model
     probe.fit(train_inputs_np, train_labels_np)
@@ -403,7 +409,9 @@ def train_probe_on_activations(
         test_acts, test_labels = prepare_probe_data(test_activations, profession)
 
         if select_top_k is not None:
-            activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)
+            activation_mask_D = get_top_k_mean_diff_mask(
+                train_acts, train_labels, select_top_k
+            )
             train_acts = apply_topk_mask_sklearn(train_acts, activation_mask_D)
             test_acts = apply_topk_mask_sklearn(test_acts, activation_mask_D)
 
@@ -456,7 +464,9 @@ for k in config.k_values:
         all_test_acts_BD,
         select_top_k=k,
     )
-    llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(llm_top_k_test_accuracies)
+    llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
+        llm_top_k_test_accuracies
+    )
     print(f"Top {k} test accuracy: {llm_results[f'llm_top_{k}_test_accuracy']}")
 
 # %%

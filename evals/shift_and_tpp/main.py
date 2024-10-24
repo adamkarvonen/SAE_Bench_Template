@@ -1,41 +1,41 @@
-import os
-import time
-import torch
-import einops
-import pandas as pd
-import random
 import gc
 import json
-from tqdm import tqdm
+import os
+import random
+import time
 from dataclasses import asdict
-from transformer_lens import HookedTransformer
 from typing import Optional
+
+import einops
+import pandas as pd
+import torch
 from sae_lens import SAE
 from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from tqdm import tqdm
+from transformer_lens import HookedTransformer
 
 import evals.shift_and_tpp.dataset_creation as dataset_creation
 import evals.shift_and_tpp.eval_config as eval_config
 import evals.sparse_probing.probe_training as probe_training
-import utils.dataset_utils as dataset_utils
-import utils.activation_collection as activation_collection
-import utils.formatting_utils as formatting_utils
-import utils.dataset_info as dataset_info
-
+import sae_bench_utils.activation_collection as activation_collection
+import sae_bench_utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.formatting_utils as formatting_utils
 
 COLUMN2_VALS_LOOKUP = {
-    "bias_in_bios": ("male", "female"),
-    "amazon_reviews_1and5": (1.0, 5.0),
+    "LabHC/bias_in_bios_class_set1": ("male", "female"),
+    "canrager/amazon_reviews_mcauley_1and5": (1.0, 5.0),
 }
 
 COLUMN1_VALS_LOOKUP = {
-    "bias_in_bios": [
+    "LabHC/bias_in_bios_class_set1": [
         ("professor", "nurse"),
-        # ("architect", "journalist"),
-        # ("surgeon", "psychologist"),
-        # ("attorney", "teacher"),
+        ("architect", "journalist"),
+        ("surgeon", "psychologist"),
+        ("attorney", "teacher"),
     ],
-    "amazon_reviews_1and5": [
+    "canrager/amazon_reviews_mcauley_1and5": [
         ("Books", "CDs_and_Vinyl"),
         ("Software", "Electronics"),
         ("Pet_Supplies", "Office_Products"),
@@ -314,6 +314,12 @@ def get_spurious_correlation_plotting_dict(
 
         dirs = [1, 2]
 
+        dir1_class_name = f"{eval_probe_class_id} probe on professor / nurse data"
+        dir2_class_name = f"{eval_probe_class_id} probe on male / female data"
+
+        dir1_acc = llm_clean_accs[dir1_class_name]
+        dir2_acc = llm_clean_accs[dir2_class_name]
+
         for dir in dirs:
             if dir == 1:
                 ablated_probe_class_id = "male / female"
@@ -339,6 +345,12 @@ def get_spurious_correlation_plotting_dict(
                 metric_key = f"scr_dir{dir}_threshold_{threshold}"
 
                 results[sae_name][metric_key] = changed_acc
+
+                scr_metric_key = f"scr_metric_threshold_{threshold}"
+                if dir1_acc < dir2_acc and dir == 1:
+                    results[sae_name][scr_metric_key] = changed_acc
+                elif dir1_acc > dir2_acc and dir == 2:
+                    results[sae_name][scr_metric_key] = changed_acc
 
     return results
 
@@ -447,10 +459,7 @@ def run_eval_single_dataset(
 
     column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
 
-    train_df, test_df = dataset_utils.load_huggingface_dataset(dataset_name)
     train_data, test_data = dataset_creation.get_train_test_data(
-        train_df,
-        test_df,
         dataset_name,
         config.spurious_corr,
         config.train_set_size,
@@ -475,13 +484,12 @@ def run_eval_single_dataset(
     )
 
     print(f"Running evaluation for layer {config.layer}")
-    hook_name = f"blocks.{config.layer}.hook_resid_post"
 
     all_train_acts_BLD = activation_collection.get_all_llm_activations(
-        train_data, model, llm_batch_size, hook_name
+        train_data, model, llm_batch_size, config.layer
     )
     all_test_acts_BLD = activation_collection.get_all_llm_activations(
-        test_data, model, llm_batch_size, hook_name
+        test_data, model, llm_batch_size, config.layer
     )
 
     all_meaned_train_acts_BD = activation_collection.create_meaned_model_activations(

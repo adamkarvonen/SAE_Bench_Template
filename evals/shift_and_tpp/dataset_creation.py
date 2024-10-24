@@ -1,26 +1,25 @@
-import sys
-import os
-import random
 import gc
-from collections import defaultdict
-import einops
 import math
-import numpy as np
+import os
 import pickle
-
-import torch as t
-from torch import nn
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
-from tqdm import tqdm
+import random
+import sys
+from collections import defaultdict
 from typing import Callable, Optional
 
-from datasets import load_dataset
 import datasets
+import einops
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch as t
+from datasets import load_dataset
+from sklearn.utils import shuffle
+from torch import nn
+from tqdm import tqdm
 
-import utils.dataset_info as dataset_info
-import utils.dataset_utils as dataset_utils
+import sae_bench_utils.dataset_info as dataset_info
+import sae_bench_utils.dataset_utils as dataset_utils
 
 
 def get_spurious_corr_data(
@@ -113,8 +112,6 @@ def get_spurious_corr_data(
 
 
 def get_train_test_data(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
     dataset_name: str,
     spurious_corr: bool,
     train_set_size: int,
@@ -122,12 +119,19 @@ def get_train_test_data(
     random_seed: int,
     column1_vals: Optional[tuple[str, str]] = None,
     column2_vals: Optional[tuple[str, str]] = None,
-) -> tuple[dict, dict]:
-    # 4 is because male / gender for each profession
-    minimum_train_samples_per_quadrant = train_set_size // 4
-    minimum_test_samples_per_quadrant = test_set_size // 4
-
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     if spurious_corr:
+        assert "bias_in_bios" in dataset_name or "amazon_reviews" in dataset_name
+
+        dataset_name = dataset_name.split("_class_set")[0]
+        dataset = load_dataset(dataset_name)
+        train_df = pd.DataFrame(dataset["train"])
+        test_df = pd.DataFrame(dataset["test"])
+
+        # 4 is because male / gender for each profession
+        minimum_train_samples_per_quadrant = train_set_size // 4
+        minimum_test_samples_per_quadrant = test_set_size // 4
+
         train_bios = get_spurious_corr_data(
             train_df,
             column1_vals,
@@ -147,17 +151,8 @@ def get_train_test_data(
         )
 
     else:
-        train_bios = dataset_utils.get_balanced_dataset(
-            train_df,
-            dataset_name,
-            minimum_train_samples_per_quadrant,
-            random_seed=random_seed,
-        )
-        test_bios = dataset_utils.get_balanced_dataset(
-            test_df,
-            dataset_name,
-            minimum_test_samples_per_quadrant,
-            random_seed=random_seed,
+        train_bios, test_bios = dataset_utils.get_multi_label_train_test_data(
+            dataset_name, train_set_size, test_set_size, random_seed
         )
 
     train_bios, test_bios = dataset_utils.ensure_shared_keys(train_bios, test_bios)
