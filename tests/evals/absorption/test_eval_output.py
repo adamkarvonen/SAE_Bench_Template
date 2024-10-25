@@ -81,6 +81,8 @@ def test_absorption_eval_output():
         sae_lens_version=get_sae_lens_version(),
     )
 
+    eval_output.to_json_file("test_absorption_eval_output.json", indent=2)
+
     assert eval_output.eval_type_id == "absorption_first_letter"
     assert eval_output.eval_config == EXAMPLE_ABSORPTION_EVAL_CONFIG
     assert eval_output.eval_result_metrics == EXAMPLE_ABSORPTION_METRIC_CATEGORIES

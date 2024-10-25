@@ -1,4 +1,5 @@
 from dataclasses import asdict
+import json
 from typing import Generic, TypeVar
 from pydantic.dataclasses import dataclass
 from pydantic import Field, field_validator, model_validator
@@ -91,6 +92,25 @@ BaseResultDetailType = TypeVar("BaseResultDetailType", bound=BaseResultDetail)
 class BaseEvalOutput(
     Generic[BaseEvalConfigType, BaseMetricCategoriesType, BaseResultDetailType]
 ):
+
+    def to_json(self, indent: int = 2) -> str:
+        """
+        Dump the BaseEvalOutput object to a JSON string.
+
+        Args:
+            indent (int): The number of spaces to use for indentation in the JSON output. Default is 2.
+
+        Returns:
+            str: A JSON string representation of the BaseEvalOutput object.
+        """
+        return json.dumps(asdict(self), indent=indent, default=str)
+
+    def to_json_file(self, file_path: str, indent: int = 2) -> None:
+        """
+        Dump the BaseEvalOutput object to a JSON file.
+        """
+        with open(file_path, "w") as f:
+            json.dump(asdict(self), f, indent=indent, default=str)
 
     eval_type_id: str = Field(
         title="Eval Type ID",

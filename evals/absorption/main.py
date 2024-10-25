@@ -152,8 +152,7 @@ def run_eval(
             sae_result_file = sae_result_file.replace("/", "_")
             sae_result_path = os.path.join(output_path, sae_result_file)
 
-            with open(sae_result_path, "w") as f:
-                json.dump(eval_output, f, indent=4)
+            eval_output.to_json_file(sae_result_path, indent=2)
 
     return results_dict
 
