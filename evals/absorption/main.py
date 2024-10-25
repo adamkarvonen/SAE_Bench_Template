@@ -1,3 +1,4 @@
+from dataclasses import asdict
 import gc
 import statistics
 from sae_lens import SAE
@@ -25,7 +26,6 @@ from sae_bench_utils import (
 from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 from transformer_lens import HookedTransformer
 from datetime import datetime
-import json
 import os
 import time
 import argparse
@@ -145,7 +145,7 @@ def run_eval(
                 sae_lens_version=get_sae_lens_version(),
             )
 
-            results_dict[f"{sae_release}_{sae_id}"] = eval_output
+            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
             # Save individual SAE result
             sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
