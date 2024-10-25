@@ -241,7 +241,8 @@ def train_probe_gpu(
     l1_penalty: Optional[float] = None,
     early_stopping_patience: int = 10,
 ) -> tuple[Probe, float]:
-    """We have a GPU training function for training on all SAE features, which was very slow (1 minute+) on CPU."""
+    """We have a GPU training function for training on all SAE features, which was very slow (1 minute+) on CPU.
+    This is also used for SHIFT / TPP, which require probe weights."""
     device = train_inputs.device
     model_dtype = train_inputs.dtype
 
