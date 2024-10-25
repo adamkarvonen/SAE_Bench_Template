@@ -3,6 +3,7 @@ from tqdm.auto import tqdm
 import re
 from tabulate import tabulate
 
+
 def all_loadable_saes() -> list[tuple[str, str, float, float]]:
     all_loadable_saes = []
     saes_directory = get_pretrained_saes_directory()
@@ -10,16 +11,12 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
         for sae_name in lookup.saes_map.keys():
             expected_var_explained = lookup.expected_var_explained[sae_name]
             expected_l0 = lookup.expected_l0[sae_name]
-            all_loadable_saes.append(
-                (release, sae_name, expected_var_explained, expected_l0)
-            )
+            all_loadable_saes.append((release, sae_name, expected_var_explained, expected_l0))
 
     return all_loadable_saes
 
 
-def get_saes_from_regex(
-    sae_regex_pattern: str, sae_id_pattern: str
-) -> dict[str, list[str]]:
+def get_saes_from_regex(sae_regex_pattern: str, sae_id_pattern: str) -> dict[str, list[str]]:
     """
     Filter and retrieve SAEs based on regex patterns for release names and SAE IDs.
 
@@ -46,7 +43,7 @@ def get_saes_from_regex(
         for sae in all_saes
         if sae_regex_compiled.fullmatch(sae[0]) and sae_id_compiled.fullmatch(sae[1])
     ]
-    
+
     # Convert to a dictionary with the first element (release) as the key, and all second elements which share the first as a list in the value
     filtered_saes_dict = {}
     for sae in filtered_saes:
@@ -55,9 +52,12 @@ def get_saes_from_regex(
         filtered_saes_dict[sae[0]].append(sae[1])
     return filtered_saes_dict
 
+
 metadata_rows = [
-    [data.model, data.release, data.repo_id, len(data.saes_map)] for data in get_pretrained_saes_directory().values()
+    [data.model, data.release, data.repo_id, len(data.saes_map)]
+    for data in get_pretrained_saes_directory().values()
 ]
+
 
 # Print all SAE releases, sorted by base model
 def print_all_sae_releases():
@@ -65,10 +65,10 @@ def print_all_sae_releases():
     Print a table of all SAE releases, sorted by base model.
     """
     metadata_rows = [
-        [data.model, data.release, data.repo_id, len(data.saes_map)] 
+        [data.model, data.release, data.repo_id, len(data.saes_map)]
         for data in get_pretrained_saes_directory().values()
     ]
-    
+
     print(
         tabulate(
             sorted(metadata_rows, key=lambda x: x[0]),
@@ -77,13 +77,15 @@ def print_all_sae_releases():
         )
     )
 
+
 def print_release_details(release_name: str):
     """
     Print details of a specific SAE release.
-    
+
     Args:
     release_name (str): The name of the release to display details for.
     """
+
     def format_value(value):
         if isinstance(value, dict):
             if not value:
@@ -92,7 +94,7 @@ def print_release_details(release_name: str):
         return repr(value)
 
     release = get_pretrained_saes_directory()[release_name]
-    
+
     print(
         tabulate(
             [[k, format_value(v)] for k, v in release.__dict__.items()],
@@ -102,3 +104,20 @@ def print_release_details(release_name: str):
     )
 
 
+def select_saes_multiple_patterns(
+    sae_regex_patterns: list[str],
+    sae_block_pattern: list[str],
+) -> dict[str, list[str]]:
+    assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
+
+    selected_saes_dict = {}
+    for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
+        selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return selected_saes_dict

@@ -32,7 +32,7 @@ from sae_bench_utils import (
     get_sae_lens_version,
     get_sae_bench_version,
 )
-from sae_bench_utils.sae_selection_utils import get_saes_from_regex
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex, select_saes_multiple_patterns
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -98,9 +98,7 @@ def run_eval_single_dataset(
 
     results_dict = {}
 
-    activations_filename = (
-        f"{dataset_name}_{config.model_name}_{hook_point}_activations.pt".replace("/", "_")
-    )
+    activations_filename = f"{dataset_name}_activations.pt".replace("/", "_")
 
     activations_path = os.path.join(artifacts_folder, activations_filename)
 
@@ -251,8 +249,7 @@ def run_eval(
     sae_lens_version = get_sae_lens_version()
     sae_bench_version = get_sae_bench_version()
 
-    artifacts_folder = os.path.join(output_path, "artifacts")
-    os.makedirs(artifacts_folder, exist_ok=True)
+    artifacts_base_folder = "artifacts"
 
     results_dict = {}
 
@@ -285,6 +282,11 @@ def run_eval(
                 device=device,
             )[0]
             sae = sae.to(device=device, dtype=llm_dtype)
+
+            artifacts_folder = os.path.join(
+                artifacts_base_folder, "sparse_probing", config.model_name, sae.cfg.hook_name
+            )
+            os.makedirs(artifacts_folder, exist_ok=True)
 
             sparse_probing_results = run_eval_single_sae(
                 config,
@@ -338,24 +340,13 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-    sae_regex_patterns: Optional[list[str]] = None,
-    sae_block_pattern: Optional[list[str]] = None,
 ) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
     config = eval_config.EvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    if sae_regex_patterns is None:
-        selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
-    else:
-        assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
-
-        print("Ignoring args.sae_regex_pattern and args.sae_block_pattern")
-
-        selected_saes_dict = {}
-        for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
-            selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
 
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
@@ -377,7 +368,7 @@ def arg_parser():
         "--sae_block_pattern", type=str, required=True, help="Regex pattern for SAE block selection"
     )
     parser.add_argument(
-        "--output_folder", type=str, default="evals/absorption/results", help="Output folder"
+        "--output_folder", type=str, default="evals/sparse_probing/results", help="Output folder"
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
@@ -392,8 +383,7 @@ if __name__ == "__main__":
     python evals/sparse_probing/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
-    --model_name pythia-70m-deduped \
-    --output_folder results
+    --model_name pythia-70m-deduped 
     
     
     """
@@ -402,21 +392,22 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    # sae_regex_patterns = [
-    #     r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
-    #     r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
-    # ]
-    # sae_block_pattern = [
-    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    # ]
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    ]
 
-    sae_regex_patterns = None
-    sae_block_pattern = None
+    # sae_regex_patterns = None
+    # sae_block_pattern = None
 
-    config, selected_saes_dict = create_config_and_selected_saes(
-        args, sae_regex_patterns, sae_block_pattern
-    )
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     print(selected_saes_dict)
 
