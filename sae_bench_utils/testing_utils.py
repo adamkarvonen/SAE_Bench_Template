@@ -57,10 +57,12 @@ def validate_eval_cli_interface(
 ) -> None:
     """Validates that an eval's CLI interface meets the requirements from eval_template.ipynb
 
+
     Args:
         parser: The ArgumentParser instance to validate
         eval_config_cls: The eval's config dataclass (optional). If provided, verifies CLI args match config fields
         additional_required_args: Any additional required arguments specific to this eval
+
 
     Raises:
         AssertionError: If validation fails with details about what's missing/incorrect
@@ -102,8 +104,17 @@ def validate_eval_cli_interface(
         ), f"Config fields missing from CLI args: {missing_config_args}"
         assert not extra_cli_args, f"CLI args not present in config: {extra_cli_args}"
 
+        assert (
+            not missing_config_args
+        ), f"Config fields missing from CLI args: {missing_config_args}"
+        assert not extra_cli_args, f"CLI args not present in config: {extra_cli_args}"
+
     # Verify help text exists for all arguments
     for action in parser._actions:
+        if action.dest != "help":
+            assert (
+                action.help is not None and action.help != ""
+            ), f"Missing help text for argument: {action.dest}"
         if action.dest != "help":
             assert (
                 action.help is not None and action.help != ""
@@ -145,9 +156,16 @@ def compare_dicts_within_tolerance(
             return
 
     if isinstance(actual, dict):
-        assert set(actual.keys()) == set(
-            expected.keys()
-        ), f"Key mismatch at {path}: {set(actual.keys())} != {set(expected.keys())}"
+        # Identify missing keys in each dictionary
+        missing_in_actual = set(expected.keys()) - set(actual.keys())
+        missing_in_expected = set(actual.keys()) - set(expected.keys())
+
+        # Modify the assertion with a detailed error message
+        assert set(actual.keys()) == set(expected.keys()), (
+            f"Key mismatch at {path}:\n"
+            f"Keys missing in 'actual': {missing_in_actual}\n"
+            f"Keys missing in 'expected': {missing_in_expected}"
+        )
         for key in actual:
             new_path = f"{path}.{key}" if path else str(key)
 

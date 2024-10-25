@@ -22,7 +22,6 @@ dependencies = [
     "beartype>=0.14.1",
     "scikit-learn>=1.5.2",
     "pydantic>=2.9.2",
-    "tabulate>=0.9.0",
 
     # Plotting stuff
     "seaborn>=0.13.2",
@@ -34,6 +33,10 @@ dependencies = [
     "nbformat>=5.10.4",
     "ipykernel>=6.29.5",
     "nbstripout>=0.7.1",
+    "tabulate>=0.9.0",
+
+    # auto-interp
+    "openai>=1.0.0",
 ]
 
 [tool.pyright]

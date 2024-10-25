@@ -27,11 +27,11 @@ def get_all_llm_activations(
     model: HookedTransformer,
     batch_size: int,
     layer: int,
+    hook_name: str,
+    remove_bos_token: bool = True,
 ) -> dict[str, Float[torch.Tensor, "dataset_size seq_len d_model"]]:
     """VERY IMPORTANT NOTE: We zero out masked token activations in this function. Later, we ignore zeroed activations."""
     all_classes_acts_BLD = {}
-
-    hook_name = f"blocks.{layer}.hook_resid_post"
 
     for class_name in tokenized_inputs_dict:
         all_acts_BLD = []
@@ -55,6 +55,8 @@ def get_all_llm_activations(
             )
 
             acts_BLD = acts_BLD * attention_mask_BL[:, :, None]
+            if remove_bos_token:
+                acts_BLD = acts_BLD[:, 1:, :]
             all_acts_BLD.append(acts_BLD)
 
         all_acts_BLD = torch.cat(all_acts_BLD, dim=0)
@@ -92,9 +94,11 @@ def get_sae_meaned_activations(
     all_llm_activations_BLD: dict[str, Float[torch.Tensor, "batch_size seq_len d_model"]],
     sae: SAE,
     sae_batch_size: int,
-    dtype: torch.dtype,
 ) -> dict[str, Float[torch.Tensor, "batch_size d_sae"]]:
     """VERY IMPORTANT NOTE: We assume that the activations have been zeroed out for masked tokens."""
+
+    dtype = sae.dtype
+
     all_sae_activations_BF = {}
     for class_name in all_llm_activations_BLD:
         all_acts_BLD = all_llm_activations_BLD[class_name]
