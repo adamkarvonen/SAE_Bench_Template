@@ -521,6 +521,7 @@ def run_eval_single_dataset(
             epochs=config.probe_epochs,
             lr=config.probe_lr,
             spurious_corr=config.spurious_corr,
+            early_stopping_patience=config.early_stopping_patience,
         )
 
         torch.set_grad_enabled(False)

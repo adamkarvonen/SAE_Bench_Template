@@ -14,6 +14,10 @@ class EvalConfig:
     )
 
     spurious_corr: bool = True
+
+    # This reduces randomness in the SCR results
+    early_stopping_patience: int = 40
+
     # Load datset and probes
     train_set_size: int = 4000
     test_set_size: int = 1000  # This is limited as the test set is smaller than the train set
