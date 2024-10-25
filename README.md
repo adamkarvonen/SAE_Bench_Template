@@ -55,4 +55,4 @@ sae.device
 sae.dtype
 ```
 
-Just pass the appropriate inputs to `run_eval_single_sae()`, referring to individual eval READMEs as needed.
+Just pass the appropriate inputs to `run_eval_single_sae()`, referring to individual eval READMEs as needed. If you match our output format you can reuse our graphing notebook.
