@@ -1,6 +1,7 @@
 import gc
 import json
 import os
+import shutil
 import random
 import time
 from dataclasses import asdict
@@ -14,6 +15,8 @@ from sae_lens.sae import TopK
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
+import argparse
+from datetime import datetime
 
 import evals.shift_and_tpp.dataset_creation as dataset_creation
 import evals.shift_and_tpp.eval_config as eval_config
@@ -22,6 +25,14 @@ import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_info as dataset_info
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.formatting_utils as formatting_utils
+from sae_bench_utils import (
+    formatting_utils,
+    activation_collection,
+    get_eval_uuid,
+    get_sae_lens_version,
+    get_sae_bench_version,
+)
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 
 COLUMN2_VALS_LOOKUP = {
     "LabHC/bias_in_bios_class_set1": ("male", "female"),
@@ -576,27 +587,32 @@ def run_eval_single_dataset(
     return per_class_accuracies, llm_test_accuracies
 
 
-def run_eval(
+def run_eval_single_sae(
     config: eval_config.EvalConfig,
-    selected_saes_dict: dict[str, list[str]],
+    sae: SAE,
+    model: HookedTransformer,
+    layer: int,
+    hook_point: str,
     device: str,
-):
-    results_dict = {}
+    artifacts_folder: str,
+    force_rerun: bool,
+    save_activations: bool = True,
+) -> dict[str, float | dict[str, float]]:
+    """hook_point: str is transformer lens format. example: f'blocks.{layer}.hook_resid_post'
+    By default, we save activations for all datasets, and then reuse them for each sae.
+    This is important to avoid recomputing activations for each SAE, and to ensure that the same activations are used for all SAEs.
+    However, it can use 10s of GBs of disk space."""
 
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
 
-    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-    model = HookedTransformer.from_pretrained_no_processing(
-        config.model_name, device=device, dtype=llm_dtype
-    )
+    dataset_results = {}
 
     averaging_names = []
 
     for dataset_name in config.dataset_names:
         if config.spurious_corr:
-            if not config.column1_vals_list:
-                config.column1_vals_list = COLUMN1_VALS_LOOKUP[dataset_name]
+            config.column1_vals_list = COLUMN1_VALS_LOOKUP[dataset_name]
             for column1_vals in config.column1_vals_list:
                 run_name = f"{dataset_name}_scr_{column1_vals[0]}_{column1_vals[1]}"
                 raw_results, llm_clean_accs = run_eval_single_dataset(
@@ -607,7 +623,7 @@ def run_eval(
                     raw_results, llm_clean_accs
                 )
 
-                results_dict[f"{run_name}_results"] = processed_results
+                dataset_results[f"{run_name}_results"] = processed_results
 
                 averaging_names.append(run_name)
 
@@ -618,68 +634,217 @@ def run_eval(
             )
 
             processed_results = create_tpp_plotting_dict(raw_results, llm_clean_accs)
-            results_dict[f"{run_name}_results"] = processed_results
+            dataset_results[f"{run_name}_results"] = processed_results
 
             averaging_names.append(run_name)
 
-    results_dict["custom_eval_config"] = asdict(config)
-    results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
-        results_dict, averaging_names
-    )
+    results_dict = formatting_utils.average_results_dictionaries(dataset_results, averaging_names)
+    results_dict.update(dataset_results)
 
     return results_dict
 
 
-if __name__ == "__main__":
-    start_time = time.time()
+def run_eval(
+    config: eval_config.EvalConfig,
+    selected_saes_dict: dict[str, list[str]],
+    device: str,
+    output_path: str,
+    force_rerun: bool = False,
+    clean_up_activations: bool = True,
+):
+    """By default, clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
+    This is because activations for all datasets can easily be 10s of GBs.
+    Return dict is a dict of SAE name: evaluation results for that SAE."""
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_version = get_sae_bench_version()
 
+    artifacts_folder = os.path.join(output_path, "artifacts")
+    os.makedirs(artifacts_folder, exist_ok=True)
+
+    results_dict = {}
+
+    if config.llm_dtype == "bfloat16":
+        llm_dtype = torch.bfloat16
+    elif config.llm_dtype == "float32":
+        llm_dtype = torch.float32
+    else:
+        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+
+    model = HookedTransformer.from_pretrained_no_processing(
+        config.model_name, device=device, dtype=llm_dtype
+    )
+
+    for sae_release in selected_saes_dict:
+        print(
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+        )
+
+        for sae_id in tqdm(
+            selected_saes_dict[sae_release],
+            desc="Running SAE evaluation on all selected SAEs",
+        ):
+            gc.collect()
+            torch.cuda.empty_cache()
+
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+            sae = sae.to(device=device, dtype=llm_dtype)
+
+            shift_or_tpp_results = run_eval_single_sae(
+                config,
+                sae,
+                model,
+                sae.cfg.hook_layer,
+                sae.cfg.hook_name,
+                device,
+                artifacts_folder,
+                force_rerun,
+            )
+
+            sae_eval_result = {
+                "eval_instance_id": eval_instance_id,
+                "sae_lens_release": sae_release,
+                "sae_lens_id": sae_id,
+                "eval_type_id": "sparse_probing",
+                "sae_lens_version": sae_lens_version,
+                "sae_bench_version": sae_bench_version,
+                "date_time": datetime.now().isoformat(),
+                "eval_config": asdict(config),
+                "eval_results": sparse_probing_results,
+                "eval_artifacts": {"artifacts": os.path.relpath(artifacts_folder)},
+            }
+
+            results_dict[sae_id] = sae_eval_result
+
+            # Save individual SAE result
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            with open(sae_result_path, "w") as f:
+                json.dump(sae_eval_result, f, indent=4)
+
+    if clean_up_activations:
+        shutil.rmtree(artifacts_folder)
+
+    return results_dict
+
+
+def setup_environment():
     if torch.backends.mps.is_available():
         device = "mps"
     else:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     print(f"Using device: {device}")
+    return device
 
-    config = eval_config.EvalConfig()
 
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
+def create_config_and_selected_saes(
+    args,
+    sae_regex_patterns: Optional[list[str]] = None,
+    sae_block_pattern: Optional[list[str]] = None,
+) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
+    config = eval_config.EvalConfig(
+        random_seed=args.random_seed,
+        model_name=args.model_name,
+    )
 
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
+    if sae_regex_patterns is None:
+        selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    else:
+        assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
+
+        print("Ignoring args.sae_regex_pattern and args.sae_block_pattern")
+
+        selected_saes_dict = {}
+        for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
+            selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument(
+        "--sae_regex_pattern", type=str, required=True, help="Regex pattern for SAE selection"
+    )
+    parser.add_argument(
+        "--sae_block_pattern", type=str, required=True, help="Regex pattern for SAE block selection"
+    )
+    parser.add_argument(
+        "--output_folder", type=str, default="evals/absorption/results", help="Output folder"
+    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+    parser.add_argument(
+        "--clean_up_activations", action="store_false", help="Clean up activations after evaluation"
+    )
+
+    return parser
+
+
+if __name__ == "__main__":
+    """
+    python evals/shift_and_tpp/main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped \
+    --output_folder results
+    
+    
+    """
+    args = arg_parser().parse_args()
+    device = setup_environment()
+
+    start_time = time.time()
+
+    # sae_regex_patterns = [
+    #     r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+    #     r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    # ]
+    # sae_block_pattern = [
+    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    # ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(
+        args, sae_regex_patterns, sae_block_pattern
+    )
+
+    print(selected_saes_dict)
+
+    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
+    ]
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
 
     # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, config.selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    eval_type = "scr" if config.spurious_corr else "tpp"
-
-    output_filename = (
-        config.model_name + f"_{eval_type}_layer_{config.layer}{checkpoints_str}_eval_results.json"
+    results_dict = run_eval(
+        config,
+        selected_saes_dict,
+        device,
+        args.output_folder,
+        args.force_rerun,
+        args.clean_up_activations,
     )
-    output_folder = "results"  # at evals/<eval_name>
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
 
     end_time = time.time()
 
