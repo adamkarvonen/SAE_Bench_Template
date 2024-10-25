@@ -37,9 +37,7 @@ def get_k_largest_indices(
                     seen_positions.add((row, col + offset))
             if len(unique_indices) == k:
                 break
-        rows, cols = torch.tensor(
-            unique_indices, dtype=torch.int64, device=x.device
-        ).unbind(dim=-1)
+        rows, cols = torch.tensor(unique_indices, dtype=torch.int64, device=x.device).unbind(dim=-1)
 
     return torch.stack((rows, cols), dim=1)[:k]
 
@@ -48,7 +46,6 @@ def get_iw_sample_indices(
     x: Float[Tensor, "batch seq"],
     k: int,
     buffer: int = 0,
-    threshold: float | None = None,
     use_squared_values: bool = True,
 ) -> Int[Tensor, "k 2"]:
     """
@@ -58,12 +55,10 @@ def get_iw_sample_indices(
     Also includes an optional threshold above which we won't sample.
     """
     x = x[:, buffer:-buffer]
-    if threshold is not None:
-        x = torch.where(x >= threshold, torch.zeros_like(x), x)
     if use_squared_values:
         x = x.pow(2)
 
-    probabilities = x.flatten() / x.flatten().sum()
+    probabilities = x.flatten() / x.sum()
     indices = torch.multinomial(probabilities, k, replacement=False)
 
     rows = indices // x.size(1)
@@ -78,8 +73,8 @@ def index_with_buffer(
 ) -> Float[Tensor, "k buffer_x2_plus1"]:
     """
     This function returns the tensor you get when indexing into `x` with indices, and taking a +-buffer range around
-    each index. For example, if `indices` is a list of the top activating tokens (returned by `get_k_largest_indices`), then
-    this function can get you the sequence context.
+    each index. For example, if `indices` is a list of the top activating tokens (returned by `get_k_largest_indices`),
+    then this function can get you the sequence context.
     """
     assert indices.ndim == 2, "indices must have 2 dimensions"
     assert indices.shape[1] == 2, "indices must have 2 columns"

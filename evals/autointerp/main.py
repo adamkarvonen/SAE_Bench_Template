@@ -15,11 +15,7 @@ from tqdm import tqdm
 
 from evals.autointerp.config import AutoInterpConfig
 from evals.autointerp.sae_encode import encode_subset
-from sae_bench_utils.indexing_utils import (
-    get_iw_sample_indices,
-    get_k_largest_indices,
-    index_with_buffer,
-)
+from sae_bench_utils.indexing_utils import get_iw_sample_indices, get_k_largest_indices, index_with_buffer
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
@@ -119,6 +115,7 @@ class AutoInterp:
         cfg: AutoInterpConfig,
         model: HookedSAETransformer,
         sae: SAE,
+        sparsity: Tensor,
         device: str,
         api_key: str,
     ):
@@ -127,7 +124,7 @@ class AutoInterp:
         self.sae = sae
         self.device = device
         self.api_key = api_key
-        self.batch_size = cfg.total_tokens // model.cfg.n_ctx
+        self.batch_size = cfg.total_tokens // sae.cfg.context_size
         self.act_store = ActivationsStore.from_sae(
             model=model,
             sae=sae,
@@ -139,7 +136,9 @@ class AutoInterp:
             self.latents = cfg.latents
         else:
             assert self.cfg.n_latents is not None
-            self.latents = random.sample(range(self.sae.cfg.d_sae), k=self.cfg.n_latents)
+            alive_latents = torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
+            assert len(alive_latents) >= self.cfg.n_latents, "Error: not enough alive latents to sample from"
+            self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
         self.n_latents = len(self.latents)
 
     async def run(self, explanations_override: dict[int, str] = {}) -> dict[int, dict[str, Any]]:
@@ -322,19 +321,13 @@ class AutoInterp:
             desc="Forward passes to get activation values",
         ):
             sae_in = self.act_store.get_activations(_tokens).squeeze(2).to(self.device)
-            acts = torch.concat(
-                [
-                    acts,
-                    encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents)),
-                ],
-                dim=0,
-            )
+            acts = torch.concat([acts, encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))], dim=0)
 
         generation_examples = {}
         scoring_examples = {}
 
         for i, latent in enumerate(self.latents):
-            # (1/3) Get random examples
+            # (1/3) Get random examples (we don't need their values)
             rand_indices = torch.stack(
                 [
                     torch.randint(0, batch_size, (self.cfg.n_random_ex_for_scoring,)),
@@ -348,7 +341,7 @@ class AutoInterp:
             )
             rand_toks = index_with_buffer(tokens, rand_indices, buffer=self.cfg.buffer)
 
-            # (2/3) Get top-scoring examples (and their values)
+            # (2/3) Get top-scoring examples
             top_indices = get_k_largest_indices(
                 acts[..., i],
                 k=self.cfg.n_top_ex,
@@ -359,17 +352,13 @@ class AutoInterp:
             top_values = index_with_buffer(acts[..., i], top_indices, buffer=self.cfg.buffer)
             act_threshold = self.cfg.act_threshold_frac * top_values.max().item()
 
-            # (3/3) Get importance-weighted examples (and their values), using a threshold so they're disjoint from top values
-            # Also, if we don't have enough values, then break - assume this is a dead feature
+            # (3/3) Get importance-weighted examples, using a threshold so they're disjoint from top examples
+            # Also, if we don't have enough values, then we assume this is a dead feature & continue
             threshold = top_values[:, self.cfg.buffer].min().item()
-            if torch.where(acts[..., i] < threshold, acts[..., i], 0.0).max() < 1e-6:
+            acts_thresholded = torch.where(acts[..., i] >= threshold, 0.0, acts[..., i])
+            if acts_thresholded[self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
                 continue
-            iw_indices = get_iw_sample_indices(
-                acts[..., i],
-                k=self.cfg.n_iw_sampled_ex,
-                buffer=self.cfg.buffer,
-                threshold=threshold,
-            )
+            iw_indices = get_iw_sample_indices(acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer)
             iw_toks = index_with_buffer(tokens, iw_indices, buffer=self.cfg.buffer)
             iw_values = index_with_buffer(acts[..., i], iw_indices, buffer=self.cfg.buffer)
 
@@ -436,10 +425,10 @@ def run_eval(
         for sae_name in sae_names:
             # Load in SAE, and randomly choose a number of latents to use for this autointerp instance
             sae_id = saes_map[sae_name]
-            sae = SAE.from_pretrained(release, sae_id, device=str(device))[0]
+            sae, _, sparsity = SAE.from_pretrained(release, sae_id, device=str(device))
 
             # Get autointerp results
-            autointerp = AutoInterp(cfg=config, model=model, sae=sae, api_key=api_key, device=device)
+            autointerp = AutoInterp(cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device)
             results = asyncio.run(autointerp.run())
 
             if save_logs_path is not None:

@@ -11,6 +11,7 @@ class AutoInterpConfig:
         device:                         The device to use
         n_latents:                      The number of latents to use
         override_latents:               The latents to use (overrides n_latents if supplied)
+        dead_latent_threshold:          The log sparsity value below which we consider a latent to be dead
         seed:                           The seed to use for all randomness
 
         buffer:                         The size of the buffer to use for scoring
@@ -31,17 +32,18 @@ class AutoInterpConfig:
         n_iw_sampled_ex_for_scoring:    The number of importance-sampled sequences to use for scoring
     """
 
-    # Important stuff
+    # High-level params (not specific to autointerp)
     model_name: str
     n_latents: int | None = None
     override_latents: list[int] | None = None
+    dead_latent_threshold: float = -8
     seed: int = 0
 
-    # Main stuff
+    # Main autointerp params
     buffer: int = 10
     no_overlap: bool = True
     act_threshold_frac: float = 0.01
-    total_tokens: int = 10_000_000
+    total_tokens: int = 2_000_000
     batch_size: int = 512  # split up total tokens into batches of this size
     scoring: bool = True
     max_tokens_in_explanation: int = 30
@@ -52,9 +54,9 @@ class AutoInterpConfig:
     n_iw_sampled_ex_for_generation: int = 5
 
     # Sequences included in scoring phase
-    n_top_ex_for_scoring: int = 4
+    n_top_ex_for_scoring: int = 2
     n_random_ex_for_scoring: int = 10
-    n_iw_sampled_ex_for_scoring: int = 0
+    n_iw_sampled_ex_for_scoring: int = 2
 
     def __post_init__(self):
         if self.n_latents is None:
