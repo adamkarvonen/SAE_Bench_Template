@@ -86,15 +86,10 @@ def run_eval_single_dataset(
     hook_point: str,
     device: str,
     artifacts_folder: str,
-    force_rerun: bool,
     save_activations: bool,
 ) -> dict[str, float]:
     """config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
-    It is saved in the results_dict for reproducibility.
-    selected_saes_dict: dict[str, list[str]] is a dict of SAE release name: list of SAE names to evaluate.
-    Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
-    ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
-    'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
+    It is saved in the results_dict for reproducibility."""
 
     results_dict = {}
 
@@ -102,7 +97,7 @@ def run_eval_single_dataset(
 
     activations_path = os.path.join(artifacts_folder, activations_filename)
 
-    if not os.path.exists(activations_path) or force_rerun:
+    if not os.path.exists(activations_path):
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name, config, model, config.llm_batch_size, layer, hook_point, device
         )
@@ -196,7 +191,6 @@ def run_eval_single_sae(
     hook_point: str,
     device: str,
     artifacts_folder: str,
-    force_rerun: bool,
     save_activations: bool = True,
 ) -> dict[str, float | dict[str, float]]:
     """hook_point: str is transformer lens format. example: f'blocks.{layer}.hook_resid_post'
@@ -220,7 +214,6 @@ def run_eval_single_sae(
             hook_point,
             device,
             artifacts_folder,
-            force_rerun,
             save_activations,
         )
 
@@ -229,7 +222,7 @@ def run_eval_single_sae(
     )
 
     for dataset_name, dataset_result in dataset_results.items():
-        results_dict[f"{dataset_name}_results"] = dataset_result
+        results_dict[f"{dataset_name}"] = dataset_result
 
     return results_dict
 
@@ -250,6 +243,7 @@ def run_eval(
     sae_bench_version = get_sae_bench_version()
 
     artifacts_base_folder = "artifacts"
+    os.makedirs(output_path, exist_ok=True)
 
     results_dict = {}
 
@@ -288,16 +282,24 @@ def run_eval(
             )
             os.makedirs(artifacts_folder, exist_ok=True)
 
-            sparse_probing_results = run_eval_single_sae(
-                config,
-                sae,
-                model,
-                sae.cfg.hook_layer,
-                sae.cfg.hook_name,
-                device,
-                artifacts_folder,
-                force_rerun,
-            )
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            if os.path.exists(sae_result_path) and not force_rerun:
+                print(f"Loading existing results from {sae_result_path}")
+                with open(sae_result_path, "r") as f:
+                    sparse_probing_results = json.load(f)
+            else:
+                sparse_probing_results = run_eval_single_sae(
+                    config,
+                    sae,
+                    model,
+                    sae.cfg.hook_layer,
+                    sae.cfg.hook_name,
+                    device,
+                    artifacts_folder,
+                )
 
             sae_eval_result = {
                 "eval_instance_id": eval_instance_id,
@@ -315,10 +317,6 @@ def run_eval(
             results_dict[sae_id] = sae_eval_result
 
             # Save individual SAE result
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
-
             with open(sae_result_path, "w") as f:
                 json.dump(sae_eval_result, f, indent=4)
 
@@ -401,8 +399,8 @@ if __name__ == "__main__":
         r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
     ]
 
-    # sae_regex_patterns = None
-    # sae_block_pattern = None
+    sae_regex_patterns = None
+    sae_block_pattern = None
 
     config, selected_saes_dict = create_config_and_selected_saes(args)
 
