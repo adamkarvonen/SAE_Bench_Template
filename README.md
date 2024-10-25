@@ -41,3 +41,18 @@ Ideally, we would like to see something like `evals.sparse_probing.main.py`, whi
 All evals and submodules will share the same dependencies, which are set in pyproject.toml.
 
 For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recovered and getting a set of tokens from The Pile, refer to this notebook: https://github.com/jbloomAus/SAELens/blob/main/tutorials/basic_loading_and_analysing.ipynb
+
+## Custom SAE Usage
+
+For the sparse probing and SHIFT / TPP evals, we support evaluating any SAE object that has the following implemented, with inputs / outputs matching the SAELens SAE format:
+
+```
+sae.encode()
+sae.decode()
+sae.forward()
+sae.W_dec # nn.Parameter(d_sae, d_in)
+sae.device
+sae.dtype
+```
+
+Just pass the appropriate inputs to `run_eval_single_sae()`, referring to individual eval READMEs as needed.
