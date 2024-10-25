@@ -830,13 +830,26 @@ def arg_parser():
 
 if __name__ == "__main__":
     """
+    Example pythia-70m usage:
     python evals/shift_and_tpp/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
     --model_name pythia-70m-deduped \
     --spurious_corr true
-    
-    
+
+    Example Gemma-2-2B SAE Bench usage:
+    python evals/shift_and_tpp/main.py \
+    --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
+    --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
+    --model_name gemma-2-2b \
+    --spurious_corr true
+
+    Example Gemma-2-2B Gemma-Scope usage:
+    python evals/shift_and_tpp/main.py \
+    --sae_regex_pattern "gemma-scope-2b-pt-res" \
+    --sae_block_pattern "layer_20/width_16k/average_l0_139" \
+    --model_name gemma-2-2b \
+    --spurious_corr true
     """
     args = arg_parser().parse_args()
     device = setup_environment()
@@ -852,8 +865,8 @@ if __name__ == "__main__":
         r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
     ]
 
-    # sae_regex_patterns = None
-    # sae_block_pattern = None
+    sae_regex_patterns = None
+    sae_block_pattern = None
 
     config, selected_saes_dict = create_config_and_selected_saes(args)
 

@@ -50,9 +50,11 @@ For the sparse probing and SHIFT / TPP evals, we support evaluating any SAE obje
 sae.encode()
 sae.decode()
 sae.forward()
-sae.W_dec # nn.Parameter(d_sae, d_in)
+sae.W_dec # nn.Parameter(d_sae, d_in), required for SHIFT, TPP, and Feature Absorption
 sae.device
 sae.dtype
 ```
 
 Just pass the appropriate inputs to `run_eval_single_sae()`, referring to individual eval READMEs as needed. If you match our output format you can reuse our graphing notebook.
+
+To run our baselines in pythia-70m and gemma-2-2b, refer to `if __name__ == "__main__":` in `shift_and_tpp/main.py`.
