@@ -865,6 +865,18 @@ if __name__ == "__main__":
         r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
     ]
 
+    # For Gemma-2-2b
+    sae_regex_patterns = [
+        r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+        r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
+        r"(gemma-scope-2b-pt-res)",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.19(?!.*step).*",
+        r".*blocks\.19(?!.*step).*",
+        r".*layer_(19).*(16k).*",
+    ]
+
     sae_regex_patterns = None
     sae_block_pattern = None
 
