@@ -5,6 +5,7 @@ import shutil
 import random
 import time
 from dataclasses import asdict
+from typing import Optional
 
 import pandas as pd
 import torch
@@ -15,7 +16,7 @@ from tqdm import tqdm
 from transformer_lens import HookedTransformer
 import argparse
 from datetime import datetime
-import pickle
+
 
 import evals.sparse_probing.eval_config as eval_config
 import evals.sparse_probing.probe_training as probe_training
@@ -97,11 +98,13 @@ def run_eval_single_dataset(
 
     results_dict = {}
 
-    activations_filename = os.path.join(
-        artifacts_folder, f"{dataset_name}_{config.model_name}_{hook_point}_activations.pt"
+    activations_filename = (
+        f"{dataset_name}_{config.model_name}_{hook_point}_activations.pt".replace("/", "_")
     )
 
-    if not os.path.exists(activations_filename) or force_rerun:
+    activations_path = os.path.join(artifacts_folder, activations_filename)
+
+    if not os.path.exists(activations_path) or force_rerun:
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name, config, model, config.llm_batch_size, layer, hook_point, device
         )
@@ -139,9 +142,10 @@ def run_eval_single_dataset(
         }
 
         if save_activations:
-            torch.save(acts, activations_filename)
+            torch.save(acts, activations_path)
     else:
-        acts = torch.load(activations_filename)
+        print(f"Loading activations from {activations_path}")
+        acts = torch.load(activations_path)
         all_train_acts_BLD = acts["train"]
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
@@ -201,11 +205,15 @@ def run_eval_single_sae(
     By default, we save activations for all datasets, and then reuse them for each sae.
     This is important to avoid recomputing activations for each SAE, and to ensure that the same activations are used for all SAEs.
     However, it can use 10s of GBs of disk space."""
+
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+
     results_dict = {}
 
     dataset_results = {}
     for dataset_name in config.dataset_names:
-        dataset_results[dataset_name] = run_eval_single_dataset(
+        dataset_results[f"{dataset_name}_results"] = run_eval_single_dataset(
             dataset_name,
             config,
             sae,
@@ -218,7 +226,9 @@ def run_eval_single_sae(
             save_activations,
         )
 
-    results_dict = formatting_utils.average_results_dictionaries(results_dict, config.dataset_names)
+    results_dict = formatting_utils.average_results_dictionaries(
+        dataset_results, config.dataset_names
+    )
 
     for dataset_name, dataset_result in dataset_results.items():
         results_dict[f"{dataset_name}_results"] = dataset_result
@@ -245,9 +255,6 @@ def run_eval(
     os.makedirs(artifacts_folder, exist_ok=True)
 
     results_dict = {}
-
-    random.seed(config.random_seed)
-    torch.manual_seed(config.random_seed)
 
     if config.llm_dtype == "bfloat16":
         llm_dtype = torch.bfloat16
@@ -329,13 +336,27 @@ def setup_environment():
     return device
 
 
-def create_config_and_selected_saes(args):
+def create_config_and_selected_saes(
+    args,
+    sae_regex_patterns: Optional[list[str]] = None,
+    sae_block_pattern: Optional[list[str]] = None,
+) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
     config = eval_config.EvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    if sae_regex_patterns is None:
+        selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    else:
+        assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
+
+        print("Ignoring args.sae_regex_pattern and args.sae_block_pattern")
+
+        selected_saes_dict = {}
+        for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
+            selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
     for release, saes in selected_saes_dict.items():
@@ -381,7 +402,23 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    config, selected_saes_dict = create_config_and_selected_saes(args)
+    # sae_regex_patterns = [
+    #     r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+    #     r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    # ]
+    # sae_block_pattern = [
+    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    # ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(
+        args, sae_regex_patterns, sae_block_pattern
+    )
+
+    print(selected_saes_dict)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
@@ -390,8 +427,6 @@ if __name__ == "__main__":
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
-
-    config = eval_config.EvalConfig()
 
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
