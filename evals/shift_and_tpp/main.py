@@ -678,9 +678,10 @@ def run_eval(
         eval_type = "scr"
     else:
         eval_type = "tpp"
+    output_path = os.path.join(output_path, eval_type)
+    os.makedirs(output_path, exist_ok=True)
 
     artifacts_base_folder = "artifacts"
-    os.makedirs(output_path, exist_ok=True)
 
     results_dict = {}
 
