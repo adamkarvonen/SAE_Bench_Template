@@ -17,6 +17,7 @@ from tqdm import tqdm
 from transformer_lens import HookedTransformer
 import argparse
 from datetime import datetime
+import pickle
 
 import evals.shift_and_tpp.dataset_creation as dataset_creation
 import evals.shift_and_tpp.eval_config as eval_config
@@ -32,26 +33,11 @@ from sae_bench_utils import (
     get_sae_lens_version,
     get_sae_bench_version,
 )
-from sae_bench_utils.sae_selection_utils import get_saes_from_regex
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex, select_saes_multiple_patterns
 
 COLUMN2_VALS_LOOKUP = {
     "LabHC/bias_in_bios_class_set1": ("male", "female"),
     "canrager/amazon_reviews_mcauley_1and5": (1.0, 5.0),
-}
-
-COLUMN1_VALS_LOOKUP = {
-    "LabHC/bias_in_bios_class_set1": [
-        ("professor", "nurse"),
-        ("architect", "journalist"),
-        ("surgeon", "psychologist"),
-        ("attorney", "teacher"),
-    ],
-    "canrager/amazon_reviews_mcauley_1and5": [
-        ("Books", "CDs_and_Vinyl"),
-        ("Software", "Electronics"),
-        ("Pet_Supplies", "Office_Products"),
-        ("Industrial_and_Scientific", "Toys_and_Games"),
-    ],
 }
 
 
@@ -309,167 +295,133 @@ def perform_feature_ablations(
 
 
 def get_spurious_correlation_plotting_dict(
-    raw_results: dict[str, dict[str, dict[int, dict[str, float]]]],
+    class_accuracies: dict[str, dict[int, dict[str, float]]],
     llm_clean_accs: dict[str, float],
-) -> dict[str, dict[str, float]]:
-    """raw_results: dict[sae_name][class_name][threshold][class_name] = float
+) -> dict[str, float]:
+    """raw_results: dict[class_name][threshold][class_name] = float
     llm_clean_accs: dict[class_name] = float
-    Returns: dict[sae_name][metric_name] = float"""
+    Returns: dict[metric_name] = float"""
 
     results = {}
     eval_probe_class_id = "male_professor / female_nurse"
 
-    for sae_name in raw_results:
-        class_accuracies = raw_results[sae_name]
-        results[sae_name] = {}
+    dirs = [1, 2]
 
-        dirs = [1, 2]
+    dir1_class_name = f"{eval_probe_class_id} probe on professor / nurse data"
+    dir2_class_name = f"{eval_probe_class_id} probe on male / female data"
 
-        dir1_class_name = f"{eval_probe_class_id} probe on professor / nurse data"
-        dir2_class_name = f"{eval_probe_class_id} probe on male / female data"
+    dir1_acc = llm_clean_accs[dir1_class_name]
+    dir2_acc = llm_clean_accs[dir2_class_name]
 
-        dir1_acc = llm_clean_accs[dir1_class_name]
-        dir2_acc = llm_clean_accs[dir2_class_name]
+    for dir in dirs:
+        if dir == 1:
+            ablated_probe_class_id = "male / female"
+            eval_data_class_id = "professor / nurse"
+        elif dir == 2:
+            ablated_probe_class_id = "professor / nurse"
+            eval_data_class_id = "male / female"
+        else:
+            raise ValueError("Invalid dir.")
 
-        for dir in dirs:
-            if dir == 1:
-                ablated_probe_class_id = "male / female"
-                eval_data_class_id = "professor / nurse"
-            elif dir == 2:
-                ablated_probe_class_id = "professor / nurse"
-                eval_data_class_id = "male / female"
-            else:
-                raise ValueError("Invalid dir.")
+        for threshold in class_accuracies[ablated_probe_class_id]:
+            clean_acc = llm_clean_accs[eval_data_class_id]
 
-            for threshold in class_accuracies[ablated_probe_class_id]:
-                clean_acc = llm_clean_accs[eval_data_class_id]
+            combined_class_name = f"{eval_probe_class_id} probe on {eval_data_class_id} data"
 
-                combined_class_name = f"{eval_probe_class_id} probe on {eval_data_class_id} data"
+            original_acc = llm_clean_accs[combined_class_name]
 
-                original_acc = llm_clean_accs[combined_class_name]
+            changed_acc = class_accuracies[ablated_probe_class_id][threshold][combined_class_name]
 
-                changed_acc = class_accuracies[ablated_probe_class_id][threshold][
-                    combined_class_name
-                ]
+            changed_acc = (changed_acc - original_acc) / (clean_acc - original_acc)
+            metric_key = f"scr_dir{dir}_threshold_{threshold}"
 
-                changed_acc = (changed_acc - original_acc) / (clean_acc - original_acc)
-                metric_key = f"scr_dir{dir}_threshold_{threshold}"
+            results[metric_key] = changed_acc
 
-                results[sae_name][metric_key] = changed_acc
-
-                scr_metric_key = f"scr_metric_threshold_{threshold}"
-                if dir1_acc < dir2_acc and dir == 1:
-                    results[sae_name][scr_metric_key] = changed_acc
-                elif dir1_acc > dir2_acc and dir == 2:
-                    results[sae_name][scr_metric_key] = changed_acc
+            scr_metric_key = f"scr_metric_threshold_{threshold}"
+            if dir1_acc < dir2_acc and dir == 1:
+                results[scr_metric_key] = changed_acc
+            elif dir1_acc > dir2_acc and dir == 2:
+                results[scr_metric_key] = changed_acc
 
     return results
 
 
 def create_tpp_plotting_dict(
-    raw_results: dict[str, dict[str, dict[int, dict[str, float]]]],
+    class_accuracies: dict[str, dict[int, dict[str, float]]],
     llm_clean_accs: dict[str, float],
-) -> dict[str, dict[str, float]]:
-    """raw_results: dict[sae_name][class_name][threshold][class_name] = float
+) -> dict[str, float]:
+    """raw_results: dict[class_name][threshold][class_name] = float
     llm_clean_accs: dict[class_name] = float
-    Returns: dict[sae_name][metric_name] = float"""
+    Returns: dict[metric_name] = float"""
 
     results = {}
+    intended_diffs = {}
+    unintended_diffs = {}
 
-    for sae_name in raw_results:
-        results[sae_name] = {}
+    classes = list(llm_clean_accs.keys())
 
-        intended_diffs = {}
-        unintended_diffs = {}
+    for class_name in classes:
+        if " probe on " in class_name:
+            raise ValueError("This is SHIFT spurious correlations, shouldn't be here.")
 
-        classes = list(llm_clean_accs.keys())
+        intended_clean_acc = llm_clean_accs[class_name]
 
-        class_accuracies = raw_results[sae_name]
+        for threshold in class_accuracies[class_name]:
+            intended_patched_acc = class_accuracies[class_name][threshold][class_name]
 
-        for class_name in classes:
-            if " probe on " in class_name:
-                raise ValueError("This is SHIFT spurious correlations, shouldn't be here.")
+            intended_diff = intended_clean_acc - intended_patched_acc
 
-            intended_clean_acc = llm_clean_accs[class_name]
+            if threshold not in intended_diffs:
+                intended_diffs[threshold] = []
 
-            for threshold in class_accuracies[class_name]:
-                intended_patched_acc = class_accuracies[class_name][threshold][class_name]
+            intended_diffs[threshold].append(intended_diff)
 
-                intended_diff = intended_clean_acc - intended_patched_acc
+        for intended_class_id in classes:
+            for unintended_class_id in classes:
+                if intended_class_id == unintended_class_id:
+                    continue
 
-                if threshold not in intended_diffs:
-                    intended_diffs[threshold] = []
+                unintended_clean_acc = llm_clean_accs[unintended_class_id]
 
-                intended_diffs[threshold].append(intended_diff)
+                for threshold in class_accuracies[intended_class_id]:
+                    unintended_patched_acc = class_accuracies[intended_class_id][threshold][
+                        unintended_class_id
+                    ]
+                    unintended_diff = unintended_clean_acc - unintended_patched_acc
 
-            for intended_class_id in classes:
-                for unintended_class_id in classes:
-                    if intended_class_id == unintended_class_id:
-                        continue
+                    if threshold not in unintended_diffs:
+                        unintended_diffs[threshold] = []
 
-                    unintended_clean_acc = llm_clean_accs[unintended_class_id]
+                    unintended_diffs[threshold].append(unintended_diff)
 
-                    for threshold in class_accuracies[intended_class_id]:
-                        unintended_patched_acc = class_accuracies[intended_class_id][threshold][
-                            unintended_class_id
-                        ]
-                        unintended_diff = unintended_clean_acc - unintended_patched_acc
+        for threshold in intended_diffs:
+            assert threshold in unintended_diffs
 
-                        if threshold not in unintended_diffs:
-                            unintended_diffs[threshold] = []
+            average_intended_diff = sum(intended_diffs[threshold]) / len(intended_diffs[threshold])
+            average_unintended_diff = sum(unintended_diffs[threshold]) / len(
+                unintended_diffs[threshold]
+            )
+            average_diff = average_intended_diff - average_unintended_diff
 
-                        unintended_diffs[threshold].append(unintended_diff)
-
-            for threshold in intended_diffs:
-                assert threshold in unintended_diffs
-
-                average_intended_diff = sum(intended_diffs[threshold]) / len(
-                    intended_diffs[threshold]
-                )
-                average_unintended_diff = sum(unintended_diffs[threshold]) / len(
-                    unintended_diffs[threshold]
-                )
-                average_diff = average_intended_diff - average_unintended_diff
-
-                results[sae_name][f"tpp_threshold_{threshold}_total_metric"] = average_diff
-                results[sae_name][f"tpp_threshold_{threshold}_intended_diff_only"] = (
-                    average_intended_diff
-                )
-                results[sae_name][f"tpp_threshold_{threshold}_unintended_diff_only"] = (
-                    average_unintended_diff
-                )
+            results[f"tpp_threshold_{threshold}_total_metric"] = average_diff
+            results[f"tpp_threshold_{threshold}_intended_diff_only"] = average_intended_diff
+            results[f"tpp_threshold_{threshold}_unintended_diff_only"] = average_unintended_diff
 
     return results
 
 
-def run_eval_single_dataset(
-    config: eval_config.EvalConfig,
-    selected_saes_dict: dict[str, list[str]],
+def get_dataset_activations(
     dataset_name: str,
+    config: eval_config.EvalConfig,
     model: HookedTransformer,
+    llm_batch_size: int,
+    layer: int,
+    hook_point: str,
     device: str,
+    chosen_classes: list[str],
     column1_vals: Optional[tuple[str, str]] = None,
-) -> tuple[dict[str, dict[str, dict[int, dict[str, float]]]], dict[str, float]]:
-    """Return dict is of the form:
-    dict[sae_name][ablated_class_name][threshold][measured_acc_class_name] = float
-
-    config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
-    It is saved in the results_dict for reproducibility.
-    selected_saes_dict: dict[str, list[str]] is a dict of SAE release name: list of SAE names to evaluate.
-    Example: sae_bench_pythia70m_sweep_topk_ctx128_0730 :
-    ['pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10',
-    'pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_12']"""
-
-    # TODO: Make this nicer.
-    sae_map_df = pd.DataFrame.from_records(
-        {k: v.__dict__ for k, v in get_pretrained_saes_directory().items()}
-    ).T
-
-    llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-
-    column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
-
+    column2_vals: Optional[tuple[str, str]] = None,
+) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor]]:
     train_data, test_data = dataset_creation.get_train_test_data(
         dataset_name,
         config.spurious_corr,
@@ -481,11 +433,8 @@ def run_eval_single_dataset(
     )
 
     if not config.spurious_corr:
-        chosen_classes = dataset_info.chosen_classes_per_dataset[dataset_name]
         train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
         test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
-    else:
-        chosen_classes = list(dataset_info.PAIRED_CLASS_KEYS.keys())
 
     train_data = dataset_utils.tokenize_data(
         train_data, model.tokenizer, config.context_length, device
@@ -494,97 +443,147 @@ def run_eval_single_dataset(
         test_data, model.tokenizer, config.context_length, device
     )
 
-    print(f"Running evaluation for layer {config.layer}")
-
     all_train_acts_BLD = activation_collection.get_all_llm_activations(
-        train_data, model, llm_batch_size, config.layer
+        train_data, model, llm_batch_size, layer, hook_point
     )
     all_test_acts_BLD = activation_collection.get_all_llm_activations(
-        test_data, model, llm_batch_size, config.layer
+        test_data, model, llm_batch_size, layer, hook_point
     )
 
-    all_meaned_train_acts_BD = activation_collection.create_meaned_model_activations(
-        all_train_acts_BLD
-    )
-    all_meaned_test_acts_BD = activation_collection.create_meaned_model_activations(
-        all_test_acts_BLD
-    )
+    return all_train_acts_BLD, all_test_acts_BLD
 
-    torch.set_grad_enabled(True)
 
-    llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
-        all_meaned_train_acts_BD,
-        all_meaned_test_acts_BD,
-        select_top_k=None,
-        use_sklearn=False,
-        batch_size=config.probe_train_batch_size,
-        epochs=config.probe_epochs,
-        lr=config.probe_lr,
-        spurious_corr=config.spurious_corr,
-    )
+def run_eval_single_dataset(
+    dataset_name: str,
+    config: eval_config.EvalConfig,
+    sae: SAE,
+    model: HookedTransformer,
+    layer: int,
+    hook_point: str,
+    device: str,
+    artifacts_folder: str,
+    save_activations: bool = True,
+    column1_vals: Optional[tuple[str, str]] = None,
+) -> tuple[dict[str, dict[str, dict[int, dict[str, float]]]], dict[str, float]]:
+    """Return dict is of the form:
+    dict[ablated_class_name][threshold][measured_acc_class_name] = float
+
+    config: eval_config.EvalConfig contains all hyperparameters to reproduce the evaluation.
+    It is saved in the results_dict for reproducibility."""
+
+    column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
+
+    if not config.spurious_corr:
+        chosen_classes = dataset_info.chosen_classes_per_dataset[dataset_name]
+        activations_filename = f"{dataset_name}_activations.pt".replace("/", "_")
+        probes_filename = f"{dataset_name}_activations.pkl".replace("/", "_")
+    else:
+        chosen_classes = list(dataset_info.PAIRED_CLASS_KEYS.keys())
+        activations_filename = (
+            f"{dataset_name}_{column1_vals[0]}_{column1_vals[1]}_activations.pt".replace("/", "_")
+        )
+        probes_filename = (
+            f"{dataset_name}_{column1_vals[0]}_{column1_vals[1]}_activations.pkl".replace("/", "_")
+        )
+
+    activations_path = os.path.join(artifacts_folder, activations_filename)
+    probes_path = os.path.join(artifacts_folder, probes_filename)
+
+    if not os.path.exists(activations_path):
+        all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
+            dataset_name,
+            config,
+            model,
+            config.llm_batch_size,
+            layer,
+            hook_point,
+            device,
+            chosen_classes,
+            column1_vals,
+            column2_vals,
+        )
+
+        all_meaned_train_acts_BD = activation_collection.create_meaned_model_activations(
+            all_train_acts_BLD
+        )
+        all_meaned_test_acts_BD = activation_collection.create_meaned_model_activations(
+            all_test_acts_BLD
+        )
+
+        torch.set_grad_enabled(True)
+
+        llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
+            all_meaned_train_acts_BD,
+            all_meaned_test_acts_BD,
+            select_top_k=None,
+            use_sklearn=False,
+            batch_size=config.probe_train_batch_size,
+            epochs=config.probe_epochs,
+            lr=config.probe_lr,
+            spurious_corr=config.spurious_corr,
+        )
+
+        torch.set_grad_enabled(False)
+
+        llm_test_accuracies = get_probe_test_accuracy(
+            llm_probes,
+            chosen_classes,
+            all_meaned_test_acts_BD,
+            config.probe_test_batch_size,
+            config.spurious_corr,
+        )
+
+        acts = {
+            "train": all_train_acts_BLD,
+            "test": all_test_acts_BLD,
+        }
+
+        llm_probes_dict = {
+            "llm_probes": llm_probes,
+            "llm_test_accuracies": llm_test_accuracies,
+        }
+
+        if save_activations:
+            torch.save(acts, activations_path)
+            with open(probes_path, "wb") as f:
+                pickle.dump(llm_probes_dict, f)
+    else:
+        print(f"Loading activations from {activations_path}")
+        acts = torch.load(activations_path)
+        all_train_acts_BLD = acts["train"]
+        all_test_acts_BLD = acts["test"]
+
+        print(f"Loading probes from {probes_path}")
+        with open(probes_path, "rb") as f:
+            llm_probes_dict = pickle.load(f)
+
+        llm_probes = llm_probes_dict["llm_probes"]
+        llm_test_accuracies = llm_probes_dict["llm_test_accuracies"]
 
     torch.set_grad_enabled(False)
 
-    llm_test_accuracies = get_probe_test_accuracy(
+    sae_node_effects = get_all_node_effects_for_one_sae(
+        sae,
         llm_probes,
         chosen_classes,
-        all_meaned_test_acts_BD,
+        config.spurious_corr,
+        all_train_acts_BLD,
+        config.sae_batch_size,
+    )
+
+    ablated_class_accuracies = perform_feature_ablations(
+        llm_probes,
+        sae,
+        config.sae_batch_size,
+        all_test_acts_BLD,
+        sae_node_effects,
+        config.n_values,
+        chosen_classes,
         config.probe_test_batch_size,
         config.spurious_corr,
     )
 
-    per_class_accuracies = {}
-
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
-        )
-        sae_id_to_name_map = sae_map_df.saes_map[sae_release]
-        sae_name_to_id_map = {v: k for k, v in sae_id_to_name_map.items()}
-
-        for sae_name in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
-
-            sae_id = sae_name_to_id_map[sae_name]
-
-            sae, cfg_dict, sparsity = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )
-            sae = sae.to(device=device, dtype=llm_dtype)
-
-            if "topk" in sae_name:
-                assert isinstance(sae.activation_fn, TopK)
-
-            sae_node_effects = get_all_node_effects_for_one_sae(
-                sae,
-                llm_probes,
-                chosen_classes,
-                config.spurious_corr,
-                all_train_acts_BLD,
-                config.sae_batch_size,
-            )
-
-            ablated_class_accuracies = perform_feature_ablations(
-                llm_probes,
-                sae,
-                config.sae_batch_size,
-                all_test_acts_BLD,
-                sae_node_effects,
-                config.n_values,
-                chosen_classes,
-                config.probe_test_batch_size,
-                config.spurious_corr,
-            )
-
-            per_class_accuracies[sae_name] = ablated_class_accuracies
-
-    return per_class_accuracies, llm_test_accuracies
+    return ablated_class_accuracies, llm_test_accuracies
 
 
 def run_eval_single_sae(
@@ -595,7 +594,6 @@ def run_eval_single_sae(
     hook_point: str,
     device: str,
     artifacts_folder: str,
-    force_rerun: bool,
     save_activations: bool = True,
 ) -> dict[str, float | dict[str, float]]:
     """hook_point: str is transformer lens format. example: f'blocks.{layer}.hook_resid_post'
@@ -612,11 +610,20 @@ def run_eval_single_sae(
 
     for dataset_name in config.dataset_names:
         if config.spurious_corr:
-            config.column1_vals_list = COLUMN1_VALS_LOOKUP[dataset_name]
-            for column1_vals in config.column1_vals_list:
+            column1_vals_list = config.column1_vals_lookup[dataset_name]
+            for column1_vals in column1_vals_list:
                 run_name = f"{dataset_name}_scr_{column1_vals[0]}_{column1_vals[1]}"
                 raw_results, llm_clean_accs = run_eval_single_dataset(
-                    config, selected_saes_dict, dataset_name, model, device, column1_vals
+                    dataset_name,
+                    config,
+                    sae,
+                    model,
+                    layer,
+                    hook_point,
+                    device,
+                    artifacts_folder,
+                    save_activations,
+                    column1_vals,
                 )
 
                 processed_results = get_spurious_correlation_plotting_dict(
@@ -630,7 +637,15 @@ def run_eval_single_sae(
         else:
             run_name = f"{dataset_name}_tpp"
             raw_results, llm_clean_accs = run_eval_single_dataset(
-                config, selected_saes_dict, dataset_name, model, device
+                dataset_name,
+                config,
+                sae,
+                model,
+                layer,
+                hook_point,
+                device,
+                artifacts_folder,
+                save_activations,
             )
 
             processed_results = create_tpp_plotting_dict(raw_results, llm_clean_accs)
@@ -659,8 +674,13 @@ def run_eval(
     sae_lens_version = get_sae_lens_version()
     sae_bench_version = get_sae_bench_version()
 
-    artifacts_folder = os.path.join(output_path, "artifacts")
-    os.makedirs(artifacts_folder, exist_ok=True)
+    if config.spurious_corr:
+        eval_type = "scr"
+    else:
+        eval_type = "tpp"
+
+    artifacts_base_folder = "artifacts"
+    os.makedirs(output_path, exist_ok=True)
 
     results_dict = {}
 
@@ -694,37 +714,46 @@ def run_eval(
             )[0]
             sae = sae.to(device=device, dtype=llm_dtype)
 
-            shift_or_tpp_results = run_eval_single_sae(
-                config,
-                sae,
-                model,
-                sae.cfg.hook_layer,
-                sae.cfg.hook_name,
-                device,
-                artifacts_folder,
-                force_rerun,
+            artifacts_folder = os.path.join(
+                artifacts_base_folder, eval_type, config.model_name, sae.cfg.hook_name
             )
+            os.makedirs(artifacts_folder, exist_ok=True)
+
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            if os.path.exists(sae_result_path) and not force_rerun:
+                print(f"Loading existing results from {sae_result_path}")
+                with open(sae_result_path, "r") as f:
+                    shift_or_tpp_results = json.load(f)
+            else:
+                shift_or_tpp_results = run_eval_single_sae(
+                    config,
+                    sae,
+                    model,
+                    sae.cfg.hook_layer,
+                    sae.cfg.hook_name,
+                    device,
+                    artifacts_folder,
+                )
 
             sae_eval_result = {
                 "eval_instance_id": eval_instance_id,
                 "sae_lens_release": sae_release,
                 "sae_lens_id": sae_id,
-                "eval_type_id": "sparse_probing",
+                "eval_type_id": eval_type,
                 "sae_lens_version": sae_lens_version,
                 "sae_bench_version": sae_bench_version,
                 "date_time": datetime.now().isoformat(),
                 "eval_config": asdict(config),
-                "eval_results": sparse_probing_results,
+                "eval_results": shift_or_tpp_results,
                 "eval_artifacts": {"artifacts": os.path.relpath(artifacts_folder)},
             }
 
             results_dict[sae_id] = sae_eval_result
 
-            # Save individual SAE result
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
-
+            # Save individual SAE results
             with open(sae_result_path, "w") as f:
                 json.dump(sae_eval_result, f, indent=4)
 
@@ -746,24 +775,14 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-    sae_regex_patterns: Optional[list[str]] = None,
-    sae_block_pattern: Optional[list[str]] = None,
 ) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
     config = eval_config.EvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
+        spurious_corr=args.spurious_corr,
     )
 
-    if sae_regex_patterns is None:
-        selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
-    else:
-        assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
-
-        print("Ignoring args.sae_regex_pattern and args.sae_block_pattern")
-
-        selected_saes_dict = {}
-        for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
-            selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
 
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
@@ -785,11 +804,17 @@ def arg_parser():
         "--sae_block_pattern", type=str, required=True, help="Regex pattern for SAE block selection"
     )
     parser.add_argument(
-        "--output_folder", type=str, default="evals/absorption/results", help="Output folder"
+        "--output_folder", type=str, default="evals/shift_and_tpp/results", help="Output folder"
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
-        "--clean_up_activations", action="store_false", help="Clean up activations after evaluation"
+        "--clean_up_activations", action="store_true", help="Clean up activations after evaluation"
+    )
+    parser.add_argument(
+        "--spurious_corr",
+        action="store_true",
+        required=True,
+        help="If true, do Spurious Correlation Removal. If false, do TPP.",
     )
 
     return parser
@@ -801,7 +826,7 @@ if __name__ == "__main__":
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
     --model_name pythia-70m-deduped \
-    --output_folder results
+    --spurious_corr
     
     
     """
@@ -810,21 +835,22 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    # sae_regex_patterns = [
-    #     r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
-    #     r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
-    # ]
-    # sae_block_pattern = [
-    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    #     r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    # ]
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    ]
 
-    sae_regex_patterns = None
-    sae_block_pattern = None
+    # sae_regex_patterns = None
+    # sae_block_pattern = None
 
-    config, selected_saes_dict = create_config_and_selected_saes(
-        args, sae_regex_patterns, sae_block_pattern
-    )
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     print(selected_saes_dict)
 
