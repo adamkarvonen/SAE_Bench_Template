@@ -1,6 +1,9 @@
 from datetime import datetime
 import json
+import os
 from pydantic import TypeAdapter
+from evals.generate_json_schemas import main as generate_json_schemas_main
+
 from evals.absorption.eval_config import (
     AbsorptionEvalConfig,
 )
@@ -47,6 +50,10 @@ EXAMPLE_ABSORPTION_RESULT_DETAILS = [
 ]
 
 
+def test_generate_json_schemas():
+    generate_json_schemas_main()
+
+
 def test_absorption_eval_output_schema():
 
     main_model_schema = TypeAdapter(AbsorptionEvalOutput).json_schema()
@@ -80,13 +87,14 @@ def test_absorption_eval_output():
         sae_lens_release_id="some_sae_lens_release_id",
         sae_lens_version=get_sae_lens_version(),
     )
-
     eval_output.to_json_file("test_absorption_eval_output.json", indent=2)
 
     assert eval_output.eval_type_id == "absorption_first_letter"
     assert eval_output.eval_config == EXAMPLE_ABSORPTION_EVAL_CONFIG
     assert eval_output.eval_result_metrics == EXAMPLE_ABSORPTION_METRIC_CATEGORIES
     assert eval_output.eval_result_details == EXAMPLE_ABSORPTION_RESULT_DETAILS
+
+    os.remove("test_absorption_eval_output.json")
 
 
 def test_absorption_eval_output_json():
