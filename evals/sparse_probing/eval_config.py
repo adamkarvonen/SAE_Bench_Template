@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class EvalConfig:
-    random_seed: int = 42
+    random_seed: int = 42  # NOTE: This will be overwritten by argparse
 
     dataset_names: list[str] = field(
         default_factory=lambda: [
