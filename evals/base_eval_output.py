@@ -8,7 +8,7 @@ from pydantic import Field, field_validator, model_validator
 @dataclass
 class BaseEvalConfig:
     """
-    Configuration for the evaluation. We want a flat, one-level config, so we don't allow dicts.
+    Configuration for the evaluation.
     """
 
     def __init__(self):
@@ -17,15 +17,15 @@ class BaseEvalConfig:
                 "BaseEvalConfig is an abstract class and cannot be instantiated directly."
             )
 
-    @model_validator(mode="after")
-    @classmethod
-    def validate_dict(cls, data):
-        for _, value in asdict(data).items():
-            if isinstance(value, dict):
-                raise ValueError(
-                    "Eval config is designed to be a flat, one-level config, so dicts are not allowed."
-                )
-        return data
+    # @model_validator(mode="after")
+    # @classmethod
+    # def validate_dict(cls, data):
+    #     for _, value in asdict(data).items():
+    #         if isinstance(value, dict):
+    #             raise ValueError(
+    #                 "Eval config is designed to be a flat, one-level config, so dicts are not allowed."
+    #             )
+    #     return data
 
 
 BaseEvalConfigType = TypeVar("BaseEvalConfigType", bound=BaseEvalConfig)

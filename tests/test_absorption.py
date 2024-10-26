@@ -1,6 +1,5 @@
 import json
 import os
-import tempfile
 from evals.absorption.eval_output import AbsorptionEvalOutput
 from sae_bench_utils.testing_utils import validate_eval_cli_interface
 import torch
@@ -47,52 +46,49 @@ def test_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    # Create a temporary directory for test outputs
-    with tempfile.TemporaryDirectory() as temp_dir:
+    test_config = eval_config.AbsorptionEvalConfig(
+        model_name="pythia-70m-deduped",
+        random_seed=44,
+        f1_jump_threshold=0.03,
+        max_k_value=10,
+        prompt_template="{word} has the first letter:",
+        prompt_token_pos=-6,
+    )
+    selected_saes_dict = get_saes_from_regex(TEST_RELEASE, TEST_SAE_NAME)
+    print(f"Selected SAEs: {selected_saes_dict}")
 
-        test_config = eval_config.AbsorptionEvalConfig(
-            model_name="pythia-70m-deduped",
-            random_seed=44,
-            f1_jump_threshold=0.03,
-            max_k_value=10,
-            prompt_template="{word} has the first letter:",
-            prompt_token_pos=-6,
-        )
-        selected_saes_dict = get_saes_from_regex(TEST_RELEASE, TEST_SAE_NAME)
-        print(f"Selected SAEs: {selected_saes_dict}")
+    run_results = absorption.run_eval(
+        config=test_config,
+        selected_saes_dict=selected_saes_dict,
+        device=device,
+        output_path=test_data_dir,
+        force_rerun=False,
+    )
 
-        run_results = absorption.run_eval(
-            config=test_config,
-            selected_saes_dict=selected_saes_dict,
-            device=device,
-            output_path=test_data_dir,
-            force_rerun=False,
-        )
+    path_to_eval_results = os.path.join(
+        test_data_dir, f"{TEST_RELEASE}_{TEST_SAE_NAME}_eval_results.json"
+    )
+    validate_eval_output_format_file(
+        path_to_eval_results, eval_output_type=AbsorptionEvalOutput
+    )
 
-        path_to_eval_results = os.path.join(
-            test_data_dir, f"{TEST_RELEASE}_{TEST_SAE_NAME}_eval_results.json"
-        )
-        validate_eval_output_format_file(
-            path_to_eval_results, eval_output_type=AbsorptionEvalOutput
-        )
+    # New checks for the updated JSON structure
+    assert isinstance(run_results, dict), "run_results should be a dictionary"
 
-        # New checks for the updated JSON structure
-        assert isinstance(run_results, dict), "run_results should be a dictionary"
+    # Find the correct key in the new structure
+    actual_result_key = f"{TEST_RELEASE}_{TEST_SAE_NAME}"
+    actual_mean_absorption_rate = run_results[actual_result_key]["eval_result_metrics"][
+        "mean"
+    ]["mean_absorption_score"]
 
-        # Find the correct key in the new structure
-        actual_result_key = f"{TEST_RELEASE}_{TEST_SAE_NAME}"
-        actual_mean_absorption_rate = run_results[actual_result_key][
-            "eval_result_metrics"
-        ]["mean"]["mean_absorption_score"]
+    # Load expected results and compare
+    with open(expected_results_filename, "r") as f:
+        expected_results = json.load(f)
 
-        # Load expected results and compare
-        with open(expected_results_filename, "r") as f:
-            expected_results = json.load(f)
-
-        expected_mean_absorption_rate = expected_results["eval_result_metrics"]["mean"][
-            "mean_absorption_score"
-        ]
-        assert (
-            abs(actual_mean_absorption_rate - expected_mean_absorption_rate)
-            < TEST_TOLERANCE
-        )
+    expected_mean_absorption_rate = expected_results["eval_result_metrics"]["mean"][
+        "mean_absorption_score"
+    ]
+    assert (
+        abs(actual_mean_absorption_rate - expected_mean_absorption_rate)
+        < TEST_TOLERANCE
+    )

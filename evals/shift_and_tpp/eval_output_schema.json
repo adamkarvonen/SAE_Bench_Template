@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "ShiftAndTppEvalConfig": {
+      "properties": {
+        "random_seed": {
+          "default": 42,
+          "description": "NOTE: This will be overwritten by argparse",
+          "title": "Random Seed",
+          "type": "integer"
+        },
+        "dataset_names": {
+          "description": "List of dataset names",
+          "items": {
+            "type": "string"
+          },
+          "title": "Dataset Names",
+          "type": "array"
+        },
+        "spurious_corr": {
+          "default": true,
+          "description": "",
+          "title": "Spurious Correlation",
+          "type": "boolean"
+        },
+        "early_stopping_patience": {
+          "default": 40,
+          "description": "This reduces randomness in the SCR results.",
+          "title": "Early Stopping Patience",
+          "type": "integer"
+        },
+        "train_set_size": {
+          "default": 4000,
+          "description": "",
+          "title": "Train Set Size",
+          "type": "integer"
+        },
+        "test_set_size": {
+          "default": 1000,
+          "description": "This is limited as the test set is smaller than the train set",
+          "title": "Test Set Size",
+          "type": "integer"
+        },
+        "context_length": {
+          "default": 128,
+          "description": "",
+          "title": "Context Length",
+          "type": "integer"
+        },
+        "probe_train_batch_size": {
+          "default": 16,
+          "description": "DO NOT CHANGE without reading the paper appendix Section 1",
+          "title": "Probe Train Batch Size",
+          "type": "integer"
+        },
+        "probe_test_batch_size": {
+          "default": 500,
+          "description": "",
+          "title": "Probe Test Batch Size",
+          "type": "integer"
+        },
+        "probe_epochs": {
+          "default": 20,
+          "description": "",
+          "title": "Probe Epochs",
+          "type": "integer"
+        },
+        "probe_lr": {
+          "default": 0.001,
+          "description": "",
+          "title": "Probe LR",
+          "type": "number"
+        },
+        "sae_batch_size": {
+          "default": 125,
+          "description": "",
+          "title": "SAE Batch Size",
+          "type": "integer"
+        },
+        "llm_batch_size": {
+          "default": 32,
+          "description": "",
+          "title": "LLM Batch Size",
+          "type": "integer"
+        },
+        "llm_dtype": {
+          "default": "bfloat16",
+          "description": "asdict() doesn't like to serialize torch.dtype",
+          "title": "LLM Dtype",
+          "type": "string"
+        },
+        "model_name": {
+          "default": "pythia-70m-deduped",
+          "description": "",
+          "title": "Model Name",
+          "type": "string"
+        },
+        "n_values": {
+          "description": "",
+          "items": {
+            "type": "integer"
+          },
+          "title": "N Values",
+          "type": "array"
+        },
+        "column1_vals_lookup": {
+          "additionalProperties": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "description": "",
+          "title": "Column 1 Values Lookup",
+          "type": "object"
+        }
+      },
+      "title": "ShiftAndTppEvalConfig",
+      "type": "object"
+    },
+    "TppMetricCategories": {
+      "properties": {
+        "uncategorized": {
+          "$ref": "#/$defs/TppUncategorizedMetrics",
+          "description": "Uncategorized metrics",
+          "title": "Uncategorized"
+        }
+      },
+      "required": [
+        "uncategorized"
+      ],
+      "title": "TppMetricCategories",
+      "type": "object"
+    },
+    "TppResultDetail": {
+      "properties": {
+        "dataset_name": {
+          "description": "",
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "tpp_threshold_10_total_metric": {
+          "description": "TPP Threshold 10 Total Metric",
+          "title": "TPP Threshold 10 Total Metric",
+          "type": "number"
+        },
+        "tpp_threshold_10_intended_diff_only": {
+          "description": "TPP Threshold 10 Intended Diff Only",
+          "title": "TPP Threshold 10 Intended Diff Only",
+          "type": "number"
+        },
+        "tpp_threshold_10_unintended_diff_only": {
+          "description": "TPP Threshold 10 Unintended Diff Only",
+          "title": "TPP Threshold 10 Unintended Diff Only",
+          "type": "number"
+        }
+      },
+      "required": [
+        "dataset_name",
+        "tpp_threshold_10_total_metric",
+        "tpp_threshold_10_intended_diff_only",
+        "tpp_threshold_10_unintended_diff_only"
+      ],
+      "title": "TppResultDetail",
+      "type": "object"
+    },
+    "TppUncategorizedMetrics": {
+      "properties": {
+        "tpp_threshold_10_total_metric": {
+          "description": "TPP Threshold 10 Total Metric",
+          "title": "TPP Threshold 10 Total Metric",
+          "type": "number"
+        },
+        "tpp_threshold_10_intended_diff_only": {
+          "description": "TPP Threshold 10 Intended Diff Only",
+          "title": "TPP Threshold 10 Intended Diff Only",
+          "type": "number"
+        },
+        "tpp_threshold_10_unintended_diff_only": {
+          "description": "TPP Threshold 10 Unintended Diff Only",
+          "title": "TPP Threshold 10 Unintended Diff Only",
+          "type": "number"
+        }
+      },
+      "required": [
+        "tpp_threshold_10_total_metric",
+        "tpp_threshold_10_intended_diff_only",
+        "tpp_threshold_10_unintended_diff_only"
+      ],
+      "title": "TppUncategorizedMetrics",
+      "type": "object"
+    }
+  },
+  "description": "The output of a SHIFT evaluation.",
+  "properties": {
+    "eval_type_id": {
+      "default": "tpp",
+      "description": "The type of the evaluation",
+      "title": "Eval Type ID",
+      "type": "string"
+    },
+    "eval_config": {
+      "$ref": "#/$defs/ShiftAndTppEvalConfig",
+      "description": "The configuration of the evaluation.",
+      "title": "Eval Config Type"
+    },
+    "eval_id": {
+      "description": "A unique UUID identifying this specific eval run",
+      "title": "ID",
+      "type": "string"
+    },
+    "datetime_epoch_millis": {
+      "description": "The datetime of the evaluation in epoch milliseconds",
+      "title": "DateTime (epoch ms)",
+      "type": "integer"
+    },
+    "eval_result_metrics": {
+      "$ref": "#/$defs/TppMetricCategories",
+      "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
+      "title": "Result Metrics Categorized"
+    },
+    "eval_result_details": {
+      "description": "Each object is a stat on the TPP results for a single dataset.",
+      "items": {
+        "$ref": "#/$defs/TppResultDetail"
+      },
+      "title": "Per-Dataset TPP Results",
+      "type": "array"
+    },
+    "sae_bench_commit_hash": {
+      "description": "The commit hash of the SAE Bench that ran the evaluation.",
+      "title": "SAE Bench Commit Hash",
+      "type": "string"
+    },
+    "sae_lens_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The ID of the SAE in SAE Lens.",
+      "title": "SAE Lens ID"
+    },
+    "sae_lens_release_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The release ID of the SAE in SAE Lens.",
+      "title": "SAE Lens Release ID"
+    },
+    "sae_lens_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The version of SAE Lens that ran the evaluation.",
+      "title": "SAE Lens Version"
+    }
+  },
+  "required": [
+    "eval_config",
+    "eval_id",
+    "datetime_epoch_millis",
+    "eval_result_metrics",
+    "sae_bench_commit_hash",
+    "sae_lens_id",
+    "sae_lens_release_id",
+    "sae_lens_version"
+  ],
+  "title": "SHIFT Evaluation",
+  "type": "object"
+}

@@ -38,6 +38,9 @@ def run_eval(
     output_path: str,
     force_rerun: bool = False,
 ):
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
 
     results_dict = {}
 
@@ -130,7 +133,7 @@ def run_eval(
             eval_output = AbsorptionEvalOutput(
                 eval_type_id="absorption_first_letter",
                 eval_config=config,
-                eval_id=get_eval_uuid(),
+                eval_id=eval_instance_id,
                 datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
                 eval_result_metrics=AbsorptionMetricCategories(
                     mean=AbsorptionMeanMetrics(
@@ -139,10 +142,10 @@ def run_eval(
                     )
                 ),
                 eval_result_details=eval_result_details,
-                sae_bench_commit_hash=get_sae_bench_version(),
+                sae_bench_commit_hash=sae_bench_commit_hash,
                 sae_lens_id=sae_id,
                 sae_lens_release_id=sae_release,
-                sae_lens_version=get_sae_lens_version(),
+                sae_lens_version=sae_lens_version,
             )
 
             results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
