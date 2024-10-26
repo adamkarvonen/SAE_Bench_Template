@@ -766,6 +766,7 @@ def run_eval(
 
 
 def setup_environment():
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
     if torch.backends.mps.is_available():
         device = "mps"
     else:
