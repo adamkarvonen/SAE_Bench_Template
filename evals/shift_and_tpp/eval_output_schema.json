@@ -788,6 +788,16 @@
       ],
       "description": "The version of SAE Lens that ran the evaluation.",
       "title": "SAE Lens Version"
+    },
+    "eval_result_unstructured": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
+      "title": "Unstructured Results"
     }
   },
   "required": [
@@ -798,7 +808,8 @@
     "sae_bench_commit_hash",
     "sae_lens_id",
     "sae_lens_release_id",
-    "sae_lens_version"
+    "sae_lens_version",
+    "eval_result_unstructured"
   ],
   "title": "TPP Evaluation",
   "type": "object"

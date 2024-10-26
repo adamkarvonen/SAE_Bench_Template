@@ -1,6 +1,6 @@
 from dataclasses import asdict
 import json
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from pydantic.dataclasses import dataclass
 from pydantic import Field, field_validator, model_validator
 
@@ -139,7 +139,7 @@ class BaseEvalOutput(
     eval_result_details: list[BaseResultDetailType] = Field(
         None,
         title="Result Details",
-        description="The details of the evaluation. A list of objects that stores nested or more detailed data, such as details about the absorption of each letter. This is optional.",
+        description="Optional. The details of the evaluation. A list of objects that stores nested or more detailed data, such as details about the absorption of each letter.",
     )
 
     sae_bench_commit_hash: str = Field(
@@ -160,6 +160,12 @@ class BaseEvalOutput(
     sae_lens_version: str | None = Field(
         title="SAE Lens Version",
         description="The version of SAE Lens that ran the evaluation.",
+    )
+
+    eval_result_unstructured: Any | None = Field(
+        default_factory=None,
+        title="Unstructured Results",
+        description="Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
     )
 
     def __init__(self, eval_config: BaseEvalConfigType):
