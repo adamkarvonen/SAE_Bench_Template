@@ -1,5 +1,4 @@
 import gc
-import json
 import os
 import shutil
 import random
@@ -20,6 +19,8 @@ import pickle
 import evals.shift_and_tpp.dataset_creation as dataset_creation
 from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
 from evals.shift_and_tpp.eval_output import (
+    EVAL_TYPE_ID_SHIFT,
+    EVAL_TYPE_ID_TPP,
     ShiftEvalOutput,
     ShiftMetricCategories,
     ShiftResultDetail,
@@ -720,9 +721,9 @@ def run_eval(
     sae_bench_commit_hash = get_sae_bench_version()
 
     if config.spurious_corr:
-        eval_type = "scr"
+        eval_type = EVAL_TYPE_ID_SHIFT
     else:
-        eval_type = "tpp"
+        eval_type = EVAL_TYPE_ID_TPP
     output_path = os.path.join(output_path, eval_type)
     os.makedirs(output_path, exist_ok=True)
 
@@ -772,11 +773,11 @@ def run_eval(
             if os.path.exists(sae_result_path) and not force_rerun:
                 print(f"Loading existing results from {sae_result_path}")
                 with open(sae_result_path, "r") as f:
-                    if eval_type == "scr":
+                    if eval_type == EVAL_TYPE_ID_SHIFT:
                         eval_output = TypeAdapter(ShiftEvalOutput).validate_json(
                             f.read()
                         )
-                    elif eval_type == "tpp":
+                    elif eval_type == EVAL_TYPE_ID_TPP:
                         eval_output = TypeAdapter(TppEvalOutput).validate_json(f.read())
                     else:
                         raise ValueError(f"Invalid eval type: {eval_type}")
@@ -790,7 +791,7 @@ def run_eval(
                     device,
                     artifacts_folder,
                 )
-                if eval_type == "scr":
+                if eval_type == EVAL_TYPE_ID_SHIFT:
                     eval_output = ShiftEvalOutput(
                         eval_type_id=eval_type,
                         eval_config=config,
@@ -818,7 +819,7 @@ def run_eval(
                         sae_lens_release_id=sae_release,
                         sae_lens_version=sae_lens_version,
                     )
-                elif eval_type == "tpp":
+                elif eval_type == EVAL_TYPE_ID_TPP:
                     eval_output = TppEvalOutput(
                         eval_type_id=eval_type,
                         eval_config=config,

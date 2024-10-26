@@ -9,6 +9,7 @@ from sae_lens.sae import TopK
 
 from evals.absorption.eval_config import AbsorptionEvalConfig
 from evals.absorption.eval_output import (
+    EVAL_TYPE_ID_ABSORPTION,
     AbsorptionEvalOutput,
     AbsorptionMetricCategories,
     AbsorptionResultDetail,
@@ -131,7 +132,7 @@ def run_eval(
                 )
 
             eval_output = AbsorptionEvalOutput(
-                eval_type_id="absorption_first_letter",
+                eval_type_id=EVAL_TYPE_ID_ABSORPTION,
                 eval_config=config,
                 eval_id=eval_instance_id,
                 datetime_epoch_millis=int(datetime.now().timestamp() * 1000),

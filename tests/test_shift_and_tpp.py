@@ -1,23 +1,12 @@
-from dataclasses import fields
-import json
-
 import torch
-
+import json
 from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
-from evals.shift_and_tpp.eval_output import (
-    ShiftUncategorizedMetrics,
-    TppUncategorizedMetrics,
-)
 import evals.shift_and_tpp.main as shift_and_tpp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-tpp_results_filename = (
-    "tests/test_data/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-)
-scr_results_filename = (
-    "tests/test_data/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
-)
+tpp_results_filename = "tests/test_data/shift_and_tpp/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
+scr_results_filename = "tests/test_data/shift_and_tpp/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
 
 
 def test_scr_end_to_end_different_seed():
@@ -71,7 +60,11 @@ def test_scr_end_to_end_different_seed():
     with open(scr_results_filename, "r") as f:
         expected_results = json.load(f)
 
-    keys_to_compare = [field.name for field in fields(ShiftUncategorizedMetrics)]
+    keys_to_compare = [
+        "scr_dir1_threshold_10",
+        "scr_metric_threshold_10",
+        "scr_dir2_threshold_10",
+    ]
 
     testing_utils.compare_dicts_within_tolerance(
         run_results[
@@ -129,7 +122,11 @@ def test_tpp_end_to_end_different_seed():
     with open(tpp_results_filename, "r") as f:
         expected_results = json.load(f)
 
-    keys_to_compare = [field.name for field in fields(TppUncategorizedMetrics)]
+    keys_to_compare = [
+        "tpp_threshold_10_total_metric",
+        "tpp_threshold_10_intended_diff_only",
+        "tpp_threshold_10_unintended_diff_only",
+    ]
 
     testing_utils.compare_dicts_within_tolerance(
         run_results[

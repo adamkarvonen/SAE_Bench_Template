@@ -84,7 +84,7 @@
         },
         "llm_dtype": {
           "default": "bfloat16",
-          "description": "asdict() doesn't like to serialize torch.dtype",
+          "description": "",
           "title": "LLM Dtype",
           "type": "string"
         },
@@ -131,6 +131,7 @@
       "properties": {
         "uncategorized": {
           "$ref": "#/$defs/TppUncategorizedMetrics",
+          "default_display": true,
           "description": "Uncategorized metrics",
           "title": "Uncategorized"
         }
@@ -148,59 +149,570 @@
           "title": "Dataset Name",
           "type": "string"
         },
+        "tpp_threshold_2_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Total Metric",
+          "title": "TPP Threshold 2 Total Metric"
+        },
+        "tpp_threshold_2_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Intended Diff Only",
+          "title": "TPP Threshold 2 Intended Diff Only"
+        },
+        "tpp_threshold_2_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Unintended Diff Only",
+          "title": "TPP Threshold 2 Unintended Diff Only"
+        },
+        "tpp_threshold_5_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Total Metric",
+          "title": "TPP Threshold 5 Total Metric"
+        },
+        "tpp_threshold_5_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Intended Diff Only",
+          "title": "TPP Threshold 5 Intended Diff Only"
+        },
+        "tpp_threshold_5_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Unintended Diff Only",
+          "title": "TPP Threshold 5 Unintended Diff Only"
+        },
         "tpp_threshold_10_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "TPP Threshold 10 Total Metric",
-          "title": "TPP Threshold 10 Total Metric",
-          "type": "number"
+          "title": "TPP Threshold 10 Total Metric"
         },
         "tpp_threshold_10_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "TPP Threshold 10 Intended Diff Only",
-          "title": "TPP Threshold 10 Intended Diff Only",
-          "type": "number"
+          "title": "TPP Threshold 10 Intended Diff Only"
         },
         "tpp_threshold_10_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "TPP Threshold 10 Unintended Diff Only",
-          "title": "TPP Threshold 10 Unintended Diff Only",
-          "type": "number"
+          "title": "TPP Threshold 10 Unintended Diff Only"
+        },
+        "tpp_threshold_20_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Total Metric",
+          "title": "TPP Threshold 20 Total Metric"
+        },
+        "tpp_threshold_20_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Intended Diff Only",
+          "title": "TPP Threshold 20 Intended Diff Only"
+        },
+        "tpp_threshold_20_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Unintended Diff Only",
+          "title": "TPP Threshold 20 Unintended Diff Only"
+        },
+        "tpp_threshold_50_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Total Metric",
+          "title": "TPP Threshold 50 Total Metric"
+        },
+        "tpp_threshold_50_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Intended Diff Only",
+          "title": "TPP Threshold 50 Intended Diff Only"
+        },
+        "tpp_threshold_50_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Unintended Diff Only",
+          "title": "TPP Threshold 50 Unintended Diff Only"
+        },
+        "tpp_threshold_100_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Total Metric",
+          "title": "TPP Threshold 100 Total Metric"
+        },
+        "tpp_threshold_100_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Intended Diff Only",
+          "title": "TPP Threshold 100 Intended Diff Only"
+        },
+        "tpp_threshold_100_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Unintended Diff Only",
+          "title": "TPP Threshold 100 Unintended Diff Only"
+        },
+        "tpp_threshold_500_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Total Metric",
+          "title": "TPP Threshold 500 Total Metric"
+        },
+        "tpp_threshold_500_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Intended Diff Only",
+          "title": "TPP Threshold 500 Intended Diff Only"
+        },
+        "tpp_threshold_500_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Unintended Diff Only",
+          "title": "TPP Threshold 500 Unintended Diff Only"
         }
       },
       "required": [
-        "dataset_name",
-        "tpp_threshold_10_total_metric",
-        "tpp_threshold_10_intended_diff_only",
-        "tpp_threshold_10_unintended_diff_only"
+        "dataset_name"
       ],
       "title": "TppResultDetail",
       "type": "object"
     },
     "TppUncategorizedMetrics": {
       "properties": {
+        "tpp_threshold_2_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Total Metric",
+          "title": "TPP Threshold 2 Total Metric"
+        },
+        "tpp_threshold_2_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Intended Diff Only",
+          "title": "TPP Threshold 2 Intended Diff Only"
+        },
+        "tpp_threshold_2_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 2 Unintended Diff Only",
+          "title": "TPP Threshold 2 Unintended Diff Only"
+        },
+        "tpp_threshold_5_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Total Metric",
+          "title": "TPP Threshold 5 Total Metric"
+        },
+        "tpp_threshold_5_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Intended Diff Only",
+          "title": "TPP Threshold 5 Intended Diff Only"
+        },
+        "tpp_threshold_5_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 5 Unintended Diff Only",
+          "title": "TPP Threshold 5 Unintended Diff Only"
+        },
         "tpp_threshold_10_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "default_display": true,
           "description": "TPP Threshold 10 Total Metric",
-          "title": "TPP Threshold 10 Total Metric",
-          "type": "number"
+          "title": "TPP Threshold 10 Total Metric"
         },
         "tpp_threshold_10_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "default_display": true,
           "description": "TPP Threshold 10 Intended Diff Only",
-          "title": "TPP Threshold 10 Intended Diff Only",
-          "type": "number"
+          "title": "TPP Threshold 10 Intended Diff Only"
         },
         "tpp_threshold_10_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "default_display": true,
           "description": "TPP Threshold 10 Unintended Diff Only",
-          "title": "TPP Threshold 10 Unintended Diff Only",
-          "type": "number"
+          "title": "TPP Threshold 10 Unintended Diff Only"
+        },
+        "tpp_threshold_20_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Total Metric",
+          "title": "TPP Threshold 20 Total Metric"
+        },
+        "tpp_threshold_20_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Intended Diff Only",
+          "title": "TPP Threshold 20 Intended Diff Only"
+        },
+        "tpp_threshold_20_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 20 Unintended Diff Only",
+          "title": "TPP Threshold 20 Unintended Diff Only"
+        },
+        "tpp_threshold_50_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Total Metric",
+          "title": "TPP Threshold 50 Total Metric"
+        },
+        "tpp_threshold_50_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Intended Diff Only",
+          "title": "TPP Threshold 50 Intended Diff Only"
+        },
+        "tpp_threshold_50_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 50 Unintended Diff Only",
+          "title": "TPP Threshold 50 Unintended Diff Only"
+        },
+        "tpp_threshold_100_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Total Metric",
+          "title": "TPP Threshold 100 Total Metric"
+        },
+        "tpp_threshold_100_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Intended Diff Only",
+          "title": "TPP Threshold 100 Intended Diff Only"
+        },
+        "tpp_threshold_100_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 100 Unintended Diff Only",
+          "title": "TPP Threshold 100 Unintended Diff Only"
+        },
+        "tpp_threshold_500_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Total Metric",
+          "title": "TPP Threshold 500 Total Metric"
+        },
+        "tpp_threshold_500_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Intended Diff Only",
+          "title": "TPP Threshold 500 Intended Diff Only"
+        },
+        "tpp_threshold_500_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP Threshold 500 Unintended Diff Only",
+          "title": "TPP Threshold 500 Unintended Diff Only"
         }
       },
-      "required": [
-        "tpp_threshold_10_total_metric",
-        "tpp_threshold_10_intended_diff_only",
-        "tpp_threshold_10_unintended_diff_only"
-      ],
       "title": "TppUncategorizedMetrics",
       "type": "object"
     }
   },
-  "description": "The output of a SHIFT evaluation.",
+  "description": "The output of a TPP evaluation.",
   "properties": {
     "eval_type_id": {
       "default": "tpp",
@@ -288,6 +800,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "SHIFT Evaluation",
+  "title": "TPP Evaluation",
   "type": "object"
 }

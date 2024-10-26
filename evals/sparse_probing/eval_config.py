@@ -1,11 +1,17 @@
-from dataclasses import dataclass, field
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from evals.base_eval_output import BaseEvalConfig
 
 
 @dataclass
-class EvalConfig:
-    random_seed: int = 42  # NOTE: This will be overwritten by argparse
+class SparseProbingEvalConfig(BaseEvalConfig):
+    random_seed: int = Field(
+        default=42,
+        title="Random Seed",
+        description="Random seed",
+    )
 
-    dataset_names: list[str] = field(
+    dataset_names: list[str] = Field(
         default_factory=lambda: [
             "LabHC/bias_in_bios_class_set1",
             "LabHC/bias_in_bios_class_set2",
@@ -15,17 +21,51 @@ class EvalConfig:
             "codeparrot/github-code",
             "fancyzhx/ag_news",
             "Helsinki-NLP/europarl",
-        ]
+        ],
+        title="Dataset Names",
+        description="List of dataset names",
     )
 
-    probe_train_set_size: int = 4000
-    probe_test_set_size: int = 1000
-    context_length: int = 128
+    probe_train_set_size: int = Field(
+        default=4000,
+        title="Probe Train Set Size",
+        description="Probe train set size",
+    )
+    probe_test_set_size: int = Field(
+        default=1000,
+        title="Probe Test Set Size",
+        description="Probe test set size",
+    )
+    context_length: int = Field(
+        default=128,
+        title="Context Length",
+        description="Context length",
+    )
 
-    sae_batch_size: int = 125
-    llm_batch_size: int = 32
-    llm_dtype: str = "bfloat16"  # asdict() doesn't like to serialize torch.dtype
+    sae_batch_size: int = Field(
+        default=125,
+        title="SAE Batch Size",
+        description="SAE batch size",
+    )
+    llm_batch_size: int = Field(
+        default=32,
+        title="LLM Batch Size",
+        description="LLM batch size",
+    )
+    llm_dtype: str = Field(
+        default="bfloat16",
+        title="LLM Data Type",
+        description="LLM data type",
+    )
 
-    model_name: str = "gemma-2-2b"
+    model_name: str = Field(
+        default="gemma-2-2b",
+        title="Model Name",
+        description="Model name",
+    )
 
-    k_values: list[int] = field(default_factory=lambda: [1, 2, 5, 10, 20, 50])
+    k_values: list[int] = Field(
+        default_factory=lambda: [1, 2, 5, 10, 20, 50],
+        title="K Values",
+        description="K values",
+    )

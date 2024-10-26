@@ -85,7 +85,7 @@ class ShiftAndTppEvalConfig(BaseEvalConfig):
     llm_dtype: str = Field(
         default="bfloat16",
         title="LLM Dtype",
-        description="asdict() doesn't like to serialize torch.dtype",
+        description="",
     )
 
     model_name: str = Field(

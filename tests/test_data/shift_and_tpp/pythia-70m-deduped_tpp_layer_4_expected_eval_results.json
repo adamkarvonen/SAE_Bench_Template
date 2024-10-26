@@ -1,0 +1,92 @@
+{
+  "eval_type_id": "tpp",
+  "eval_config": {
+    "random_seed": 44,
+    "dataset_names": ["LabHC/bias_in_bios_class_set1"],
+    "spurious_corr": false,
+    "early_stopping_patience": 40,
+    "train_set_size": 4000,
+    "test_set_size": 1000,
+    "context_length": 128,
+    "probe_train_batch_size": 16,
+    "probe_test_batch_size": 500,
+    "probe_epochs": 20,
+    "probe_lr": 0.001,
+    "sae_batch_size": 250,
+    "llm_batch_size": 500,
+    "llm_dtype": "float32",
+    "model_name": "pythia-70m-deduped",
+    "n_values": [10],
+    "column1_vals_lookup": {
+      "LabHC/bias_in_bios_class_set1": [
+        ["professor", "nurse"],
+        ["architect", "journalist"],
+        ["surgeon", "psychologist"],
+        ["attorney", "teacher"]
+      ],
+      "canrager/amazon_reviews_mcauley_1and5": [
+        ["Books", "CDs_and_Vinyl"],
+        ["Software", "Electronics"],
+        ["Pet_Supplies", "Office_Products"],
+        ["Industrial_and_Scientific", "Toys_and_Games"]
+      ]
+    }
+  },
+  "eval_id": "73fa421b-89af-4593-b9fe-4622dcea149f",
+  "datetime_epoch_millis": 1729919466792,
+  "eval_result_metrics": {
+    "uncategorized": {
+      "tpp_threshold_2_total_metric": null,
+      "tpp_threshold_2_intended_diff_only": null,
+      "tpp_threshold_2_unintended_diff_only": null,
+      "tpp_threshold_5_total_metric": null,
+      "tpp_threshold_5_intended_diff_only": null,
+      "tpp_threshold_5_unintended_diff_only": null,
+      "tpp_threshold_10_total_metric": 0.14690002501010893,
+      "tpp_threshold_10_intended_diff_only": 0.16020002365112304,
+      "tpp_threshold_10_unintended_diff_only": 0.0132999986410141,
+      "tpp_threshold_20_total_metric": null,
+      "tpp_threshold_20_intended_diff_only": null,
+      "tpp_threshold_20_unintended_diff_only": null,
+      "tpp_threshold_50_total_metric": null,
+      "tpp_threshold_50_intended_diff_only": null,
+      "tpp_threshold_50_unintended_diff_only": null,
+      "tpp_threshold_100_total_metric": null,
+      "tpp_threshold_100_intended_diff_only": null,
+      "tpp_threshold_100_unintended_diff_only": null,
+      "tpp_threshold_500_total_metric": null,
+      "tpp_threshold_500_intended_diff_only": null,
+      "tpp_threshold_500_unintended_diff_only": null
+    }
+  },
+  "eval_result_details": [
+    {
+      "dataset_name": "LabHC/bias_in_bios_class_set1_tpp_results",
+      "tpp_threshold_2_total_metric": null,
+      "tpp_threshold_2_intended_diff_only": null,
+      "tpp_threshold_2_unintended_diff_only": null,
+      "tpp_threshold_5_total_metric": null,
+      "tpp_threshold_5_intended_diff_only": null,
+      "tpp_threshold_5_unintended_diff_only": null,
+      "tpp_threshold_10_total_metric": 0.14690002501010893,
+      "tpp_threshold_10_intended_diff_only": 0.16020002365112304,
+      "tpp_threshold_10_unintended_diff_only": 0.0132999986410141,
+      "tpp_threshold_20_total_metric": null,
+      "tpp_threshold_20_intended_diff_only": null,
+      "tpp_threshold_20_unintended_diff_only": null,
+      "tpp_threshold_50_total_metric": null,
+      "tpp_threshold_50_intended_diff_only": null,
+      "tpp_threshold_50_unintended_diff_only": null,
+      "tpp_threshold_100_total_metric": null,
+      "tpp_threshold_100_intended_diff_only": null,
+      "tpp_threshold_100_unintended_diff_only": null,
+      "tpp_threshold_500_total_metric": null,
+      "tpp_threshold_500_intended_diff_only": null,
+      "tpp_threshold_500_unintended_diff_only": null
+    }
+  ],
+  "sae_bench_commit_hash": "eb8c66073524128b3154051fe47f8fe3ef85959a",
+  "sae_lens_id": "blocks.4.hook_resid_post__trainer_10",
+  "sae_lens_release_id": "sae_bench_pythia70m_sweep_topk_ctx128_0730",
+  "sae_lens_version": "4.0.7"
+}

@@ -17,20 +17,11 @@ class BaseEvalConfig:
                 "BaseEvalConfig is an abstract class and cannot be instantiated directly."
             )
 
-    # @model_validator(mode="after")
-    # @classmethod
-    # def validate_dict(cls, data):
-    #     for _, value in asdict(data).items():
-    #         if isinstance(value, dict):
-    #             raise ValueError(
-    #                 "Eval config is designed to be a flat, one-level config, so dicts are not allowed."
-    #             )
-    #     return data
-
 
 BaseEvalConfigType = TypeVar("BaseEvalConfigType", bound=BaseEvalConfig)
 
 
+# Metrics for a single eval category
 @dataclass
 class BaseMetrics:
 

@@ -8,17 +8,22 @@ from evals.base_eval_output import (
     BaseResultDetail,
 )
 
+EVAL_TYPE_ID_ABSORPTION = "absorption_first_letter"
+
 
 # Define the metrics for each metric category, and include a title and description for each.
 @dataclass
 class AbsorptionMeanMetrics(BaseMetrics):
+
     mean_absorption_score: float = Field(
         title="Mean Absorption Score",
         description="Average of the absorption scores across all letters",
+        json_schema_extra={"default_display": True},
     )
     mean_num_split_features: float = Field(
         title="Mean Number of Split Features",
         description="Average number of split features across all letters",
+        json_schema_extra={"default_display": True},
     )
 
 
@@ -28,6 +33,7 @@ class AbsorptionMetricCategories(BaseMetricCategories):
     mean: AbsorptionMeanMetrics = Field(
         title="Mean",
         description="Mean metrics",
+        json_schema_extra={"default_display": True},
     )
 
 
@@ -75,7 +81,7 @@ class AbsorptionEvalOutput(
         description="Each object is a stat on the first letter of the absorption.",
     )
     eval_type_id: str = Field(
-        default="absorption_first_letter",
+        default=EVAL_TYPE_ID_ABSORPTION,
         title="Eval Type ID",
         description="The type of the evaluation",
     )
