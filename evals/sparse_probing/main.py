@@ -1,38 +1,39 @@
 import gc
-import json
 import os
 import shutil
 import random
 import time
 from dataclasses import asdict
-from typing import Optional
-
-import pandas as pd
+from pydantic import TypeAdapter
 import torch
 from sae_lens import SAE
-from sae_lens.sae import TopK
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
 import argparse
 from datetime import datetime
-
-
-import evals.sparse_probing.eval_config as eval_config
+from evals.sparse_probing.eval_config import SparseProbingEvalConfig
+from evals.sparse_probing.eval_output import (
+    EVAL_TYPE_ID_SPARSE_PROBING,
+    SparseProbingEvalOutput,
+    SparseProbingLlmMetrics,
+    SparseProbingMetricCategories,
+    SparseProbingResultDetail,
+    SparseProbingSaeMetrics,
+)
 import evals.sparse_probing.probe_training as probe_training
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_info as dataset_info
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.formatting_utils as formatting_utils
-
 from sae_bench_utils import (
-    formatting_utils,
-    activation_collection,
     get_eval_uuid,
     get_sae_lens_version,
     get_sae_bench_version,
 )
-from sae_bench_utils.sae_selection_utils import get_saes_from_regex, select_saes_multiple_patterns
+from sae_bench_utils.sae_selection_utils import (
+    get_saes_from_regex,
+    select_saes_multiple_patterns,
+)
 
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
@@ -41,7 +42,7 @@ def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
 
 def get_dataset_activations(
     dataset_name: str,
-    config: eval_config.EvalConfig,
+    config: SparseProbingEvalConfig,
     model: HookedTransformer,
     llm_batch_size: int,
     layer: int,
@@ -79,7 +80,7 @@ def get_dataset_activations(
 
 def run_eval_single_dataset(
     dataset_name: str,
-    config: eval_config.EvalConfig,
+    config: SparseProbingEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     layer: int,
@@ -99,14 +100,22 @@ def run_eval_single_dataset(
 
     if not os.path.exists(activations_path):
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
-            dataset_name, config, model, config.llm_batch_size, layer, hook_point, device
+            dataset_name,
+            config,
+            model,
+            config.llm_batch_size,
+            layer,
+            hook_point,
+            device,
         )
 
         all_train_acts_BD = activation_collection.create_meaned_model_activations(
             all_train_acts_BLD
         )
 
-        all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
+        all_test_acts_BD = activation_collection.create_meaned_model_activations(
+            all_test_acts_BLD
+        )
 
         llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
             all_train_acts_BD,
@@ -119,10 +128,12 @@ def run_eval_single_dataset(
         llm_test_accuracy = average_test_accuracy(llm_test_accuracies)
 
         for k in config.k_values:
-            llm_top_k_probes, llm_top_k_test_accuracies = probe_training.train_probe_on_activations(
-                all_train_acts_BD,
-                all_test_acts_BD,
-                select_top_k=k,
+            llm_top_k_probes, llm_top_k_test_accuracies = (
+                probe_training.train_probe_on_activations(
+                    all_train_acts_BD,
+                    all_test_acts_BD,
+                    select_top_k=k,
+                )
             )
             llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
                 llm_top_k_test_accuracies
@@ -143,8 +154,12 @@ def run_eval_single_dataset(
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-    all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
+    all_train_acts_BD = activation_collection.create_meaned_model_activations(
+        all_train_acts_BLD
+    )
+    all_test_acts_BD = activation_collection.create_meaned_model_activations(
+        all_test_acts_BLD
+    )
 
     all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
         all_train_acts_BLD, sae, config.sae_batch_size
@@ -171,10 +186,12 @@ def run_eval_single_dataset(
     results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
 
     for k in config.k_values:
-        sae_top_k_probes, sae_top_k_test_accuracies = probe_training.train_probe_on_activations(
-            all_sae_train_acts_BF,
-            all_sae_test_acts_BF,
-            select_top_k=k,
+        sae_top_k_probes, sae_top_k_test_accuracies = (
+            probe_training.train_probe_on_activations(
+                all_sae_train_acts_BF,
+                all_sae_test_acts_BF,
+                select_top_k=k,
+            )
         )
         results_dict[f"sae_top_{k}_test_accuracy"] = average_test_accuracy(
             sae_top_k_test_accuracies
@@ -184,7 +201,7 @@ def run_eval_single_dataset(
 
 
 def run_eval_single_sae(
-    config: eval_config.EvalConfig,
+    config: SparseProbingEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     layer: int,
@@ -228,19 +245,19 @@ def run_eval_single_sae(
 
 
 def run_eval(
-    config: eval_config.EvalConfig,
+    config: SparseProbingEvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_activations: bool = True,
-) -> dict[str, dict[str, float | dict[str, float]]]:
+):
     """By default, clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
     This is because activations for all datasets can easily be 10s of GBs.
     Return dict is a dict of SAE name: evaluation results for that SAE."""
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
-    sae_bench_version = get_sae_bench_version()
+    sae_bench_commit_hash = get_sae_bench_version()
 
     artifacts_base_folder = "artifacts"
     os.makedirs(output_path, exist_ok=True)
@@ -278,7 +295,10 @@ def run_eval(
             sae = sae.to(device=device, dtype=llm_dtype)
 
             artifacts_folder = os.path.join(
-                artifacts_base_folder, "sparse_probing", config.model_name, sae.cfg.hook_name
+                artifacts_base_folder,
+                EVAL_TYPE_ID_SPARSE_PROBING,
+                config.model_name,
+                sae.cfg.hook_name,
             )
             os.makedirs(artifacts_folder, exist_ok=True)
 
@@ -289,7 +309,9 @@ def run_eval(
             if os.path.exists(sae_result_path) and not force_rerun:
                 print(f"Loading existing results from {sae_result_path}")
                 with open(sae_result_path, "r") as f:
-                    sparse_probing_results = json.load(f)
+                    eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(
+                        f.read()
+                    )
             else:
                 sparse_probing_results = run_eval_single_sae(
                     config,
@@ -300,25 +322,43 @@ def run_eval(
                     device,
                     artifacts_folder,
                 )
+                eval_output = SparseProbingEvalOutput(
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=SparseProbingMetricCategories(
+                        llm=SparseProbingLlmMetrics(
+                            **{
+                                k: v
+                                for k, v in sparse_probing_results.items()
+                                if k.startswith("llm_") and not isinstance(v, dict)
+                            }
+                        ),
+                        sae=SparseProbingSaeMetrics(
+                            **{
+                                k: v
+                                for k, v in sparse_probing_results.items()
+                                if k.startswith("sae_") and not isinstance(v, dict)
+                            }
+                        ),
+                    ),
+                    eval_result_details=[
+                        SparseProbingResultDetail(
+                            dataset_name=dataset_name,
+                            **result,
+                        )
+                        for dataset_name, result in sparse_probing_results.items()
+                        if isinstance(result, dict)
+                    ],
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
 
-            sae_eval_result = {
-                "eval_instance_id": eval_instance_id,
-                "sae_lens_release": sae_release,
-                "sae_lens_id": sae_id,
-                "eval_type_id": "sparse_probing",
-                "sae_lens_version": sae_lens_version,
-                "sae_bench_version": sae_bench_version,
-                "date_time": datetime.now().isoformat(),
-                "eval_config": asdict(config),
-                "eval_results": sparse_probing_results,
-                "eval_artifacts": {"artifacts": os.path.relpath(artifacts_folder)},
-            }
+            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            results_dict[sae_id] = sae_eval_result
-
-            # Save individual SAE result
-            with open(sae_result_path, "w") as f:
-                json.dump(sae_eval_result, f, indent=4)
+            eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_activations:
         shutil.rmtree(artifacts_folder)
@@ -339,13 +379,15 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
-    config = eval_config.EvalConfig(
+) -> tuple[SparseProbingEvalConfig, dict[str, list[str]]]:
+    config = SparseProbingEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes_dict = get_saes_from_regex(
+        args.sae_regex_pattern, args.sae_block_pattern
+    )
 
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
@@ -359,19 +401,34 @@ def create_config_and_selected_saes(
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
-        "--sae_regex_pattern", type=str, required=True, help="Regex pattern for SAE selection"
+        "--model_name", type=str, default="pythia-70m-deduped", help="Model name"
     )
     parser.add_argument(
-        "--sae_block_pattern", type=str, required=True, help="Regex pattern for SAE block selection"
+        "--sae_regex_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE selection",
     )
     parser.add_argument(
-        "--output_folder", type=str, default="evals/sparse_probing/results", help="Output folder"
+        "--sae_block_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE block selection",
     )
-    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
-        "--clean_up_activations", action="store_false", help="Clean up activations after evaluation"
+        "--output_folder",
+        type=str,
+        default="evals/sparse_probing/results",
+        help="Output folder",
+    )
+    parser.add_argument(
+        "--force_rerun", action="store_true", help="Force rerun of experiments"
+    )
+    parser.add_argument(
+        "--clean_up_activations",
+        action="store_false",
+        help="Clean up activations after evaluation",
     )
 
     return parser
@@ -406,14 +463,18 @@ if __name__ == "__main__":
     config, selected_saes_dict = create_config_and_selected_saes(args)
 
     if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+        selected_saes_dict = select_saes_multiple_patterns(
+            sae_regex_patterns, sae_block_pattern
+        )
 
     print(selected_saes_dict)
 
-    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
+    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[
+        config.model_name
     ]
+    config.llm_dtype = str(
+        activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+    ).split(".")[-1]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

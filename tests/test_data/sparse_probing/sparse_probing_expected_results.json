@@ -1,0 +1,64 @@
+{
+  "eval_type_id": "sparse_probing",
+  "eval_config": {
+    "random_seed": 44,
+    "dataset_names": ["LabHC/bias_in_bios_class_set1"],
+    "probe_train_set_size": 4000,
+    "probe_test_set_size": 1000,
+    "context_length": 128,
+    "sae_batch_size": 125,
+    "llm_batch_size": 32,
+    "llm_dtype": "float32",
+    "model_name": "pythia-70m-deduped",
+    "k_values": [1, 2, 5, 10, 20, 50, 100]
+  },
+  "eval_id": "f2f0401a-eef7-409d-9ac2-cfeb122ea0ed",
+  "datetime_epoch_millis": 1729921837271,
+  "eval_result_metrics": {
+    "llm": {
+      "llm_test_accuracy": 0.9516,
+      "llm_top_1_test_accuracy": 0.7604,
+      "llm_top_2_test_accuracy": 0.8026,
+      "llm_top_5_test_accuracy": 0.8532,
+      "llm_top_10_test_accuracy": 0.8904,
+      "llm_top_20_test_accuracy": 0.9112,
+      "llm_top_50_test_accuracy": 0.9318,
+      "llm_top_100_test_accuracy": 0.9411999999999999
+    },
+    "sae": {
+      "sae_test_accuracy": 0.9540000438690186,
+      "sae_top_1_test_accuracy": 0.7744,
+      "sae_top_2_test_accuracy": 0.82,
+      "sae_top_5_test_accuracy": 0.8794000000000001,
+      "sae_top_10_test_accuracy": 0.8988000000000002,
+      "sae_top_20_test_accuracy": 0.9134,
+      "sae_top_50_test_accuracy": 0.9402000000000001,
+      "sae_top_100_test_accuracy": 0.9432
+    }
+  },
+  "eval_result_details": [
+    {
+      "dataset_name": "LabHC/bias_in_bios_class_set1_results",
+      "llm_test_accuracy": 0.9516,
+      "llm_top_1_test_accuracy": 0.7604,
+      "llm_top_2_test_accuracy": 0.8026,
+      "llm_top_5_test_accuracy": 0.8532,
+      "llm_top_10_test_accuracy": 0.8904,
+      "llm_top_20_test_accuracy": 0.9112,
+      "llm_top_50_test_accuracy": 0.9318,
+      "llm_top_100_test_accuracy": 0.9411999999999999,
+      "sae_test_accuracy": 0.9540000438690186,
+      "sae_top_1_test_accuracy": 0.7744,
+      "sae_top_2_test_accuracy": 0.82,
+      "sae_top_5_test_accuracy": 0.8794000000000001,
+      "sae_top_10_test_accuracy": 0.8988000000000002,
+      "sae_top_20_test_accuracy": 0.9134,
+      "sae_top_50_test_accuracy": 0.9402000000000001,
+      "sae_top_100_test_accuracy": 0.9432
+    }
+  ],
+  "sae_bench_commit_hash": "eb8c66073524128b3154051fe47f8fe3ef85959a",
+  "sae_lens_id": "blocks.4.hook_resid_post__trainer_10",
+  "sae_lens_release_id": "sae_bench_pythia70m_sweep_topk_ctx128_0730",
+  "sae_lens_version": "4.0.7"
+}

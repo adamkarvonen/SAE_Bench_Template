@@ -1,16 +1,11 @@
 import json
-
 import torch
-
-import evals.sparse_probing.eval_config as eval_config
+from evals.sparse_probing.eval_config import SparseProbingEvalConfig
 import evals.sparse_probing.main as sparse_probing
-import sae_bench_utils.formatting_utils as formatting_utils
 import sae_bench_utils.testing_utils as testing_utils
-
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-results_filename = "tests/test_data/sparse_probing_expected_results.json"
-
+results_filename = "tests/test_data/sparse_probing/sparse_probing_expected_results.json"
 
 # Minor details of probing and dataset construction have changed, which means we don't get identical results
 # def test_end_to_end_matching_seed():
@@ -69,7 +64,7 @@ def test_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    test_config = eval_config.EvalConfig()
+    test_config = SparseProbingEvalConfig()
 
     test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
@@ -87,7 +82,9 @@ def test_end_to_end_different_seed():
         rf".*blocks\.([{layer}])\.hook_resid_post__trainer_(10)$",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+    selected_saes_dict = select_saes_multiple_patterns(
+        sae_regex_patterns, sae_block_pattern
+    )
 
     run_results = sparse_probing.run_eval(
         test_config,
@@ -98,27 +95,30 @@ def test_end_to_end_different_seed():
         clean_up_activations=True,
     )
 
-    with open("test.json", "w") as f:
-        json.dump(run_results, f)
-
     with open(results_filename, "r") as f:
         expected_results = json.load(f)
 
+    run_result_metrics = run_results[
+        "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10"
+    ]["eval_result_metrics"]
+
     keys_to_compare = ["llm_test_accuracy"]
-
     for k in test_config.k_values:
-        keys_to_compare.append(f"sae_top_{k}_test_accuracy")
-
-    # Trickery to maintain backwards compatibility with the old results file
-    del run_results["blocks.4.hook_resid_post__trainer_10"]["eval_results"][
-        "LabHC/bias_in_bios_class_set1_results"
-    ]
+        keys_to_compare.append(f"llm_top_{k}_test_accuracy")
 
     testing_utils.compare_dicts_within_tolerance(
-        run_results["blocks.4.hook_resid_post__trainer_10"]["eval_results"],
-        expected_results["custom_eval_results"][
-            "pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4/trainer_10"
-        ],
+        run_result_metrics["llm"],
+        expected_results["eval_result_metrics"]["llm"],
+        tolerance,
+        keys_to_compare=keys_to_compare,
+    )
+
+    keys_to_compare = []
+    for k in test_config.k_values:
+        keys_to_compare.append(f"sae_top_{k}_test_accuracy")
+    testing_utils.compare_dicts_within_tolerance(
+        run_result_metrics["sae"],
+        expected_results["eval_result_metrics"]["sae"],
         tolerance,
         keys_to_compare=keys_to_compare,
     )
