@@ -88,6 +88,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "LLM top 1 test accuracy",
           "title": "LLM Top 1 Test Accuracy"
         },
@@ -101,6 +102,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "LLM top 2 test accuracy",
           "title": "LLM Top 2 Test Accuracy"
         },
@@ -114,6 +116,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "LLM top 5 test accuracy",
           "title": "LLM Top 5 Test Accuracy"
         },
@@ -439,6 +442,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "SAE top 1 test accuracy",
           "title": "SAE Top 1 Test Accuracy"
         },
@@ -452,6 +456,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "SAE top 2 test accuracy",
           "title": "SAE Top 2 Test Accuracy"
         },
@@ -465,6 +470,7 @@
             }
           ],
           "default": null,
+          "default_display": true,
           "description": "SAE top 5 test accuracy",
           "title": "SAE Top 5 Test Accuracy"
         },
