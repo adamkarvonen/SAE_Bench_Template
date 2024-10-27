@@ -22,16 +22,19 @@ class SparseProbingLlmMetrics(BaseMetrics):
         default=None,
         title="LLM Top 1 Test Accuracy",
         description="LLM top 1 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     llm_top_2_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 2 Test Accuracy",
         description="LLM top 2 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     llm_top_5_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 5 Test Accuracy",
         description="LLM top 5 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     llm_top_10_test_accuracy: float | None = Field(
         default=None,
@@ -67,16 +70,19 @@ class SparseProbingSaeMetrics(BaseMetrics):
         default=None,
         title="SAE Top 1 Test Accuracy",
         description="SAE top 1 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     sae_top_2_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 2 Test Accuracy",
         description="SAE top 2 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     sae_top_5_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 5 Test Accuracy",
         description="SAE top 5 test accuracy",
+        json_schema_extra={"default_display": True},
     )
     sae_top_10_test_accuracy: float | None = Field(
         default=None,
