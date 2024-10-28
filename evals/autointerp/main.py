@@ -1,4 +1,5 @@
 import asyncio
+import gc
 import random
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
@@ -418,14 +419,26 @@ def run_eval(
 
     results_dict = {"custom_eval_results": {}, "custom_eval_config": asdict(config)}
 
-    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(config.model_name, device=device)
+    if config.llm_dtype == "bfloat16":
+        llm_dtype = torch.bfloat16
+    elif config.llm_dtype == "float32":
+        llm_dtype = torch.float32
+    else:
+        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+
+    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(config.model_name, device=device, dtype=llm_dtype)
 
     for release, sae_names in selected_saes_dict.items():
         saes_map = get_pretrained_saes_directory()[release].saes_map
         for sae_name in sae_names:
+            # Clear memory
+            gc.collect()
+            torch.cuda.empty_cache()
+
             # Load in SAE, and randomly choose a number of latents to use for this autointerp instance
             sae_id = saes_map[sae_name]
             sae, _, sparsity = SAE.from_pretrained(release, sae_id, device=str(device))
+            sae = sae.to(device=device, dtype=llm_dtype)
 
             # Get autointerp results
             autointerp = AutoInterp(cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device)
