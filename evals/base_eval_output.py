@@ -163,7 +163,7 @@ class BaseEvalOutput(
     )
 
     eval_result_unstructured: Any | None = Field(
-        default_factory=None,
+        default=None,
         title="Unstructured Results",
         description="Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
     )

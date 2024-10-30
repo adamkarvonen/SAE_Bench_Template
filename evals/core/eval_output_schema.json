@@ -1,0 +1,441 @@
+{
+  "$defs": {
+    "CoreEvalConfig": {
+      "properties": {
+        "batch_size_prompts": {
+          "default": 16,
+          "description": "Batch size for evaluation prompts",
+          "title": "Batch Size Prompts",
+          "type": "integer"
+        },
+        "n_eval_reconstruction_batches": {
+          "default": 10,
+          "description": "Number of evaluation batches for reconstruction metrics",
+          "title": "Reconstruction Batches",
+          "type": "integer"
+        },
+        "n_eval_sparsity_variance_batches": {
+          "default": 1,
+          "description": "Number of evaluation batches for sparsity and variance metrics",
+          "title": "Sparsity Variance Batches",
+          "type": "integer"
+        },
+        "dataset": {
+          "default": "Skylion007/openwebtext",
+          "description": "Dataset to evaluate on",
+          "title": "Dataset",
+          "type": "string"
+        },
+        "context_size": {
+          "default": 128,
+          "description": "Context length to evaluate on",
+          "title": "Context Length",
+          "type": "integer"
+        },
+        "compute_kl": {
+          "default": false,
+          "description": "Compute KL divergence",
+          "title": "Compute KL",
+          "type": "boolean"
+        },
+        "compute_ce_loss": {
+          "default": false,
+          "description": "Compute cross-entropy loss",
+          "title": "Compute CE Loss",
+          "type": "boolean"
+        },
+        "compute_l2_norms": {
+          "default": false,
+          "description": "Compute L2 norms",
+          "title": "Compute L2 Norms",
+          "type": "boolean"
+        },
+        "compute_sparsity_metrics": {
+          "default": false,
+          "description": "Compute sparsity metrics",
+          "title": "Compute Sparsity Metrics",
+          "type": "boolean"
+        },
+        "compute_variance_metrics": {
+          "default": false,
+          "description": "Compute variance metrics",
+          "title": "Compute Variance Metrics",
+          "type": "boolean"
+        },
+        "compute_featurewise_density_statistics": {
+          "default": false,
+          "description": "Compute featurewise density statistics",
+          "title": "Compute Featurewise Density Statistics",
+          "type": "boolean"
+        },
+        "compute_featurewise_weight_based_metrics": {
+          "default": false,
+          "description": "Compute featurewise weight-based metrics",
+          "title": "Compute Featurewise Weight-Based Metrics",
+          "type": "boolean"
+        }
+      },
+      "title": "CoreEvalConfig",
+      "type": "object"
+    },
+    "CoreFeatureMetrics": {
+      "properties": {
+        "feature_density": {
+          "description": "Proportion of tokens that activate each feature",
+          "items": {
+            "type": "number"
+          },
+          "title": "Feature Density",
+          "type": "array"
+        },
+        "consistent_activation_heuristic": {
+          "description": "Average number of tokens per prompt that activate each feature",
+          "items": {
+            "type": "number"
+          },
+          "title": "Consistent Activation Heuristic",
+          "type": "array"
+        },
+        "encoder_bias": {
+          "description": "Bias terms in the encoder for each feature",
+          "items": {
+            "type": "number"
+          },
+          "title": "Encoder Bias",
+          "type": "array"
+        },
+        "encoder_norm": {
+          "description": "L2 norm of encoder weights for each feature",
+          "items": {
+            "type": "number"
+          },
+          "title": "Encoder Norm",
+          "type": "array"
+        },
+        "encoder_decoder_cosine_sim": {
+          "description": "Cosine similarity between encoder and decoder weights for each feature",
+          "items": {
+            "type": "number"
+          },
+          "title": "Encoder-Decoder Cosine Similarity",
+          "type": "array"
+        }
+      },
+      "required": [
+        "feature_density",
+        "consistent_activation_heuristic",
+        "encoder_bias",
+        "encoder_norm",
+        "encoder_decoder_cosine_sim"
+      ],
+      "title": "CoreFeatureMetrics",
+      "type": "object"
+    },
+    "CoreMetricCategories": {
+      "properties": {
+        "model_behavior_preservation": {
+          "$ref": "#/$defs/ModelBehaviorPreservationMetrics",
+          "description": "Metrics related to how well the SAE preserves model behavior",
+          "title": "Model Behavior Preservation"
+        },
+        "model_performance_preservation": {
+          "$ref": "#/$defs/ModelPerformancePreservationMetrics",
+          "description": "Metrics related to how well the SAE preserves model performance",
+          "title": "Model Performance Preservation"
+        },
+        "reconstruction_quality": {
+          "$ref": "#/$defs/ReconstructionQualityMetrics",
+          "description": "Metrics related to how well the SAE reconstructs the original activation",
+          "title": "Reconstruction Quality"
+        },
+        "shrinkage": {
+          "$ref": "#/$defs/ShrinkageMetrics",
+          "description": "Metrics related to how the SAE changes activation magnitudes",
+          "title": "Shrinkage"
+        },
+        "sparsity": {
+          "$ref": "#/$defs/SparsityMetrics",
+          "description": "Metrics related to feature activation sparsity",
+          "title": "Sparsity"
+        },
+        "token_stats": {
+          "$ref": "#/$defs/TokenStatsMetrics",
+          "description": "Statistics about the number of tokens used in evaluation",
+          "title": "Token Statistics"
+        }
+      },
+      "required": [
+        "model_behavior_preservation",
+        "model_performance_preservation",
+        "reconstruction_quality",
+        "shrinkage",
+        "sparsity",
+        "token_stats"
+      ],
+      "title": "CoreMetricCategories",
+      "type": "object"
+    },
+    "ModelBehaviorPreservationMetrics": {
+      "properties": {
+        "kl_div_score": {
+          "default_display": true,
+          "description": "Normalized KL divergence score comparing model behavior with and without SAE",
+          "title": "KL Divergence Score",
+          "type": "number"
+        },
+        "kl_div_with_ablation": {
+          "description": "KL divergence when the activation is ablated",
+          "title": "KL Divergence with Ablation",
+          "type": "number"
+        },
+        "kl_div_with_sae": {
+          "description": "KL divergence when using the SAE reconstruction",
+          "title": "KL Divergence with SAE",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kl_div_score",
+        "kl_div_with_ablation",
+        "kl_div_with_sae"
+      ],
+      "title": "ModelBehaviorPreservationMetrics",
+      "type": "object"
+    },
+    "ModelPerformancePreservationMetrics": {
+      "properties": {
+        "ce_loss_score": {
+          "default_display": true,
+          "description": "Normalized cross entropy loss score comparing model performance with and without SAE",
+          "title": "Cross Entropy Loss Score",
+          "type": "number"
+        },
+        "ce_loss_with_ablation": {
+          "description": "Cross entropy loss when the activation is ablated",
+          "title": "CE Loss with Ablation",
+          "type": "number"
+        },
+        "ce_loss_with_sae": {
+          "description": "Cross entropy loss when using the SAE reconstruction",
+          "title": "CE Loss with SAE",
+          "type": "number"
+        },
+        "ce_loss_without_sae": {
+          "description": "Base cross entropy loss without any intervention",
+          "title": "CE Loss without SAE",
+          "type": "number"
+        }
+      },
+      "required": [
+        "ce_loss_score",
+        "ce_loss_with_ablation",
+        "ce_loss_with_sae",
+        "ce_loss_without_sae"
+      ],
+      "title": "ModelPerformancePreservationMetrics",
+      "type": "object"
+    },
+    "ReconstructionQualityMetrics": {
+      "properties": {
+        "explained_variance": {
+          "default_display": true,
+          "description": "Proportion of variance in the original activation explained by the SAE reconstruction",
+          "title": "Explained Variance",
+          "type": "number"
+        },
+        "mse": {
+          "description": "Mean squared error between original activation and SAE reconstruction",
+          "title": "Mean Squared Error",
+          "type": "number"
+        },
+        "cossim": {
+          "description": "Cosine similarity between original activation and SAE reconstruction",
+          "title": "Cosine Similarity",
+          "type": "number"
+        }
+      },
+      "required": [
+        "explained_variance",
+        "mse",
+        "cossim"
+      ],
+      "title": "ReconstructionQualityMetrics",
+      "type": "object"
+    },
+    "ShrinkageMetrics": {
+      "properties": {
+        "l2_norm_in": {
+          "description": "Average L2 norm of input activations",
+          "title": "Input L2 Norm",
+          "type": "number"
+        },
+        "l2_norm_out": {
+          "description": "Average L2 norm of reconstructed activations",
+          "title": "Output L2 Norm",
+          "type": "number"
+        },
+        "l2_ratio": {
+          "default_display": true,
+          "description": "Ratio of output to input L2 norms",
+          "title": "L2 Ratio",
+          "type": "number"
+        },
+        "relative_reconstruction_bias": {
+          "description": "Measure of systematic bias in the reconstruction",
+          "title": "Relative Reconstruction Bias",
+          "type": "number"
+        }
+      },
+      "required": [
+        "l2_norm_in",
+        "l2_norm_out",
+        "l2_ratio",
+        "relative_reconstruction_bias"
+      ],
+      "title": "ShrinkageMetrics",
+      "type": "object"
+    },
+    "SparsityMetrics": {
+      "properties": {
+        "l0": {
+          "default_display": true,
+          "description": "Average number of non-zero feature activations",
+          "title": "L0 Sparsity",
+          "type": "number"
+        },
+        "l1": {
+          "description": "Average sum of absolute feature activations",
+          "title": "L1 Sparsity",
+          "type": "number"
+        }
+      },
+      "required": [
+        "l0",
+        "l1"
+      ],
+      "title": "SparsityMetrics",
+      "type": "object"
+    },
+    "TokenStatsMetrics": {
+      "properties": {
+        "total_tokens_eval_reconstruction": {
+          "description": "Total number of tokens used in reconstruction evaluation",
+          "title": "Total Tokens (Reconstruction)",
+          "type": "integer"
+        },
+        "total_tokens_eval_sparsity_variance": {
+          "description": "Total number of tokens used in sparsity and variance evaluation",
+          "title": "Total Tokens (Sparsity/Variance)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total_tokens_eval_reconstruction",
+        "total_tokens_eval_sparsity_variance"
+      ],
+      "title": "TokenStatsMetrics",
+      "type": "object"
+    }
+  },
+  "description": "The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.",
+  "properties": {
+    "eval_type_id": {
+      "default": "core",
+      "description": "The type of the evaluation",
+      "title": "Eval Type ID",
+      "type": "string"
+    },
+    "eval_config": {
+      "$ref": "#/$defs/CoreEvalConfig",
+      "description": "The configuration of the evaluation.",
+      "title": "Eval Config Type"
+    },
+    "eval_id": {
+      "description": "A unique UUID identifying this specific eval run",
+      "title": "ID",
+      "type": "string"
+    },
+    "datetime_epoch_millis": {
+      "description": "The datetime of the evaluation in epoch milliseconds",
+      "title": "DateTime (epoch ms)",
+      "type": "integer"
+    },
+    "eval_result_metrics": {
+      "$ref": "#/$defs/CoreMetricCategories",
+      "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
+      "title": "Result Metrics Categorized"
+    },
+    "eval_result_details": {
+      "description": "Detailed metrics for each feature in the SAE",
+      "items": {
+        "$ref": "#/$defs/CoreFeatureMetrics"
+      },
+      "title": "Feature-wise Metrics",
+      "type": "array"
+    },
+    "sae_bench_commit_hash": {
+      "description": "The commit hash of the SAE Bench that ran the evaluation.",
+      "title": "SAE Bench Commit Hash",
+      "type": "string"
+    },
+    "sae_lens_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The ID of the SAE in SAE Lens.",
+      "title": "SAE Lens ID"
+    },
+    "sae_lens_release_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The release ID of the SAE in SAE Lens.",
+      "title": "SAE Lens Release ID"
+    },
+    "sae_lens_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The version of SAE Lens that ran the evaluation.",
+      "title": "SAE Lens Version"
+    },
+    "eval_result_unstructured": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
+      "title": "Unstructured Results"
+    }
+  },
+  "required": [
+    "eval_config",
+    "eval_id",
+    "datetime_epoch_millis",
+    "eval_result_metrics",
+    "sae_bench_commit_hash",
+    "sae_lens_id",
+    "sae_lens_release_id",
+    "sae_lens_version"
+  ],
+  "title": "Core SAE Evaluation",
+  "type": "object"
+}
