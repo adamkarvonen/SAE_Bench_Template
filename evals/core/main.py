@@ -3,6 +3,10 @@
 # fmt: on
 import argparse
 import time
+import functools
+import random
+from typing import Type, Tuple, Optional, Callable, Any, Union
+import logging
 import json
 import math
 import re
@@ -12,7 +16,7 @@ from dataclasses import dataclass, field, asdict
 from functools import partial
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Callable, Dict, List, Mapping, Union
 
 import einops
 import pandas as pd
@@ -41,6 +45,60 @@ from sae_bench_utils import (
     get_sae_lens_version,
     get_sae_bench_version,
 )
+
+logger = logging.getLogger(__name__)
+
+def retry_with_exponential_backoff(
+    retries: int = 5,
+    initial_delay: float = 1.0,
+    max_delay: float = 60.0,
+    exponential_base: float = 2.0,
+    jitter: bool = True,
+    exceptions: Union[Type[Exception], Tuple[Type[Exception], ...]] = Exception,
+) -> Callable:
+    """
+    Decorator for retrying a function with exponential backoff.
+    
+    Args:
+        retries: Maximum number of retries
+        initial_delay: Initial delay between retries in seconds
+        max_delay: Maximum delay between retries in seconds
+        exponential_base: Base for exponential backoff
+        jitter: Whether to add random jitter to delay
+        exceptions: Exception(s) to catch and retry on
+    """
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            delay = initial_delay
+            last_exception = None
+
+            for retry_count in range(retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    last_exception = e
+                    if retry_count == retries:
+                        logger.error(f"Failed after {retries} retries: {str(e)}")
+                        raise
+                    
+                    # Calculate delay with optional jitter
+                    current_delay = min(delay * (exponential_base ** retry_count), max_delay)
+                    if jitter:
+                        current_delay *= (1 + random.random() * 0.1)  # 10% jitter
+                    
+                    logger.warning(
+                        f"Attempt {retry_count + 1}/{retries} failed: {str(e)}. "
+                        f"Retrying in {current_delay:.2f} seconds..."
+                    )
+                    time.sleep(current_delay)
+            
+            if last_exception:
+                raise last_exception
+            return None
+        return wrapper
+    return decorator
+
 
 def get_library_version() -> str:
     try:
@@ -733,6 +791,65 @@ def dict_to_nested(flat_dict: dict[str, Any]) -> defaultdict[Any, Any]:
     return nested
 
 
+def save_single_eval_result(
+    result: Dict[str, Any], 
+    eval_instance_id: str,
+    sae_lens_version: str,
+    sae_bench_commit_hash: str,
+    output_path: Path
+) -> Path:
+    """Save a single evaluation result to a JSON file."""
+    # Get the eval_config directly - it's already a CoreEvalConfig object
+    eval_config = result["eval_cfg"]
+    
+    # Create metric categories
+    metric_categories = CoreMetricCategories(
+        model_behavior_preservation=ModelBehaviorPreservationMetrics(
+            **result["metrics"].get("model_behavior_preservation", {})
+        ),
+        model_performance_preservation=ModelPerformancePreservationMetrics(
+            **result["metrics"].get("model_performance_preservation", {})
+        ),
+        reconstruction_quality=ReconstructionQualityMetrics(
+            **result["metrics"].get("reconstruction_quality", {})
+        ),
+        shrinkage=ShrinkageMetrics(
+            **result["metrics"].get("shrinkage", {})
+        ),
+        sparsity=SparsityMetrics(
+            **result["metrics"].get("sparsity", {})
+        ),
+        token_stats=TokenStatsMetrics(
+            **result["metrics"].get("token_stats", {})
+        )
+    )
+
+    # Create feature metrics
+    feature_metrics = CoreFeatureMetrics(**result.get("feature_metrics", {}))
+
+    # Create the full output object
+    eval_output = CoreEvalOutput(
+        eval_config=eval_config,
+        eval_id=eval_instance_id,
+        datetime_epoch_millis=int(time.time() * 1000),
+        eval_result_metrics=metric_categories,
+        eval_result_details=[feature_metrics],
+        eval_result_unstructured={},  # Add empty dict for unstructured results
+        sae_bench_commit_hash=sae_bench_commit_hash,
+        sae_lens_id=result["sae_id"],
+        sae_lens_release_id=result["sae_set"],
+        sae_lens_version=sae_lens_version,
+    )
+
+    # Save individual JSON file
+    json_filename = f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
+        "/", "_"
+    )
+    json_path = output_path / json_filename
+    eval_output.to_json_file(json_path)
+    
+    return json_path
+
 def multiple_evals(
     sae_regex_pattern: str,
     sae_block_pattern: str,
@@ -752,6 +869,11 @@ def multiple_evals(
     eval_results = []
     output_path = Path(output_folder)
     output_path.mkdir(parents=True, exist_ok=True)
+    
+    # Get evaluation metadata once at the start
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
 
     multiple_evals_config = get_multiple_evals_everything_config(
         batch_size_prompts=eval_batch_size_prompts,
@@ -763,67 +885,130 @@ def multiple_evals(
     current_model_str = None
     
     for sae_release_name, sae_id, _, _ in tqdm(filtered_saes):
-        sae = SAE.from_pretrained(
-            release=sae_release_name,
-            sae_id=sae_id,
-            device=device,
-        )[0]
+        # Wrap SAE loading with retry
+        @retry_with_exponential_backoff(
+            retries=5,
+            exceptions=(Exception,),  # You might want to be more specific about which exceptions to catch
+            initial_delay=1.0,
+            max_delay=60.0
+        )
+        def load_sae():
+            return SAE.from_pretrained(
+                release=sae_release_name,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+
+        try:
+            sae = load_sae()
+        except Exception as e:
+            logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
+            continue  # Skip this SAE and continue with the next one
 
         sae.to(device)
 
         if current_model_str != sae.cfg.model_name:
-            del current_model
-            current_model_str = sae.cfg.model_name
-            current_model = HookedTransformer.from_pretrained_no_processing(
-                current_model_str, device=device, **sae.cfg.model_from_pretrained_kwargs
+            # Wrap model loading with retry
+            @retry_with_exponential_backoff(
+                retries=5,
+                exceptions=(Exception,),  # We might want to be more specific about which exceptions to catch
+                initial_delay=1.0,
+                max_delay=60.0
             )
+            def load_model():
+                return HookedTransformer.from_pretrained_no_processing(
+                    sae.cfg.model_name, 
+                    device=device, 
+                    **sae.cfg.model_from_pretrained_kwargs
+                )
+
+            try:
+                del current_model
+                current_model_str = sae.cfg.model_name
+                current_model = load_model()
+            except Exception as e:
+                logger.error(f"Failed to load model {sae.cfg.model_name}: {str(e)}")
+                continue  # Skip this SAE and continue with the next one
+                
         assert current_model is not None
 
         for ctx_len in ctx_lens:
             for dataset in datasets:
-                # Create a CoreEvalConfig for this specific evaluation
-                core_eval_config = CoreEvalConfig(
-                    batch_size_prompts=multiple_evals_config.batch_size_prompts or 16,
-                    n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
-                    n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
-                    dataset=dataset,  # Single dataset
-                    context_size=ctx_len,  # Single context length
-                    compute_kl=multiple_evals_config.compute_kl,
-                    compute_ce_loss=multiple_evals_config.compute_ce_loss,
-                    compute_l2_norms=multiple_evals_config.compute_l2_norms,
-                    compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
-                    compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
-                    compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
-                    compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
-                )
+                try:
+                    # Create a CoreEvalConfig for this specific evaluation
+                    core_eval_config = CoreEvalConfig(
+                        batch_size_prompts=multiple_evals_config.batch_size_prompts or 16,
+                        n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
+                        n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
+                        dataset=dataset,
+                        context_size=ctx_len,
+                        compute_kl=multiple_evals_config.compute_kl,
+                        compute_ce_loss=multiple_evals_config.compute_ce_loss,
+                        compute_l2_norms=multiple_evals_config.compute_l2_norms,
+                        compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
+                        compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
+                        compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
+                        compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+                    )
 
-                activation_store = ActivationsStore.from_sae(
-                    current_model, sae, context_size=ctx_len, dataset=dataset
-                )
-                activation_store.shuffle_input_dataset(seed=42)
+                    # Wrap activation store creation with retry
+                    @retry_with_exponential_backoff(
+                        retries=3,
+                        exceptions=(Exception,),
+                        initial_delay=1.0,
+                        max_delay=30.0
+                    )
+                    def create_activation_store():
+                        return ActivationsStore.from_sae(
+                            current_model, sae, context_size=ctx_len, dataset=dataset
+                        )
 
-                eval_metrics = nested_dict()
-                eval_metrics["unique_id"] = f"{sae_release_name}-{sae_id}"
-                eval_metrics["sae_set"] = f"{sae_release_name}"
-                eval_metrics["sae_id"] = f"{sae_id}"
-                eval_metrics["eval_cfg"] = core_eval_config  # Store the CoreEvalConfig object
+                    activation_store = create_activation_store()
+                    activation_store.shuffle_input_dataset(seed=42)
 
-                scalar_metrics, feature_metrics = run_evals(
-                    sae=sae,
-                    activation_store=activation_store,
-                    model=current_model,
-                    eval_config=multiple_evals_config,  # Use MultipleEvalsConfig for internal computation
-                    ignore_tokens={
-                        current_model.tokenizer.pad_token_id,
-                        current_model.tokenizer.eos_token_id,
-                        current_model.tokenizer.bos_token_id,
-                    },
-                    verbose=verbose,
-                )
-                eval_metrics["metrics"] = scalar_metrics
-                eval_metrics["feature_metrics"] = feature_metrics
+                    eval_metrics = nested_dict()
+                    eval_metrics["unique_id"] = f"{sae_release_name}-{sae_id}"
+                    eval_metrics["sae_set"] = f"{sae_release_name}"
+                    eval_metrics["sae_id"] = f"{sae_id}"
+                    eval_metrics["eval_cfg"] = core_eval_config
 
-                eval_results.append(eval_metrics)
+                    scalar_metrics, feature_metrics = run_evals(
+                        sae=sae,
+                        activation_store=activation_store,
+                        model=current_model, # type: ignore
+                        eval_config=multiple_evals_config,
+                        ignore_tokens={
+                            current_model.tokenizer.pad_token_id, # type: ignore    
+                            current_model.tokenizer.eos_token_id, # type: ignore
+                            current_model.tokenizer.bos_token_id, # type: ignore
+                        },
+                        verbose=verbose,
+                    )
+                    eval_metrics["metrics"] = scalar_metrics
+                    eval_metrics["feature_metrics"] = feature_metrics
+
+                    # Clean NaN values before saving
+                    cleaned_metrics = replace_nans_with_negative_one(eval_metrics)
+                    
+                    # Save results immediately after each evaluation
+                    saved_path = save_single_eval_result(
+                        cleaned_metrics,
+                        eval_instance_id,
+                        sae_lens_version,
+                        sae_bench_commit_hash,
+                        output_path
+                    )
+                    
+                    if verbose:
+                        print(f"Saved evaluation results to: {saved_path}")
+
+                    eval_results.append(eval_metrics)
+                except Exception as e:
+                    logger.error(
+                        f"Failed to evaluate SAE {sae_id} from {sae_release_name} "
+                        f"with context length {ctx_len} on dataset {dataset}: {str(e)}"
+                    )
+                    continue  # Skip this combination and continue with the next one
 
     return eval_results
 
@@ -831,6 +1016,11 @@ def multiple_evals(
 def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     # Filter SAEs based on regex patterns
     filtered_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+
+    # print the filtered SAEs
+    print("Filtered SAEs based on provided patterns:")
+    for sae in filtered_saes:
+        print(sae)
 
     num_sae_sets = len(set(sae_set for sae_set, _, _, _ in filtered_saes))
     num_all_sae_ids = len(filtered_saes)
@@ -1030,9 +1220,7 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
     eval_results = run_evaluations(args)
-    output_files = process_results(eval_results, args.output_folder)
-
-    print("Evaluation complete. Output files:")
-    print(f"Individual JSONs: {len(output_files['individual_jsons'])}")  # type: ignore
+    
+    print("Evaluation complete. All results have been saved incrementally.") # type: ignore
     # print(f"Combined JSON: {output_files['combined_json']}")
     # print(f"CSV: {output_files['csv']}")
