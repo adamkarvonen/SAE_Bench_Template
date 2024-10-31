@@ -30,7 +30,7 @@ def test_scr_end_to_end_different_seed():
     layer = 4
     tolerance = 0.04
 
-    test_config.spurious_corr = True
+    test_config.perform_scr = True
     test_config.column1_vals_lookup = {
         "LabHC/bias_in_bios_class_set1": [
             ("professor", "nurse"),
@@ -97,7 +97,7 @@ def test_tpp_end_to_end_different_seed():
     layer = 4
     tolerance = 0.04
 
-    test_config.spurious_corr = False
+    test_config.perform_scr = False
 
     sae_regex_patterns = [
         r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
