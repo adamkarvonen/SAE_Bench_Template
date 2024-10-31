@@ -28,7 +28,8 @@ def test_scr_end_to_end_different_seed():
     test_config.llm_batch_size = 500
     test_config.llm_dtype = "float32"
     layer = 4
-    tolerance = 0.04
+    tolerance = 0.08  # There can be significant variation in the strength of the correlation learned by a linear probe between random seeds
+    # This causes large shifts in absolute values of the shift metrics, especially as this test only uses a single dataset
 
     test_config.perform_scr = True
     test_config.column1_vals_lookup = {
@@ -69,8 +70,8 @@ def test_scr_end_to_end_different_seed():
     testing_utils.compare_dicts_within_tolerance(
         run_results[
             "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10"
-        ]["eval_result_metrics"]["uncategorized"],
-        expected_results["eval_result_metrics"]["uncategorized"],
+        ]["eval_result_metrics"]["shift_metrics"],
+        expected_results["eval_result_metrics"]["shift_metrics"],
         tolerance,
         keys_to_compare=keys_to_compare,
     )
@@ -131,8 +132,8 @@ def test_tpp_end_to_end_different_seed():
     testing_utils.compare_dicts_within_tolerance(
         run_results[
             "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10"
-        ]["eval_result_metrics"]["uncategorized"],
-        expected_results["eval_result_metrics"]["uncategorized"],
+        ]["eval_result_metrics"]["tpp_metrics"],
+        expected_results["eval_result_metrics"]["tpp_metrics"],
         tolerance,
         keys_to_compare=keys_to_compare,
     )

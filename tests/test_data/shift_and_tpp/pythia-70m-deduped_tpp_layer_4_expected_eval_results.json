@@ -35,7 +35,7 @@
   "eval_id": "73fa421b-89af-4593-b9fe-4622dcea149f",
   "datetime_epoch_millis": 1729919466792,
   "eval_result_metrics": {
-    "uncategorized": {
+    "tpp_metrics": {
       "tpp_threshold_2_total_metric": null,
       "tpp_threshold_2_intended_diff_only": null,
       "tpp_threshold_2_unintended_diff_only": null,
