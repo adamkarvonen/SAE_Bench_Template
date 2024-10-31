@@ -24,11 +24,11 @@ from evals.shift_and_tpp.eval_output import (
     ShiftEvalOutput,
     ShiftMetricCategories,
     ShiftResultDetail,
-    ShiftUncategorizedMetrics,
+    ShiftMetrics,
     TppEvalOutput,
     TppMetricCategories,
     TppResultDetail,
-    TppUncategorizedMetrics,
+    TppMetrics,
 )
 import evals.sparse_probing.probe_training as probe_training
 import sae_bench_utils.activation_collection as activation_collection
@@ -465,7 +465,7 @@ def get_dataset_activations(
 ) -> tuple[dict[str, torch.Tensor], dict[str, torch.Tensor]]:
     train_data, test_data = dataset_creation.get_train_test_data(
         dataset_name,
-        config.spurious_corr,
+        config.perform_scr,
         config.train_set_size,
         config.test_set_size,
         config.random_seed,
@@ -473,7 +473,7 @@ def get_dataset_activations(
         column2_vals,
     )
 
-    if not config.spurious_corr:
+    if not config.perform_scr:
         train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
         test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
 
@@ -514,7 +514,7 @@ def run_eval_single_dataset(
 
     column2_vals = COLUMN2_VALS_LOOKUP[dataset_name]
 
-    if not config.spurious_corr:
+    if not config.perform_scr:
         chosen_classes = dataset_info.chosen_classes_per_dataset[dataset_name]
         activations_filename = f"{dataset_name}_activations.pt".replace("/", "_")
         probes_filename = f"{dataset_name}_probes.pkl".replace("/", "_")
@@ -563,7 +563,7 @@ def run_eval_single_dataset(
             batch_size=config.probe_train_batch_size,
             epochs=config.probe_epochs,
             lr=config.probe_lr,
-            spurious_corr=config.spurious_corr,
+            spurious_corr=config.perform_scr,
             early_stopping_patience=config.early_stopping_patience,
         )
 
@@ -574,7 +574,7 @@ def run_eval_single_dataset(
             chosen_classes,
             all_meaned_test_acts_BD,
             config.probe_test_batch_size,
-            config.spurious_corr,
+            config.perform_scr,
         )
 
         acts = {
@@ -610,7 +610,7 @@ def run_eval_single_dataset(
         sae,
         llm_probes,
         chosen_classes,
-        config.spurious_corr,
+        config.perform_scr,
         all_train_acts_BLD,
         config.sae_batch_size,
     )
@@ -624,7 +624,7 @@ def run_eval_single_dataset(
         config.n_values,
         chosen_classes,
         config.probe_test_batch_size,
-        config.spurious_corr,
+        config.perform_scr,
     )
 
     return ablated_class_accuracies, llm_test_accuracies
@@ -653,7 +653,7 @@ def run_eval_single_sae(
     averaging_names = []
 
     for dataset_name in config.dataset_names:
-        if config.spurious_corr:
+        if config.perform_scr:
             column1_vals_list = config.column1_vals_lookup[dataset_name]
             for column1_vals in column1_vals_list:
                 run_name = f"{dataset_name}_scr_{column1_vals[0]}_{column1_vals[1]}"
@@ -720,7 +720,7 @@ def run_eval(
     sae_lens_version = get_sae_lens_version()
     sae_bench_commit_hash = get_sae_bench_version()
 
-    if config.spurious_corr:
+    if config.perform_scr:
         eval_type = EVAL_TYPE_ID_SHIFT
     else:
         eval_type = EVAL_TYPE_ID_TPP
@@ -798,7 +798,7 @@ def run_eval(
                         eval_id=eval_instance_id,
                         datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
                         eval_result_metrics=ShiftMetricCategories(
-                            uncategorized=ShiftUncategorizedMetrics(
+                            shift_metrics=ShiftMetrics(
                                 **{
                                     k: v
                                     for k, v in shift_or_tpp_results.items()
@@ -826,7 +826,7 @@ def run_eval(
                         eval_id=eval_instance_id,
                         datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
                         eval_result_metrics=TppMetricCategories(
-                            uncategorized=TppUncategorizedMetrics(
+                            tpp_metrics=TppMetrics(
                                 **{
                                     k: v
                                     for k, v in shift_or_tpp_results.items()
@@ -877,7 +877,7 @@ def create_config_and_selected_saes(
     config = ShiftAndTppEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
-        spurious_corr=args.spurious_corr,
+        perform_scr=args.spurious_corr,
     )
 
     selected_saes_dict = get_saes_from_regex(
@@ -894,7 +894,7 @@ def create_config_and_selected_saes(
 
 
 def arg_parser():
-    parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
+    parser = argparse.ArgumentParser(description="Run SHIFT or TPP evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument(
         "--model_name", type=str, default="pythia-70m-deduped", help="Model name"
@@ -932,10 +932,10 @@ def arg_parser():
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
     parser.add_argument(
-        "--spurious_corr",
+        "--perform_scr",
         type=str_to_bool,
         required=True,
-        help="If true, do Spurious Correlation Removal. If false, do TPP.",
+        help="If true, do SHIFT Spurious Correlation Removal (SCR). If false, do TPP.",
     )
 
     return parser
