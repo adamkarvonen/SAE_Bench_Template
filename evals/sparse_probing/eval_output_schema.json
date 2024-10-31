@@ -9,7 +9,7 @@
           "type": "integer"
         },
         "dataset_names": {
-          "description": "List of dataset names",
+          "description": "List of dataset names. We have at most 5 class names in a single subset, which is why we have multiple bias_in_bios class subsets.",
           "items": {
             "type": "string"
           },
@@ -30,19 +30,19 @@
         },
         "context_length": {
           "default": 128,
-          "description": "Context length",
-          "title": "Context Length",
+          "description": "The maximum length of each input to the LLM. Any longer inputs will be truncated, keeping only the beginning.",
+          "title": "LLM Context Length",
           "type": "integer"
         },
         "sae_batch_size": {
           "default": 125,
-          "description": "SAE batch size",
+          "description": "SAE batch size, inference only",
           "title": "SAE Batch Size",
           "type": "integer"
         },
         "llm_batch_size": {
           "default": 32,
-          "description": "LLM batch size",
+          "description": "LLM batch size, inference only",
           "title": "LLM Batch Size",
           "type": "integer"
         },
@@ -59,7 +59,7 @@
           "type": "string"
         },
         "k_values": {
-          "description": "K values",
+          "description": "K represents the number of SAE features or residual stream channels we train the linear probe on. We iterate over all values of K.",
           "items": {
             "type": "integer"
           },
@@ -74,7 +74,7 @@
       "properties": {
         "llm_test_accuracy": {
           "default_display": true,
-          "description": "LLM test accuracy",
+          "description": "Linear probe accuracy when training on the full LLM residual stream",
           "title": "LLM Test Accuracy",
           "type": "number"
         },
@@ -89,7 +89,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "LLM top 1 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 1 residual stream channel test accuracy",
           "title": "LLM Top 1 Test Accuracy"
         },
         "llm_top_2_test_accuracy": {
@@ -103,7 +103,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "LLM top 2 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 2 residual stream channels test accuracy",
           "title": "LLM Top 2 Test Accuracy"
         },
         "llm_top_5_test_accuracy": {
@@ -117,7 +117,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "LLM top 5 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 5 residual stream channels test accuracy",
           "title": "LLM Top 5 Test Accuracy"
         },
         "llm_top_10_test_accuracy": {
@@ -130,7 +130,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 10 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 10 residual stream channels",
           "title": "LLM Top 10 Test Accuracy"
         },
         "llm_top_20_test_accuracy": {
@@ -143,7 +143,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 20 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 20 residual stream channels",
           "title": "LLM Top 20 Test Accuracy"
         },
         "llm_top_50_test_accuracy": {
@@ -156,7 +156,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 50 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 50 residual stream channels",
           "title": "LLM Top 50 Test Accuracy"
         },
         "llm_top_100_test_accuracy": {
@@ -169,7 +169,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 100 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 100 residual stream channels",
           "title": "LLM Top 100 Test Accuracy"
         }
       },
@@ -209,7 +209,7 @@
           "type": "string"
         },
         "llm_test_accuracy": {
-          "description": "LLM test accuracy",
+          "description": "Linear probe accuracy when trained on all LLM residual stream channels",
           "title": "LLM Test Accuracy",
           "type": "number"
         },
@@ -223,7 +223,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 1 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 1 residual stream channels",
           "title": "LLM Top 1 Test Accuracy"
         },
         "llm_top_2_test_accuracy": {
@@ -236,7 +236,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 2 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 2 residual stream channels",
           "title": "LLM Top 2 Test Accuracy"
         },
         "llm_top_5_test_accuracy": {
@@ -249,7 +249,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 5 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 5 residual stream channels",
           "title": "LLM Top 5 Test Accuracy"
         },
         "llm_top_10_test_accuracy": {
@@ -262,7 +262,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 10 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 10 residual stream channels",
           "title": "LLM Top 10 Test Accuracy"
         },
         "llm_top_20_test_accuracy": {
@@ -275,7 +275,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 20 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 20 residual stream channels",
           "title": "LLM Top 20 Test Accuracy"
         },
         "llm_top_50_test_accuracy": {
@@ -288,7 +288,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 50 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 50 residual stream channels",
           "title": "LLM Top 50 Test Accuracy"
         },
         "llm_top_100_test_accuracy": {
@@ -301,7 +301,7 @@
             }
           ],
           "default": null,
-          "description": "LLM top 100 test accuracy",
+          "description": "Linear probe accuracy when trained on the LLM top 100 residual stream channels",
           "title": "LLM Top 100 Test Accuracy"
         },
         "sae_test_accuracy": {
@@ -314,7 +314,7 @@
             }
           ],
           "default": null,
-          "description": "SAE test accuracy",
+          "description": "Linear probe accuracy when trained on all SAE latents",
           "title": "SAE Test Accuracy"
         },
         "sae_top_1_test_accuracy": {
@@ -327,7 +327,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 1 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 1 SAE latents",
           "title": "SAE Top 1 Test Accuracy"
         },
         "sae_top_2_test_accuracy": {
@@ -340,7 +340,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 2 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 2 SAE latents",
           "title": "SAE Top 2 Test Accuracy"
         },
         "sae_top_5_test_accuracy": {
@@ -353,7 +353,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 5 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 5 SAE latents",
           "title": "SAE Top 5 Test Accuracy"
         },
         "sae_top_10_test_accuracy": {
@@ -366,7 +366,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 10 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 10 SAE latents",
           "title": "SAE Top 10 Test Accuracy"
         },
         "sae_top_20_test_accuracy": {
@@ -379,7 +379,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 20 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 20 SAE latents",
           "title": "SAE Top 20 Test Accuracy"
         },
         "sae_top_50_test_accuracy": {
@@ -392,7 +392,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 50 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 50 SAE latents",
           "title": "SAE Top 50 Test Accuracy"
         },
         "sae_top_100_test_accuracy": {
@@ -405,7 +405,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 100 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 100 SAE latents",
           "title": "SAE Top 100 Test Accuracy"
         }
       },
@@ -429,7 +429,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "SAE test accuracy",
+          "description": "Linear probe accuracy when trained on all SAE latents",
           "title": "SAE Test Accuracy"
         },
         "sae_top_1_test_accuracy": {
@@ -443,7 +443,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "SAE top 1 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 1 SAE latents",
           "title": "SAE Top 1 Test Accuracy"
         },
         "sae_top_2_test_accuracy": {
@@ -457,7 +457,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "SAE top 2 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 2 SAE latents",
           "title": "SAE Top 2 Test Accuracy"
         },
         "sae_top_5_test_accuracy": {
@@ -471,7 +471,7 @@
           ],
           "default": null,
           "default_display": true,
-          "description": "SAE top 5 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 5 SAE latents",
           "title": "SAE Top 5 Test Accuracy"
         },
         "sae_top_10_test_accuracy": {
@@ -484,7 +484,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 10 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 10 SAE latents",
           "title": "SAE Top 10 Test Accuracy"
         },
         "sae_top_20_test_accuracy": {
@@ -497,7 +497,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 20 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 20 SAE latents",
           "title": "SAE Top 20 Test Accuracy"
         },
         "sae_top_50_test_accuracy": {
@@ -510,7 +510,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 50 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 50 SAE latents",
           "title": "SAE Top 50 Test Accuracy"
         },
         "sae_top_100_test_accuracy": {
@@ -523,7 +523,7 @@
             }
           ],
           "default": null,
-          "description": "SAE top 100 test accuracy",
+          "description": "Linear probe accuracy when trained on the top 100 SAE latents",
           "title": "SAE Top 100 Test Accuracy"
         }
       },

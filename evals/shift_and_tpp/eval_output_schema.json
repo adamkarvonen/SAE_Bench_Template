@@ -9,17 +9,17 @@
           "type": "integer"
         },
         "dataset_names": {
-          "description": "List of dataset names",
+          "description": "List of dataset names for both the SHIFT and TPP metrics",
           "items": {
             "type": "string"
           },
           "title": "Dataset Names",
           "type": "array"
         },
-        "spurious_corr": {
+        "perform_scr": {
           "default": true,
-          "description": "",
-          "title": "Spurious Correlation",
+          "description": "If True, the eval will be Spurious Correlation Removal (SCR) using SHIFT. If False, the eval will be TPP.",
+          "title": "Perform Spurious Correlation Removal",
           "type": "boolean"
         },
         "early_stopping_patience": {
@@ -30,55 +30,55 @@
         },
         "train_set_size": {
           "default": 4000,
-          "description": "",
+          "description": "Train set size for each linear probe.",
           "title": "Train Set Size",
           "type": "integer"
         },
         "test_set_size": {
           "default": 1000,
-          "description": "This is limited as the test set is smaller than the train set",
+          "description": "Test set size for each linear probe.",
           "title": "Test Set Size",
           "type": "integer"
         },
         "context_length": {
           "default": 128,
-          "description": "",
-          "title": "Context Length",
+          "description": "The maximum length of each input to the LLM. Any longer inputs will be truncated, keeping only the beginning.",
+          "title": "LLM Context Length",
           "type": "integer"
         },
         "probe_train_batch_size": {
           "default": 16,
-          "description": "DO NOT CHANGE without reading the paper appendix Section 1",
+          "description": "DO NOT CHANGE without reading the paper appendix Section 1. The probe's train batch size effects the size of the spuriour correlation learned by the probe.",
           "title": "Probe Train Batch Size",
           "type": "integer"
         },
         "probe_test_batch_size": {
           "default": 500,
-          "description": "",
+          "description": "Batch size when testing the linear probe",
           "title": "Probe Test Batch Size",
           "type": "integer"
         },
         "probe_epochs": {
-          "default": 20,
-          "description": "",
+          "default": 100,
+          "description": "Number of epochs to train the linear probe. Many epochs are needed to decrease randomness in the SCR results.",
           "title": "Probe Epochs",
           "type": "integer"
         },
         "probe_lr": {
           "default": 0.001,
-          "description": "",
+          "description": "Probe learning rate.",
           "title": "Probe LR",
           "type": "number"
         },
         "sae_batch_size": {
           "default": 125,
-          "description": "",
+          "description": "SAE Batch size, inference only",
           "title": "SAE Batch Size",
           "type": "integer"
         },
         "llm_batch_size": {
           "default": 32,
-          "description": "",
+          "description": "LLM batch size, inference only",
           "title": "LLM Batch Size",
           "type": "integer"
         },
@@ -95,7 +95,7 @@
           "type": "string"
         },
         "n_values": {
-          "description": "",
+          "description": "N represents the number of features we zero ablate when performing SCR or TPP. We iterate over all values of N.",
           "items": {
             "type": "integer"
           },
@@ -119,7 +119,7 @@
             },
             "type": "array"
           },
-          "description": "",
+          "description": "Column1 Values apply only to the SHIFT metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
           "title": "Column 1 Values Lookup",
           "type": "object"
         }
@@ -129,17 +129,297 @@
     },
     "TppMetricCategories": {
       "properties": {
-        "uncategorized": {
-          "$ref": "#/$defs/TppUncategorizedMetrics",
+        "tpp_metrics": {
+          "$ref": "#/$defs/TppMetrics",
           "default_display": true,
-          "description": "Uncategorized metrics",
-          "title": "Uncategorized"
+          "description": "Targeted Probe Perturbation (TPP) results",
+          "title": "TPP Metrics"
         }
       },
       "required": [
-        "uncategorized"
+        "tpp_metrics"
       ],
       "title": "TppMetricCategories",
+      "type": "object"
+    },
+    "TppMetrics": {
+      "properties": {
+        "tpp_threshold_2_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 2 SAE latents",
+          "title": "TPP Metric, Top 2 SAE latents"
+        },
+        "tpp_threshold_2_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 2 SAE latents",
+          "title": "TPP Intended Class, Top 2 SAE latents"
+        },
+        "tpp_threshold_2_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 2 SAE latents",
+          "title": "TPP Unintended Class, Top 2 SAE latents"
+        },
+        "tpp_threshold_5_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 5 SAE latents",
+          "title": "TPP Metric, Top 5 SAE latents"
+        },
+        "tpp_threshold_5_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 5 SAE latents",
+          "title": "TPP Intended Class, Top 5 SAE latents"
+        },
+        "tpp_threshold_5_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 5 SAE latents",
+          "title": "TPP Unintended Class, Top 5 SAE latents"
+        },
+        "tpp_threshold_10_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "default_display": true,
+          "description": "TPP metric when ablating the top 10 SAE latents",
+          "title": "TPP Metric, Top 10 SAE latents"
+        },
+        "tpp_threshold_10_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 10 SAE latents",
+          "title": "TPP Intended Class, Top 10 SAE latents"
+        },
+        "tpp_threshold_10_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 10 SAE latents",
+          "title": "TPP Unintended Class, Top 10 SAE latents"
+        },
+        "tpp_threshold_20_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 20 SAE latents",
+          "title": "TPP Metric, Top 20 SAE latents"
+        },
+        "tpp_threshold_20_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 20 SAE latents",
+          "title": "TPP Intended Class, Top 20 SAE latents"
+        },
+        "tpp_threshold_20_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 20 SAE latents",
+          "title": "TPP Unintended Class, Top 20 SAE latents"
+        },
+        "tpp_threshold_50_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 50 SAE latents",
+          "title": "TPP Metric, Top 50 SAE latents"
+        },
+        "tpp_threshold_50_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 50 SAE latents",
+          "title": "TPP Intended Class, Top 50 SAE latents"
+        },
+        "tpp_threshold_50_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 50 SAE latents",
+          "title": "TPP Unintended Class, Top 50 SAE latents"
+        },
+        "tpp_threshold_100_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 100 SAE latents",
+          "title": "TPP Metric, Top 100 SAE latents"
+        },
+        "tpp_threshold_100_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 100 SAE latents",
+          "title": "TPP Intended Class, Top 100 SAE latents"
+        },
+        "tpp_threshold_100_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 100 SAE latents",
+          "title": "TPP Unintended Class, Top 100 SAE latents"
+        },
+        "tpp_threshold_500_total_metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP metric when ablating the top 500 SAE latents",
+          "title": "TPP Metric, Top 500 SAE latents"
+        },
+        "tpp_threshold_500_intended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to the intended class only when ablating the top 500 SAE latents",
+          "title": "TPP Intended Class, Top 500 SAE latents"
+        },
+        "tpp_threshold_500_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 500 SAE latents",
+          "title": "TPP Unintended Class, Top 500 SAE latents"
+        }
+      },
+      "title": "TppMetrics",
       "type": "object"
     },
     "TppResultDetail": {
@@ -159,8 +439,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 2 Total Metric",
-          "title": "TPP Threshold 2 Total Metric"
+          "description": "TPP metric when ablating the top 2 SAE latents",
+          "title": "TPP Metric, Top 2 SAE latents"
         },
         "tpp_threshold_2_intended_diff_only": {
           "anyOf": [
@@ -172,8 +452,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 2 Intended Diff Only",
-          "title": "TPP Threshold 2 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 2 SAE latents",
+          "title": "TPP Intended Class, Top 2 SAE latents"
         },
         "tpp_threshold_2_unintended_diff_only": {
           "anyOf": [
@@ -185,8 +465,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 2 Unintended Diff Only",
-          "title": "TPP Threshold 2 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 2 SAE latents",
+          "title": "TPP Unintended Class, Top 2 SAE latents"
         },
         "tpp_threshold_5_total_metric": {
           "anyOf": [
@@ -198,8 +478,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 5 Total Metric",
-          "title": "TPP Threshold 5 Total Metric"
+          "description": "TPP metric when ablating the top 5 SAE latents",
+          "title": "TPP Metric, Top 5 SAE latents"
         },
         "tpp_threshold_5_intended_diff_only": {
           "anyOf": [
@@ -211,8 +491,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 5 Intended Diff Only",
-          "title": "TPP Threshold 5 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 5 SAE latents",
+          "title": "TPP Intended Class, Top 5 SAE latents"
         },
         "tpp_threshold_5_unintended_diff_only": {
           "anyOf": [
@@ -224,8 +504,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 5 Unintended Diff Only",
-          "title": "TPP Threshold 5 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 5 SAE latents",
+          "title": "TPP Unintended Class, Top 5 SAE latents"
         },
         "tpp_threshold_10_total_metric": {
           "anyOf": [
@@ -237,8 +517,9 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 10 Total Metric",
-          "title": "TPP Threshold 10 Total Metric"
+          "default_display": true,
+          "description": "TPP metric when ablating the top 10 SAE latents",
+          "title": "TPP Metric, Top 10 SAE latents"
         },
         "tpp_threshold_10_intended_diff_only": {
           "anyOf": [
@@ -250,8 +531,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 10 Intended Diff Only",
-          "title": "TPP Threshold 10 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 10 SAE latents",
+          "title": "TPP Intended Class, Top 10 SAE latents"
         },
         "tpp_threshold_10_unintended_diff_only": {
           "anyOf": [
@@ -263,8 +544,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 10 Unintended Diff Only",
-          "title": "TPP Threshold 10 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 10 SAE latents",
+          "title": "TPP Unintended Class, Top 10 SAE latents"
         },
         "tpp_threshold_20_total_metric": {
           "anyOf": [
@@ -276,8 +557,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 20 Total Metric",
-          "title": "TPP Threshold 20 Total Metric"
+          "description": "TPP metric when ablating the top 20 SAE latents",
+          "title": "TPP Metric, Top 20 SAE latents"
         },
         "tpp_threshold_20_intended_diff_only": {
           "anyOf": [
@@ -289,8 +570,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 20 Intended Diff Only",
-          "title": "TPP Threshold 20 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 20 SAE latents",
+          "title": "TPP Intended Class, Top 20 SAE latents"
         },
         "tpp_threshold_20_unintended_diff_only": {
           "anyOf": [
@@ -302,8 +583,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 20 Unintended Diff Only",
-          "title": "TPP Threshold 20 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 20 SAE latents",
+          "title": "TPP Unintended Class, Top 20 SAE latents"
         },
         "tpp_threshold_50_total_metric": {
           "anyOf": [
@@ -315,8 +596,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 50 Total Metric",
-          "title": "TPP Threshold 50 Total Metric"
+          "description": "TPP metric when ablating the top 50 SAE latents",
+          "title": "TPP Metric, Top 50 SAE latents"
         },
         "tpp_threshold_50_intended_diff_only": {
           "anyOf": [
@@ -328,8 +609,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 50 Intended Diff Only",
-          "title": "TPP Threshold 50 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 50 SAE latents",
+          "title": "TPP Intended Class, Top 50 SAE latents"
         },
         "tpp_threshold_50_unintended_diff_only": {
           "anyOf": [
@@ -341,8 +622,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 50 Unintended Diff Only",
-          "title": "TPP Threshold 50 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 50 SAE latents",
+          "title": "TPP Unintended Class, Top 50 SAE latents"
         },
         "tpp_threshold_100_total_metric": {
           "anyOf": [
@@ -354,8 +635,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 100 Total Metric",
-          "title": "TPP Threshold 100 Total Metric"
+          "description": "TPP metric when ablating the top 100 SAE latents",
+          "title": "TPP Metric, Top 100 SAE latents"
         },
         "tpp_threshold_100_intended_diff_only": {
           "anyOf": [
@@ -367,8 +648,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 100 Intended Diff Only",
-          "title": "TPP Threshold 100 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 100 SAE latents",
+          "title": "TPP Intended Class, Top 100 SAE latents"
         },
         "tpp_threshold_100_unintended_diff_only": {
           "anyOf": [
@@ -380,8 +661,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 100 Unintended Diff Only",
-          "title": "TPP Threshold 100 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 100 SAE latents",
+          "title": "TPP Unintended Class, Top 100 SAE latents"
         },
         "tpp_threshold_500_total_metric": {
           "anyOf": [
@@ -393,8 +674,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 500 Total Metric",
-          "title": "TPP Threshold 500 Total Metric"
+          "description": "TPP metric when ablating the top 500 SAE latents",
+          "title": "TPP Metric, Top 500 SAE latents"
         },
         "tpp_threshold_500_intended_diff_only": {
           "anyOf": [
@@ -406,8 +687,8 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 500 Intended Diff Only",
-          "title": "TPP Threshold 500 Intended Diff Only"
+          "description": "TPP decrease to the intended class only when ablating the top 500 SAE latents",
+          "title": "TPP Intended Class, Top 500 SAE latents"
         },
         "tpp_threshold_500_unintended_diff_only": {
           "anyOf": [
@@ -419,296 +700,14 @@
             }
           ],
           "default": null,
-          "description": "TPP Threshold 500 Unintended Diff Only",
-          "title": "TPP Threshold 500 Unintended Diff Only"
+          "description": "TPP decrease to all unintended classes when ablating the top 500 SAE latents",
+          "title": "TPP Unintended Class, Top 500 SAE latents"
         }
       },
       "required": [
         "dataset_name"
       ],
       "title": "TppResultDetail",
-      "type": "object"
-    },
-    "TppUncategorizedMetrics": {
-      "properties": {
-        "tpp_threshold_2_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 2 Total Metric",
-          "title": "TPP Threshold 2 Total Metric"
-        },
-        "tpp_threshold_2_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 2 Intended Diff Only",
-          "title": "TPP Threshold 2 Intended Diff Only"
-        },
-        "tpp_threshold_2_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 2 Unintended Diff Only",
-          "title": "TPP Threshold 2 Unintended Diff Only"
-        },
-        "tpp_threshold_5_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 5 Total Metric",
-          "title": "TPP Threshold 5 Total Metric"
-        },
-        "tpp_threshold_5_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 5 Intended Diff Only",
-          "title": "TPP Threshold 5 Intended Diff Only"
-        },
-        "tpp_threshold_5_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 5 Unintended Diff Only",
-          "title": "TPP Threshold 5 Unintended Diff Only"
-        },
-        "tpp_threshold_10_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "default_display": true,
-          "description": "TPP Threshold 10 Total Metric",
-          "title": "TPP Threshold 10 Total Metric"
-        },
-        "tpp_threshold_10_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "default_display": true,
-          "description": "TPP Threshold 10 Intended Diff Only",
-          "title": "TPP Threshold 10 Intended Diff Only"
-        },
-        "tpp_threshold_10_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "default_display": true,
-          "description": "TPP Threshold 10 Unintended Diff Only",
-          "title": "TPP Threshold 10 Unintended Diff Only"
-        },
-        "tpp_threshold_20_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 20 Total Metric",
-          "title": "TPP Threshold 20 Total Metric"
-        },
-        "tpp_threshold_20_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 20 Intended Diff Only",
-          "title": "TPP Threshold 20 Intended Diff Only"
-        },
-        "tpp_threshold_20_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 20 Unintended Diff Only",
-          "title": "TPP Threshold 20 Unintended Diff Only"
-        },
-        "tpp_threshold_50_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 50 Total Metric",
-          "title": "TPP Threshold 50 Total Metric"
-        },
-        "tpp_threshold_50_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 50 Intended Diff Only",
-          "title": "TPP Threshold 50 Intended Diff Only"
-        },
-        "tpp_threshold_50_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 50 Unintended Diff Only",
-          "title": "TPP Threshold 50 Unintended Diff Only"
-        },
-        "tpp_threshold_100_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 100 Total Metric",
-          "title": "TPP Threshold 100 Total Metric"
-        },
-        "tpp_threshold_100_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 100 Intended Diff Only",
-          "title": "TPP Threshold 100 Intended Diff Only"
-        },
-        "tpp_threshold_100_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 100 Unintended Diff Only",
-          "title": "TPP Threshold 100 Unintended Diff Only"
-        },
-        "tpp_threshold_500_total_metric": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 500 Total Metric",
-          "title": "TPP Threshold 500 Total Metric"
-        },
-        "tpp_threshold_500_intended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 500 Intended Diff Only",
-          "title": "TPP Threshold 500 Intended Diff Only"
-        },
-        "tpp_threshold_500_unintended_diff_only": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "TPP Threshold 500 Unintended Diff Only",
-          "title": "TPP Threshold 500 Unintended Diff Only"
-        }
-      },
-      "title": "TppUncategorizedMetrics",
       "type": "object"
     }
   },
