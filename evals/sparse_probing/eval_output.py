@@ -15,46 +15,46 @@ EVAL_TYPE_ID_SPARSE_PROBING = "sparse_probing"
 class SparseProbingLlmMetrics(BaseMetrics):
     llm_test_accuracy: float = Field(
         title="LLM Test Accuracy",
-        description="LLM test accuracy",
+        description="Linear probe accuracy when training on the full LLM residual stream",
         json_schema_extra={"default_display": True},
     )
     llm_top_1_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 1 Test Accuracy",
-        description="LLM top 1 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 1 residual stream channel test accuracy",
         json_schema_extra={"default_display": True},
     )
     llm_top_2_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 2 Test Accuracy",
-        description="LLM top 2 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 2 residual stream channels test accuracy",
         json_schema_extra={"default_display": True},
     )
     llm_top_5_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 5 Test Accuracy",
-        description="LLM top 5 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 5 residual stream channels test accuracy",
         json_schema_extra={"default_display": True},
     )
     llm_top_10_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 10 Test Accuracy",
-        description="LLM top 10 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 10 residual stream channels",
     )
     llm_top_20_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 20 Test Accuracy",
-        description="LLM top 20 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 20 residual stream channels",
     )
     llm_top_50_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 50 Test Accuracy",
-        description="LLM top 50 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 50 residual stream channels",
     )
     llm_top_100_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 100 Test Accuracy",
-        description="LLM top 100 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 100 residual stream channels",
     )
 
 
@@ -63,46 +63,46 @@ class SparseProbingSaeMetrics(BaseMetrics):
     sae_test_accuracy: float | None = Field(
         default=None,
         title="SAE Test Accuracy",
-        description="SAE test accuracy",
+        description="Linear probe accuracy when trained on all SAE latents",
         json_schema_extra={"default_display": True},
     )
     sae_top_1_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 1 Test Accuracy",
-        description="SAE top 1 test accuracy",
+        description="Linear probe accuracy when trained on the top 1 SAE latents",
         json_schema_extra={"default_display": True},
     )
     sae_top_2_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 2 Test Accuracy",
-        description="SAE top 2 test accuracy",
+        description="Linear probe accuracy when trained on the top 2 SAE latents",
         json_schema_extra={"default_display": True},
     )
     sae_top_5_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 5 Test Accuracy",
-        description="SAE top 5 test accuracy",
+        description="Linear probe accuracy when trained on the top 5 SAE latents",
         json_schema_extra={"default_display": True},
     )
     sae_top_10_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 10 Test Accuracy",
-        description="SAE top 10 test accuracy",
+        description="Linear probe accuracy when trained on the top 10 SAE latents",
     )
     sae_top_20_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 20 Test Accuracy",
-        description="SAE top 20 test accuracy",
+        description="Linear probe accuracy when trained on the top 20 SAE latents",
     )
     sae_top_50_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 50 Test Accuracy",
-        description="SAE top 50 test accuracy",
+        description="Linear probe accuracy when trained on the top 50 SAE latents",
     )
     sae_top_100_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 100 Test Accuracy",
-        description="SAE top 100 test accuracy",
+        description="Linear probe accuracy when trained on the top 100 SAE latents",
     )
 
 
@@ -122,7 +122,6 @@ class SparseProbingMetricCategories(BaseMetricCategories):
 
 @dataclass
 class SparseProbingResultDetail(BaseResultDetail):
-
     dataset_name: str = Field(
         title="Dataset Name",
         description="Dataset name",
@@ -130,83 +129,83 @@ class SparseProbingResultDetail(BaseResultDetail):
 
     llm_test_accuracy: float = Field(
         title="LLM Test Accuracy",
-        description="LLM test accuracy",
+        description="Linear probe accuracy when trained on all LLM residual stream channels",
     )
     llm_top_1_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 1 Test Accuracy",
-        description="LLM top 1 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 1 residual stream channels",
     )
     llm_top_2_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 2 Test Accuracy",
-        description="LLM top 2 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 2 residual stream channels",
     )
     llm_top_5_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 5 Test Accuracy",
-        description="LLM top 5 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 5 residual stream channels",
     )
     llm_top_10_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 10 Test Accuracy",
-        description="LLM top 10 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 10 residual stream channels",
     )
     llm_top_20_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 20 Test Accuracy",
-        description="LLM top 20 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 20 residual stream channels",
     )
     llm_top_50_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 50 Test Accuracy",
-        description="LLM top 50 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 50 residual stream channels",
     )
     llm_top_100_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 100 Test Accuracy",
-        description="LLM top 100 test accuracy",
+        description="Linear probe accuracy when trained on the LLM top 100 residual stream channels",
     )
 
     sae_test_accuracy: float | None = Field(
         default=None,
         title="SAE Test Accuracy",
-        description="SAE test accuracy",
+        description="Linear probe accuracy when trained on all SAE latents",
     )
     sae_top_1_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 1 Test Accuracy",
-        description="SAE top 1 test accuracy",
+        description="Linear probe accuracy when trained on the top 1 SAE latents",
     )
     sae_top_2_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 2 Test Accuracy",
-        description="SAE top 2 test accuracy",
+        description="Linear probe accuracy when trained on the top 2 SAE latents",
     )
     sae_top_5_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 5 Test Accuracy",
-        description="SAE top 5 test accuracy",
+        description="Linear probe accuracy when trained on the top 5 SAE latents",
     )
     sae_top_10_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 10 Test Accuracy",
-        description="SAE top 10 test accuracy",
+        description="Linear probe accuracy when trained on the top 10 SAE latents",
     )
     sae_top_20_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 20 Test Accuracy",
-        description="SAE top 20 test accuracy",
+        description="Linear probe accuracy when trained on the top 20 SAE latents",
     )
     sae_top_50_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 50 Test Accuracy",
-        description="SAE top 50 test accuracy",
+        description="Linear probe accuracy when trained on the top 50 SAE latents",
     )
     sae_top_100_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 100 Test Accuracy",
-        description="SAE top 100 test accuracy",
+        description="Linear probe accuracy when trained on the top 100 SAE latents",
     )
 
 

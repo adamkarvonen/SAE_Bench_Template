@@ -25,12 +25,12 @@ class Probe(nn.Module):
 def prepare_probe_data(
     all_activations: dict[str, Float[torch.Tensor, "num_datapoints_per_class ... d_model"]],
     class_name: str,
-    spurious_corr: bool = False,
+    perform_scr: bool = False,
 ) -> tuple[
     Float[torch.Tensor, "num_datapoints_per_class_x_2 ... d_model"],
     Int[torch.Tensor, "num_datapoints_per_class_x_2"],
 ]:
-    """spurious_corr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
+    """perform_scr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
     It's a bit unfortunate to introduce coupling between the metrics, but most of the code is reused between them.
     The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model.
     """
@@ -39,7 +39,7 @@ def prepare_probe_data(
 
     num_positive = len(positive_acts_BD)
 
-    if spurious_corr:
+    if perform_scr:
         if class_name in dataset_info.PAIRED_CLASS_KEYS.keys():
             selected_negative_acts_BD = all_activations[dataset_info.PAIRED_CLASS_KEYS[class_name]]
         elif class_name in dataset_info.PAIRED_CLASS_KEYS.values():
@@ -308,7 +308,7 @@ def train_probe_on_activations(
     lr: float = 1e-3,
     verbose: bool = False,
     early_stopping_patience: int = 10,
-    spurious_corr: bool = False,
+    perform_scr: bool = False,
 ) -> tuple[dict[str, LogisticRegression | Probe], dict[str, float]]:
     """Train a probe on the given activations and return the probe and test accuracies for each profession.
     use_sklearn is a flag to use sklearn's LogisticRegression model instead of a custom PyTorch model.
@@ -319,8 +319,8 @@ def train_probe_on_activations(
     probes, test_accuracies = {}, {}
 
     for profession in train_activations.keys():
-        train_acts, train_labels = prepare_probe_data(train_activations, profession, spurious_corr)
-        test_acts, test_labels = prepare_probe_data(test_activations, profession, spurious_corr)
+        train_acts, train_labels = prepare_probe_data(train_activations, profession, perform_scr)
+        test_acts, test_labels = prepare_probe_data(test_activations, profession, perform_scr)
 
         if select_top_k is not None:
             activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)

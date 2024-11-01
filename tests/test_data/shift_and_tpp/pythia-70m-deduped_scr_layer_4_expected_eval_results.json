@@ -1,39 +1,48 @@
 {
   "eval_type_id": "scr",
   "eval_config": {
-    "random_seed": 48,
-    "dataset_names": ["LabHC/bias_in_bios_class_set1"],
-    "spurious_corr": true,
+    "random_seed": 42,
+    "dataset_names": [
+      "LabHC/bias_in_bios_class_set1"
+    ],
+    "perform_scr": true,
     "early_stopping_patience": 40,
     "train_set_size": 4000,
     "test_set_size": 1000,
     "context_length": 128,
     "probe_train_batch_size": 16,
     "probe_test_batch_size": 500,
-    "probe_epochs": 20,
+    "probe_epochs": 100,
     "probe_lr": 0.001,
     "sae_batch_size": 250,
     "llm_batch_size": 500,
     "llm_dtype": "float32",
     "model_name": "pythia-70m-deduped",
-    "n_values": [10],
+    "n_values": [
+      10
+    ],
     "column1_vals_lookup": {
-      "LabHC/bias_in_bios_class_set1": [["professor", "nurse"]]
+      "LabHC/bias_in_bios_class_set1": [
+        [
+          "professor",
+          "nurse"
+        ]
+      ]
     }
   },
-  "eval_id": "4e7fb950-6f00-43ea-a2ea-b08fa871f562",
-  "datetime_epoch_millis": 1729919388719,
+  "eval_id": "f6fe23a1-880b-4bb9-aebf-9fe04a94bf6a",
+  "datetime_epoch_millis": 1730416723279,
   "eval_result_metrics": {
-    "uncategorized": {
+    "shift_metrics": {
       "scr_dir1_threshold_2": null,
       "scr_metric_threshold_2": null,
       "scr_dir2_threshold_2": null,
       "scr_dir1_threshold_5": null,
       "scr_metric_threshold_5": null,
       "scr_dir2_threshold_5": null,
-      "scr_dir1_threshold_10": 0.8888888888888888,
-      "scr_metric_threshold_10": 0.8888888888888888,
-      "scr_dir2_threshold_10": 0.43243330320882406,
+      "scr_dir1_threshold_10": 0.7570754866178424,
+      "scr_metric_threshold_10": 0.7570754866178424,
+      "scr_dir2_threshold_10": 0.34374924330053214,
       "scr_dir1_threshold_20": null,
       "scr_metric_threshold_20": null,
       "scr_dir2_threshold_20": null,
@@ -57,9 +66,9 @@
       "scr_dir1_threshold_5": null,
       "scr_metric_threshold_5": null,
       "scr_dir2_threshold_5": null,
-      "scr_dir1_threshold_10": 0.8888888888888888,
-      "scr_metric_threshold_10": 0.8888888888888888,
-      "scr_dir2_threshold_10": 0.43243330320882406,
+      "scr_dir1_threshold_10": 0.7570754866178424,
+      "scr_metric_threshold_10": 0.7570754866178424,
+      "scr_dir2_threshold_10": 0.34374924330053214,
       "scr_dir1_threshold_20": null,
       "scr_metric_threshold_20": null,
       "scr_dir2_threshold_20": null,
@@ -74,8 +83,9 @@
       "scr_dir2_threshold_500": null
     }
   ],
-  "sae_bench_commit_hash": "eb8c66073524128b3154051fe47f8fe3ef85959a",
+  "sae_bench_commit_hash": "177be38c320cec0cf2e5ceb66d94e6e5c80427c6",
   "sae_lens_id": "blocks.4.hook_resid_post__trainer_10",
   "sae_lens_release_id": "sae_bench_pythia70m_sweep_topk_ctx128_0730",
-  "sae_lens_version": "4.0.7"
+  "sae_lens_version": "4.0.10",
+  "eval_result_unstructured": null
 }

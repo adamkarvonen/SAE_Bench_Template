@@ -23,7 +23,7 @@ class SparseProbingEvalConfig(BaseEvalConfig):
             "Helsinki-NLP/europarl",
         ],
         title="Dataset Names",
-        description="List of dataset names",
+        description="List of dataset names. We have at most 5 class names in a single subset, which is why we have multiple bias_in_bios class subsets.",
     )
 
     probe_train_set_size: int = Field(
@@ -38,19 +38,19 @@ class SparseProbingEvalConfig(BaseEvalConfig):
     )
     context_length: int = Field(
         default=128,
-        title="Context Length",
-        description="Context length",
+        title="LLM Context Length",
+        description="The maximum length of each input to the LLM. Any longer inputs will be truncated, keeping only the beginning.",
     )
 
     sae_batch_size: int = Field(
         default=125,
         title="SAE Batch Size",
-        description="SAE batch size",
+        description="SAE batch size, inference only",
     )
     llm_batch_size: int = Field(
         default=32,
         title="LLM Batch Size",
-        description="LLM batch size",
+        description="LLM batch size, inference only",
     )
     llm_dtype: str = Field(
         default="bfloat16",
@@ -67,5 +67,5 @@ class SparseProbingEvalConfig(BaseEvalConfig):
     k_values: list[int] = Field(
         default_factory=lambda: [1, 2, 5, 10, 20, 50],
         title="K Values",
-        description="K values",
+        description="K represents the number of SAE features or residual stream channels we train the linear probe on. We iterate over all values of K.",
     )
