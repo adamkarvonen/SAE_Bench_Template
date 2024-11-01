@@ -338,7 +338,13 @@ def get_featurewise_weight_based_metrics(sae: SAE) -> dict[str, Any]:
     unit_norm_decoder = (sae.W_dec.T / sae.W_dec.T.norm(dim=0, keepdim=True)).cpu()
 
     encoder_norms = sae.W_enc.norm(dim=-2).cpu().tolist()
-    encoder_bias = sae.b_enc.cpu().tolist()
+
+    # gated models have a different bias (no b_enc)
+    if sae.cfg.architecture != "gated":
+        encoder_bias = sae.b_enc.cpu().tolist()
+    else:
+        encoder_bias = sae.b_mag.cpu().tolist()
+
     encoder_decoder_cosine_sim = (
         torch.nn.functional.cosine_similarity(
             unit_norm_decoder.T,
