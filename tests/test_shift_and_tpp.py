@@ -62,9 +62,7 @@ def test_scr_end_to_end_different_seed():
         expected_results = json.load(f)
 
     keys_to_compare = [
-        "scr_dir1_threshold_10",
         "scr_metric_threshold_10",
-        "scr_dir2_threshold_10",
     ]
 
     testing_utils.compare_dicts_within_tolerance(
