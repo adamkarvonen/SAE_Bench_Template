@@ -1,6 +1,6 @@
 This repo implements the SHIFT and TPP evals from "Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks".
 
-To run SHIFT, set eval_config.spurious_corr = True. To run TPP, set it to False.
+To run SHIFT, set eval_config.perform_scr = True. To run TPP, set it to False.
 
 Estimated runtime per dataset (currently there are 2 datasets, and for SHIFT we have 4 class pairs per dataset, so 2x4=8 iterations):
 

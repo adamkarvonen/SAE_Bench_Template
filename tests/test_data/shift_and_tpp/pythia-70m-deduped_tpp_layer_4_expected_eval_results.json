@@ -3,7 +3,7 @@
   "eval_config": {
     "random_seed": 44,
     "dataset_names": ["LabHC/bias_in_bios_class_set1"],
-    "spurious_corr": false,
+    "perform_scr": false,
     "early_stopping_patience": 40,
     "train_set_size": 4000,
     "test_set_size": 1000,
