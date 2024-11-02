@@ -8,6 +8,7 @@ import einops
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
 
+# Relevant at ctx len 128
 LLM_NAME_TO_BATCH_SIZE = {
     "pythia-70m-deduped": 500,
     "gemma-2-2b": 32,

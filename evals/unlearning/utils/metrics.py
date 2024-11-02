@@ -59,6 +59,7 @@ def load_dataset_with_retries(
 def calculate_MCQ_metrics(
     model: HookedTransformer,
     mcq_batch_size: int,
+    artifacts_folder: str,
     dataset_name: str = "wmdp-bio",
     target_metric: Optional[str] = None,
     question_subset: Optional[list[int]] = None,
@@ -122,9 +123,8 @@ def calculate_MCQ_metrics(
         full_dataset_name = (
             f'mmlu-{dataset_name.replace("_", "-")}' if dataset_name != "wmdp-bio" else dataset_name
         )
-        question_subset_file = (
-            f"data/question_ids/{model_name}/{split}/{full_dataset_name}_{target_metric}.csv"
-        )
+        question_subset_file = f"data/question_ids/{split}/{full_dataset_name}_{target_metric}.csv"
+        question_subset_file = os.path.join(artifacts_folder, question_subset_file)
 
     if question_subset_file is not None:
         question_subset = np.genfromtxt(question_subset_file, ndmin=1, dtype=int)
@@ -481,11 +481,11 @@ def compute_loss_added(
 def get_baseline_metrics(
     model: HookedTransformer,
     mcq_batch_size: int,
+    artifacts_folder: str,
     dataset_name,
     metric_param,
     recompute=False,
     split="all",
-    output_dir="./data/baseline_metrics",
 ):
     """
     Compute the baseline metrics or retrieve if pre-computed and saved
@@ -500,7 +500,7 @@ def get_baseline_metrics(
     q_type = metric_param["target_metric"]
 
     baseline_metrics_file = os.path.join(
-        output_dir, f"{model_name}/{split}/{full_dataset_name}_{q_type}.json"
+        artifacts_folder, "data/baseline_metrics", f"{split}/{full_dataset_name}_{q_type}.json"
     )
     os.makedirs(os.path.dirname(baseline_metrics_file), exist_ok=True)
 
@@ -518,7 +518,12 @@ def get_baseline_metrics(
 
     else:
         baseline_metrics = calculate_MCQ_metrics(
-            model, mcq_batch_size, dataset_name=dataset_name, split=split, **metric_param
+            model,
+            mcq_batch_size,
+            artifacts_folder,
+            dataset_name=dataset_name,
+            split=split,
+            **metric_param,
         )
 
         metrics = baseline_metrics.copy()
@@ -537,6 +542,7 @@ def get_baseline_metrics(
 def modify_and_calculate_metrics(
     model: HookedTransformer,
     mcq_batch_size: int,
+    artifacts_folder: str,
     sae: SAE,
     dataset_names=["wmdp-bio"],
     metric_params={"wmdp-bio": {"target_metric": "correct"}},
@@ -572,7 +578,12 @@ def modify_and_calculate_metrics(
             metric_param = {"target_metric": "correct", "verbose": verbose}
 
         dataset_metrics = calculate_MCQ_metrics(
-            model, mcq_batch_size, dataset_name=dataset_name, split=split, **metric_param
+            model,
+            mcq_batch_size,
+            artifacts_folder,
+            dataset_name=dataset_name,
+            split=split,
+            **metric_param,
         )
         metrics_for_current_ablation[dataset_name] = dataset_metrics
 
@@ -600,6 +611,8 @@ def calculate_metrics_list(
     sae: SAE,
     main_ablate_params,
     sweep,
+    artifacts_folder: str,
+    force_rerun: bool,
     dataset_names=["wmdp-bio"],
     metric_params={"wmdp-bio": {"target_metric": "correct"}},
     n_batch_loss_added=2,
@@ -622,9 +635,7 @@ def calculate_metrics_list(
 
     for dataset_name in [x for x in dataset_names if x != "loss_added"]:
         # Ensure that target question ids exist
-        save_target_question_ids(
-            model, mcq_batch_size, dataset_name, output_dir="./data/question_ids"
-        )
+        save_target_question_ids(model, mcq_batch_size, artifacts_folder, dataset_name)
 
         if dataset_name in metric_params:
             metric_param = metric_params[dataset_name]
@@ -634,7 +645,7 @@ def calculate_metrics_list(
         # metrics[dataset_name] = dataset_metrics
 
         baseline_metric = get_baseline_metrics(
-            model, mcq_batch_size, dataset_name, metric_param, split=split
+            model, mcq_batch_size, artifacts_folder, dataset_name, metric_param, split=split
         )
 
         baseline_metrics[dataset_name] = baseline_metric
@@ -657,7 +668,7 @@ def calculate_metrics_list(
         save_file_name = f"{intervention_method}_multiplier{multiplier}_nfeatures{n_features}_layer{layer}_retainthres{retain_threshold}.pkl"
         full_path = os.path.join(save_metrics_dir, save_file_name)
 
-        if os.path.exists(full_path):
+        if os.path.exists(full_path) and not force_rerun:
             with open(full_path, "rb") as f:
                 ablated_metrics = pickle.load(f)
             metrics_list.append(ablated_metrics)
@@ -666,6 +677,7 @@ def calculate_metrics_list(
         ablated_metrics = modify_and_calculate_metrics(
             model,
             mcq_batch_size,
+            artifacts_folder,
             sae,
             dataset_names=dataset_names,
             metric_params=metric_params,
@@ -738,8 +750,8 @@ def create_df_from_metrics(metrics_list):
 def save_target_question_ids(
     model: HookedTransformer,
     mcq_batch_size: int,
+    artifacts_folder: str,
     dataset_name: str,
-    output_dir: str = "../data/question_ids",
     train_ratio: float = 0.5,
 ):
     """
@@ -756,7 +768,9 @@ def save_target_question_ids(
 
     # Check if the files already exist
     file_paths = [
-        os.path.join(output_dir, f"{model_name}/{split}/{full_dataset_name}_{q_type}.csv")
+        os.path.join(
+            artifacts_folder, "data/question_ids", f"{split}/{full_dataset_name}_{q_type}.csv"
+        )
         for q_type in ["correct", "correct-iff-question", "correct-no-tricks"]
         for split in ["train", "test", "all"]
     ]
@@ -770,10 +784,15 @@ def save_target_question_ids(
     print(f"Saving target question ids for {model_name} on {dataset_name}...")
 
     metrics = calculate_MCQ_metrics(
-        model, mcq_batch_size, dataset_name, permutations=all_permutations
+        model, mcq_batch_size, artifacts_folder, dataset_name, permutations=all_permutations
     )
     metrics_wo_question = calculate_MCQ_metrics(
-        model, mcq_batch_size, dataset_name, permutations=all_permutations, without_question=True
+        model,
+        mcq_batch_size,
+        artifacts_folder,
+        dataset_name,
+        permutations=all_permutations,
+        without_question=True,
     )
 
     # find all permutations correct
@@ -789,7 +808,9 @@ def save_target_question_ids(
 
         for split, ids in splits.items():
             file_name = os.path.join(
-                output_dir, f"{model.cfg.model_name}/{split}/{full_dataset_name}_{q_type}.csv"
+                artifacts_folder,
+                "data/question_ids",
+                f"{split}/{full_dataset_name}_{q_type}.csv",
             )
             os.makedirs(os.path.dirname(file_name), exist_ok=True)
             np.savetxt(file_name, ids, fmt="%d")

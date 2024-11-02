@@ -19,8 +19,10 @@ def run_metrics_calculation(
     activation_store,
     forget_sparsity: np.ndarray,
     retain_sparsity: np.ndarray,
-    sae_folder: str,
+    artifacts_folder: str,
+    sae_name: str,
     config: eval_config.EvalConfig,
+    force_rerun: bool,
 ):
     all_dataset_names = config.all_dataset_names
 
@@ -41,7 +43,7 @@ def run_metrics_calculation(
             "multiplier": multipliers,
         }
 
-        save_metrics_dir = os.path.join("results/metrics", sae_folder)
+        save_metrics_dir = os.path.join(artifacts_folder, sae_name, "results/metrics")
 
         metrics_lst = calculate_metrics_list(
             model,
@@ -49,6 +51,8 @@ def run_metrics_calculation(
             sae,
             main_ablate_params,
             sweep,
+            artifacts_folder,
+            force_rerun,
             all_dataset_names,
             n_batch_loss_added=config.n_batch_loss_added,
             activation_store=activation_store,
@@ -62,19 +66,38 @@ def run_metrics_calculation(
 
 
 def run_eval_single_sae(
-    model: HookedTransformer, sae: SAE, sae_name: str, config: eval_config.EvalConfig
+    model: HookedTransformer,
+    sae: SAE,
+    config: eval_config.EvalConfig,
+    artifacts_folder: str,
+    sae_release_and_id: str,
+    force_rerun: bool,
 ):
     # calculate feature sparsity
     save_feature_sparsity(
-        model, sae, sae_name, config.dataset_size, config.seq_len, config.llm_batch_size
+        model,
+        sae,
+        artifacts_folder,
+        sae_release_and_id,
+        config.dataset_size,
+        config.seq_len,
+        config.llm_batch_size,
     )
-    forget_sparsity, retain_sparsity = load_sparsity_data(sae_name)
+    forget_sparsity, retain_sparsity = load_sparsity_data(artifacts_folder, sae_release_and_id)
 
     # do intervention and calculate eval metrics
     # activation_store = setup_activation_store(sae, model)
     activation_store = None
     results = run_metrics_calculation(
-        model, sae, activation_store, forget_sparsity, retain_sparsity, sae_name, config
+        model,
+        sae,
+        activation_store,
+        forget_sparsity,
+        retain_sparsity,
+        artifacts_folder,
+        sae_release_and_id,
+        config,
+        force_rerun,
     )
 
     return results
