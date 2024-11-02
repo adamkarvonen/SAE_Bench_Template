@@ -26,11 +26,10 @@ class ShiftAndTppEvalConfig(BaseEvalConfig):
         description="If True, the eval will be Spurious Correlation Removal (SCR) using SHIFT. If False, the eval will be TPP.",
     )
 
-    # This reduces randomness in the SCR results
     early_stopping_patience: int = Field(
-        default=40,
+        default=20,
         title="Early Stopping Patience",
-        description="This reduces randomness in the SCR results.",
+        description="We set early stopping patience to probe epochs, so we always train for the same amount.",
     )
 
     # Load datset and probes
@@ -66,11 +65,16 @@ class ShiftAndTppEvalConfig(BaseEvalConfig):
         description="Batch size when testing the linear probe",
     )
     probe_epochs: int = Field(
-        default=100,
+        default=20,
         title="Probe Epochs",
         description="Number of epochs to train the linear probe. Many epochs are needed to decrease randomness in the SCR results.",
     )
     probe_lr: float = Field(default=1e-3, title="Probe LR", description="Probe learning rate.")
+    probe_l1_penalty: float = Field(
+        default=1e-3,
+        title="Probe L1 Penalty",
+        description="L1 sparsity penalty when training the linear probe.",
+    )
 
     sae_batch_size: int = Field(
         default=125,

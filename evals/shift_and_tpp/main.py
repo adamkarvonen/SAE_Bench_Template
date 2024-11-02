@@ -346,16 +346,21 @@ def get_scr_plotting_dict(
 
             changed_acc = class_accuracies[ablated_probe_class_id][threshold][combined_class_name]
 
-            changed_acc = (changed_acc - original_acc) / (clean_acc - original_acc)
+            scr_score = (changed_acc - original_acc) / (clean_acc - original_acc)
+
+            print(
+                f"dir: {dir}, original_acc: {original_acc}, clean_acc: {clean_acc}, changed_acc: {changed_acc}, scr_score: {scr_score}"
+            )
+
             metric_key = f"scr_dir{dir}_threshold_{threshold}"
 
-            results[metric_key] = changed_acc
+            results[metric_key] = scr_score
 
             scr_metric_key = f"scr_metric_threshold_{threshold}"
             if dir1_acc < dir2_acc and dir == 1:
-                results[scr_metric_key] = changed_acc
+                results[scr_metric_key] = scr_score
             elif dir1_acc > dir2_acc and dir == 2:
-                results[scr_metric_key] = changed_acc
+                results[scr_metric_key] = scr_score
 
     return results
 
@@ -536,6 +541,7 @@ def run_eval_single_dataset(
             lr=config.probe_lr,
             perform_scr=config.perform_scr,
             early_stopping_patience=config.early_stopping_patience,
+            l1_penalty=config.probe_l1_penalty,
         )
 
         torch.set_grad_enabled(False)

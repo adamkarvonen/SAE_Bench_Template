@@ -309,6 +309,7 @@ def train_probe_on_activations(
     verbose: bool = False,
     early_stopping_patience: int = 10,
     perform_scr: bool = False,
+    l1_penalty: Optional[float] = None,
 ) -> tuple[dict[str, LogisticRegression | Probe], dict[str, float]]:
     """Train a probe on the given activations and return the probe and test accuracies for each profession.
     use_sklearn is a flag to use sklearn's LogisticRegression model instead of a custom PyTorch model.
@@ -351,6 +352,7 @@ def train_probe_on_activations(
                 lr=lr,
                 verbose=verbose,
                 early_stopping_patience=early_stopping_patience,
+                l1_penalty=l1_penalty,
             )
 
         print(f"Test accuracy for {profession}: {test_accuracy}")
