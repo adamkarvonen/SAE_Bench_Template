@@ -36,7 +36,7 @@ def get_forget_retain_data(
         raise Exception("Unknown retain corpora")
 
     forget_dataset = []
-    for line in open(f"./data/{forget_corpora}.jsonl", "r"):
+    for line in open(f"./evals/unlearning/data/{forget_corpora}.jsonl", "r"):
         if "bio-forget-corpus" in forget_corpora:
             raw_text = json.loads(line)["text"]
         else:
@@ -160,9 +160,9 @@ def get_top_features(forget_score, retain_score, retain_threshold=0.01):
     return top_features_non_zero
 
 
-def check_existing_results(sae_folder):
-    forget_path = os.path.join(SPARSITIES_DIR, sae_folder, FORGET_FILENAME)
-    retain_path = os.path.join(SPARSITIES_DIR, sae_folder, RETAIN_FILENAME)
+def check_existing_results(artifacts_folder: str, sae_name) -> bool:
+    forget_path = os.path.join(artifacts_folder, sae_name, SPARSITIES_DIR, FORGET_FILENAME)
+    retain_path = os.path.join(artifacts_folder, sae_name, SPARSITIES_DIR, RETAIN_FILENAME)
     return os.path.exists(forget_path) and os.path.exists(retain_path)
 
 
@@ -178,19 +178,21 @@ def calculate_sparsity(
     return feature_sparsity_forget, feature_sparsity_retain
 
 
-def save_results(sae_folder, feature_sparsity_forget, feature_sparsity_retain):
-    output_dir = os.path.join(SPARSITIES_DIR, sae_folder)
+def save_results(
+    artifacts_folder: str, sae_name: str, feature_sparsity_forget, feature_sparsity_retain
+):
+    output_dir = os.path.join(artifacts_folder, sae_name, SPARSITIES_DIR)
     os.makedirs(output_dir, exist_ok=True)
     np.savetxt(os.path.join(output_dir, FORGET_FILENAME), feature_sparsity_forget, fmt="%f")
     np.savetxt(os.path.join(output_dir, RETAIN_FILENAME), feature_sparsity_retain, fmt="%f")
 
 
-def load_sparsity_data(sae_folder: str) -> tuple[np.ndarray, np.ndarray]:
+def load_sparsity_data(artifacts_folder: str, sae_name: str) -> tuple[np.ndarray, np.ndarray]:
     forget_sparsity = np.loadtxt(
-        os.path.join(SPARSITIES_DIR, sae_folder, FORGET_FILENAME), dtype=float
+        os.path.join(artifacts_folder, sae_name, SPARSITIES_DIR, FORGET_FILENAME), dtype=float
     )
     retain_sparsity = np.loadtxt(
-        os.path.join(SPARSITIES_DIR, sae_folder, RETAIN_FILENAME), dtype=float
+        os.path.join(artifacts_folder, sae_name, SPARSITIES_DIR, RETAIN_FILENAME), dtype=float
     )
     return forget_sparsity, retain_sparsity
 
@@ -198,12 +200,13 @@ def load_sparsity_data(sae_folder: str) -> tuple[np.ndarray, np.ndarray]:
 def save_feature_sparsity(
     model: HookedTransformer,
     sae: SAE,
+    artifacts_folder: str,
     sae_name: str,
     dataset_size: int,
     seq_len: int,
     batch_size: int,
 ):
-    if check_existing_results(sae_name):
+    if check_existing_results(artifacts_folder, sae_name):
         print(f"Sparsity calculation for {sae_name} is already done")
         return
 
@@ -215,4 +218,4 @@ def save_feature_sparsity(
         model, sae, forget_tokens, retain_tokens, batch_size
     )
 
-    save_results(sae_name, feature_sparsity_forget, feature_sparsity_retain)
+    save_results(artifacts_folder, sae_name, feature_sparsity_forget, feature_sparsity_retain)
