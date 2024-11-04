@@ -149,7 +149,7 @@ def calculate_dl(
 
         float_entropy_F[feature_idx] = float_entropy
 
-    total_entropy_F = bool_entropy_F.cuda() + bool_prob_F.cuda() * float_entropy
+    total_entropy_F = bool_entropy_F.cuda() + bool_prob_F.cuda() * float_entropy_F.cuda()
 
     description_length = total_entropy_F.sum().item()
 
