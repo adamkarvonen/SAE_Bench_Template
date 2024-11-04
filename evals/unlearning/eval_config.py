@@ -1,6 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
-import torch
 
 
 @dataclass
@@ -35,17 +33,5 @@ class EvalConfig:
     target_metric: str = "correct"
     save_metrics: bool = True
 
-    sae_releases: list[str] = field(
-        default_factory=lambda: [
-            # "gemma-scope-2b-pt-res",
-            "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-            # "sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
-        ]
-    )
     model_name: str = "gemma-2-2b-it"
-    layer: int = 3
-    # trainer_ids: Optional[list[int]] = None
-    trainer_ids: Optional[list[int]] = field(default_factory=lambda: [2])
-    include_checkpoints: bool = False
-
-    selected_saes_dict: dict = field(default_factory=lambda: {})
+    llm_dtype: str = "bfloat16"

@@ -47,18 +47,23 @@ def anthropic_clamp_resid_SAE_features(
 
             error = resid - reconstruction
 
-            non_zero_features = feature_activations[:, :, features_to_ablate] > 0
+            non_zero_features_BLD = feature_activations[:, :, features_to_ablate] > 0
+
+            # B, L, _ = non_zero_features_BLD.shape
+
+            # non_zero_features_BD = non_zero_features_BLD.any(dim=1)
+            # non_zero_features_BLD = einops.repeat(non_zero_features_BD, "B D -> B L D", L=L)
 
             if not random:
                 if isinstance(multiplier, float) or isinstance(multiplier, int):
                     feature_activations[:, :, features_to_ablate] = torch.where(
-                        non_zero_features,
+                        non_zero_features_BLD,
                         -multiplier,
                         feature_activations[:, :, features_to_ablate],
                     )
                 else:
                     feature_activations[:, :, features_to_ablate] = torch.where(
-                        non_zero_features,
+                        non_zero_features_BLD,
                         -multiplier.unsqueeze(dim=0).unsqueeze(dim=0),
                         feature_activations[:, :, features_to_ablate],
                     )
