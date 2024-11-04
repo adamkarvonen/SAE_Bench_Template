@@ -17,6 +17,7 @@ from torch import nn
 from transformer_lens import HookedTransformer
 import argparse
 from datetime import datetime
+from tqdm import tqdm
 
 from evals.mdl.eval_config import MDLEvalConfig
 from sae_bench_utils import activation_collection, formatting_utils
@@ -29,6 +30,8 @@ from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
     select_saes_multiple_patterns,
 )
+
+EVAL_TYPE = "mdl"
 
 
 class Decodable(Protocol):
@@ -113,7 +116,7 @@ def calculate_dl(
     else:
         raise ValueError("feature_activations should be 2D or 3D tensor")
 
-    for feature_idx in range(num_features):
+    for feature_idx in tqdm(range(num_features), desc="Calculating DL"):
         # BOOL entropy
         bool_prob = t.zeros(1, device=device)
 
@@ -299,35 +302,13 @@ def _run_single_eval(
     model: HookedTransformer,
     device: str,
     dataset_name: str = "HuggingFaceFW/fineweb",
-) -> MDLEvalResult:
-    mdl_eval_results_list: list[MDLEvalResult] = []
+) -> MDLEvalResultsCollection:
+    random.seed(config.random_seed)
+    t.manual_seed(config.random_seed)
 
     t.set_grad_enabled(False)
+    mdl_eval_results_list: list[MDLEvalResult] = []
 
-    # llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    # llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-
-    # train_df, test_df = dataset_utils.load_huggingface_dataset(dataset_name)
-    # train_data, test_data = dataset_utils.get_multi_label_train_test_data(
-    #     train_df,
-    #     test_df,
-    #     dataset_name,
-    #     config.sae_batch_size,
-    #     config.sae_batch_size,
-    #     config.random_seed,
-    # )
-
-    # chosen_classes = dataset_info.chosen_classes_per_dataset[dataset_name]
-
-    # train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
-    # test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
-
-    # train_data = dataset_utils.tokenize_data(
-    #     train_data, model.tokenizer, config.context_length, device
-    # )
-    # test_data = dataset_utils.tokenize_data(
-    #     test_data, model.tokenizer, config.context_length, device
-    # )
     sae.cfg.dataset_trust_remote_code = True
     sae = sae.to(device)
     model = model.to(device)  # type: ignore
@@ -336,8 +317,6 @@ def _run_single_eval(
         model, sae, config.sae_batch_size, dataset=dataset_name, device=device
     )
 
-    # print(f"Running evaluation for layer {config.layer}")
-    # hook_name = f"blocks.{config.layer}.hook_resid_post"
     num_features = sae.cfg.d_sae
 
     def get_min_max_activations() -> tuple[t.Tensor, t.Tensor]:
@@ -372,11 +351,9 @@ def _run_single_eval(
 
     for num_bins in config.num_bins_values:
         for k in config.k_values:
-            assert k is not None
-
             bins = build_bins(min_pos_activations_F, max_activations_F, num_bins=num_bins)
 
-            # print("Built bins")
+            print("Built bins")
 
             within_threshold, mse_loss = check_quantised_features_reach_mse_threshold(
                 bins_F_list_Bi=bins,
@@ -390,9 +367,8 @@ def _run_single_eval(
                 logger.warning(
                     f"mse_loss for num_bins = {num_bins} and k = {k} is {mse_loss}, which is not within threshold"
                 )
-                continue
 
-            # print("Checked threshold")
+            print("Checked threshold")
 
             description_length = calculate_dl(
                 num_features=num_features,
@@ -420,58 +396,84 @@ def _run_single_eval(
 
     mdl_eval_results = MDLEvalResultsCollection(mdl_eval_results_list)
 
-    minimum_viable_eval_result = mdl_eval_results.pick_minimum_viable()
+    result = []
 
-    minimum_viable_description_length = minimum_viable_eval_result.description_length
-    logger.info(minimum_viable_description_length)
+    for mdl_eval_result in mdl_eval_results:
+        result.append(mdl_eval_result.to_dict())
 
-    return minimum_viable_eval_result
+    return result
+
+    # minimum_viable_eval_result = mdl_eval_results.pick_minimum_viable()
+
+    # minimum_viable_description_length = minimum_viable_eval_result.description_length
+    # logger.info(minimum_viable_description_length)
+
+    # return minimum_viable_eval_result
 
 
 def run_eval(
     config: MDLEvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
+    output_path: str,
+    force_rerun: bool = False,
 ) -> dict[str, Any]:
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
+
     results_dict = {}
 
-    random.seed(config.random_seed)
-    t.manual_seed(config.random_seed)
+    if config.llm_dtype == "bfloat16":
+        llm_dtype = t.bfloat16
+    elif config.llm_dtype == "float32":
+        llm_dtype = t.float32
+    else:
+        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
-    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
     )
 
     for dataset_name in config.dataset_names:
-        for sae_release_name, sae_specific_names in selected_saes_dict.items():
-            for sae_specific_name in sae_specific_names:
+        for sae_release, sae_id in selected_saes_dict.items():
+            for sae_specific_name in sae_id:
                 try:
-                    sae, _, _ = SAE.from_pretrained(
-                        sae_release_name, sae_specific_name, device=device
-                    )
+                    sae, _, _ = SAE.from_pretrained(sae_release, sae_specific_name, device=device)
                 except ValueError as e:
-                    logger.error(
-                        f"Error loading SAE {sae_specific_name} from {sae_release_name}: {e}"
-                    )
-                    sae_specific_name = "blocks.3.hook_resid_post__trainer_10"
-                    sae, _, _ = SAE.from_pretrained(
-                        sae_release_name, sae_specific_name, device=device
-                    )
+                    logger.error(f"Error loading SAE {sae_specific_name} from {sae_release}: {e}")
 
-                eval_result = _run_single_eval(
+                sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+                sae_result_file = sae_result_file.replace("/", "_")
+                sae_result_path = os.path.join(output_path, sae_result_file)
+
+                eval_output = _run_single_eval(
                     config=config,
                     sae=sae,
                     model=model,
                     dataset_name=dataset_name,
                     device=device,
                 )
-                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = eval_result.to_dict()
+
+                sae_eval_result = {
+                    "eval_instance_id": eval_instance_id,
+                    "sae_lens_release": sae_release,
+                    "sae_lens_id": sae_id,
+                    "eval_type_id": EVAL_TYPE,
+                    "sae_lens_version": sae_lens_version,
+                    "sae_bench_version": sae_bench_commit_hash,
+                    "date_time": datetime.now().isoformat(),
+                    "eval_config": asdict(config),
+                    "eval_results": eval_output,
+                    "eval_artifacts": {"artifacts": "None"},
+                }
+
+                with open(sae_result_path, "w") as f:
+                    json.dump(sae_eval_result, f, indent=4)
+
+                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = eval_output
 
     results_dict["custom_eval_config"] = asdict(config)
-    # results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
-    #     results_dict, config.dataset_names
-    # )
 
     return results_dict
 
@@ -507,7 +509,7 @@ def create_config_and_selected_saes(
 
 
 def arg_parser():
-    parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
+    parser = argparse.ArgumentParser(description="Run MDL evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
@@ -525,7 +527,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/sparse_probing/results",
+        default="evals/mdl/results",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -539,7 +541,7 @@ def arg_parser():
 
 
 if __name__ == "__main__":
-    """python main.py \
+    """python evals/mdl/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
     --model_name pythia-70m-deduped """
@@ -556,8 +558,8 @@ if __name__ == "__main__":
         r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
     ]
     sae_block_pattern = [
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
     ]
 
     sae_regex_patterns = None
@@ -579,31 +581,20 @@ if __name__ == "__main__":
     os.makedirs(args.output_folder, exist_ok=True)
 
     config = MDLEvalConfig(
-        k_values=[12, 16, 24, 32],
-        num_bins_values=[8, 12, 16, 32, 64, 128],
+        k_values=[None],
+        # num_bins_values=[8, 12, 16, 32, 64, 128],
+        num_bins_values=[8, 16, 32, 64],
         mse_epsilon_threshold=0.2,
     )
     logger.info(config)
 
-    results_dict = run_eval(config, selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
+    results_dict = run_eval(
+        config,
+        selected_saes_dict,
+        device,
+        args.output_folder,
+        args.force_rerun,
     )
-    output_folder = "results"  # at evals/<eval_name>
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
 
     end_time = time.time()
 
