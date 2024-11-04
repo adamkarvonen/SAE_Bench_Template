@@ -229,7 +229,7 @@ def get_balanced_dataset(
 
         if min_count < min_samples_per_quadrant:
             continue
-
+            
         sampled_texts = []
         for _, group_df in prof_df.groupby(column2_name):
             sampled_group = group_df.sample(n=min_samples_per_quadrant, random_state=random_seed)
