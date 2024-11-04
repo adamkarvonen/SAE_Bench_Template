@@ -86,7 +86,6 @@ def calculate_dl(
     sae: SAE,
     k: int,
 ) -> float:
-
     float_entropy_F = t.zeros(num_features, device=device)
     bool_entropy_F = t.zeros(num_features, device=device)
 
@@ -113,9 +112,7 @@ def calculate_dl(
         if bool_prob == 0 or bool_prob == 1:
             bool_entropy = 0
         else:
-            bool_entropy = -bool_prob * t.log2(bool_prob) - (1 - bool_prob) * t.log2(
-                1 - bool_prob
-            )
+            bool_entropy = -bool_prob * t.log2(bool_prob) - (1 - bool_prob) * t.log2(1 - bool_prob)
         bool_entropy_F[feature_idx] = bool_entropy
 
         # FLOAT entropy
@@ -212,7 +209,6 @@ def check_quantised_features_reach_mse_threshold(
     autoencoder: SAE,
     k: Optional[int] = None,
 ) -> tuple[bool, float]:
-
     mse_losses: list[t.Tensor] = []
 
     for i in range(1):
@@ -258,7 +254,6 @@ class MDLEvalResult:
     mse_loss: float
 
     def to_dict(self) -> dict[str, Any]:
-
         out = asdict(self)
         out["bins"] = []
         return out
@@ -349,9 +344,7 @@ def _run_single_eval(
                 ],
                 dim=0,
             )
-            min_pos_activations_1F = t.min(
-                cat_feature_activations_BsF, dim=0
-            ).values.unsqueeze(0)
+            min_pos_activations_1F = t.min(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
             max_activations_1F = t.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
 
         min_pos_activations_F = min_pos_activations_1F.squeeze()
@@ -460,9 +453,7 @@ def run_eval(
                     dataset_name=dataset_name,
                     device=device,
                 )
-                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = (
-                    eval_result.to_dict()
-                )
+                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = eval_result.to_dict()
 
     results_dict["custom_eval_config"] = asdict(config)
     # results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
