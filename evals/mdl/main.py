@@ -15,9 +15,20 @@ from sae_lens import SAE, ActivationsStore
 from sae_lens.sae import TopK
 from torch import nn
 from transformer_lens import HookedTransformer
+import argparse
+from datetime import datetime
 
-from evals.mdl.eval_config import EvalConfig
+from evals.mdl.eval_config import MDLEvalConfig
 from sae_bench_utils import activation_collection, formatting_utils
+from sae_bench_utils import (
+    get_eval_uuid,
+    get_sae_lens_version,
+    get_sae_bench_version,
+)
+from sae_bench_utils.sae_selection_utils import (
+    get_saes_from_regex,
+    select_saes_multiple_patterns,
+)
 
 
 class Decodable(Protocol):
@@ -283,13 +294,15 @@ class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
 
 
 def _run_single_eval(
-    config: EvalConfig,
+    config: MDLEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     device: str,
     dataset_name: str = "HuggingFaceFW/fineweb",
 ) -> MDLEvalResult:
     mdl_eval_results_list: list[MDLEvalResult] = []
+
+    t.set_grad_enabled(False)
 
     # llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     # llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
@@ -416,7 +429,7 @@ def _run_single_eval(
 
 
 def run_eval(
-    config: EvalConfig,
+    config: MDLEvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
 ) -> dict[str, Any]:
@@ -463,50 +476,116 @@ def run_eval(
     return results_dict
 
 
-if __name__ == "__main__":
-    logger.remove()
-    logger.add(sys.stdout, level="INFO")
-
-    # feature_activations_BSF = t.relu(t.randn(10, 5))
-
-    # minimum_viable_description_length = _run_single_eval(
-    #     feature_activations_BSF,
-    # )
-    # print(minimum_viable_description_length)
-    # pass
-
+def setup_environment():
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
     if t.backends.mps.is_available():
         device = "mps"
     else:
         device = "cuda" if t.cuda.is_available() else "cpu"
-    logger.info(f"Using device: {device}")
+
+    print(f"Using device: {device}")
+    return device
+
+
+def create_config_and_selected_saes(
+    args,
+) -> tuple[MDLEvalConfig, dict[str, list[str]]]:
+    config = MDLEvalConfig(
+        random_seed=args.random_seed,
+        model_name=args.model_name,
+    )
+
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument(
+        "--sae_regex_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE selection",
+    )
+    parser.add_argument(
+        "--sae_block_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE block selection",
+    )
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default="evals/sparse_probing/results",
+        help="Output folder",
+    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+    parser.add_argument(
+        "--clean_up_activations",
+        action="store_false",
+        help="Clean up activations after evaluation",
+    )
+
+    return parser
+
+
+if __name__ == "__main__":
+    """python main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped """
+    logger.remove()
+    logger.add(sys.stdout, level="INFO")
+
+    args = arg_parser().parse_args()
+    device = setup_environment()
 
     start_time = time.time()
 
-    config = EvalConfig(
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+
+    print(selected_saes_dict)
+
+    # config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    # config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+    #     -1
+    # ]
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
+
+    config = MDLEvalConfig(
         k_values=[12, 16, 24, 32],
         num_bins_values=[8, 12, 16, 32, 64, 128],
         mse_epsilon_threshold=0.2,
     )
     logger.info(config)
 
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
-
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
-
-    results_dict = run_eval(config, config.selected_saes_dict, device)
+    results_dict = run_eval(config, selected_saes_dict, device)
 
     # create output filename and save results
     checkpoints_str = ""
