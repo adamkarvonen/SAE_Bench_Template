@@ -78,57 +78,48 @@
       "title": "CoreEvalConfig",
       "type": "object"
     },
-    "CoreFeatureMetrics": {
+    "CoreFeatureMetric": {
       "properties": {
+        "index": {
+          "description": "Index of the feature in the SAE",
+          "title": "Feature Index",
+          "type": "integer"
+        },
         "feature_density": {
           "description": "Proportion of tokens that activate each feature",
-          "items": {
-            "type": "number"
-          },
           "title": "Feature Density",
-          "type": "array"
+          "type": "number"
         },
         "consistent_activation_heuristic": {
           "description": "Average number of tokens per prompt that activate each feature",
-          "items": {
-            "type": "number"
-          },
           "title": "Consistent Activation Heuristic",
-          "type": "array"
+          "type": "number"
         },
         "encoder_bias": {
           "description": "Bias terms in the encoder for each feature",
-          "items": {
-            "type": "number"
-          },
           "title": "Encoder Bias",
-          "type": "array"
+          "type": "number"
         },
         "encoder_norm": {
           "description": "L2 norm of encoder weights for each feature",
-          "items": {
-            "type": "number"
-          },
           "title": "Encoder Norm",
-          "type": "array"
+          "type": "number"
         },
         "encoder_decoder_cosine_sim": {
           "description": "Cosine similarity between encoder and decoder weights for each feature",
-          "items": {
-            "type": "number"
-          },
           "title": "Encoder-Decoder Cosine Similarity",
-          "type": "array"
+          "type": "number"
         }
       },
       "required": [
+        "index",
         "feature_density",
         "consistent_activation_heuristic",
         "encoder_bias",
         "encoder_norm",
         "encoder_decoder_cosine_sim"
       ],
-      "title": "CoreFeatureMetrics",
+      "title": "CoreFeatureMetric",
       "type": "object"
     },
     "CoreMetricCategories": {
@@ -368,7 +359,7 @@
     "eval_result_details": {
       "description": "Detailed metrics for each feature in the SAE",
       "items": {
-        "$ref": "#/$defs/CoreFeatureMetrics"
+        "$ref": "#/$defs/CoreFeatureMetric"
       },
       "title": "Feature-wise Metrics",
       "type": "array"

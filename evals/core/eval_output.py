@@ -10,6 +10,7 @@ from evals.base_eval_output import (
 
 EVAL_TYPE_ID_CORE = "core"
 
+
 # Define metrics for model behavior preservation
 @dataclass
 class ModelBehaviorPreservationMetrics(BaseMetrics):
@@ -26,6 +27,7 @@ class ModelBehaviorPreservationMetrics(BaseMetrics):
         title="KL Divergence with SAE",
         description="KL divergence when using the SAE reconstruction",
     )
+
 
 # Define metrics for model performance preservation
 @dataclass
@@ -48,6 +50,7 @@ class ModelPerformancePreservationMetrics(BaseMetrics):
         description="Base cross entropy loss without any intervention",
     )
 
+
 # Define metrics for reconstruction quality
 @dataclass
 class ReconstructionQualityMetrics(BaseMetrics):
@@ -64,6 +67,7 @@ class ReconstructionQualityMetrics(BaseMetrics):
         title="Cosine Similarity",
         description="Cosine similarity between original activation and SAE reconstruction",
     )
+
 
 # Define metrics for shrinkage
 @dataclass
@@ -86,6 +90,7 @@ class ShrinkageMetrics(BaseMetrics):
         description="Measure of systematic bias in the reconstruction",
     )
 
+
 # Define metrics for sparsity
 @dataclass
 class SparsityMetrics(BaseMetrics):
@@ -99,6 +104,7 @@ class SparsityMetrics(BaseMetrics):
         description="Average sum of absolute feature activations",
     )
 
+
 # Define metrics for token stats
 @dataclass
 class TokenStatsMetrics(BaseMetrics):
@@ -110,6 +116,7 @@ class TokenStatsMetrics(BaseMetrics):
         title="Total Tokens (Sparsity/Variance)",
         description="Total number of tokens used in sparsity and variance evaluation",
     )
+
 
 # Define the categories themselves
 @dataclass
@@ -139,34 +146,40 @@ class CoreMetricCategories(BaseMetricCategories):
         description="Statistics about the number of tokens used in evaluation",
     )
 
+
 # Define the feature-wise metrics
 @dataclass
-class CoreFeatureMetrics(BaseResultDetail):
-    feature_density: list[float] = Field(
+class CoreFeatureMetric(BaseResultDetail):
+    index: int = Field(
+        title="Feature Index",
+        description="Index of the feature in the SAE",
+    )
+    feature_density: float = Field(
         title="Feature Density",
         description="Proportion of tokens that activate each feature",
     )
-    consistent_activation_heuristic: list[float] = Field(
+    consistent_activation_heuristic: float = Field(
         title="Consistent Activation Heuristic",
         description="Average number of tokens per prompt that activate each feature",
     )
-    encoder_bias: list[float] = Field(
+    encoder_bias: float = Field(
         title="Encoder Bias",
         description="Bias terms in the encoder for each feature",
     )
-    encoder_norm: list[float] = Field(
+    encoder_norm: float = Field(
         title="Encoder Norm",
         description="L2 norm of encoder weights for each feature",
     )
-    encoder_decoder_cosine_sim: list[float] = Field(
+    encoder_decoder_cosine_sim: float = Field(
         title="Encoder-Decoder Cosine Similarity",
         description="Cosine similarity between encoder and decoder weights for each feature",
     )
 
+
 # Define the eval output
 @dataclass(config=ConfigDict(title="Core SAE Evaluation"))
 class CoreEvalOutput(
-    BaseEvalOutput[CoreEvalConfig, CoreMetricCategories, CoreFeatureMetrics]
+    BaseEvalOutput[CoreEvalConfig, CoreMetricCategories, CoreFeatureMetric]
 ):
     """
     The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.
@@ -176,7 +189,7 @@ class CoreEvalOutput(
     eval_id: str
     datetime_epoch_millis: int
     eval_result_metrics: CoreMetricCategories
-    eval_result_details: list[CoreFeatureMetrics] = Field(
+    eval_result_details: list[CoreFeatureMetric] = Field(
         default_factory=list,
         title="Feature-wise Metrics",
         description="Detailed metrics for each feature in the SAE",
