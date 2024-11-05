@@ -113,9 +113,7 @@ def run_eval_single_dataset(
             all_train_acts_BLD
         )
 
-        all_test_acts_BD = activation_collection.create_meaned_model_activations(
-            all_test_acts_BLD
-        )
+        all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
 
         llm_probes, llm_test_accuracies = probe_training.train_probe_on_activations(
             all_train_acts_BD,
@@ -128,12 +126,10 @@ def run_eval_single_dataset(
         llm_test_accuracy = average_test_accuracy(llm_test_accuracies)
 
         for k in config.k_values:
-            llm_top_k_probes, llm_top_k_test_accuracies = (
-                probe_training.train_probe_on_activations(
-                    all_train_acts_BD,
-                    all_test_acts_BD,
-                    select_top_k=k,
-                )
+            llm_top_k_probes, llm_top_k_test_accuracies = probe_training.train_probe_on_activations(
+                all_train_acts_BD,
+                all_test_acts_BD,
+                select_top_k=k,
             )
             llm_results[f"llm_top_{k}_test_accuracy"] = average_test_accuracy(
                 llm_top_k_test_accuracies
@@ -154,12 +150,8 @@ def run_eval_single_dataset(
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(
-        all_train_acts_BLD
-    )
-    all_test_acts_BD = activation_collection.create_meaned_model_activations(
-        all_test_acts_BLD
-    )
+    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
+    all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
 
     all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
         all_train_acts_BLD, sae, config.sae_batch_size
@@ -186,12 +178,10 @@ def run_eval_single_dataset(
     results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
 
     for k in config.k_values:
-        sae_top_k_probes, sae_top_k_test_accuracies = (
-            probe_training.train_probe_on_activations(
-                all_sae_train_acts_BF,
-                all_sae_test_acts_BF,
-                select_top_k=k,
-            )
+        sae_top_k_probes, sae_top_k_test_accuracies = probe_training.train_probe_on_activations(
+            all_sae_train_acts_BF,
+            all_sae_test_acts_BF,
+            select_top_k=k,
         )
         results_dict[f"sae_top_{k}_test_accuracy"] = average_test_accuracy(
             sae_top_k_test_accuracies
@@ -250,7 +240,7 @@ def run_eval(
     device: str,
     output_path: str,
     force_rerun: bool = False,
-    clean_up_activations: bool = True,
+    clean_up_activations: bool = False,
 ):
     """By default, clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
     This is because activations for all datasets can easily be 10s of GBs.
@@ -309,9 +299,7 @@ def run_eval(
             if os.path.exists(sae_result_path) and not force_rerun:
                 print(f"Loading existing results from {sae_result_path}")
                 with open(sae_result_path, "r") as f:
-                    eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(
-                        f.read()
-                    )
+                    eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
             else:
                 sparse_probing_results = run_eval_single_sae(
                     config,
@@ -385,9 +373,7 @@ def create_config_and_selected_saes(
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(
-        args.sae_regex_pattern, args.sae_block_pattern
-    )
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
 
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
@@ -401,9 +387,7 @@ def create_config_and_selected_saes(
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument(
-        "--model_name", type=str, default="pythia-70m-deduped", help="Model name"
-    )
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -422,12 +406,10 @@ def arg_parser():
         default="evals/sparse_probing/results",
         help="Output folder",
     )
-    parser.add_argument(
-        "--force_rerun", action="store_true", help="Force rerun of experiments"
-    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
         "--clean_up_activations",
-        action="store_false",
+        action="store_true",
         help="Clean up activations after evaluation",
     )
 
@@ -463,18 +445,14 @@ if __name__ == "__main__":
     config, selected_saes_dict = create_config_and_selected_saes(args)
 
     if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(
-            sae_regex_patterns, sae_block_pattern
-        )
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     print(selected_saes_dict)
 
-    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[
-        config.model_name
+    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
     ]
-    config.llm_dtype = str(
-        activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-    ).split(".")[-1]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

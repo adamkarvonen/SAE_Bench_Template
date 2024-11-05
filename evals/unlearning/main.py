@@ -109,7 +109,7 @@ def run_eval(
     device: str,
     output_path: str,
     force_rerun: bool = False,
-    clean_up_artifacts: bool = True,
+    clean_up_artifacts: bool = False,
 ):
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()

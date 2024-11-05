@@ -684,7 +684,7 @@ def run_eval(
     device: str,
     output_path: str,
     force_rerun: bool = False,
-    clean_up_activations: bool = True,
+    clean_up_activations: bool = False,
 ):
     """By default, clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
     This is because activations for all datasets can easily be 10s of GBs.
