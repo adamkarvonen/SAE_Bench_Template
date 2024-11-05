@@ -23,8 +23,8 @@
           "type": "boolean"
         },
         "early_stopping_patience": {
-          "default": 40,
-          "description": "This reduces randomness in the SCR results.",
+          "default": 20,
+          "description": "We set early stopping patience to probe epochs, so we always train for the same amount.",
           "title": "Early Stopping Patience",
           "type": "integer"
         },
@@ -59,7 +59,7 @@
           "type": "integer"
         },
         "probe_epochs": {
-          "default": 100,
+          "default": 20,
           "description": "Number of epochs to train the linear probe. Many epochs are needed to decrease randomness in the SCR results.",
           "title": "Probe Epochs",
           "type": "integer"
@@ -68,6 +68,12 @@
           "default": 0.001,
           "description": "Probe learning rate.",
           "title": "Probe LR",
+          "type": "number"
+        },
+        "probe_l1_penalty": {
+          "default": 0.001,
+          "description": "L1 sparsity penalty when training the linear probe.",
+          "title": "Probe L1 Penalty",
           "type": "number"
         },
         "sae_batch_size": {

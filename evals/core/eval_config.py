@@ -1,11 +1,7 @@
-from importlib.metadata import PackageNotFoundError, version
-from pathlib import Path
-import subprocess
-from typing import Optional
 from pydantic.dataclasses import dataclass
 from pydantic import Field
 from evals.base_eval_output import BaseEvalConfig
-from sae_lens import SAEConfig
+
 
 # Define the eval config, which inherits from BaseEvalConfig, and include fields with titles and descriptions.
 @dataclass
