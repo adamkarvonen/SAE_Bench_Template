@@ -8,7 +8,7 @@ class MDLEvalConfig:
     num_bins_values: list[int] = field(default_factory=lambda: [4, 6, 8, 12, 16, 32])
 
     random_seed: int = 42
-    dataset_names: list[str] = field(default_factory=lambda: ["HuggingFaceFW/fineweb"])
+    dataset_name: str = "HuggingFaceFW/fineweb"
 
     context_length: int = 128
 

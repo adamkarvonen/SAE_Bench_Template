@@ -14,6 +14,7 @@ from loguru import logger
 from sae_lens import SAE, ActivationsStore
 from sae_lens.sae import TopK
 from torch import nn
+import gc
 from transformer_lens import HookedTransformer
 import argparse
 from datetime import datetime
@@ -380,7 +381,7 @@ def _run_single_eval(
             )
 
             logger.info(
-                f"Description length: {description_length} for num_bins = {num_bins} and k = {k}"
+                f"Description length: {description_length} for num_bins = {num_bins} and k = {k} and mse = {mse_loss}"
             )
 
             mdl_eval_results_list.append(
@@ -431,47 +432,60 @@ def run_eval(
     else:
         raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
+    print(f"Using dtype: {llm_dtype}")
+
     model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for dataset_name in config.dataset_names:
-        for sae_release, sae_id in selected_saes_dict.items():
-            for sae_specific_name in sae_id:
-                try:
-                    sae, _, _ = SAE.from_pretrained(sae_release, sae_specific_name, device=device)
-                except ValueError as e:
-                    logger.error(f"Error loading SAE {sae_specific_name} from {sae_release}: {e}")
+    for sae_release in selected_saes_dict:
+        print(
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+        )
 
-                sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-                sae_result_file = sae_result_file.replace("/", "_")
-                sae_result_path = os.path.join(output_path, sae_result_file)
+        for sae_id in tqdm(
+            selected_saes_dict[sae_release],
+            desc="Running SAE evaluation on all selected SAEs",
+        ):
+            gc.collect()
+            t.cuda.empty_cache()
 
-                eval_output = _run_single_eval(
-                    config=config,
-                    sae=sae,
-                    model=model,
-                    dataset_name=dataset_name,
-                    device=device,
-                )
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+            sae = sae.to(device=device, dtype=llm_dtype)
 
-                sae_eval_result = {
-                    "eval_instance_id": eval_instance_id,
-                    "sae_lens_release": sae_release,
-                    "sae_lens_id": sae_id,
-                    "eval_type_id": EVAL_TYPE,
-                    "sae_lens_version": sae_lens_version,
-                    "sae_bench_version": sae_bench_commit_hash,
-                    "date_time": datetime.now().isoformat(),
-                    "eval_config": asdict(config),
-                    "eval_results": eval_output,
-                    "eval_artifacts": {"artifacts": "None"},
-                }
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
 
-                with open(sae_result_path, "w") as f:
-                    json.dump(sae_eval_result, f, indent=4)
+            eval_output = _run_single_eval(
+                config=config,
+                sae=sae,
+                model=model,
+                dataset_name=config.dataset_name,
+                device=device,
+            )
 
-                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = eval_output
+            sae_eval_result = {
+                "eval_instance_id": eval_instance_id,
+                "sae_lens_release": sae_release,
+                "sae_lens_id": sae_id,
+                "eval_type_id": EVAL_TYPE,
+                "sae_lens_version": sae_lens_version,
+                "sae_bench_version": sae_bench_commit_hash,
+                "date_time": datetime.now().isoformat(),
+                "eval_config": asdict(config),
+                "eval_results": eval_output,
+                "eval_artifacts": {"artifacts": "None"},
+            }
+
+            with open(sae_result_path, "w") as f:
+                json.dump(sae_eval_result, f, indent=4)
+
+            results_dict[sae_result_file] = eval_output
 
     results_dict["custom_eval_config"] = asdict(config)
 
@@ -562,6 +576,17 @@ if __name__ == "__main__":
         r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
     ]
 
+    # sae_regex_patterns = [
+    #     r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+    #     r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
+    #     r"(gemma-scope-2b-pt-res)",
+    # ]
+    # sae_block_pattern = [
+    #     r".*blocks\.19(?!.*step).*",
+    #     r".*blocks\.19(?!.*step).*",
+    #     r".*layer_(19).*(16k).*",
+    # ]
+
     sae_regex_patterns = None
     sae_block_pattern = None
 
@@ -572,11 +597,6 @@ if __name__ == "__main__":
 
     print(selected_saes_dict)
 
-    # config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    # config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-    #     -1
-    # ]
-
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
 
@@ -584,8 +604,13 @@ if __name__ == "__main__":
         k_values=[None],
         # num_bins_values=[8, 12, 16, 32, 64, 128],
         num_bins_values=[8, 16, 32, 64],
+        # num_bins_values=[8],
         mse_epsilon_threshold=0.2,
+        model_name=args.model_name,
     )
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
+    ]
     logger.info(config)
 
     results_dict = run_eval(
