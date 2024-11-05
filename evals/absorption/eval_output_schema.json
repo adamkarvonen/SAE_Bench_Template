@@ -45,16 +45,16 @@
     "AbsorptionMeanMetrics": {
       "properties": {
         "mean_absorption_score": {
-          "default_display": true,
           "description": "Average of the absorption scores across all letters",
           "title": "Mean Absorption Score",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "mean_num_split_features": {
-          "default_display": true,
           "description": "Average number of split features across all letters",
           "title": "Mean Number of Split Features",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         }
       },
       "required": [
@@ -68,9 +68,9 @@
       "properties": {
         "mean": {
           "$ref": "#/$defs/AbsorptionMeanMetrics",
-          "default_display": true,
           "description": "Mean metrics",
-          "title": "Mean"
+          "title": "Mean",
+          "ui_default_display": true
         }
       },
       "required": [

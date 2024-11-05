@@ -6,6 +6,7 @@ from evals.base_eval_output import (
     BaseMetricCategories,
     BaseMetrics,
     BaseResultDetail,
+    DEFAULT_DISPLAY,
 )
 
 EVAL_TYPE_ID_ABSORPTION = "absorption_first_letter"
@@ -18,12 +19,12 @@ class AbsorptionMeanMetrics(BaseMetrics):
     mean_absorption_score: float = Field(
         title="Mean Absorption Score",
         description="Average of the absorption scores across all letters",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     mean_num_split_features: float = Field(
         title="Mean Number of Split Features",
         description="Average number of split features across all letters",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
@@ -33,7 +34,7 @@ class AbsorptionMetricCategories(BaseMetricCategories):
     mean: AbsorptionMeanMetrics = Field(
         title="Mean",
         description="Mean metrics",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 

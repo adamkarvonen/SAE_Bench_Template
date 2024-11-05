@@ -1,6 +1,6 @@
 from pydantic.dataclasses import dataclass
 from pydantic import Field
-from evals.base_eval_output import BaseEvalConfig
+from evals.base_eval_output import DEFAULT_DISPLAY, BaseEvalConfig
 
 
 # Define the eval config, which inherits from BaseEvalConfig, and include fields with titles and descriptions.
@@ -10,26 +10,31 @@ class CoreEvalConfig(BaseEvalConfig):
         default=16,
         title="Batch Size Prompts",
         description="Batch size for evaluation prompts",
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     n_eval_reconstruction_batches: int = Field(
         default=10,
         title="Reconstruction Batches",
         description="Number of evaluation batches for reconstruction metrics",
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     n_eval_sparsity_variance_batches: int = Field(
         default=1,
         title="Sparsity Variance Batches",
         description="Number of evaluation batches for sparsity and variance metrics",
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     dataset: str = Field(
         default="Skylion007/openwebtext",
         title="Dataset",
         description="Dataset to evaluate on",
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     context_size: int = Field(
         default=128,
         title="Context Length",
         description="Context length to evaluate on",
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     compute_kl: bool = Field(
         default=False,

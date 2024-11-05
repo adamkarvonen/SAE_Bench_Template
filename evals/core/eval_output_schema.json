@@ -6,31 +6,36 @@
           "default": 16,
           "description": "Batch size for evaluation prompts",
           "title": "Batch Size Prompts",
-          "type": "integer"
+          "type": "integer",
+          "ui_default_display": true
         },
         "n_eval_reconstruction_batches": {
           "default": 10,
           "description": "Number of evaluation batches for reconstruction metrics",
           "title": "Reconstruction Batches",
-          "type": "integer"
+          "type": "integer",
+          "ui_default_display": true
         },
         "n_eval_sparsity_variance_batches": {
           "default": 1,
           "description": "Number of evaluation batches for sparsity and variance metrics",
           "title": "Sparsity Variance Batches",
-          "type": "integer"
+          "type": "integer",
+          "ui_default_display": true
         },
         "dataset": {
           "default": "Skylion007/openwebtext",
           "description": "Dataset to evaluate on",
           "title": "Dataset",
-          "type": "string"
+          "type": "string",
+          "ui_default_display": true
         },
         "context_size": {
           "default": 128,
           "description": "Context length to evaluate on",
           "title": "Context Length",
-          "type": "integer"
+          "type": "integer",
+          "ui_default_display": true
         },
         "compute_kl": {
           "default": false,
@@ -169,10 +174,10 @@
     "ModelBehaviorPreservationMetrics": {
       "properties": {
         "kl_div_score": {
-          "default_display": true,
           "description": "Normalized KL divergence score comparing model behavior with and without SAE",
           "title": "KL Divergence Score",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "kl_div_with_ablation": {
           "description": "KL divergence when the activation is ablated",
@@ -196,10 +201,10 @@
     "ModelPerformancePreservationMetrics": {
       "properties": {
         "ce_loss_score": {
-          "default_display": true,
           "description": "Normalized cross entropy loss score comparing model performance with and without SAE",
           "title": "Cross Entropy Loss Score",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "ce_loss_with_ablation": {
           "description": "Cross entropy loss when the activation is ablated",
@@ -229,10 +234,10 @@
     "ReconstructionQualityMetrics": {
       "properties": {
         "explained_variance": {
-          "default_display": true,
           "description": "Proportion of variance in the original activation explained by the SAE reconstruction",
           "title": "Explained Variance",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "mse": {
           "description": "Mean squared error between original activation and SAE reconstruction",
@@ -266,10 +271,10 @@
           "type": "number"
         },
         "l2_ratio": {
-          "default_display": true,
           "description": "Ratio of output to input L2 norms",
           "title": "L2 Ratio",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "relative_reconstruction_bias": {
           "description": "Measure of systematic bias in the reconstruction",
@@ -289,10 +294,10 @@
     "SparsityMetrics": {
       "properties": {
         "l0": {
-          "default_display": true,
           "description": "Average number of non-zero feature activations",
           "title": "L0 Sparsity",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "l1": {
           "description": "Average sum of absolute feature activations",
