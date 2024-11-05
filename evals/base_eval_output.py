@@ -3,7 +3,10 @@ import json
 from typing import Any, Generic, TypeVar
 from pydantic.dataclasses import dataclass
 from pydantic import Field, field_validator, model_validator
+from pydantic.config import JsonDict
 
+# adding this to the json_schema_extra field of a field will make it display by default in UIs
+DEFAULT_DISPLAY: JsonDict = {"ui_default_display": True}
 
 @dataclass
 class BaseEvalConfig:
