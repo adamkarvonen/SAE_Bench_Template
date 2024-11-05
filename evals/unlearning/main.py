@@ -202,7 +202,10 @@ def run_eval(
     results_dict["custom_eval_config"] = asdict(config)
 
     if clean_up_artifacts:
-        shutil.rmtree(artifacts_folder)
+        for folder in os.listdir(artifacts_folder):
+            folder_path = os.path.join(artifacts_folder, folder)
+            if os.path.isdir(folder_path) and folder != "data":
+                shutil.rmtree(folder_path)
 
     return results_dict
 
