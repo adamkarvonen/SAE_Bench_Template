@@ -31,7 +31,9 @@ def main():
                             and issubclass(obj, BaseEvalOutput)
                             and obj != BaseEvalOutput
                         ):
-                            output_file = os.path.join(root, "eval_output_schema.json")
+                            output_file = os.path.join(
+                                root, f"eval_output_schema_{name}.json"
+                            )
                             generate_json_schema(obj, output_file)
                             print(f"Generated schema for {name} in {output_file}")
                 except ImportError as e:
