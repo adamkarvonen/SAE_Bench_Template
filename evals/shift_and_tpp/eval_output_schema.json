@@ -137,9 +137,9 @@
       "properties": {
         "tpp_metrics": {
           "$ref": "#/$defs/TppMetrics",
-          "default_display": true,
           "description": "Targeted Probe Perturbation (TPP) results",
-          "title": "TPP Metrics"
+          "title": "TPP Metrics",
+          "ui_default_display": true
         }
       },
       "required": [
@@ -238,9 +238,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "TPP metric when ablating the top 10 SAE latents",
-          "title": "TPP Metric, Top 10 SAE latents"
+          "title": "TPP Metric, Top 10 SAE latents",
+          "ui_default_display": true
         },
         "tpp_threshold_10_intended_diff_only": {
           "anyOf": [
@@ -523,9 +523,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "TPP metric when ablating the top 10 SAE latents",
-          "title": "TPP Metric, Top 10 SAE latents"
+          "title": "TPP Metric, Top 10 SAE latents",
+          "ui_default_display": true
         },
         "tpp_threshold_10_intended_diff_only": {
           "anyOf": [
@@ -816,6 +816,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "TPP Evaluation",
+  "title": "TPP",
   "type": "object"
 }

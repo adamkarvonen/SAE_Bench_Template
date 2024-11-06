@@ -178,7 +178,7 @@ class CoreFeatureMetric(BaseResultDetail):
 
 
 # Define the eval output
-@dataclass(config=ConfigDict(title="Core SAE Evaluation"))
+@dataclass(config=ConfigDict(title="Core"))
 class CoreEvalOutput(
     BaseEvalOutput[CoreEvalConfig, CoreMetricCategories, CoreFeatureMetric]
 ):

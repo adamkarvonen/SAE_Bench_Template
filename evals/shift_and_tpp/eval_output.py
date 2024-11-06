@@ -1,6 +1,7 @@
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict, Field
 from evals.base_eval_output import (
+    DEFAULT_DISPLAY,
     BaseEvalOutput,
     BaseMetricCategories,
     BaseMetrics,
@@ -55,7 +56,7 @@ class ShiftMetrics(BaseMetrics):
         None,
         title="SCR Metric, Top 10 SAE latents",
         description="SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 10 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     scr_dir2_threshold_10: float | None = Field(
         None,
@@ -129,7 +130,7 @@ class ShiftMetricCategories(BaseMetricCategories):
     shift_metrics: ShiftMetrics = Field(
         title="Shift Metrics",
         description="SHIFT SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
@@ -176,7 +177,7 @@ class ShiftResultDetail(BaseResultDetail):
         None,
         title="SCR Metric, Top 10 SAE latents",
         description="SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 10 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     scr_dir2_threshold_10: float | None = Field(
         None,
@@ -245,7 +246,7 @@ class ShiftResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="SHIFT Evaluation"))
+@dataclass(config=ConfigDict(title="SHIFT"))
 class ShiftEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, ShiftMetricCategories, ShiftResultDetail]
 ):
@@ -308,7 +309,7 @@ class TppMetrics(BaseMetrics):
         None,
         title="TPP Metric, Top 10 SAE latents",
         description="TPP metric when ablating the top 10 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     tpp_threshold_10_intended_diff_only: float | None = Field(
         None,
@@ -387,7 +388,7 @@ class TppMetricCategories(BaseMetricCategories):
     tpp_metrics: TppMetrics = Field(
         title="TPP Metrics",
         description="Targeted Probe Perturbation (TPP) results",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
@@ -429,7 +430,7 @@ class TppResultDetail(BaseResultDetail):
         None,
         title="TPP Metric, Top 10 SAE latents",
         description="TPP metric when ablating the top 10 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     tpp_threshold_10_intended_diff_only: float | None = Field(
         None,
@@ -503,8 +504,10 @@ class TppResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="TPP Evaluation"))
-class TppEvalOutput(BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]):
+@dataclass(config=ConfigDict(title="TPP"))
+class TppEvalOutput(
+    BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]
+):
     """
     The output of a TPP evaluation.
     """

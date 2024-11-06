@@ -73,10 +73,10 @@
     "SparseProbingLlmMetrics": {
       "properties": {
         "llm_test_accuracy": {
-          "default_display": true,
           "description": "Linear probe accuracy when training on the full LLM residual stream",
           "title": "LLM Test Accuracy",
-          "type": "number"
+          "type": "number",
+          "ui_default_display": true
         },
         "llm_top_1_test_accuracy": {
           "anyOf": [
@@ -88,9 +88,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the LLM top 1 residual stream channel test accuracy",
-          "title": "LLM Top 1 Test Accuracy"
+          "title": "LLM Top 1 Test Accuracy",
+          "ui_default_display": true
         },
         "llm_top_2_test_accuracy": {
           "anyOf": [
@@ -102,9 +102,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the LLM top 2 residual stream channels test accuracy",
-          "title": "LLM Top 2 Test Accuracy"
+          "title": "LLM Top 2 Test Accuracy",
+          "ui_default_display": true
         },
         "llm_top_5_test_accuracy": {
           "anyOf": [
@@ -116,9 +116,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the LLM top 5 residual stream channels test accuracy",
-          "title": "LLM Top 5 Test Accuracy"
+          "title": "LLM Top 5 Test Accuracy",
+          "ui_default_display": true
         },
         "llm_top_10_test_accuracy": {
           "anyOf": [
@@ -183,15 +183,15 @@
       "properties": {
         "llm": {
           "$ref": "#/$defs/SparseProbingLlmMetrics",
-          "default_display": true,
           "description": "LLM metrics",
-          "title": "LLM"
+          "title": "LLM",
+          "ui_default_display": true
         },
         "sae": {
           "$ref": "#/$defs/SparseProbingSaeMetrics",
-          "default_display": true,
           "description": "SAE metrics",
-          "title": "SAE"
+          "title": "SAE",
+          "ui_default_display": true
         }
       },
       "required": [
@@ -428,9 +428,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on all SAE latents",
-          "title": "SAE Test Accuracy"
+          "title": "SAE Test Accuracy",
+          "ui_default_display": true
         },
         "sae_top_1_test_accuracy": {
           "anyOf": [
@@ -442,9 +442,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the top 1 SAE latents",
-          "title": "SAE Top 1 Test Accuracy"
+          "title": "SAE Top 1 Test Accuracy",
+          "ui_default_display": true
         },
         "sae_top_2_test_accuracy": {
           "anyOf": [
@@ -456,9 +456,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the top 2 SAE latents",
-          "title": "SAE Top 2 Test Accuracy"
+          "title": "SAE Top 2 Test Accuracy",
+          "ui_default_display": true
         },
         "sae_top_5_test_accuracy": {
           "anyOf": [
@@ -470,9 +470,9 @@
             }
           ],
           "default": null,
-          "default_display": true,
           "description": "Linear probe accuracy when trained on the top 5 SAE latents",
-          "title": "SAE Top 5 Test Accuracy"
+          "title": "SAE Top 5 Test Accuracy",
+          "ui_default_display": true
         },
         "sae_top_10_test_accuracy": {
           "anyOf": [
@@ -629,6 +629,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "Sparse Probing Evaluation",
+  "title": "Sparse Probing",
   "type": "object"
 }

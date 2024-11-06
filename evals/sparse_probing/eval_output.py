@@ -1,6 +1,7 @@
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict, Field
 from evals.base_eval_output import (
+    DEFAULT_DISPLAY,
     BaseEvalOutput,
     BaseMetricCategories,
     BaseMetrics,
@@ -16,25 +17,25 @@ class SparseProbingLlmMetrics(BaseMetrics):
     llm_test_accuracy: float = Field(
         title="LLM Test Accuracy",
         description="Linear probe accuracy when training on the full LLM residual stream",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     llm_top_1_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 1 Test Accuracy",
         description="Linear probe accuracy when trained on the LLM top 1 residual stream channel test accuracy",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     llm_top_2_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 2 Test Accuracy",
         description="Linear probe accuracy when trained on the LLM top 2 residual stream channels test accuracy",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     llm_top_5_test_accuracy: float | None = Field(
         default=None,
         title="LLM Top 5 Test Accuracy",
         description="Linear probe accuracy when trained on the LLM top 5 residual stream channels test accuracy",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     llm_top_10_test_accuracy: float | None = Field(
         default=None,
@@ -64,25 +65,25 @@ class SparseProbingSaeMetrics(BaseMetrics):
         default=None,
         title="SAE Test Accuracy",
         description="Linear probe accuracy when trained on all SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     sae_top_1_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 1 Test Accuracy",
         description="Linear probe accuracy when trained on the top 1 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     sae_top_2_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 2 Test Accuracy",
         description="Linear probe accuracy when trained on the top 2 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     sae_top_5_test_accuracy: float | None = Field(
         default=None,
         title="SAE Top 5 Test Accuracy",
         description="Linear probe accuracy when trained on the top 5 SAE latents",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     sae_top_10_test_accuracy: float | None = Field(
         default=None,
@@ -111,12 +112,12 @@ class SparseProbingMetricCategories(BaseMetricCategories):
     llm: SparseProbingLlmMetrics = Field(
         title="LLM",
         description="LLM metrics",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     sae: SparseProbingSaeMetrics = Field(
         title="SAE",
         description="SAE metrics",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
@@ -209,7 +210,7 @@ class SparseProbingResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="Sparse Probing Evaluation"))
+@dataclass(config=ConfigDict(title="Sparse Probing"))
 class SparseProbingEvalOutput(
     BaseEvalOutput[
         SparseProbingEvalConfig,
