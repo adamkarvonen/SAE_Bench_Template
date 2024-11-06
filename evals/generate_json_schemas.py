@@ -32,7 +32,7 @@ def main():
                             and obj != BaseEvalOutput
                         ):
                             output_file = os.path.join(
-                                root, f"eval_output_schema_{name}.json"
+                                root, f"eval_output_schema_{obj.eval_type_id}.json"
                             )
                             generate_json_schema(obj, output_file)
                             print(f"Generated schema for {name} in {output_file}")
