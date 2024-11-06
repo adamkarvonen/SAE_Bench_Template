@@ -246,7 +246,7 @@ class ShiftResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="SHIFT Evaluation"))
+@dataclass(config=ConfigDict(title="SHIFT"))
 class ShiftEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, ShiftMetricCategories, ShiftResultDetail]
 ):
@@ -504,7 +504,7 @@ class TppResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="TPP Evaluation"))
+@dataclass(config=ConfigDict(title="TPP"))
 class TppEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]
 ):

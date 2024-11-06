@@ -61,7 +61,7 @@ class AbsorptionResultDetail(BaseResultDetail):
 
 # Define the eval output, which includes the eval config, metrics, and result details.
 # The title will end up being the title of the eval in the UI.
-@dataclass(config=ConfigDict(title="Feature Absorption Evaluation - First Letter"))
+@dataclass(config=ConfigDict(title="Absorption"))
 class AbsorptionEvalOutput(
     BaseEvalOutput[
         AbsorptionEvalConfig, AbsorptionMetricCategories, AbsorptionResultDetail

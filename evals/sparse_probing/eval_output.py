@@ -210,7 +210,7 @@ class SparseProbingResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="Sparse Probing Evaluation"))
+@dataclass(config=ConfigDict(title="Sparse Probing"))
 class SparseProbingEvalOutput(
     BaseEvalOutput[
         SparseProbingEvalConfig,

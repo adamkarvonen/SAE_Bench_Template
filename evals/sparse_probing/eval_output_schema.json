@@ -629,6 +629,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "Sparse Probing Evaluation",
+  "title": "Sparse Probing",
   "type": "object"
 }

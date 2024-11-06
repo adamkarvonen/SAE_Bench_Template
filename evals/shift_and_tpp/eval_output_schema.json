@@ -816,6 +816,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "TPP Evaluation",
+  "title": "TPP",
   "type": "object"
 }

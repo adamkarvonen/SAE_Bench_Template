@@ -217,6 +217,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "Feature Absorption Evaluation - First Letter",
+  "title": "Absorption",
   "type": "object"
 }
