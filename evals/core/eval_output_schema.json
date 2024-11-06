@@ -2,40 +2,41 @@
   "$defs": {
     "CoreEvalConfig": {
       "properties": {
+        "model_name": {
+          "default": "pythia-70m-deduped",
+          "description": "Model name",
+          "title": "Model Name",
+          "type": "string"
+        },
         "batch_size_prompts": {
           "default": 16,
           "description": "Batch size for evaluation prompts",
           "title": "Batch Size Prompts",
-          "type": "integer",
-          "ui_default_display": true
+          "type": "integer"
         },
         "n_eval_reconstruction_batches": {
           "default": 10,
           "description": "Number of evaluation batches for reconstruction metrics",
           "title": "Reconstruction Batches",
-          "type": "integer",
-          "ui_default_display": true
+          "type": "integer"
         },
         "n_eval_sparsity_variance_batches": {
           "default": 1,
           "description": "Number of evaluation batches for sparsity and variance metrics",
           "title": "Sparsity Variance Batches",
-          "type": "integer",
-          "ui_default_display": true
+          "type": "integer"
         },
         "dataset": {
           "default": "Skylion007/openwebtext",
           "description": "Dataset to evaluate on",
           "title": "Dataset",
-          "type": "string",
-          "ui_default_display": true
+          "type": "string"
         },
         "context_size": {
           "default": 128,
           "description": "Context length to evaluate on",
           "title": "Context Length",
-          "type": "integer",
-          "ui_default_display": true
+          "type": "integer"
         },
         "compute_kl": {
           "default": false,
@@ -77,6 +78,12 @@
           "default": false,
           "description": "Compute featurewise weight-based metrics",
           "title": "Compute Featurewise Weight-Based Metrics",
+          "type": "boolean"
+        },
+        "verbose": {
+          "default": false,
+          "description": "Enable verbose output",
+          "title": "Verbose",
           "type": "boolean"
         }
       },

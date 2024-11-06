@@ -2,6 +2,7 @@ from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict, Field, field_validator
 from evals.absorption.eval_config import AbsorptionEvalConfig
 from evals.base_eval_output import (
+    DEFAULT_DISPLAY,
     BaseEvalOutput,
     BaseMetricCategories,
     BaseMetrics,
@@ -18,12 +19,12 @@ class AbsorptionMeanMetrics(BaseMetrics):
     mean_absorption_score: float = Field(
         title="Mean Absorption Score",
         description="Average of the absorption scores across all letters",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     mean_num_split_features: float = Field(
         title="Mean Number of Split Features",
         description="Average number of split features across all letters",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
@@ -33,7 +34,7 @@ class AbsorptionMetricCategories(BaseMetricCategories):
     mean: AbsorptionMeanMetrics = Field(
         title="Mean",
         description="Mean metrics",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
