@@ -6,6 +6,7 @@ from evals.base_eval_output import (
     BaseMetricCategories,
     BaseMetrics,
     BaseResultDetail,
+    DEFAULT_DISPLAY,
 )
 
 EVAL_TYPE_ID_CORE = "core"
@@ -17,7 +18,7 @@ class ModelBehaviorPreservationMetrics(BaseMetrics):
     kl_div_score: float = Field(
         title="KL Divergence Score",
         description="Normalized KL divergence score comparing model behavior with and without SAE",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     kl_div_with_ablation: float = Field(
         title="KL Divergence with Ablation",
@@ -35,7 +36,7 @@ class ModelPerformancePreservationMetrics(BaseMetrics):
     ce_loss_score: float = Field(
         title="Cross Entropy Loss Score",
         description="Normalized cross entropy loss score comparing model performance with and without SAE",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     ce_loss_with_ablation: float = Field(
         title="CE Loss with Ablation",
@@ -57,7 +58,7 @@ class ReconstructionQualityMetrics(BaseMetrics):
     explained_variance: float = Field(
         title="Explained Variance",
         description="Proportion of variance in the original activation explained by the SAE reconstruction",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     mse: float = Field(
         title="Mean Squared Error",
@@ -83,7 +84,7 @@ class ShrinkageMetrics(BaseMetrics):
     l2_ratio: float = Field(
         title="L2 Ratio",
         description="Ratio of output to input L2 norms",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     relative_reconstruction_bias: float = Field(
         title="Relative Reconstruction Bias",
@@ -97,7 +98,7 @@ class SparsityMetrics(BaseMetrics):
     l0: float = Field(
         title="L0 Sparsity",
         description="Average number of non-zero feature activations",
-        json_schema_extra={"default_display": True},
+        json_schema_extra=DEFAULT_DISPLAY,
     )
     l1: float = Field(
         title="L1 Sparsity",

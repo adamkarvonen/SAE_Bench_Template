@@ -176,7 +176,7 @@ def run_evals(
     sae: SAE,
     activation_store: ActivationsStore,
     model: HookedRootModule,
-    eval_config: MultipleEvalsConfig = MultipleEvalsConfig(),
+    eval_config: CoreEvalConfig = CoreEvalConfig(),
     model_kwargs: Mapping[str, Any] = {},
     ignore_tokens: set[int | None] = set(),
     verbose: bool = False,
@@ -908,8 +908,8 @@ def multiple_evals(
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
-    datasets: list[str] = ["Skylion007/openwebtext", "lighteval/MATH"],
-    ctx_lens: list[int] = [128],
+    dataset: str = "Skylion007/openwebtext",
+    context_size: int = 128,
     output_folder: str = "eval_results",
     verbose: bool = False,
 ) -> List[Dict[str, Any]]:
@@ -990,84 +990,84 @@ def multiple_evals(
 
         assert current_model is not None
 
-        for ctx_len in ctx_lens:
-            for dataset in datasets:
-                try:
-                    # Create a CoreEvalConfig for this specific evaluation
-                    core_eval_config = CoreEvalConfig(
-                        batch_size_prompts=multiple_evals_config.batch_size_prompts
-                        or 16,
-                        n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
-                        n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
-                        dataset=dataset,
-                        context_size=ctx_len,
-                        compute_kl=multiple_evals_config.compute_kl,
-                        compute_ce_loss=multiple_evals_config.compute_ce_loss,
-                        compute_l2_norms=multiple_evals_config.compute_l2_norms,
-                        compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
-                        compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
-                        compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
-                        compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
-                    )
+ 
+        try:
+            # Create a CoreEvalConfig for this specific evaluation
+            core_eval_config = CoreEvalConfig(
+                model_name=sae.cfg.model_name,
+                batch_size_prompts=multiple_evals_config.batch_size_prompts 
+                or 16,
+                n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
+                n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
+                dataset=dataset,
+                context_size=context_size,
+                compute_kl=multiple_evals_config.compute_kl,
+                compute_ce_loss=multiple_evals_config.compute_ce_loss,
+                compute_l2_norms=multiple_evals_config.compute_l2_norms,
+                compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
+                compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
+                compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
+                compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+            )
 
-                    # Wrap activation store creation with retry
-                    @retry_with_exponential_backoff(
-                        retries=3,
-                        exceptions=(Exception,),
-                        initial_delay=1.0,
-                        max_delay=30.0,
-                    )
-                    def create_activation_store():
-                        return ActivationsStore.from_sae(
-                            current_model, sae, context_size=ctx_len, dataset=dataset
-                        )
+            # Wrap activation store creation with retry
+            @retry_with_exponential_backoff(
+                retries=3,
+                exceptions=(Exception,),
+                initial_delay=1.0,
+                max_delay=30.0,
+            )
+            def create_activation_store():
+                return ActivationsStore.from_sae(
+                    current_model, sae, context_size=context_size, dataset=dataset
+                )
 
-                    activation_store = create_activation_store()
-                    activation_store.shuffle_input_dataset(seed=42)
+            activation_store = create_activation_store()
+            activation_store.shuffle_input_dataset(seed=42)
 
-                    eval_metrics = nested_dict()
-                    eval_metrics["unique_id"] = f"{sae_release_name}-{sae_id}"
-                    eval_metrics["sae_set"] = f"{sae_release_name}"
-                    eval_metrics["sae_id"] = f"{sae_id}"
-                    eval_metrics["eval_cfg"] = core_eval_config
+            eval_metrics = nested_dict()
+            eval_metrics["unique_id"] = f"{sae_release_name}-{sae_id}"
+            eval_metrics["sae_set"] = f"{sae_release_name}"
+            eval_metrics["sae_id"] = f"{sae_id}"
+            eval_metrics["eval_cfg"] = core_eval_config
 
-                    scalar_metrics, feature_metrics = run_evals(
-                        sae=sae,
-                        activation_store=activation_store,
-                        model=current_model,  # type: ignore
-                        eval_config=multiple_evals_config,
-                        ignore_tokens={
-                            current_model.tokenizer.pad_token_id,  # type: ignore
-                            current_model.tokenizer.eos_token_id,  # type: ignore
-                            current_model.tokenizer.bos_token_id,  # type: ignore
-                        },
-                        verbose=verbose,
-                    )
-                    eval_metrics["metrics"] = scalar_metrics
-                    eval_metrics["feature_metrics"] = feature_metrics
+            scalar_metrics, feature_metrics = run_evals(
+                sae=sae,
+                activation_store=activation_store,
+                model=current_model,  # type: ignore
+                eval_config=core_eval_config,
+                ignore_tokens={
+                    current_model.tokenizer.pad_token_id,  # type: ignore
+                    current_model.tokenizer.eos_token_id,  # type: ignore
+                    current_model.tokenizer.bos_token_id,  # type: ignore
+                },
+                verbose=verbose,
+            )
+            eval_metrics["metrics"] = scalar_metrics
+            eval_metrics["feature_metrics"] = feature_metrics
 
-                    # Clean NaN values before saving
-                    cleaned_metrics = replace_nans_with_negative_one(eval_metrics)
+            # Clean NaN values before saving
+            cleaned_metrics = replace_nans_with_negative_one(eval_metrics)
 
-                    # Save results immediately after each evaluation
-                    saved_path = save_single_eval_result(
-                        cleaned_metrics,
-                        eval_instance_id,
-                        sae_lens_version,
-                        sae_bench_commit_hash,
-                        output_path,
-                    )
+            # Save results immediately after each evaluation
+            saved_path = save_single_eval_result(
+                cleaned_metrics,
+                eval_instance_id,
+                sae_lens_version,
+                sae_bench_commit_hash,
+                output_path,
+            )
 
-                    if verbose:
-                        print(f"Saved evaluation results to: {saved_path}")
+            if verbose:
+                print(f"Saved evaluation results to: {saved_path}")
 
-                    eval_results.append(eval_metrics)
-                except Exception as e:
-                    logger.error(
-                        f"Failed to evaluate SAE {sae_id} from {sae_release_name} "
-                        f"with context length {ctx_len} on dataset {dataset}: {str(e)}"
-                    )
-                    continue  # Skip this combination and continue with the next one
+            eval_results.append(eval_metrics)
+        except Exception as e:
+            logger.error(
+                f"Failed to evaluate SAE {sae_id} from {sae_release_name} "
+                f"with context length {context_size} on dataset {dataset}: {str(e)}"
+            )
+            continue  # Skip this combination and continue with the next one
 
     return eval_results
 
@@ -1094,8 +1094,8 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
-        datasets=args.datasets,
-        ctx_lens=args.ctx_lens,
+        dataset=args.dataset,
+        context_size=args.context_size,
         output_folder=args.output_folder,
         verbose=args.verbose,
     )
@@ -1113,98 +1113,108 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
     else:
         return obj
 
-
-if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(description="Run evaluations on SAEs")
-    arg_parser.add_argument(
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run core evaluation")
+    parser.add_argument(
+        "--model_name",
+        type=str,
+        default="pythia-70m-deduped",
+        help="Model name",
+    )
+    parser.add_argument(
         "sae_regex_pattern",
         type=str,
         help="Regex pattern to match SAE names. Can be an entire SAE name to match a specific SAE.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "sae_block_pattern",
         type=str,
         help="Regex pattern to match SAE block names. Can be an entire block name to match a specific block.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--batch_size_prompts",
         type=int,
         default=16,
         help="Batch size for evaluation prompts.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--n_eval_reconstruction_batches",
         type=int,
         default=10,
         help="Number of evaluation batches for reconstruction metrics.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_kl",
         action="store_true",
         help="Compute KL divergence.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_ce_loss",
         action="store_true",
         help="Compute cross-entropy loss.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--n_eval_sparsity_variance_batches",
         type=int,
         default=1,
         help="Number of evaluation batches for sparsity and variance metrics.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_l2_norms",
         action="store_true",
         help="Compute L2 norms.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_sparsity_metrics",
         action="store_true",
         help="Compute sparsity metrics.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_variance_metrics",
         action="store_true",
         help="Compute variance metrics.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_featurewise_density_statistics",
         action="store_true",
         help="Compute featurewise density statistics.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--compute_featurewise_weight_based_metrics",
         action="store_true",
         help="Compute featurewise weight-based metrics.",
     )
-    arg_parser.add_argument(
-        "--datasets",
-        nargs="+",
-        default=["Skylion007/openwebtext"],
-        help="Datasets to evaluate on, such as 'Skylion007/openwebtext' or 'lighteval/MATH'.",
+    parser.add_argument(
+        "--dataset",
+        default="Skylion007/openwebtext",
+        help="Dataset to evaluate on, such as 'Skylion007/openwebtext' or 'lighteval/MATH'.",
     )
-    arg_parser.add_argument(
-        "--ctx_lens",
-        nargs="+",
+    parser.add_argument(
+        "--context_size",
         type=int,
-        default=[128],
-        help="Context lengths to evaluate on.",
+        default=128,
+        help="Context size to evaluate on.",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--output_folder",
         type=str,
         default="eval_results",
         help="Directory to save evaluation results",
     )
-    arg_parser.add_argument(
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Enable verbose output with tqdm loaders.",
     )
+    parser.add_argument(
+        "--force_rerun", action="store_true", help="Force rerun of experiments"
+    )
 
-    args = arg_parser.parse_args()
+    return parser
+
+if __name__ == "__main__":
+   
+    args = arg_parser().parse_args()
     eval_results = run_evaluations(args)
 
     print("Evaluation complete. All results have been saved incrementally.")  # type: ignore

@@ -6,6 +6,11 @@ from evals.base_eval_output import BaseEvalConfig
 # Define the eval config, which inherits from BaseEvalConfig, and include fields with titles and descriptions.
 @dataclass
 class CoreEvalConfig(BaseEvalConfig):
+    model_name: str = Field(
+        default="pythia-70m-deduped",
+        title="Model Name",
+        description="Model name",
+    )
     batch_size_prompts: int = Field(
         default=16,
         title="Batch Size Prompts",
@@ -65,4 +70,9 @@ class CoreEvalConfig(BaseEvalConfig):
         default=False,
         title="Compute Featurewise Weight-Based Metrics",
         description="Compute featurewise weight-based metrics",
+    )
+    verbose: bool = Field(
+        default=False,
+        title="Verbose",
+        description="Enable verbose output",
     )
