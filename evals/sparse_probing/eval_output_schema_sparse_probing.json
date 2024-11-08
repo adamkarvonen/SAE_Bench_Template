@@ -531,7 +531,7 @@
       "type": "object"
     }
   },
-  "description": "The output of sparse probing evaluations.",
+  "description": "Sparse probing evaluation description goes here.",
   "properties": {
     "eval_type_id": {
       "default": "sparse_probing",

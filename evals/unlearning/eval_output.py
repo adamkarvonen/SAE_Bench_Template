@@ -34,7 +34,7 @@ class UnlearningEvalOutput(
     BaseEvalOutput[UnlearningEvalConfig, UnlearningMetricCategories, BaseResultDetail]
 ):
     """
-    The output of unlearning evaluations.
+    Unlearning evaluation description goes here.
     """
 
     eval_config: UnlearningEvalConfig

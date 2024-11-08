@@ -139,7 +139,7 @@
       "type": "object"
     }
   },
-  "description": "The output of unlearning evaluations.",
+  "description": "Unlearning evaluation description goes here.",
   "properties": {
     "eval_type_id": {
       "default": "unlearning",

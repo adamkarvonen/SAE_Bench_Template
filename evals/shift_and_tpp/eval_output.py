@@ -251,7 +251,7 @@ class ShiftEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, ShiftMetricCategories, ShiftResultDetail]
 ):
     """
-    The output of a SHIFT evaluation.
+    SHIFT evaluation description goes here.
     """
 
     eval_config: ShiftAndTppEvalConfig
@@ -509,7 +509,7 @@ class TppEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]
 ):
     """
-    The output of a TPP evaluation.
+    TPP evaluation description goes here.
     """
 
     eval_config: ShiftAndTppEvalConfig

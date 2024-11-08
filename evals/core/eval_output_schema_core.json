@@ -340,7 +340,7 @@
       "type": "object"
     }
   },
-  "description": "The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.",
+  "description": "Core SAE evaluations measuring reconstruction quality, sparsity, and model preservation. From SAELens.",
   "properties": {
     "eval_type_id": {
       "default": "core",
