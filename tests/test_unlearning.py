@@ -55,11 +55,11 @@ def test_end_to_end_different_seed():
 
     run_result_metrics = run_results[
         sae_name
-    ]["eval_results"]
+    ]["eval_result_metrics"]
 
     testing_utils.compare_dicts_within_tolerance(
         run_result_metrics,
-        expected_results["eval_results"],
+        expected_results["eval_result_metrics"],
         tolerance,
         keys_to_compare=["unlearning_score"],
     )

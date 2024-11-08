@@ -1,13 +1,7 @@
 {
-  "eval_instance_id": "d5b4749a-d95f-4efd-b20f-e61bc7fb4ca7",
-  "sae_lens_release": "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-  "sae_lens_id": "blocks.3.hook_resid_post__trainer_2",
   "eval_type_id": "unlearning",
-  "sae_lens_version": "4.1.0",
-  "sae_bench_version": "5d545d199309334ac9985c036cbfb3b2f1a4638d",
-  "date_time": "2024-11-05T21:28:04.387840",
   "eval_config": {
-    "random_seed": 44,
+    "random_seed": 48,
     "dataset_names": [
       "wmdp-bio",
       "high_school_us_history",
@@ -30,7 +24,17 @@
     "model_name": "gemma-2-2b-it",
     "llm_dtype": "bfloat16"
   },
-  "eval_results": {
-    "unlearning_score": 0.17782026529312134
-  }
+  "eval_id": "09e86e37-02ed-4907-b0c0-9f83bc1d8c78",
+  "datetime_epoch_millis": 1731058131990,
+  "eval_result_metrics": {
+    "unlearning": {
+      "unlearning_score": 0.17590820789337158
+    }
+  },
+  "eval_result_details": [],
+  "sae_bench_commit_hash": "41c7750c04f43201c05c309da19ce0b19f11161c",
+  "sae_lens_id": "blocks.3.hook_resid_post__trainer_2",
+  "sae_lens_release_id": "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+  "sae_lens_version": "4.1.1",
+  "eval_result_unstructured": null
 }
