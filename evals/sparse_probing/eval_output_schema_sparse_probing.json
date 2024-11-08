@@ -531,7 +531,7 @@
       "type": "object"
     }
   },
-  "description": "The output of a feature absorption evaluation looking at the first letter.",
+  "description": "The output of sparse probing evaluations.",
   "properties": {
     "eval_type_id": {
       "default": "sparse_probing",
