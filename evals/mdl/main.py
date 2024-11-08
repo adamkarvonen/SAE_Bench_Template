@@ -101,8 +101,8 @@ def calculate_dl(
     sae: SAE,
     k: int,
 ) -> float:
-    float_entropy_F = t.zeros(num_features, device=device)
-    bool_entropy_F = t.zeros(num_features, device=device)
+    float_entropy_F = t.zeros(num_features, device=device, dtype=t.float32)
+    bool_entropy_F = t.zeros(num_features, device=device, dtype=t.float32)
 
     x_BSN = activations_store.get_buffer(config.sae_batch_size)
     feature_activations_BsF = sae.encode(x_BSN).squeeze()
@@ -134,7 +134,7 @@ def calculate_dl(
         num_bins = len(bins_F_list_Bi[feature_idx]) - 1
         counts_Bi = t.zeros(num_bins, device="cpu")
 
-        feature_activations_Bs = feature_activations_BsF[:, feature_idx]
+        feature_activations_Bs = feature_activations_BsF[:, feature_idx].to(dtype=t.float32)
         bins = bins_F_list_Bi[feature_idx]
 
         temp_counts_Bi, _bin_edges = t.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
@@ -297,7 +297,7 @@ class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
             return self[min_dl_idx]
 
 
-def _run_single_eval(
+def run_eval_single_sae(
     config: MDLEvalConfig,
     sae: SAE,
     model: HookedTransformer,
@@ -461,7 +461,7 @@ def run_eval(
             sae_result_file = sae_result_file.replace("/", "_")
             sae_result_path = os.path.join(output_path, sae_result_file)
 
-            eval_output = _run_single_eval(
+            eval_output = run_eval_single_sae(
                 config=config,
                 sae=sae,
                 model=model,
