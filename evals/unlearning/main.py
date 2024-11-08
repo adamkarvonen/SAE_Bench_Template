@@ -196,8 +196,6 @@ def run_eval(
 
             results_dict[sae_release_and_id] = sae_eval_result
 
-    results_dict["custom_eval_config"] = asdict(config)
-
     if clean_up_artifacts:
         for folder in os.listdir(artifacts_folder):
             folder_path = os.path.join(artifacts_folder, folder)

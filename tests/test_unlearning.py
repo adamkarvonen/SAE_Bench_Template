@@ -53,11 +53,13 @@ def test_end_to_end_different_seed():
 
     sae_name = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2"
 
-    keys_to_compare = ["unlearning_score"]
+    run_result_metrics = run_results[
+        sae_name
+    ]["eval_results"]
 
     testing_utils.compare_dicts_within_tolerance(
-        run_results[sae_name]["eval_results"],
-        expected_results[sae_name]["eval_results"],
+        run_result_metrics,
+        expected_results["eval_results"],
         tolerance,
-        keys_to_compare=keys_to_compare,
+        keys_to_compare=["unlearning_score"],
     )
