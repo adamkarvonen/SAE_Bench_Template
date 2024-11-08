@@ -15,12 +15,9 @@ import argparse
 from datetime import datetime
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
-
 from evals.unlearning.utils.eval import run_eval_single_sae
-import evals.unlearning.eval_config as eval_config
 import sae_bench_utils.activation_collection as activation_collection
-import sae_bench_utils.formatting_utils as formatting_utils
-import evals.unlearning.eval_config as eval_config
+from evals.unlearning.eval_config import UnlearningEvalConfig
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
@@ -104,7 +101,7 @@ def convert_ndarrays_to_lists(obj):
 
 
 def run_eval(
-    config: eval_config.EvalConfig,
+    config: UnlearningEvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
     output_path: str,
@@ -223,8 +220,8 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-) -> tuple[eval_config.EvalConfig, dict[str, list[str]]]:
-    config = eval_config.EvalConfig(
+) -> tuple[UnlearningEvalConfig, dict[str, list[str]]]:
+    config = UnlearningEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )

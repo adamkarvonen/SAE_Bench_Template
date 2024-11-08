@@ -1,6 +1,6 @@
 import json
 import torch
-from evals.unlearning.eval_config import EvalConfig
+from evals.unlearning.eval_config import UnlearningEvalConfig
 import evals.unlearning.main as unlearning
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
@@ -18,7 +18,7 @@ def test_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    test_config = EvalConfig()
+    test_config = UnlearningEvalConfig()
 
     test_config.retain_thresholds = [0.01]
     test_config.n_features_list = [10]
@@ -45,7 +45,7 @@ def test_end_to_end_different_seed():
         device,
         output_path="evals/unlearning/test_results/",
         force_rerun=True,
-        clean_up_artifacts=True,
+        clean_up_artifacts=False,
     )
 
     with open(results_filename, "r") as f:

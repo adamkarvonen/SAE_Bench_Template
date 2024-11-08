@@ -1,77 +1,65 @@
 {
-    "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2": {
-        "eval_instance_id": "d5b4749a-d95f-4efd-b20f-e61bc7fb4ca7",
-        "sae_lens_release": "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-        "sae_lens_id": "blocks.3.hook_resid_post__trainer_2",
-        "eval_type_id": "unlearning",
-        "sae_lens_version": "4.1.0",
-        "sae_bench_version": "5d545d199309334ac9985c036cbfb3b2f1a4638d",
-        "date_time": "2024-11-05T21:28:04.387840",
-        "eval_config": {
-            "random_seed": 44,
-            "all_dataset_names": [
-                "wmdp-bio",
-                "high_school_us_history",
-                "college_computer_science",
-                "high_school_geography",
-                "human_aging",
-                "college_biology"
-            ],
-            "intervention_method": "clamp_feature_activation",
-            "retain_thresholds": [
-                0.01
-            ],
-            "n_features_list": [
-                10
-            ],
-            "multipliers": [
-                25
-            ],
-            "llm_batch_size": 4,
-            "mcq_batch_size": 8,
-            "dataset_size": 256,
-            "seq_len": 1024,
-            "n_batch_loss_added": 50,
-            "target_metric": "correct",
-            "save_metrics": true,
-            "model_name": "gemma-2-2b-it",
-            "llm_dtype": "bfloat16"
-        },
-        "eval_results": {
-            "unlearning_score": 0.17782026529312134
-        },
-        "eval_artifacts": {
-            "artifacts": "artifacts/unlearning/gemma-2-2b-it"
-        }
+  "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2": {
+    "eval_instance_id": "d5b4749a-d95f-4efd-b20f-e61bc7fb4ca7",
+    "sae_lens_release": "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+    "sae_lens_id": "blocks.3.hook_resid_post__trainer_2",
+    "eval_type_id": "unlearning",
+    "sae_lens_version": "4.1.0",
+    "sae_bench_version": "5d545d199309334ac9985c036cbfb3b2f1a4638d",
+    "date_time": "2024-11-05T21:28:04.387840",
+    "eval_config": {
+      "random_seed": 44,
+      "dataset_names": [
+        "wmdp-bio",
+        "high_school_us_history",
+        "college_computer_science",
+        "high_school_geography",
+        "human_aging",
+        "college_biology"
+      ],
+      "intervention_method": "clamp_feature_activation",
+      "retain_thresholds": [0.01],
+      "n_features_list": [10],
+      "multipliers": [25],
+      "llm_batch_size": 4,
+      "mcq_batch_size": 8,
+      "dataset_size": 256,
+      "seq_len": 1024,
+      "n_batch_loss_added": 50,
+      "target_metric": "correct",
+      "save_metrics": true,
+      "model_name": "gemma-2-2b-it",
+      "llm_dtype": "bfloat16"
     },
-    "custom_eval_config": {
-        "random_seed": 44,
-        "all_dataset_names": [
-            "wmdp-bio",
-            "high_school_us_history",
-            "college_computer_science",
-            "high_school_geography",
-            "human_aging",
-            "college_biology"
-        ],
-        "intervention_method": "clamp_feature_activation",
-        "retain_thresholds": [
-            0.01
-        ],
-        "n_features_list": [
-            10
-        ],
-        "multipliers": [
-            25
-        ],
-        "llm_batch_size": 4,
-        "mcq_batch_size": 8,
-        "dataset_size": 256,
-        "seq_len": 1024,
-        "n_batch_loss_added": 50,
-        "target_metric": "correct",
-        "save_metrics": true,
-        "model_name": "gemma-2-2b-it",
-        "llm_dtype": "bfloat16"
+    "eval_results": {
+      "unlearning_score": 0.17782026529312134
+    },
+    "eval_artifacts": {
+      "artifacts": "artifacts/unlearning/gemma-2-2b-it"
     }
+  },
+  "custom_eval_config": {
+    "random_seed": 44,
+    "dataset_names": [
+      "wmdp-bio",
+      "high_school_us_history",
+      "college_computer_science",
+      "high_school_geography",
+      "human_aging",
+      "college_biology"
+    ],
+    "intervention_method": "clamp_feature_activation",
+    "retain_thresholds": [0.01],
+    "n_features_list": [10],
+    "multipliers": [25],
+    "llm_batch_size": 4,
+    "mcq_batch_size": 8,
+    "dataset_size": 256,
+    "seq_len": 1024,
+    "n_batch_loss_added": 50,
+    "target_metric": "correct",
+    "save_metrics": true,
+    "model_name": "gemma-2-2b-it",
+    "llm_dtype": "bfloat16"
+  }
 }
