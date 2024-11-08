@@ -32,8 +32,5 @@
   },
   "eval_results": {
     "unlearning_score": 0.17782026529312134
-  },
-  "eval_artifacts": {
-    "artifacts": "artifacts/unlearning/gemma-2-2b-it"
   }
 }
