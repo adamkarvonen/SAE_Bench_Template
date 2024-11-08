@@ -16,9 +16,10 @@ EVAL_TYPE_ID_UNLEARNING = "unlearning"
 class UnlearningMetrics(BaseMetrics):
     unlearning_score: float = Field(
         title="Unlearning Score",
-        description="Unlearning score",
+        description="Unlearning score, using methodology from APPLYING SPARSE AUTOENCODERS TO UNLEARN KNOWLEDGE IN LANGUAGE MODELS",
         json_schema_extra=DEFAULT_DISPLAY,
     )
+
 
 # Define the categories themselves
 @dataclass
@@ -27,14 +28,15 @@ class UnlearningMetricCategories(BaseMetricCategories):
         title="Unlearning",
         description="Metrics related to unlearning",
     )
-        
+
+
 # Define the eval output
 @dataclass(config=ConfigDict(title="Unlearning"))
 class UnlearningEvalOutput(
     BaseEvalOutput[UnlearningEvalConfig, UnlearningMetricCategories, BaseResultDetail]
 ):
     """
-    Unlearning evaluation description goes here.
+    An evaluation of the ability of SAEs to unlearn biology knowledge from LLMs, using methodology from `Applying Sparse Autoencoders to Unlearn Knowledge in Language Models`
     """
 
     eval_config: UnlearningEvalConfig

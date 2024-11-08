@@ -220,7 +220,7 @@ class SparseProbingEvalOutput(
 ):
     # This will end up being the description of the eval in the UI.
     """
-    Sparse probing evaluation description goes here.
+    An evaluation using SAEs to probe for supervised concepts in LLMs. We use sparse probing with the top K SAE latents and probe for over 30 different classes across 5 datasets.
     """
 
     eval_config: SparseProbingEvalConfig

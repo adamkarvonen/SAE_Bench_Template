@@ -251,7 +251,7 @@ class ShiftEvalOutput(
     BaseEvalOutput[ShiftAndTppEvalConfig, ShiftMetricCategories, ShiftResultDetail]
 ):
     """
-    SHIFT evaluation description goes here.
+    The SHIFT Spurious Correlation Removal (SCR) evaluation ablates SAE latents to shift the bias of a biased linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.
     """
 
     eval_config: ShiftAndTppEvalConfig
@@ -505,11 +505,9 @@ class TppResultDetail(BaseResultDetail):
 
 
 @dataclass(config=ConfigDict(title="TPP"))
-class TppEvalOutput(
-    BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]
-):
+class TppEvalOutput(BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]):
     """
-    TPP evaluation description goes here.
+    The Targeted Probe Pertubation (TPP) evaluation ablates a set of SAE latents to damage a single targeted linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.
     """
 
     eval_config: ShiftAndTppEvalConfig
