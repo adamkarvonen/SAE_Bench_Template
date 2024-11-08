@@ -139,7 +139,7 @@
       "type": "object"
     }
   },
-  "description": "The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.",
+  "description": "The output of unlearning evaluations.",
   "properties": {
     "eval_type_id": {
       "default": "unlearning",

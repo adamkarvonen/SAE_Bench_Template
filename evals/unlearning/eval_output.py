@@ -34,7 +34,7 @@ class UnlearningEvalOutput(
     BaseEvalOutput[UnlearningEvalConfig, UnlearningMetricCategories, BaseResultDetail]
 ):
     """
-    The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.
+    The output of unlearning evaluations.
     """
 
     eval_config: UnlearningEvalConfig
