@@ -6,7 +6,7 @@ import time
 from dataclasses import asdict, dataclass
 from typing import Any, Optional, Protocol
 
-import torch as t
+import torch
 import torch.nn.functional as F
 from collectibles import ListCollection
 from einops import rearrange
@@ -36,15 +36,15 @@ EVAL_TYPE = "mdl"
 
 
 class Decodable(Protocol):
-    def decode(self, x: t.Tensor) -> t.Tensor: ...
+    def decode(self, x: torch.Tensor) -> torch.Tensor: ...
 
 
 def build_bins(
-    min_pos_activations_F: t.Tensor,
-    max_activations_F: t.Tensor,
+    min_pos_activations_F: torch.Tensor,
+    max_activations_F: torch.Tensor,
     bin_precision: Optional[float] = None,  # 0.2,
     num_bins: Optional[int] = None,  # 16)
-) -> list[t.Tensor]:
+) -> list[torch.Tensor]:
     if bin_precision is not None and num_bins is not None:
         raise ValueError("Only one of bin_precision or num_bins should be provided")
     if bin_precision is None and num_bins is None:
@@ -55,21 +55,21 @@ def build_bins(
     assert len(max_activations_F) == num_features
 
     # positive_mask_BsF = feature_activations_BsF > 0
-    # masked_activations_BsF = t.where(positive_mask_BsF, feature_activations_BsF, t.inf)
-    # min_pos_activations_F = t.min(masked_activations_BsF, dim=-1).values
-    # min_pos_activations_F = t.where(
-    #     t.isfinite(min_pos_activations_F), min_pos_activations_F, 0
+    # masked_activations_BsF = torch.where(positive_mask_BsF, feature_activations_BsF, torch.inf)
+    # min_pos_activations_F = torch.min(masked_activations_BsF, dim=-1).values
+    # min_pos_activations_F = torch.where(
+    #     torch.isfinite(min_pos_activations_F), min_pos_activations_F, 0
     # )
-    min_pos_activations_F = t.zeros_like(max_activations_F)
+    min_pos_activations_F = torch.zeros_like(max_activations_F)
 
     logger.debug(max_activations_F)
     logger.debug(min_pos_activations_F)
 
-    bins_F_list_Bi: list[t.Tensor] = []
+    bins_F_list_Bi: list[torch.Tensor] = []
 
     if bin_precision is not None:
         for feature_idx in range(num_features):
-            bins = t.arange(
+            bins = torch.arange(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item() + 2 * bin_precision,
                 bin_precision,
@@ -82,7 +82,7 @@ def build_bins(
     else:
         assert num_bins is not None
         for feature_idx in range(num_features):
-            bins = t.linspace(
+            bins = torch.linspace(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item(),
                 num_bins + 1,
@@ -95,14 +95,14 @@ def build_bins(
 
 def calculate_dl(
     num_features: int,
-    bins_F_list_Bi: list[t.Tensor],
+    bins_F_list_Bi: list[torch.Tensor],
     device: str,
     activations_store: ActivationsStore,
     sae: SAE,
     k: int,
 ) -> float:
-    float_entropy_F = t.zeros(num_features, device=device, dtype=t.float32)
-    bool_entropy_F = t.zeros(num_features, device=device, dtype=t.float32)
+    float_entropy_F = torch.zeros(num_features, device=device, dtype=torch.float32)
+    bool_entropy_F = torch.zeros(num_features, device=device, dtype=torch.float32)
 
     x_BSN = activations_store.get_buffer(config.sae_batch_size)
     feature_activations_BsF = sae.encode(x_BSN).squeeze()
@@ -119,7 +119,7 @@ def calculate_dl(
 
     for feature_idx in tqdm(range(num_features), desc="Calculating DL"):
         # BOOL entropy
-        bool_prob = t.zeros(1, device=device)
+        bool_prob = torch.zeros(1, device=device)
 
         bool_prob_F = (feature_activations_BsF > 0).float().mean(dim=0)
         bool_prob = bool_prob + bool_prob_F[feature_idx]
@@ -127,17 +127,19 @@ def calculate_dl(
         if bool_prob == 0 or bool_prob == 1:
             bool_entropy = 0
         else:
-            bool_entropy = -bool_prob * t.log2(bool_prob) - (1 - bool_prob) * t.log2(1 - bool_prob)
+            bool_entropy = -bool_prob * torch.log2(bool_prob) - (1 - bool_prob) * torch.log2(
+                1 - bool_prob
+            )
         bool_entropy_F[feature_idx] = bool_entropy
 
         # FLOAT entropy
         num_bins = len(bins_F_list_Bi[feature_idx]) - 1
-        counts_Bi = t.zeros(num_bins, device="cpu")
+        counts_Bi = torch.zeros(num_bins, device="cpu")
 
-        feature_activations_Bs = feature_activations_BsF[:, feature_idx].to(dtype=t.float32)
+        feature_activations_Bs = feature_activations_BsF[:, feature_idx].to(dtype=torch.float32)
         bins = bins_F_list_Bi[feature_idx]
 
-        temp_counts_Bi, _bin_edges = t.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
+        temp_counts_Bi, _bin_edges = torch.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
         counts_Bi = counts_Bi + temp_counts_Bi
 
         counts_Bi = counts_Bi.to(device)
@@ -149,7 +151,7 @@ def calculate_dl(
             float_entropy = 0
         else:
             # H[p] = -sum(p * log2(p))
-            float_entropy = -t.sum(probs_Bi * t.log2(probs_Bi)).item()
+            float_entropy = -torch.sum(probs_Bi * torch.log2(probs_Bi)).item()
 
         float_entropy_F[feature_idx] = float_entropy
 
@@ -161,14 +163,14 @@ def calculate_dl(
 
 
 def quantize_features_to_bin_midpoints(
-    features_BF: t.Tensor, bins_F_list_Bi: list[t.Tensor]
-) -> t.Tensor:
+    features_BF: torch.Tensor, bins_F_list_Bi: list[torch.Tensor]
+) -> torch.Tensor:
     """
     Quantize features to the bin midpoints of their corresponding histograms.
     """
     _, num_features = features_BF.shape
 
-    quantized_features_BF = t.empty_like(features_BF, device=features_BF.device)
+    quantized_features_BF = torch.empty_like(features_BF, device=features_BF.device)
 
     for feature_idx in range(num_features):
         # Extract the feature values and bin edges for the current histogram
@@ -177,8 +179,8 @@ def quantize_features_to_bin_midpoints(
 
         num_bins = len(bin_edges_Bi) - 1
 
-        bin_indices_B = t.bucketize(features_B, bin_edges_Bi)
-        bin_indices_clipped_B = t.clamp(bin_indices_B, min=1, max=num_bins) - 1
+        bin_indices_B = torch.bucketize(features_B, bin_edges_Bi)
+        bin_indices_clipped_B = torch.clamp(bin_indices_B, min=1, max=num_bins) - 1
 
         # Calculate the midpoints of the bins
         bin_mids_Bi = 0.5 * (bin_edges_Bi[:-1] + bin_edges_Bi[1:])
@@ -191,7 +193,7 @@ def quantize_features_to_bin_midpoints(
 # def calculate_dl(
 #     activations_store: ActivationsStore,
 #     sae: SAE,
-#     bins: list[t.Tensor],
+#     bins: list[torch.Tensor],
 #     k: Optional[int] = None,
 # ) -> float:
 #     for i in range(10):
@@ -217,14 +219,14 @@ def quantize_features_to_bin_midpoints(
 
 
 def check_quantised_features_reach_mse_threshold(
-    bins_F_list_Bi: list[t.Tensor],
+    bins_F_list_Bi: list[torch.Tensor],
     activations_store: ActivationsStore,
     sae: SAE,
     mse_threshold: float,
     autoencoder: SAE,
     k: Optional[int] = None,
 ) -> tuple[bool, float]:
-    mse_losses: list[t.Tensor] = []
+    mse_losses: list[torch.Tensor] = []
 
     for i in range(1):
         x_BSN = activations_store.get_buffer(config.sae_batch_size)
@@ -238,13 +240,13 @@ def check_quantised_features_reach_mse_threshold(
             feature_activations_BSF, bins_F_list_Bi
         )
 
-        reconstructed_x_BSN: t.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
+        reconstructed_x_BSN: torch.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
 
-        mse_loss: t.Tensor = F.mse_loss(reconstructed_x_BSN, x_BSN.squeeze(), reduction="mean")
-        mse_loss = t.sqrt(mse_loss) / sae.cfg.d_in
+        mse_loss: torch.Tensor = F.mse_loss(reconstructed_x_BSN, x_BSN.squeeze(), reduction="mean")
+        mse_loss = torch.sqrt(mse_loss) / sae.cfg.d_in
         mse_losses.append(mse_loss)
 
-    avg_mse_loss = t.mean(t.stack(mse_losses))
+    avg_mse_loss = torch.mean(torch.stack(mse_losses))
     within_threshold = bool((avg_mse_loss < mse_threshold).item())
 
     return within_threshold, mse_loss.item()
@@ -261,7 +263,7 @@ class IdentityAE(nn.Module):
 @dataclass
 class MDLEvalResult:
     num_bins: int
-    bins: list[t.Tensor]
+    bins: list[torch.Tensor]
     k: Optional[int]
 
     description_length: float
@@ -276,7 +278,7 @@ class MDLEvalResult:
 
 class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
     num_bins: list[int]
-    bins: list[list[t.Tensor]]
+    bins: list[list[torch.Tensor]]
     k: list[Optional[int]]
 
     description_length: list[float]
@@ -284,16 +286,16 @@ class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
     mse_loss: list[float]
 
     def pick_minimum_viable(self) -> MDLEvalResult:
-        all_description_lengths = t.tensor(self.description_length)
-        threshold_mask = t.tensor(self.within_threshold)
+        all_description_lengths = torch.tensor(self.description_length)
+        threshold_mask = torch.tensor(self.within_threshold)
 
         viable_description_lengths = all_description_lengths[threshold_mask]
         if len(viable_description_lengths) > 0:
-            min_dl_idx = int(t.argmin(viable_description_lengths).item())
+            min_dl_idx = int(torch.argmin(viable_description_lengths).item())
             return self[min_dl_idx]
 
         else:
-            min_dl_idx = int(t.argmin(all_description_lengths).item())
+            min_dl_idx = int(torch.argmin(all_description_lengths).item())
             return self[min_dl_idx]
 
 
@@ -305,9 +307,9 @@ def run_eval_single_sae(
     dataset_name: str = "HuggingFaceFW/fineweb",
 ) -> MDLEvalResultsCollection:
     random.seed(config.random_seed)
-    t.manual_seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
 
-    t.set_grad_enabled(False)
+    torch.set_grad_enabled(False)
     mdl_eval_results_list: list[MDLEvalResult] = []
 
     sae.cfg.dataset_trust_remote_code = True
@@ -320,16 +322,16 @@ def run_eval_single_sae(
 
     num_features = sae.cfg.d_sae
 
-    def get_min_max_activations() -> tuple[t.Tensor, t.Tensor]:
-        min_pos_activations_1F = t.zeros(1, num_features, device=device)
-        max_activations_1F = t.zeros(1, num_features, device=device) + 100
+    def get_min_max_activations() -> tuple[torch.Tensor, torch.Tensor]:
+        min_pos_activations_1F = torch.zeros(1, num_features, device=device)
+        max_activations_1F = torch.zeros(1, num_features, device=device) + 100
 
         for _ in range(10):
             neuron_activations_BSN = activations_store.get_buffer(config.sae_batch_size)
 
             feature_activations_BsF = sae.encode(neuron_activations_BSN).squeeze()
 
-            cat_feature_activations_BsF = t.cat(
+            cat_feature_activations_BsF = torch.cat(
                 [
                     feature_activations_BsF,
                     min_pos_activations_1F,
@@ -337,8 +339,10 @@ def run_eval_single_sae(
                 ],
                 dim=0,
             )
-            min_pos_activations_1F = t.min(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
-            max_activations_1F = t.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
+            min_pos_activations_1F = torch.min(cat_feature_activations_BsF, dim=0).values.unsqueeze(
+                0
+            )
+            max_activations_1F = torch.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
 
         min_pos_activations_F = min_pos_activations_1F.squeeze()
         max_activations_F = max_activations_1F.squeeze()
@@ -426,9 +430,9 @@ def run_eval(
     results_dict = {}
 
     if config.llm_dtype == "bfloat16":
-        llm_dtype = t.bfloat16
+        llm_dtype = torch.bfloat16
     elif config.llm_dtype == "float32":
-        llm_dtype = t.float32
+        llm_dtype = torch.float32
     else:
         raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
@@ -448,7 +452,7 @@ def run_eval(
             desc="Running SAE evaluation on all selected SAEs",
         ):
             gc.collect()
-            t.cuda.empty_cache()
+            torch.cuda.empty_cache()
 
             sae = SAE.from_pretrained(
                 release=sae_release,
@@ -494,10 +498,10 @@ def run_eval(
 
 def setup_environment():
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if t.backends.mps.is_available():
+    if torch.backends.mps.is_available():
         device = "mps"
     else:
-        device = "cuda" if t.cuda.is_available() else "cpu"
+        device = "cuda" if torch.cuda.is_available() else "cpu"
 
     print(f"Using device: {device}")
     return device
