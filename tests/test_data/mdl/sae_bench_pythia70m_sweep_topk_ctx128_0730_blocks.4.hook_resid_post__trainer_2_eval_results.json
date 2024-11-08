@@ -1,0 +1,64 @@
+{
+    "eval_instance_id": "31e11de7-ee34-44e5-bed3-ba4cbaa636c1",
+    "sae_lens_release": "sae_bench_pythia70m_sweep_topk_ctx128_0730",
+    "sae_lens_id": "blocks.4.hook_resid_post__trainer_2",
+    "eval_type_id": "mdl",
+    "sae_lens_version": "4.1.0",
+    "sae_bench_version": "7045ad23e671f457e961a52e8a888cec5dd3d5b1",
+    "date_time": "2024-11-05T01:54:14.197238",
+    "eval_config": {
+        "k_values": [
+            null
+        ],
+        "num_bins_values": [
+            8,
+            16,
+            32,
+            64
+        ],
+        "random_seed": 42,
+        "dataset_name": "HuggingFaceFW/fineweb",
+        "context_length": 128,
+        "sae_batch_size": 64,
+        "model_name": "pythia-70m-deduped",
+        "llm_dtype": "float32",
+        "mse_epsilon_threshold": 0.2
+    },
+    "eval_results": [
+        {
+            "num_bins": 8,
+            "bins": [],
+            "k": null,
+            "description_length": 169.08822631835938,
+            "within_threshold": false,
+            "mse_loss": 1.1164727210998535
+        },
+        {
+            "num_bins": 16,
+            "bins": [],
+            "k": null,
+            "description_length": 162.47213745117188,
+            "within_threshold": false,
+            "mse_loss": 0.5581578016281128
+        },
+        {
+            "num_bins": 32,
+            "bins": [],
+            "k": null,
+            "description_length": 169.43289184570312,
+            "within_threshold": false,
+            "mse_loss": 0.27901211380958557
+        },
+        {
+            "num_bins": 64,
+            "bins": [],
+            "k": null,
+            "description_length": 166.86834716796875,
+            "within_threshold": true,
+            "mse_loss": 0.13946622610092163
+        }
+    ],
+    "eval_artifacts": {
+        "artifacts": "None"
+    }
+}

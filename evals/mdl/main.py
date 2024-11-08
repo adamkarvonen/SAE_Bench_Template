@@ -6,7 +6,7 @@ import time
 from dataclasses import asdict, dataclass
 from typing import Any, Optional, Protocol
 
-import torch as t
+import torch
 import torch.nn.functional as F
 from collectibles import ListCollection
 from einops import rearrange
@@ -14,22 +14,37 @@ from loguru import logger
 from sae_lens import SAE, ActivationsStore
 from sae_lens.sae import TopK
 from torch import nn
+import gc
 from transformer_lens import HookedTransformer
+import argparse
+from datetime import datetime
+from tqdm import tqdm
 
-from evals.mdl.eval_config import EvalConfig
+from evals.mdl.eval_config import MDLEvalConfig
 from sae_bench_utils import activation_collection, formatting_utils
+from sae_bench_utils import (
+    get_eval_uuid,
+    get_sae_lens_version,
+    get_sae_bench_version,
+)
+from sae_bench_utils.sae_selection_utils import (
+    get_saes_from_regex,
+    select_saes_multiple_patterns,
+)
+
+EVAL_TYPE = "mdl"
 
 
 class Decodable(Protocol):
-    def decode(self, x: t.Tensor) -> t.Tensor: ...
+    def decode(self, x: torch.Tensor) -> torch.Tensor: ...
 
 
 def build_bins(
-    min_pos_activations_F: t.Tensor,
-    max_activations_F: t.Tensor,
+    min_pos_activations_F: torch.Tensor,
+    max_activations_F: torch.Tensor,
     bin_precision: Optional[float] = None,  # 0.2,
     num_bins: Optional[int] = None,  # 16)
-) -> list[t.Tensor]:
+) -> list[torch.Tensor]:
     if bin_precision is not None and num_bins is not None:
         raise ValueError("Only one of bin_precision or num_bins should be provided")
     if bin_precision is None and num_bins is None:
@@ -40,21 +55,21 @@ def build_bins(
     assert len(max_activations_F) == num_features
 
     # positive_mask_BsF = feature_activations_BsF > 0
-    # masked_activations_BsF = t.where(positive_mask_BsF, feature_activations_BsF, t.inf)
-    # min_pos_activations_F = t.min(masked_activations_BsF, dim=-1).values
-    # min_pos_activations_F = t.where(
-    #     t.isfinite(min_pos_activations_F), min_pos_activations_F, 0
+    # masked_activations_BsF = torch.where(positive_mask_BsF, feature_activations_BsF, torch.inf)
+    # min_pos_activations_F = torch.min(masked_activations_BsF, dim=-1).values
+    # min_pos_activations_F = torch.where(
+    #     torch.isfinite(min_pos_activations_F), min_pos_activations_F, 0
     # )
-    min_pos_activations_F = t.zeros_like(max_activations_F)
+    min_pos_activations_F = torch.zeros_like(max_activations_F)
 
     logger.debug(max_activations_F)
     logger.debug(min_pos_activations_F)
 
-    bins_F_list_Bi: list[t.Tensor] = []
+    bins_F_list_Bi: list[torch.Tensor] = []
 
     if bin_precision is not None:
         for feature_idx in range(num_features):
-            bins = t.arange(
+            bins = torch.arange(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item() + 2 * bin_precision,
                 bin_precision,
@@ -67,7 +82,7 @@ def build_bins(
     else:
         assert num_bins is not None
         for feature_idx in range(num_features):
-            bins = t.linspace(
+            bins = torch.linspace(
                 min_pos_activations_F[feature_idx].item(),
                 max_activations_F[feature_idx].item(),
                 num_bins + 1,
@@ -80,15 +95,14 @@ def build_bins(
 
 def calculate_dl(
     num_features: int,
-    bins_F_list_Bi: list[t.Tensor],
+    bins_F_list_Bi: list[torch.Tensor],
     device: str,
     activations_store: ActivationsStore,
     sae: SAE,
     k: int,
 ) -> float:
-
-    float_entropy_F = t.zeros(num_features, device=device)
-    bool_entropy_F = t.zeros(num_features, device=device)
+    float_entropy_F = torch.zeros(num_features, device=device, dtype=torch.float32)
+    bool_entropy_F = torch.zeros(num_features, device=device, dtype=torch.float32)
 
     x_BSN = activations_store.get_buffer(config.sae_batch_size)
     feature_activations_BsF = sae.encode(x_BSN).squeeze()
@@ -103,9 +117,9 @@ def calculate_dl(
     else:
         raise ValueError("feature_activations should be 2D or 3D tensor")
 
-    for feature_idx in range(num_features):
+    for feature_idx in tqdm(range(num_features), desc="Calculating DL"):
         # BOOL entropy
-        bool_prob = t.zeros(1, device=device)
+        bool_prob = torch.zeros(1, device=device)
 
         bool_prob_F = (feature_activations_BsF > 0).float().mean(dim=0)
         bool_prob = bool_prob + bool_prob_F[feature_idx]
@@ -113,19 +127,19 @@ def calculate_dl(
         if bool_prob == 0 or bool_prob == 1:
             bool_entropy = 0
         else:
-            bool_entropy = -bool_prob * t.log2(bool_prob) - (1 - bool_prob) * t.log2(
+            bool_entropy = -bool_prob * torch.log2(bool_prob) - (1 - bool_prob) * torch.log2(
                 1 - bool_prob
             )
         bool_entropy_F[feature_idx] = bool_entropy
 
         # FLOAT entropy
         num_bins = len(bins_F_list_Bi[feature_idx]) - 1
-        counts_Bi = t.zeros(num_bins, device="cpu")
+        counts_Bi = torch.zeros(num_bins, device="cpu")
 
-        feature_activations_Bs = feature_activations_BsF[:, feature_idx]
+        feature_activations_Bs = feature_activations_BsF[:, feature_idx].to(dtype=torch.float32)
         bins = bins_F_list_Bi[feature_idx]
 
-        temp_counts_Bi, _bin_edges = t.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
+        temp_counts_Bi, _bin_edges = torch.histogram(feature_activations_Bs.cpu(), bins=bins.cpu())
         counts_Bi = counts_Bi + temp_counts_Bi
 
         counts_Bi = counts_Bi.to(device)
@@ -137,11 +151,11 @@ def calculate_dl(
             float_entropy = 0
         else:
             # H[p] = -sum(p * log2(p))
-            float_entropy = -t.sum(probs_Bi * t.log2(probs_Bi)).item()
+            float_entropy = -torch.sum(probs_Bi * torch.log2(probs_Bi)).item()
 
         float_entropy_F[feature_idx] = float_entropy
 
-    total_entropy_F = bool_entropy_F.cuda() + bool_prob_F.cuda() * float_entropy
+    total_entropy_F = bool_entropy_F.cuda() + bool_prob_F.cuda() * float_entropy_F.cuda()
 
     description_length = total_entropy_F.sum().item()
 
@@ -149,14 +163,14 @@ def calculate_dl(
 
 
 def quantize_features_to_bin_midpoints(
-    features_BF: t.Tensor, bins_F_list_Bi: list[t.Tensor]
-) -> t.Tensor:
+    features_BF: torch.Tensor, bins_F_list_Bi: list[torch.Tensor]
+) -> torch.Tensor:
     """
     Quantize features to the bin midpoints of their corresponding histograms.
     """
     _, num_features = features_BF.shape
 
-    quantized_features_BF = t.empty_like(features_BF, device=features_BF.device)
+    quantized_features_BF = torch.empty_like(features_BF, device=features_BF.device)
 
     for feature_idx in range(num_features):
         # Extract the feature values and bin edges for the current histogram
@@ -165,8 +179,8 @@ def quantize_features_to_bin_midpoints(
 
         num_bins = len(bin_edges_Bi) - 1
 
-        bin_indices_B = t.bucketize(features_B, bin_edges_Bi)
-        bin_indices_clipped_B = t.clamp(bin_indices_B, min=1, max=num_bins) - 1
+        bin_indices_B = torch.bucketize(features_B, bin_edges_Bi)
+        bin_indices_clipped_B = torch.clamp(bin_indices_B, min=1, max=num_bins) - 1
 
         # Calculate the midpoints of the bins
         bin_mids_Bi = 0.5 * (bin_edges_Bi[:-1] + bin_edges_Bi[1:])
@@ -179,7 +193,7 @@ def quantize_features_to_bin_midpoints(
 # def calculate_dl(
 #     activations_store: ActivationsStore,
 #     sae: SAE,
-#     bins: list[t.Tensor],
+#     bins: list[torch.Tensor],
 #     k: Optional[int] = None,
 # ) -> float:
 #     for i in range(10):
@@ -205,15 +219,14 @@ def quantize_features_to_bin_midpoints(
 
 
 def check_quantised_features_reach_mse_threshold(
-    bins_F_list_Bi: list[t.Tensor],
+    bins_F_list_Bi: list[torch.Tensor],
     activations_store: ActivationsStore,
     sae: SAE,
     mse_threshold: float,
     autoencoder: SAE,
     k: Optional[int] = None,
 ) -> tuple[bool, float]:
-
-    mse_losses: list[t.Tensor] = []
+    mse_losses: list[torch.Tensor] = []
 
     for i in range(1):
         x_BSN = activations_store.get_buffer(config.sae_batch_size)
@@ -227,13 +240,13 @@ def check_quantised_features_reach_mse_threshold(
             feature_activations_BSF, bins_F_list_Bi
         )
 
-        reconstructed_x_BSN: t.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
+        reconstructed_x_BSN: torch.Tensor = autoencoder.decode(quantised_feature_activations_BsF)
 
-        mse_loss: t.Tensor = F.mse_loss(reconstructed_x_BSN, x_BSN.squeeze(), reduction="mean")
-        mse_loss = t.sqrt(mse_loss) / sae.cfg.d_in
+        mse_loss: torch.Tensor = F.mse_loss(reconstructed_x_BSN, x_BSN.squeeze(), reduction="mean")
+        mse_loss = torch.sqrt(mse_loss) / sae.cfg.d_in
         mse_losses.append(mse_loss)
 
-    avg_mse_loss = t.mean(t.stack(mse_losses))
+    avg_mse_loss = torch.mean(torch.stack(mse_losses))
     within_threshold = bool((avg_mse_loss < mse_threshold).item())
 
     return within_threshold, mse_loss.item()
@@ -250,7 +263,7 @@ class IdentityAE(nn.Module):
 @dataclass
 class MDLEvalResult:
     num_bins: int
-    bins: list[t.Tensor]
+    bins: list[torch.Tensor]
     k: Optional[int]
 
     description_length: float
@@ -258,7 +271,6 @@ class MDLEvalResult:
     mse_loss: float
 
     def to_dict(self) -> dict[str, Any]:
-
         out = asdict(self)
         out["bins"] = []
         return out
@@ -266,7 +278,7 @@ class MDLEvalResult:
 
 class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
     num_bins: list[int]
-    bins: list[list[t.Tensor]]
+    bins: list[list[torch.Tensor]]
     k: list[Optional[int]]
 
     description_length: list[float]
@@ -274,52 +286,32 @@ class MDLEvalResultsCollection(ListCollection[MDLEvalResult]):
     mse_loss: list[float]
 
     def pick_minimum_viable(self) -> MDLEvalResult:
-        all_description_lengths = t.tensor(self.description_length)
-        threshold_mask = t.tensor(self.within_threshold)
+        all_description_lengths = torch.tensor(self.description_length)
+        threshold_mask = torch.tensor(self.within_threshold)
 
         viable_description_lengths = all_description_lengths[threshold_mask]
         if len(viable_description_lengths) > 0:
-            min_dl_idx = int(t.argmin(viable_description_lengths).item())
+            min_dl_idx = int(torch.argmin(viable_description_lengths).item())
             return self[min_dl_idx]
 
         else:
-            min_dl_idx = int(t.argmin(all_description_lengths).item())
+            min_dl_idx = int(torch.argmin(all_description_lengths).item())
             return self[min_dl_idx]
 
 
-def _run_single_eval(
-    config: EvalConfig,
+def run_eval_single_sae(
+    config: MDLEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     device: str,
     dataset_name: str = "HuggingFaceFW/fineweb",
-) -> MDLEvalResult:
+) -> MDLEvalResultsCollection:
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+
+    torch.set_grad_enabled(False)
     mdl_eval_results_list: list[MDLEvalResult] = []
 
-    # llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    # llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-
-    # train_df, test_df = dataset_utils.load_huggingface_dataset(dataset_name)
-    # train_data, test_data = dataset_utils.get_multi_label_train_test_data(
-    #     train_df,
-    #     test_df,
-    #     dataset_name,
-    #     config.sae_batch_size,
-    #     config.sae_batch_size,
-    #     config.random_seed,
-    # )
-
-    # chosen_classes = dataset_info.chosen_classes_per_dataset[dataset_name]
-
-    # train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
-    # test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
-
-    # train_data = dataset_utils.tokenize_data(
-    #     train_data, model.tokenizer, config.context_length, device
-    # )
-    # test_data = dataset_utils.tokenize_data(
-    #     test_data, model.tokenizer, config.context_length, device
-    # )
     sae.cfg.dataset_trust_remote_code = True
     sae = sae.to(device)
     model = model.to(device)  # type: ignore
@@ -328,20 +320,18 @@ def _run_single_eval(
         model, sae, config.sae_batch_size, dataset=dataset_name, device=device
     )
 
-    # print(f"Running evaluation for layer {config.layer}")
-    # hook_name = f"blocks.{config.layer}.hook_resid_post"
     num_features = sae.cfg.d_sae
 
-    def get_min_max_activations() -> tuple[t.Tensor, t.Tensor]:
-        min_pos_activations_1F = t.zeros(1, num_features, device=device)
-        max_activations_1F = t.zeros(1, num_features, device=device) + 100
+    def get_min_max_activations() -> tuple[torch.Tensor, torch.Tensor]:
+        min_pos_activations_1F = torch.zeros(1, num_features, device=device)
+        max_activations_1F = torch.zeros(1, num_features, device=device) + 100
 
         for _ in range(10):
             neuron_activations_BSN = activations_store.get_buffer(config.sae_batch_size)
 
             feature_activations_BsF = sae.encode(neuron_activations_BSN).squeeze()
 
-            cat_feature_activations_BsF = t.cat(
+            cat_feature_activations_BsF = torch.cat(
                 [
                     feature_activations_BsF,
                     min_pos_activations_1F,
@@ -349,10 +339,10 @@ def _run_single_eval(
                 ],
                 dim=0,
             )
-            min_pos_activations_1F = t.min(
-                cat_feature_activations_BsF, dim=0
-            ).values.unsqueeze(0)
-            max_activations_1F = t.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
+            min_pos_activations_1F = torch.min(cat_feature_activations_BsF, dim=0).values.unsqueeze(
+                0
+            )
+            max_activations_1F = torch.max(cat_feature_activations_BsF, dim=0).values.unsqueeze(0)
 
         min_pos_activations_F = min_pos_activations_1F.squeeze()
         max_activations_F = max_activations_1F.squeeze()
@@ -366,11 +356,9 @@ def _run_single_eval(
 
     for num_bins in config.num_bins_values:
         for k in config.k_values:
-            assert k is not None
-
             bins = build_bins(min_pos_activations_F, max_activations_F, num_bins=num_bins)
 
-            # print("Built bins")
+            print("Built bins")
 
             within_threshold, mse_loss = check_quantised_features_reach_mse_threshold(
                 bins_F_list_Bi=bins,
@@ -384,9 +372,8 @@ def _run_single_eval(
                 logger.warning(
                     f"mse_loss for num_bins = {num_bins} and k = {k} is {mse_loss}, which is not within threshold"
                 )
-                continue
 
-            # print("Checked threshold")
+            print("Checked threshold")
 
             description_length = calculate_dl(
                 num_features=num_features,
@@ -398,7 +385,7 @@ def _run_single_eval(
             )
 
             logger.info(
-                f"Description length: {description_length} for num_bins = {num_bins} and k = {k}"
+                f"Description length: {description_length} for num_bins = {num_bins} and k = {k} and mse = {mse_loss}"
             )
 
             mdl_eval_results_list.append(
@@ -414,126 +401,229 @@ def _run_single_eval(
 
     mdl_eval_results = MDLEvalResultsCollection(mdl_eval_results_list)
 
-    minimum_viable_eval_result = mdl_eval_results.pick_minimum_viable()
+    result = []
 
-    minimum_viable_description_length = minimum_viable_eval_result.description_length
-    logger.info(minimum_viable_description_length)
+    for mdl_eval_result in mdl_eval_results:
+        result.append(mdl_eval_result.to_dict())
 
-    return minimum_viable_eval_result
+    return result
+
+    # minimum_viable_eval_result = mdl_eval_results.pick_minimum_viable()
+
+    # minimum_viable_description_length = minimum_viable_eval_result.description_length
+    # logger.info(minimum_viable_description_length)
+
+    # return minimum_viable_eval_result
 
 
 def run_eval(
-    config: EvalConfig,
+    config: MDLEvalConfig,
     selected_saes_dict: dict[str, list[str]],
     device: str,
+    output_path: str,
+    force_rerun: bool = False,
 ) -> dict[str, Any]:
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
+
     results_dict = {}
 
-    random.seed(config.random_seed)
-    t.manual_seed(config.random_seed)
+    if config.llm_dtype == "bfloat16":
+        llm_dtype = torch.bfloat16
+    elif config.llm_dtype == "float32":
+        llm_dtype = torch.float32
+    else:
+        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
-    llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+    print(f"Using dtype: {llm_dtype}")
+
     model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for dataset_name in config.dataset_names:
-        for sae_release_name, sae_specific_names in selected_saes_dict.items():
-            for sae_specific_name in sae_specific_names:
-                try:
-                    sae, _, _ = SAE.from_pretrained(
-                        sae_release_name, sae_specific_name, device=device
-                    )
-                except ValueError as e:
-                    logger.error(
-                        f"Error loading SAE {sae_specific_name} from {sae_release_name}: {e}"
-                    )
-                    sae_specific_name = "blocks.3.hook_resid_post__trainer_10"
-                    sae, _, _ = SAE.from_pretrained(
-                        sae_release_name, sae_specific_name, device=device
-                    )
+    for sae_release in selected_saes_dict:
+        print(
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+        )
 
-                eval_result = _run_single_eval(
-                    config=config,
-                    sae=sae,
-                    model=model,
-                    dataset_name=dataset_name,
-                    device=device,
-                )
-                results_dict[f"{dataset_name}_{sae_specific_name}_results"] = (
-                    eval_result.to_dict()
-                )
+        for sae_id in tqdm(
+            selected_saes_dict[sae_release],
+            desc="Running SAE evaluation on all selected SAEs",
+        ):
+            gc.collect()
+            torch.cuda.empty_cache()
+
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+            sae = sae.to(device=device, dtype=llm_dtype)
+
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            eval_output = run_eval_single_sae(
+                config=config,
+                sae=sae,
+                model=model,
+                dataset_name=config.dataset_name,
+                device=device,
+            )
+
+            sae_eval_result = {
+                "eval_instance_id": eval_instance_id,
+                "sae_lens_release": sae_release,
+                "sae_lens_id": sae_id,
+                "eval_type_id": EVAL_TYPE,
+                "sae_lens_version": sae_lens_version,
+                "sae_bench_version": sae_bench_commit_hash,
+                "date_time": datetime.now().isoformat(),
+                "eval_config": asdict(config),
+                "eval_results": eval_output,
+                "eval_artifacts": {"artifacts": "None"},
+            }
+
+            with open(sae_result_path, "w") as f:
+                json.dump(sae_eval_result, f, indent=4)
+
+            results_dict[sae_result_file] = eval_output
 
     results_dict["custom_eval_config"] = asdict(config)
-    # results_dict["custom_eval_results"] = formatting_utils.average_results_dictionaries(
-    #     results_dict, config.dataset_names
-    # )
 
     return results_dict
 
 
+def setup_environment():
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    if torch.backends.mps.is_available():
+        device = "mps"
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    print(f"Using device: {device}")
+    return device
+
+
+def create_config_and_selected_saes(
+    args,
+) -> tuple[MDLEvalConfig, dict[str, list[str]]]:
+    config = MDLEvalConfig(
+        random_seed=args.random_seed,
+        model_name=args.model_name,
+    )
+
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run MDL evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument(
+        "--sae_regex_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE selection",
+    )
+    parser.add_argument(
+        "--sae_block_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE block selection",
+    )
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default="evals/mdl/results",
+        help="Output folder",
+    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+    parser.add_argument(
+        "--clean_up_activations",
+        action="store_false",
+        help="Clean up activations after evaluation",
+    )
+
+    return parser
+
+
 if __name__ == "__main__":
+    """python evals/mdl/main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped """
     logger.remove()
     logger.add(sys.stdout, level="INFO")
 
-    # feature_activations_BSF = t.relu(t.randn(10, 5))
-
-    # minimum_viable_description_length = _run_single_eval(
-    #     feature_activations_BSF,
-    # )
-    # print(minimum_viable_description_length)
-    # pass
-
-    if t.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if t.cuda.is_available() else "cpu"
-    logger.info(f"Using device: {device}")
+    args = arg_parser().parse_args()
+    device = setup_environment()
 
     start_time = time.time()
 
-    config = EvalConfig(
-        k_values=[12, 16, 24, 32],
-        num_bins_values=[8, 12, 16, 32, 64, 128],
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
+    ]
+
+    # sae_regex_patterns = [
+    #     r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+    #     r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
+    #     r"(gemma-scope-2b-pt-res)",
+    # ]
+    # sae_block_pattern = [
+    #     r".*blocks\.19(?!.*step).*",
+    #     r".*blocks\.19(?!.*step).*",
+    #     r".*layer_(19).*(16k).*",
+    # ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+
+    print(selected_saes_dict)
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
+
+    config = MDLEvalConfig(
+        k_values=[None],
+        # num_bins_values=[8, 12, 16, 32, 64, 128],
+        num_bins_values=[8, 16, 32, 64],
+        # num_bins_values=[8],
         mse_epsilon_threshold=0.2,
+        model_name=args.model_name,
     )
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
+    ]
     logger.info(config)
 
-    # populate selected_saes_dict using config values
-    for release in config.sae_releases:
-        if "gemma-scope" in release:
-            config.selected_saes_dict[release] = (
-                formatting_utils.find_gemmascope_average_l0_sae_names(config.layer)
-            )
-        else:
-            config.selected_saes_dict[release] = formatting_utils.filter_sae_names(
-                sae_names=release,
-                layers=[config.layer],
-                include_checkpoints=config.include_checkpoints,
-                trainer_ids=config.trainer_ids,
-            )
-
-        print(f"SAE release: {release}, SAEs: {config.selected_saes_dict[release]}")
-
-    results_dict = run_eval(config, config.selected_saes_dict, device)
-
-    # create output filename and save results
-    checkpoints_str = ""
-    if config.include_checkpoints:
-        checkpoints_str = "_with_checkpoints"
-
-    output_filename = (
-        config.model_name + f"_layer_{config.layer}{checkpoints_str}_eval_results.json"
+    results_dict = run_eval(
+        config,
+        selected_saes_dict,
+        device,
+        args.output_folder,
+        args.force_rerun,
     )
-    output_folder = "results"  # at evals/<eval_name>
-
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder, exist_ok=True)
-
-    output_location = os.path.join(output_folder, output_filename)
-
-    with open(output_location, "w") as f:
-        json.dump(results_dict, f)
 
     end_time = time.time()
 
