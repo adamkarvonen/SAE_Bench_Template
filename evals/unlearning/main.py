@@ -1,6 +1,7 @@
 import os
 import shutil
 import time
+from pydantic import TypeAdapter
 import torch
 import pandas as pd
 import random
@@ -15,6 +16,7 @@ import argparse
 from datetime import datetime
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
+from evals.unlearning.eval_output import UnlearningEvalOutput, UnlearningMetricCategories, UnlearningMetrics
 from evals.unlearning.utils.eval import run_eval_single_sae
 import sae_bench_utils.activation_collection as activation_collection
 from evals.unlearning.eval_config import UnlearningEvalConfig
@@ -165,36 +167,31 @@ def run_eval(
             if os.path.exists(sae_result_path) and not force_rerun:
                 print(f"Loading existing results from {sae_result_path}")
                 with open(sae_result_path, "r") as f:
-                    eval_output = json.load(f)
+                    eval_output = TypeAdapter(UnlearningEvalOutput).validate_json(f.read())
             else:
                 run_eval_single_sae(
                     model, sae, config, artifacts_folder, sae_release_and_id, force_rerun
                 )
-
                 sae_results_folder = os.path.join(
                     artifacts_folder, sae_release_and_id, "results/metrics"
                 )
                 metrics_df = get_metrics_df(sae_results_folder)
                 unlearning_score = get_unlearning_scores(metrics_df)
-                eval_output = {"unlearning_score": unlearning_score}
+                eval_output = UnlearningEvalOutput(
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=UnlearningMetricCategories(unlearning=UnlearningMetrics(unlearning_score=unlearning_score)),
+                    eval_result_details=[],
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
 
-            sae_eval_result = {
-                "eval_instance_id": eval_instance_id,
-                "sae_lens_release": sae_release,
-                "sae_lens_id": sae_id,
-                "eval_type_id": EVAL_TYPE,
-                "sae_lens_version": sae_lens_version,
-                "sae_bench_version": sae_bench_commit_hash,
-                "date_time": datetime.now().isoformat(),
-                "eval_config": asdict(config),
-                "eval_results": eval_output,
-                "eval_artifacts": {"artifacts": os.path.relpath(artifacts_folder)},
-            }
+            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            with open(sae_result_path, "w") as f:
-                json.dump(sae_eval_result, f, indent=4)
-
-            results_dict[sae_release_and_id] = sae_eval_result
+            eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_artifacts:
         for folder in os.listdir(artifacts_folder):

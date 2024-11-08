@@ -45,7 +45,7 @@ def test_end_to_end_different_seed():
         device,
         output_path="evals/unlearning/test_results/",
         force_rerun=True,
-        clean_up_artifacts=False,
+        clean_up_artifacts=True,
     )
 
     with open(results_filename, "r") as f:
