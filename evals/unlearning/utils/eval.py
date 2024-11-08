@@ -1,16 +1,14 @@
-import argparse
 import os
 import numpy as np
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
-
 from evals.unlearning.utils.feature_activation import (
     get_top_features,
     load_sparsity_data,
     save_feature_sparsity,
 )
 from evals.unlearning.utils.metrics import calculate_metrics_list
-import evals.unlearning.eval_config as eval_config
+from evals.unlearning.eval_config import UnlearningEvalConfig
 
 
 def run_metrics_calculation(
@@ -21,10 +19,10 @@ def run_metrics_calculation(
     retain_sparsity: np.ndarray,
     artifacts_folder: str,
     sae_name: str,
-    config: eval_config.EvalConfig,
+    config: UnlearningEvalConfig,
     force_rerun: bool,
 ):
-    all_dataset_names = config.all_dataset_names
+    dataset_names = config.dataset_names
 
     for retain_threshold in config.retain_thresholds:
         top_features_custom = get_top_features(
@@ -53,7 +51,7 @@ def run_metrics_calculation(
             sweep,
             artifacts_folder,
             force_rerun,
-            all_dataset_names,
+            dataset_names,
             n_batch_loss_added=config.n_batch_loss_added,
             activation_store=activation_store,
             target_metric=config.target_metric,
@@ -68,7 +66,7 @@ def run_metrics_calculation(
 def run_eval_single_sae(
     model: HookedTransformer,
     sae: SAE,
-    config: eval_config.EvalConfig,
+    config: UnlearningEvalConfig,
     artifacts_folder: str,
     sae_release_and_id: str,
     force_rerun: bool,

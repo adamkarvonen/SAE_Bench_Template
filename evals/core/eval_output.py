@@ -183,7 +183,7 @@ class CoreEvalOutput(
     BaseEvalOutput[CoreEvalConfig, CoreMetricCategories, CoreFeatureMetric]
 ):
     """
-    The output of core SAE evaluations measuring reconstruction quality, sparsity, and model preservation.
+    Core SAE evaluations measuring reconstruction quality, sparsity, and model preservation. From SAELens.
     """
 
     eval_config: CoreEvalConfig

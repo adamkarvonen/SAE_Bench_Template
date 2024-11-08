@@ -717,7 +717,7 @@
       "type": "object"
     }
   },
-  "description": "The output of a TPP evaluation.",
+  "description": "TPP evaluation description goes here.",
   "properties": {
     "eval_type_id": {
       "default": "tpp",

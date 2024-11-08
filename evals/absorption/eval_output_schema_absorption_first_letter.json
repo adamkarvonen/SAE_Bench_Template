@@ -118,7 +118,7 @@
       "type": "object"
     }
   },
-  "description": "The output of a feature absorption evaluation looking at the first letter.",
+  "description": "The feature absorption evaluation looking at the first letter.",
   "properties": {
     "eval_type_id": {
       "default": "absorption_first_letter",

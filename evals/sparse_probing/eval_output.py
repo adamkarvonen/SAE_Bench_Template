@@ -220,7 +220,7 @@ class SparseProbingEvalOutput(
 ):
     # This will end up being the description of the eval in the UI.
     """
-    The output of a feature absorption evaluation looking at the first letter.
+    Sparse probing evaluation description goes here.
     """
 
     eval_config: SparseProbingEvalConfig
