@@ -1,0 +1,205 @@
+Summary table:
+┌──────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────┬────────────────┬────────────────┬─────────┐
+│   latent │ explanation                                                                                                 │ predictions    │ correct seqs   │   score │
+├──────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────┼────────────────┼────────────────┼─────────┤
+│       15 │ terms related to credit and debit card transactions and associated fees                                     │ [4, 9, 11, 14] │ [4, 9, 11, 14] │       1 │
+│    16873 │ theological concepts related to belief, righteousness, and the significance of baptism                      │ [2, 7, 8, 10]  │ [2, 7, 8, 10]  │       1 │
+│       11 │ variations of the substring 'rel' in different contexts related to relationships, religion, and reliability │ [4, 7, 8, 11]  │ [4, 7, 8, 11]  │       1 │
+│        9 │ the term 'new' in various contexts indicating updates or changes to policies and systems                    │ [4, 6, 7, 10]  │ [4, 6, 7, 10]  │       1 │
+└──────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┴────────────────┴────────────────┴─────────┘
+
+Worst scoring idx 15, score = 1.0
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1.  to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>.  │
+│           │ He says he plans to donate a portion 2. , the original amount is released back to your credit<< card>>, but some banks   │
+│           │ take upwards of 10 working days 3.  pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of   │
+│           │ excessive payment sur 4. A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The │
+│           │ 5.  revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing 6. olving │
+│           │ credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. 7. pin       │
+│           │ device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £ 8. , or £2.10 if using a credit<<      │
+│           │ card>>.↵↵The figures, produced in 2011, 9.  Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least │
+│           │ in their headline prices.↵↵ 10.  the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal  │
+│           │ Reserve said Thursday that 11.  banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre │
+│           │ a 12.  cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex 13.  have been      │
+│           │ asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically, 14.  confirmed that       │
+│           │ Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient 15. ↵Old Navy↵↵Radio        │
+│           │ Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                                                  │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on terms related to credit and debit card transactions and associated fees.                        │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                           │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    51.329 │ to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>. He says he plans to donate a portion      │
+│    47.245 │ , the original amount is released back to your credit<< card>>, but some banks take upwards of 10 working days     │
+│    46.221 │ pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of excessive payment sur           │
+│    45.020 │ A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The                    │
+│    43.863 │ revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing         │
+│    43.799 │ olving credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. │
+│    43.656 │ pin device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £                              │
+│    41.237 │ , or £2.10 if using a credit<< card>>.↵↵The figures, produced in 2011,                                             │
+│    39.815 │ Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least in their headline prices.↵↵           │
+│    39.747 │ the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal Reserve said Thursday that  │
+│    19.952 │ banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre a                         │
+│    14.123 │ cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex                      │
+│    13.361 │ have been asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically,           │
+│     8.593 │ confirmed that Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient        │
+│     1.823 │ ↵Old Navy↵↵Radio Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                           │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "2, 5, 7, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on terms related to credit and debit card transactions and associated fees.   │
+│           │ Here are the examples:  1.  from romance to friendships to family to co-workers. Ready for a commitment? Then Like us 2. │
+│           │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when 3. It was a remarkable           │
+│           │ breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award 4. t his ankle joint, but │
+│           │ his credit card snapping.↵↵JUSTIN HODGES↵ 5. ages, he found that the kinds of antioxidants in pomegranates do. His       │
+│           │ theory: there are 6.  about one-third of Americans hold both liberal and conservative views, depending on the specific   │
+│           │ issue. Another Pew 7.  they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking 8.  bra. Grab your seam ripper.   │
+│           │ We need to remove the stitches from inside of the elastic.↵ 9.  are beginning to report fraudulent charges on the linked │
+│           │ credit cards.↵↵Unlike the breach a few years back 10.  happened was not long for the world.↵↵During that rest, Thomas    │
+│           │ began thinking in the long- 11.  be charged 53 pence extra if using a debit card, or £2.10 if using a credit 12. Wish    │
+│           │ You Were Listed. Patanjali has pitchforked itself into the top 13. .↵↵Although Queen was originally charged with second- │
+│           │ degree rape and contributing to the delinquency of a 14.  he has hundreds of pages of sales records and credit card      │
+│           │ receipts that prove they're lying. Merkel has requested                                                                  │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 4, 9, 11, 14                                                                                                             │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                            │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ from romance to friendships to family to co-workers. Ready for a commitment? Then Like us                           │
+│     0.000 │           │              │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when                             │
+│     0.000 │           │              │ It was a remarkable breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award  │
+│    43.382 │ Y         │ Y            │ t his ankle joint, but his credit card snapping.↵↵JUSTIN HODGES↵                                                    │
+│     0.000 │           │              │ ages, he found that the kinds of antioxidants in pomegranates do. His theory: there are                             │
+│     0.000 │           │              │ about one-third of Americans hold both liberal and conservative views, depending on the specific issue. Another Pew │
+│     0.000 │           │              │ they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking                                                     │
+│     0.000 │           │              │ bra. Grab your seam ripper. We need to remove the stitches from inside of the elastic.↵                             │
+│    40.256 │ Y         │ Y            │ are beginning to report fraudulent charges on the linked credit cards.↵↵Unlike the breach a few years back          │
+│     0.000 │           │              │ happened was not long for the world.↵↵During that rest, Thomas began thinking in the long-                          │
+│    34.820 │ Y         │ Y            │ be charged 53 pence extra if using a debit card, or £2.10 if using a credit                                         │
+│     0.000 │           │              │ Wish You Were Listed. Patanjali has pitchforked itself into the top                                                 │
+│     0.000 │           │              │ .↵↵Although Queen was originally charged with second-degree rape and contributing to the delinquency of a           │
+│    44.726 │ Y         │ Y            │ he has hundreds of pages of sales records and credit card receipts that prove they're lying. Merkel has requested   │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Best scoring idx 15, score = 1.0
+Generation phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents │
+│           │ on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of │
+│           │ the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be │
+│           │ overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but      │
+│           │ others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your       │
+│           │ explanation should cover most or all activating words (for example, don't give an explanation which is specific to a     │
+│           │ single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization    │
+│           │ and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as │
+│           │ possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words.     │
+│           │ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs  │
+│           │ related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words",   │
+│           │ and "This neuron activates on text about government economic policy".                                                    │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ The activating documents are given below:  1.  to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>.  │
+│           │ He says he plans to donate a portion 2. , the original amount is released back to your credit<< card>>, but some banks   │
+│           │ take upwards of 10 working days 3.  pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of   │
+│           │ excessive payment sur 4. A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The │
+│           │ 5.  revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing 6. olving │
+│           │ credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. 7. pin       │
+│           │ device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £ 8. , or £2.10 if using a credit<<      │
+│           │ card>>.↵↵The figures, produced in 2011, 9.  Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least │
+│           │ in their headline prices.↵↵ 10.  the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal  │
+│           │ Reserve said Thursday that 11.  banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre │
+│           │ a 12.  cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex 13.  have been      │
+│           │ asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically, 14.  confirmed that       │
+│           │ Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient 15. ↵Old Navy↵↵Radio        │
+│           │ Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                                                  │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ This neuron activates on terms related to credit and debit card transactions and associated fees.                        │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Sequence                                                                                                           │
+├───────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│    51.329 │ to pay in cash to avoid<< bank>> fees from credit<< card>><< machines>>. He says he plans to donate a portion      │
+│    47.245 │ , the original amount is released back to your credit<< card>>, but some banks take upwards of 10 working days     │
+│    46.221 │ pay many pounds extra to use a<< debit>> or<< credit>><< card>>.↵↵"The practice of excessive payment sur           │
+│    45.020 │ A ban on "excessive"<< debit>> and<< credit>><< card>> charges begins on Saturday 6 April.↵↵The                    │
+│    43.863 │ revolving credit outstanding, which mostly consists of credit<<->><<card>> loans.↵↵U.S. consumer borrowing         │
+│    43.799 │ olving credit outstanding, which mostly consists of credit<<->><<card>> loans, accelerated to an annual rate of 9. │
+│    43.656 │ pin device.↵↵How much should your credit<< card>> surcharge be? transaction of £50: £                              │
+│    41.237 │ , or £2.10 if using a credit<< card>>.↵↵The figures, produced in 2011,                                             │
+│    39.815 │ Easyjet and Aer Lingus agreed to include<< debit>><< card>> charges at least in their headline prices.↵↵           │
+│    39.747 │ the fastest rate in 11 months, reflecting heavy credit<< card>> spending.↵↵The Federal Reserve said Thursday that  │
+│    19.952 │ banks take upwards of 10 working days to process a<< card>> chargeback, meaning if youre a                         │
+│    14.123 │ cinema tickets to hotel rooms now have new protection from<< card>> surcharges.↵↵A ban on "ex                      │
+│    13.361 │ have been asked to pay large surcharges for using<< cards>>, especially when booking online.↵↵Typically,           │
+│     8.593 │ confirmed that Second Career funding gets deducted from welfare che<<ques>>. But she added that A recipient        │
+│     1.823 │ ↵Old Navy↵↵Radio Shack↵↵St<<aples>>↵↵Supervalu↵↵Victoria                                                           │
+└───────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+Scoring phase
+┌───────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ system    │ We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a   │
+│           │ short document. You will be given a short explanation of what this neuron activates for, and then be shown 14 example    │
+│           │ sequences in random order. You will have to return a comma-separated list of the examples where you think the neuron     │
+│           │ should activate at least once, on ANY of the words or substrings in the document. For example, your response might look  │
+│           │ like "2, 5, 7, 8". Try not to be overly specific in your interpretation of the explanation. If you think there are no    │
+│           │ examples where the neuron will activate, you should just respond with "None". You should include nothing else in your    │
+│           │ response other than comma-separated numbers or the word "None" - this is important.                                      │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ user      │ Here is the explanation: this neuron fires on terms related to credit and debit card transactions and associated fees.   │
+│           │ Here are the examples:  1.  from romance to friendships to family to co-workers. Ready for a commitment? Then Like us 2. │
+│           │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when 3. It was a remarkable           │
+│           │ breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award 4. t his ankle joint, but │
+│           │ his credit card snapping.↵↵JUSTIN HODGES↵ 5. ages, he found that the kinds of antioxidants in pomegranates do. His       │
+│           │ theory: there are 6.  about one-third of Americans hold both liberal and conservative views, depending on the specific   │
+│           │ issue. Another Pew 7.  they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking 8.  bra. Grab your seam ripper.   │
+│           │ We need to remove the stitches from inside of the elastic.↵ 9.  are beginning to report fraudulent charges on the linked │
+│           │ credit cards.↵↵Unlike the breach a few years back 10.  happened was not long for the world.↵↵During that rest, Thomas    │
+│           │ began thinking in the long- 11.  be charged 53 pence extra if using a debit card, or £2.10 if using a credit 12. Wish    │
+│           │ You Were Listed. Patanjali has pitchforked itself into the top 13. .↵↵Although Queen was originally charged with second- │
+│           │ degree rape and contributing to the delinquency of a 14.  he has hundreds of pages of sales records and credit card      │
+│           │ receipts that prove they're lying. Merkel has requested                                                                  │
+├───────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ assistant │ 4, 9, 11, 14                                                                                                             │
+└───────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────┬───────────┬──────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│   Top act │ Active?   │ Predicted?   │ Sequence                                                                                                            │
+├───────────┼───────────┼──────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│     0.000 │           │              │ from romance to friendships to family to co-workers. Ready for a commitment? Then Like us                           │
+│     0.000 │           │              │ lots of Notoriety decks. The point of Notoriety is that you can make points appear when                             │
+│     0.000 │           │              │ It was a remarkable breakthrough campaign that saw him named the Jimmy Murphy Academy Player of the Year, an award  │
+│    43.382 │ Y         │ Y            │ t his ankle joint, but his credit card snapping.↵↵JUSTIN HODGES↵                                                    │
+│     0.000 │           │              │ ages, he found that the kinds of antioxidants in pomegranates do. His theory: there are                             │
+│     0.000 │           │              │ about one-third of Americans hold both liberal and conservative views, depending on the specific issue. Another Pew │
+│     0.000 │           │              │ they left Katedra.↵↵Downturn [ edit ]↵↵The band was now seeking                                                     │
+│     0.000 │           │              │ bra. Grab your seam ripper. We need to remove the stitches from inside of the elastic.↵                             │
+│    40.256 │ Y         │ Y            │ are beginning to report fraudulent charges on the linked credit cards.↵↵Unlike the breach a few years back          │
+│     0.000 │           │              │ happened was not long for the world.↵↵During that rest, Thomas began thinking in the long-                          │
+│    34.820 │ Y         │ Y            │ be charged 53 pence extra if using a debit card, or £2.10 if using a credit                                         │
+│     0.000 │           │              │ Wish You Were Listed. Patanjali has pitchforked itself into the top                                                 │
+│     0.000 │           │              │ .↵↵Although Queen was originally charged with second-degree rape and contributing to the delinquency of a           │
+│    44.726 │ Y         │ Y            │ he has hundreds of pages of sales records and credit card receipts that prove they're lying. Merkel has requested   │
+└───────────┴───────────┴──────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
