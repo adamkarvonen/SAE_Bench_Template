@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from typing import Callable, Optional
-from jaxtyping import Int, Float, jaxtyped, BFloat16
+from jaxtyping import Bool, Int, Float, jaxtyped
 from beartype import beartype
 import einops
 from transformer_lens import HookedTransformer
+from transformers import AutoTokenizer
 from sae_lens import SAE
 
 # Relevant at ctx len 128
@@ -21,6 +22,60 @@ LLM_NAME_TO_DTYPE = {
 }
 
 
+# @jaxtyped(typechecker=beartype) # TODO: jaxtyped struggles with the tokenizer
+@torch.no_grad
+def get_bos_pad_eos_mask(
+    tokens: Int[torch.Tensor, "dataset_size seq_len"], tokenizer: AutoTokenizer
+) -> Bool[torch.Tensor, "dataset_size seq_len"]:
+    mask = (
+        (tokens == tokenizer.pad_token_id)
+        | (tokens == tokenizer.eos_token_id)
+        | (tokens == tokenizer.bos_token_id)
+    ).to(dtype=torch.bool)
+    return ~mask
+
+
+@jaxtyped(typechecker=beartype)
+@torch.no_grad
+def get_llm_activations(
+    tokens: Int[torch.Tensor, "dataset_size seq_len"],
+    model: HookedTransformer,
+    batch_size: int,
+    layer: int,
+    hook_name: str,
+    mask_bos_pad_eos_tokens: bool = False,
+) -> Float[torch.Tensor, "dataset_size seq_len d_model"]:
+    """Collects activations for an LLM model from a given layer for a given set of tokens.
+    VERY IMPORTANT NOTE: If mask_bos_pad_eos_tokens is True, we zero out activations for BOS, PAD, and EOS tokens.
+    Later, we ignore zeroed activations."""
+
+    all_acts_BLD = []
+
+    for i in tqdm(
+        range(0, len(tokens), batch_size),
+        desc="Collecting activations",
+    ):
+        tokens_BL = tokens[i : i + batch_size]
+
+        acts_BLD = None
+
+        def activation_hook(resid_BLD: torch.Tensor, hook):
+            nonlocal acts_BLD
+            acts_BLD = resid_BLD
+
+        model.run_with_hooks(
+            tokens_BL, stop_at_layer=layer + 1, fwd_hooks=[(hook_name, activation_hook)]
+        )
+
+        if mask_bos_pad_eos_tokens:
+            attn_mask_BL = get_bos_pad_eos_mask(tokens_BL, model.tokenizer)
+            acts_BLD = acts_BLD * attn_mask_BL[:, :, None]
+
+        all_acts_BLD.append(acts_BLD)
+
+    return torch.cat(all_acts_BLD, dim=0)
+
+
 @jaxtyped(typechecker=beartype)
 @torch.no_grad
 def get_all_llm_activations(
@@ -29,40 +84,21 @@ def get_all_llm_activations(
     batch_size: int,
     layer: int,
     hook_name: str,
-    remove_bos_token: bool = True,
+    mask_bos_pad_eos_tokens: bool = False,
 ) -> dict[str, Float[torch.Tensor, "dataset_size seq_len d_model"]]:
-    """VERY IMPORTANT NOTE: We zero out masked token activations in this function. Later, we ignore zeroed activations."""
+    """If we have a dictionary of tokenized inputs for different classes, this function collects activations for all classes.
+    We assume that the tokenized inputs have both the input_ids and attention_mask keys.
+    VERY IMPORTANT NOTE: We zero out masked token activations in this function. Later, we ignore zeroed activations."""
     all_classes_acts_BLD = {}
 
     for class_name in tokenized_inputs_dict:
-        all_acts_BLD = []
-        tokenized_inputs = tokenized_inputs_dict[class_name]
+        tokens = tokenized_inputs_dict[class_name]["input_ids"]
 
-        for i in tqdm(
-            range(0, len(tokenized_inputs["input_ids"]), batch_size),
-            desc=f"Collecting activations for class {class_name}",
-        ):
-            tokens_BL = tokenized_inputs["input_ids"][i : i + batch_size]
-            attention_mask_BL = tokenized_inputs["attention_mask"][i : i + batch_size]
+        acts_BLD = get_llm_activations(
+            tokens, model, batch_size, layer, hook_name, mask_bos_pad_eos_tokens
+        )
 
-            acts_BLD = None
-
-            def activation_hook(resid_BLD: torch.Tensor, hook):
-                nonlocal acts_BLD
-                acts_BLD = resid_BLD
-
-            model.run_with_hooks(
-                tokens_BL, stop_at_layer=layer + 1, fwd_hooks=[(hook_name, activation_hook)]
-            )
-
-            acts_BLD = acts_BLD * attention_mask_BL[:, :, None]
-            if remove_bos_token:
-                acts_BLD = acts_BLD[:, 1:, :]
-            all_acts_BLD.append(acts_BLD)
-
-        all_acts_BLD = torch.cat(all_acts_BLD, dim=0)
-
-        all_classes_acts_BLD[class_name] = all_acts_BLD
+        all_classes_acts_BLD[class_name] = acts_BLD
 
     return all_classes_acts_BLD
 
