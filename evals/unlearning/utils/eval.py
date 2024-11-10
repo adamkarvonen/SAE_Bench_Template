@@ -71,6 +71,7 @@ def run_eval_single_sae(
     sae_release_and_id: str,
     force_rerun: bool,
 ):
+    """sae_release_and_id: str is the name used when saving data for this SAE. This data will be reused at various points in the evaluation."""
     # calculate feature sparsity
     save_feature_sparsity(
         model,

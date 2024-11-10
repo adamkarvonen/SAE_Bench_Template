@@ -13,6 +13,8 @@ import os
 from sae_lens import SAE
 from transformer_lens import HookedTransformer
 
+from sae_bench_utils.activation_collection import get_feature_activation_sparsity
+
 FORGET_FILENAME = "feature_sparsity_forget.txt"
 RETAIN_FILENAME = "feature_sparsity_retain.txt"
 
@@ -115,37 +117,6 @@ def gather_residual_activations(model: HookedTransformer, target_layer: int, inp
     return target_act
 
 
-def get_feature_activation_sparsity(
-    model: HookedTransformer, sae: SAE, tokens, batch_size: int = 4
-):
-    mean_acts = []
-    layer = int(sae.cfg.hook_layer)
-
-    for i in tqdm(range(0, tokens.shape[0], batch_size)):
-        with torch.no_grad():
-            _, cache = model.run_with_cache(
-                tokens[i : i + batch_size], names_filter=sae.cfg.hook_name
-            )
-            resid: Float[Tensor, "batch pos d_model"] = cache[sae.cfg.hook_name]
-            # resid: Float[Tensor, 'batch pos d_model'] = gather_residual_activations(model, layer, tokens[i:i + batch_size])
-            resid = resid.to(torch.float)
-
-            act: Float[Tensor, "batch pos d_sae"] = sae.encode(resid)
-            # make act to zero or one
-            act = (act > 0).to(torch.float)
-            current_mean_act = einops.reduce(act, "batch pos d_sae -> d_sae", "mean")
-
-        mean_acts.append(current_mean_act)
-
-        # Free up memory
-        del resid, act
-        torch.cuda.empty_cache()
-        gc.collect()
-
-    mean_acts = torch.stack(mean_acts)
-    return mean_acts.to(torch.float16).mean(dim=0).detach().cpu().numpy()
-
-
 def get_top_features(forget_score, retain_score, retain_threshold=0.01):
     # criteria for selecting features: retain score < 0.01 and then sort by forget score
     high_retain_score_features = np.where(retain_score >= retain_threshold)[0]
@@ -169,11 +140,31 @@ def check_existing_results(artifacts_folder: str, sae_name) -> bool:
 def calculate_sparsity(
     model: HookedTransformer, sae: SAE, forget_tokens, retain_tokens, batch_size: int
 ):
-    feature_sparsity_forget = get_feature_activation_sparsity(
-        model, sae, forget_tokens, batch_size=batch_size
+    feature_sparsity_forget = (
+        get_feature_activation_sparsity(
+            forget_tokens,
+            model,
+            sae,
+            batch_size=batch_size,
+            layer=sae.cfg.hook_layer,
+            hook_name=sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+        )
+        .cpu()
+        .numpy()
     )
-    feature_sparsity_retain = get_feature_activation_sparsity(
-        model, sae, retain_tokens, batch_size=batch_size
+    feature_sparsity_retain = (
+        get_feature_activation_sparsity(
+            retain_tokens,
+            model,
+            sae,
+            batch_size=batch_size,
+            layer=sae.cfg.hook_layer,
+            hook_name=sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+        )
+        .cpu()
+        .numpy()
     )
     return feature_sparsity_forget, feature_sparsity_retain
 
