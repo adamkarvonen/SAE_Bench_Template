@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "AbsorptionEvalConfig": {
+      "properties": {
+        "random_seed": {
+          "default": 42,
+          "description": "Random seed",
+          "title": "Random Seed",
+          "type": "integer"
+        },
+        "f1_jump_threshold": {
+          "default": 0.03,
+          "description": "F1 jump threshold",
+          "title": "F1 Jump Threshold",
+          "type": "number"
+        },
+        "max_k_value": {
+          "default": 10,
+          "description": "Max k value",
+          "title": "Max K Value",
+          "type": "integer"
+        },
+        "prompt_template": {
+          "default": "{word} has the first letter:",
+          "description": "Prompt template",
+          "title": "Prompt Template",
+          "type": "string"
+        },
+        "prompt_token_pos": {
+          "default": -6,
+          "description": "Prompt token position",
+          "title": "Prompt Token Position",
+          "type": "integer"
+        },
+        "model_name": {
+          "default": "pythia-70m-deduped",
+          "description": "Model name",
+          "title": "Model Name",
+          "type": "string"
+        }
+      },
+      "title": "AbsorptionEvalConfig",
+      "type": "object"
+    },
+    "AbsorptionMeanMetrics": {
+      "properties": {
+        "mean_absorption_score": {
+          "description": "Average of the absorption scores across all letters",
+          "title": "Mean Absorption Score",
+          "type": "number",
+          "ui_default_display": true
+        },
+        "mean_num_split_features": {
+          "description": "Average number of split features across all letters",
+          "title": "Mean Number of Split Features",
+          "type": "number",
+          "ui_default_display": true
+        }
+      },
+      "required": [
+        "mean_absorption_score",
+        "mean_num_split_features"
+      ],
+      "title": "AbsorptionMeanMetrics",
+      "type": "object"
+    },
+    "AbsorptionMetricCategories": {
+      "properties": {
+        "mean": {
+          "$ref": "#/$defs/AbsorptionMeanMetrics",
+          "description": "Mean metrics",
+          "title": "Mean",
+          "ui_default_display": true
+        }
+      },
+      "required": [
+        "mean"
+      ],
+      "title": "AbsorptionMetricCategories",
+      "type": "object"
+    },
+    "AbsorptionResultDetail": {
+      "properties": {
+        "first_letter": {
+          "description": "",
+          "title": "First Letter",
+          "type": "string"
+        },
+        "absorption_rate": {
+          "description": "",
+          "title": "Absorption Rate",
+          "type": "number"
+        },
+        "num_absorption": {
+          "description": "",
+          "title": "Num Absorption",
+          "type": "integer"
+        },
+        "num_probe_true_positives": {
+          "description": "",
+          "title": "Num Probe True Positives",
+          "type": "integer"
+        },
+        "num_split_features": {
+          "description": "",
+          "title": "Num Split Features",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "first_letter",
+        "absorption_rate",
+        "num_absorption",
+        "num_probe_true_positives",
+        "num_split_features"
+      ],
+      "title": "AbsorptionResultDetail",
+      "type": "object"
+    }
+  },
+  "description": "The feature absorption evaluation looking at the first letter.",
+  "properties": {
+    "eval_type_id": {
+      "default": "absorption_first_letter",
+      "description": "The type of the evaluation",
+      "title": "Eval Type ID",
+      "type": "string"
+    },
+    "eval_config": {
+      "$ref": "#/$defs/AbsorptionEvalConfig",
+      "description": "The configuration of the evaluation.",
+      "title": "Eval Config Type"
+    },
+    "eval_id": {
+      "description": "A unique UUID identifying this specific eval run",
+      "title": "ID",
+      "type": "string"
+    },
+    "datetime_epoch_millis": {
+      "description": "The datetime of the evaluation in epoch milliseconds",
+      "title": "DateTime (epoch ms)",
+      "type": "integer"
+    },
+    "eval_result_metrics": {
+      "$ref": "#/$defs/AbsorptionMetricCategories",
+      "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
+      "title": "Result Metrics Categorized"
+    },
+    "eval_result_details": {
+      "description": "Each object is a stat on the first letter of the absorption.",
+      "items": {
+        "$ref": "#/$defs/AbsorptionResultDetail"
+      },
+      "title": "Per-Letter Absorption Results",
+      "type": "array"
+    },
+    "sae_bench_commit_hash": {
+      "description": "The commit hash of the SAE Bench that ran the evaluation.",
+      "title": "SAE Bench Commit Hash",
+      "type": "string"
+    },
+    "sae_lens_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The ID of the SAE in SAE Lens.",
+      "title": "SAE Lens ID"
+    },
+    "sae_lens_release_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The release ID of the SAE in SAE Lens.",
+      "title": "SAE Lens Release ID"
+    },
+    "sae_lens_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The version of SAE Lens that ran the evaluation.",
+      "title": "SAE Lens Version"
+    },
+    "eval_result_unstructured": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
+      "title": "Unstructured Results"
+    }
+  },
+  "required": [
+    "eval_config",
+    "eval_id",
+    "datetime_epoch_millis",
+    "eval_result_metrics",
+    "sae_bench_commit_hash",
+    "sae_lens_id",
+    "sae_lens_release_id",
+    "sae_lens_version"
+  ],
+  "title": "Absorption",
+  "type": "object"
+}

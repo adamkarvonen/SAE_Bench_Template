@@ -1,43 +1,41 @@
-from dataclasses import dataclass, field
-from typing import Optional
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from evals.base_eval_output import BaseEvalConfig
 
 
+# Define the eval config, which inherits from BaseEvalConfig, and include fields with titles and descriptions.
 @dataclass
-class EvalConfig:
-    random_seed: int = 42
-    f1_jump_threshold: float = 0.03
-    max_k_value: int = 10
+class AbsorptionEvalConfig(BaseEvalConfig):
+    random_seed: int = Field(
+        default=42,
+        title="Random Seed",
+        description="Random seed",
+    )
+    f1_jump_threshold: float = Field(
+        default=0.03,
+        title="F1 Jump Threshold",
+        description="F1 jump threshold",
+    )
+    max_k_value: int = Field(
+        default=10,
+        title="Max K Value",
+        description="Max k value",
+    )
 
     # double-check token_pos matches prompting_template for other tokenizers
-    prompt_template: str = "{word} has the first letter:"
-    prompt_token_pos: int = -6
-
-    ## Uncomment to run Pythia SAEs
-
-    sae_releases: list[str] = field(
-        default_factory=lambda: [
-            "sae_bench_pythia70m_sweep_standard_ctx128_0712",
-            "sae_bench_pythia70m_sweep_topk_ctx128_0730",
-        ]
+    prompt_template: str = Field(
+        default="{word} has the first letter:",
+        title="Prompt Template",
+        description="Prompt template",
     )
-    model_name: str = "pythia-70m-deduped"
-    layer: int = 4
-    # no idea what this means
-    trainer_ids: Optional[list[int]] = None
-    include_checkpoints: bool = False
+    prompt_token_pos: int = Field(
+        default=-6,
+        title="Prompt Token Position",
+        description="Prompt token position",
+    )
 
-    ## Uncomment to run Gemma SAEs
-
-    # sae_releases: list[str] = field(
-    #     default_factory=lambda: [
-    #         "gemma-scope-2b-pt-res",
-    #         "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-    #         "sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
-    #     ]
-    # )
-    # model_name: str = "gemma-2-2b"
-    # layer: int = 19
-    # trainer_ids: Optional[list[int]] = None
-    # include_checkpoints: bool = False
-
-    selected_saes_dict: dict = field(default_factory=lambda: {})
+    model_name: str = Field(
+        default="pythia-70m-deduped",
+        title="Model Name",
+        description="Model name",
+    )

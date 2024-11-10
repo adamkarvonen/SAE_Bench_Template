@@ -7,6 +7,7 @@ from beartype import beartype
 from jaxtyping import Bool, Float, Int, jaxtyped
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+import math
 
 import sae_bench_utils.dataset_info as dataset_info
 
@@ -24,12 +25,12 @@ class Probe(nn.Module):
 def prepare_probe_data(
     all_activations: dict[str, Float[torch.Tensor, "num_datapoints_per_class ... d_model"]],
     class_name: str,
-    spurious_corr: bool = False,
+    perform_scr: bool = False,
 ) -> tuple[
     Float[torch.Tensor, "num_datapoints_per_class_x_2 ... d_model"],
     Int[torch.Tensor, "num_datapoints_per_class_x_2"],
 ]:
-    """spurious_corr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
+    """perform_scr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
     It's a bit unfortunate to introduce coupling between the metrics, but most of the code is reused between them.
     The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model.
     """
@@ -38,26 +39,32 @@ def prepare_probe_data(
 
     num_positive = len(positive_acts_BD)
 
-    if spurious_corr:
+    if perform_scr:
         if class_name in dataset_info.PAIRED_CLASS_KEYS.keys():
-            negative_acts = all_activations[dataset_info.PAIRED_CLASS_KEYS[class_name]]
+            selected_negative_acts_BD = all_activations[dataset_info.PAIRED_CLASS_KEYS[class_name]]
         elif class_name in dataset_info.PAIRED_CLASS_KEYS.values():
             reversed_dict = {v: k for k, v in dataset_info.PAIRED_CLASS_KEYS.items()}
-            negative_acts = all_activations[reversed_dict[class_name]]
+            selected_negative_acts_BD = all_activations[reversed_dict[class_name]]
         else:
             raise ValueError(f"Class {class_name} not found in paired class keys.")
     else:
         # Collect all negative class activations and labels
-        negative_acts = []
-        for idx, acts in all_activations.items():
-            if idx != class_name:
-                negative_acts.append(acts)
+        selected_negative_acts_BD = []
+        negative_keys = [k for k in all_activations.keys() if k != class_name]
+        num_neg_classes = len(negative_keys)
+        samples_per_class = math.ceil(num_positive / num_neg_classes)
 
-        negative_acts = torch.cat(negative_acts)
+        for negative_class_name in negative_keys:
+            sample_indices = torch.randperm(len(all_activations[negative_class_name]))[
+                :samples_per_class
+            ]
+            selected_negative_acts_BD.append(all_activations[negative_class_name][sample_indices])
+
+        selected_negative_acts_BD = torch.cat(selected_negative_acts_BD)
 
     # Randomly select num_positive samples from negative class
-    indices = torch.randperm(len(negative_acts))[:num_positive]
-    selected_negative_acts_BD = negative_acts[indices]
+    indices = torch.randperm(len(selected_negative_acts_BD))[:num_positive]
+    selected_negative_acts_BD = selected_negative_acts_BD[indices]
 
     assert selected_negative_acts_BD.shape == positive_acts_BD.shape
 
@@ -234,7 +241,8 @@ def train_probe_gpu(
     l1_penalty: Optional[float] = None,
     early_stopping_patience: int = 10,
 ) -> tuple[Probe, float]:
-    """We have a GPU training function for training on all SAE features, which was very slow (1 minute+) on CPU."""
+    """We have a GPU training function for training on all SAE features, which was very slow (1 minute+) on CPU.
+    This is also used for SHIFT / TPP, which require probe weights."""
     device = train_inputs.device
     model_dtype = train_inputs.dtype
 
@@ -300,7 +308,8 @@ def train_probe_on_activations(
     lr: float = 1e-3,
     verbose: bool = False,
     early_stopping_patience: int = 10,
-    spurious_corr: bool = False,
+    perform_scr: bool = False,
+    l1_penalty: Optional[float] = None,
 ) -> tuple[dict[str, LogisticRegression | Probe], dict[str, float]]:
     """Train a probe on the given activations and return the probe and test accuracies for each profession.
     use_sklearn is a flag to use sklearn's LogisticRegression model instead of a custom PyTorch model.
@@ -311,17 +320,11 @@ def train_probe_on_activations(
     probes, test_accuracies = {}, {}
 
     for profession in train_activations.keys():
-        train_acts, train_labels = prepare_probe_data(
-            train_activations, profession, spurious_corr
-        )
-        test_acts, test_labels = prepare_probe_data(
-            test_activations, profession, spurious_corr
-        )
+        train_acts, train_labels = prepare_probe_data(train_activations, profession, perform_scr)
+        test_acts, test_labels = prepare_probe_data(test_activations, profession, perform_scr)
 
         if select_top_k is not None:
-            activation_mask_D = get_top_k_mean_diff_mask(
-                train_acts, train_labels, select_top_k
-            )
+            activation_mask_D = get_top_k_mean_diff_mask(train_acts, train_labels, select_top_k)
             train_acts = apply_topk_mask_reduce_dim(train_acts, activation_mask_D)
             test_acts = apply_topk_mask_reduce_dim(test_acts, activation_mask_D)
 
@@ -349,6 +352,7 @@ def train_probe_on_activations(
                 lr=lr,
                 verbose=verbose,
                 early_stopping_patience=early_stopping_patience,
+                l1_penalty=l1_penalty,
             )
 
         print(f"Test accuracy for {profession}: {test_accuracy}")

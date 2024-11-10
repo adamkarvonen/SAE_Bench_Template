@@ -1,50 +1,71 @@
-from dataclasses import dataclass, field
-from typing import Optional
-import torch
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from evals.base_eval_output import BaseEvalConfig
 
 
 @dataclass
-class EvalConfig:
-    random_seed: int = 42
-
-    dataset_names: list[str] = field(
-        default_factory=lambda: ["bias_in_bios", "amazon_reviews_1and5"]
+class SparseProbingEvalConfig(BaseEvalConfig):
+    random_seed: int = Field(
+        default=42,
+        title="Random Seed",
+        description="Random seed",
     )
 
-    probe_train_set_size: int = 4000
-    probe_test_set_size: int = 1000
-    context_length: int = 128
-
-    sae_batch_size: int = 125
-
-    ## Uncomment to run Pythia SAEs
-
-    sae_releases: list[str] = field(
+    dataset_names: list[str] = Field(
         default_factory=lambda: [
-            "sae_bench_pythia70m_sweep_standard_ctx128_0712",
-            "sae_bench_pythia70m_sweep_topk_ctx128_0730",
-        ]
+            "LabHC/bias_in_bios_class_set1",
+            "LabHC/bias_in_bios_class_set2",
+            "LabHC/bias_in_bios_class_set3",
+            "canrager/amazon_reviews_mcauley_1and5",
+            "canrager/amazon_reviews_mcauley_1and5_sentiment",
+            "codeparrot/github-code",
+            "fancyzhx/ag_news",
+            "Helsinki-NLP/europarl",
+        ],
+        title="Dataset Names",
+        description="List of dataset names. We have at most 5 class names in a single subset, which is why we have multiple bias_in_bios class subsets.",
     )
-    model_name: str = "pythia-70m-deduped"
-    layer: int = 4
-    trainer_ids: Optional[list[int]] = field(default_factory=lambda: list(range(20)))
-    trainer_ids: Optional[list[int]] = field(default_factory=lambda: [10])
-    include_checkpoints: bool = False
 
-    ## Uncomment to run Gemma SAEs
+    probe_train_set_size: int = Field(
+        default=4000,
+        title="Probe Train Set Size",
+        description="Probe train set size",
+    )
+    probe_test_set_size: int = Field(
+        default=1000,
+        title="Probe Test Set Size",
+        description="Probe test set size",
+    )
+    context_length: int = Field(
+        default=128,
+        title="LLM Context Length",
+        description="The maximum length of each input to the LLM. Any longer inputs will be truncated, keeping only the beginning.",
+    )
 
-    # sae_releases: list[str] = field(
-    #     default_factory=lambda: [
-    #         "gemma-scope-2b-pt-res",
-    #         "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-    #         "sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
-    #     ]
-    # )
-    # model_name: str = "gemma-2-2b"
-    # layer: int = 19
-    # trainer_ids: Optional[list[int]] = None
-    # include_checkpoints: bool = False
+    sae_batch_size: int = Field(
+        default=125,
+        title="SAE Batch Size",
+        description="SAE batch size, inference only",
+    )
+    llm_batch_size: int = Field(
+        default=32,
+        title="LLM Batch Size",
+        description="LLM batch size, inference only",
+    )
+    llm_dtype: str = Field(
+        default="bfloat16",
+        title="LLM Data Type",
+        description="LLM data type",
+    )
 
-    k_values: list[int] = field(default_factory=lambda: [1, 2, 5, 10, 20, 50, 100])
+    model_name: str = Field(
+        default="gemma-2-2b",
+        title="Model Name",
+        description="Model name",
+    )
 
-    selected_saes_dict: dict = field(default_factory=lambda: {})
+    k_values: list[int] = Field(
+        default_factory=lambda: [1, 2, 5, 10, 20, 50],
+        title="K Values",
+        description="K represents the number of SAE features or residual stream channels we train the linear probe on. We iterate over all values of K.",
+    )

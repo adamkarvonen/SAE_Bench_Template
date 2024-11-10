@@ -56,7 +56,6 @@ def test_get_eval_uuid_uniqueness(num_calls):
     uuids = [sae_bench_utils.get_eval_uuid() for _ in range(num_calls)]
     assert len(set(uuids)) == num_calls, "Not all generated UUIDs are unique"
 
-
 def test_indexing_utils():
     x = torch.arange(40).reshape((2, 20))
     x[0, 10] += 50  # 2nd highest value
