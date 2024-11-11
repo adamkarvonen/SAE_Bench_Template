@@ -16,13 +16,19 @@ from tqdm import tqdm
 
 from evals.autointerp.config import AutoInterpConfig
 from evals.autointerp.sae_encode import encode_subset
-from sae_bench_utils.indexing_utils import get_iw_sample_indices, get_k_largest_indices, index_with_buffer
+from sae_bench_utils.indexing_utils import (
+    get_iw_sample_indices,
+    get_k_largest_indices,
+    index_with_buffer,
+)
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
 
 def display_messages(messages: Messages) -> str:
-    return tabulate([m.values() for m in messages], tablefmt="simple_grid", maxcolwidths=[None, 120])
+    return tabulate(
+        [m.values() for m in messages], tablefmt="simple_grid", maxcolwidths=[None, 120]
+    )
 
 
 def str_bool(b: bool) -> str:
@@ -89,7 +95,9 @@ class Examples:
                 ]
                 for i, ex in enumerate(self.examples)
             ],
-            headers=["Top act"] + ([] if predictions is None else ["Active?", "Predicted?"]) + ["Sequence"],
+            headers=["Top act"]
+            + ([] if predictions is None else ["Active?", "Predicted?"])
+            + ["Sequence"],
             tablefmt="simple_outline",
             floatfmt=".3f",
         )
@@ -137,8 +145,12 @@ class AutoInterp:
             self.latents = cfg.latents
         else:
             assert self.cfg.n_latents is not None
-            alive_latents = torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
-            assert len(alive_latents) >= self.cfg.n_latents, "Error: not enough alive latents to sample from"
+            alive_latents = (
+                torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
+            )
+            assert (
+                len(alive_latents) >= self.cfg.n_latents
+            ), "Error: not enough alive latents to sample from"
             self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
         self.n_latents = len(self.latents)
 
@@ -156,7 +168,9 @@ class AutoInterp:
         latents_with_data = sorted(generation_examples.keys())
         n_dead = self.n_latents - len(latents_with_data)
         if n_dead > 0:
-            print(f"Found data for {len(latents_with_data)}/{self.n_latents} alive latents; {n_dead} dead")
+            print(
+                f"Found data for {len(latents_with_data)}/{self.n_latents} alive latents; {n_dead} dead"
+            )
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             tasks = [
@@ -222,9 +236,12 @@ class AutoInterp:
             score = self.score_predictions(predictions, scoring_examples)
             results |= {
                 "predictions": predictions,
-                "correct seqs": [i for i, ex in enumerate(scoring_examples, start=1) if ex.is_active],
+                "correct seqs": [
+                    i for i, ex in enumerate(scoring_examples, start=1) if ex.is_active
+                ],
                 "score": score,
-                "logs": results["logs"] + f"\nScoring phase\n{logs}\n{scoring_examples.display(predictions)}",
+                "logs": results["logs"]
+                + f"\nScoring phase\n{logs}\n{scoring_examples.display(predictions)}",
             }
 
         return results
@@ -233,7 +250,9 @@ class AutoInterp:
         return explanation.split("activates on")[-1].rstrip(".").strip()
 
     def parse_predictions(self, predictions: str) -> list[int] | None:
-        predictions_split = predictions.strip().rstrip(".").replace("and", ",").replace("None", "").split(",")
+        predictions_split = (
+            predictions.strip().rstrip(".").replace("and", ",").replace("None", "").split(",")
+        )
         predictions_list = [i.strip() for i in predictions_split if i.strip() != ""]
         if predictions_list == []:
             return []
@@ -245,9 +264,13 @@ class AutoInterp:
     def score_predictions(self, predictions: list[int], scoring_examples: Examples) -> float:
         classifications = [i in predictions for i in range(1, len(scoring_examples) + 1)]
         correct_classifications = [ex.is_active for ex in scoring_examples]
-        return sum([c == cc for c, cc in zip(classifications, correct_classifications)]) / len(classifications)
+        return sum([c == cc for c, cc in zip(classifications, correct_classifications)]) / len(
+            classifications
+        )
 
-    def get_api_response(self, messages: Messages, max_tokens: int, n_completions: int = 1) -> tuple[list[str], str]:
+    def get_api_response(
+        self, messages: Messages, max_tokens: int, n_completions: int = 1
+    ) -> tuple[list[str], str]:
         """Generic API usage function for OpenAI"""
         for message in messages:
             assert message.keys() == {"content", "role"}
@@ -275,13 +298,17 @@ class AutoInterp:
     def get_generation_prompts(self, generation_examples: Examples) -> Messages:
         assert len(generation_examples) > 0, "No generation examples found"
 
-        examples_as_str = "\n".join([f"{i+1}. {ex.to_str(mark_toks=True)}" for i, ex in enumerate(generation_examples)])
+        examples_as_str = "\n".join(
+            [f"{i+1}. {ex.to_str(mark_toks=True)}" for i, ex in enumerate(generation_examples)]
+        )
 
         SYSTEM_PROMPT = """We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your explanation should cover most or all activating words (for example, don't give an explanation which is specific to a single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words."""
         if self.cfg.use_demos_in_explanation:
             SYSTEM_PROMPT += """ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words", and "This neuron activates on text about government economic policy"."""
         else:
-            SYSTEM_PROMPT += """Your response should be in the form "This neuron activates on..."."""
+            SYSTEM_PROMPT += (
+                """Your response should be in the form "This neuron activates on..."."""
+            )
         USER_PROMPT = f"""The activating documents are given below:\n\n{examples_as_str}"""
 
         return [
@@ -292,7 +319,9 @@ class AutoInterp:
     def get_scoring_prompts(self, explanation: str, scoring_examples: Examples) -> Messages:
         assert len(scoring_examples) > 0, "No scoring examples found"
 
-        examples_as_str = "\n".join([f"{i+1}. {ex.to_str(mark_toks=False)}" for i, ex in enumerate(scoring_examples)])
+        examples_as_str = "\n".join(
+            [f"{i+1}. {ex.to_str(mark_toks=False)}" for i, ex in enumerate(scoring_examples)]
+        )
 
         example_response = sorted(
             random.sample(
@@ -322,7 +351,9 @@ class AutoInterp:
             desc="Forward passes to get activation values",
         ):
             sae_in = self.act_store.get_activations(_tokens).squeeze(2).to(self.device)
-            acts = torch.concat([acts, encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))], dim=0)
+            acts = torch.concat(
+                [acts, encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))], dim=0
+            )
 
         generation_examples = {}
         scoring_examples = {}
@@ -359,7 +390,9 @@ class AutoInterp:
             acts_thresholded = torch.where(acts[..., i] >= threshold, 0.0, acts[..., i])
             if acts_thresholded[self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
                 continue
-            iw_indices = get_iw_sample_indices(acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer)
+            iw_indices = get_iw_sample_indices(
+                acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer
+            )
             iw_toks = index_with_buffer(tokens, iw_indices, buffer=self.cfg.buffer)
             iw_values = index_with_buffer(acts[..., i], iw_indices, buffer=self.cfg.buffer)
 
@@ -401,7 +434,9 @@ class AutoInterp:
 
 def run_eval(
     config: AutoInterpConfig,
-    selected_saes_dict: dict[str, list[str]],  # dict of SAE release name: list of SAE names to evaluate
+    selected_saes_dict: dict[
+        str, list[str]
+    ],  # dict of SAE release name: list of SAE names to evaluate
     device: str,
     api_key: str,
     save_logs_path: str | Path | None = None,
@@ -426,7 +461,9 @@ def run_eval(
     else:
         raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
-    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(config.model_name, device=device, dtype=llm_dtype)
+    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(
+        config.model_name, device=device, dtype=llm_dtype
+    )
 
     for release, sae_names in selected_saes_dict.items():
         saes_map = get_pretrained_saes_directory()[release].saes_map
@@ -441,7 +478,9 @@ def run_eval(
             sae = sae.to(device=device, dtype=llm_dtype)
 
             # Get autointerp results
-            autointerp = AutoInterp(cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device)
+            autointerp = AutoInterp(
+                cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device
+            )
             results = asyncio.run(autointerp.run())
 
             if save_logs_path is not None:

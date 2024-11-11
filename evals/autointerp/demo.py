@@ -13,7 +13,9 @@ args = parser.parse_args()
 
 api_key = args.api_key  # Use the API key supplied via command line
 
-device = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device(
+    "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
+)
 
 selected_saes_dict = {
     "gpt2-small-res-jb": ["blocks.7.hook_resid_pre"],
