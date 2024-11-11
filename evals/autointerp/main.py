@@ -5,6 +5,11 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Iterator, Literal, TypeAlias, Optional
+import os
+import time
+import argparse
+import json
+from datetime import datetime
 
 import torch
 from openai import OpenAI
@@ -24,6 +29,19 @@ from sae_bench_utils.indexing_utils import (
 )
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.activation_collection as activation_collection
+
+
+from sae_bench_utils import (
+    get_eval_uuid,
+    get_sae_lens_version,
+    get_sae_bench_version,
+)
+from sae_bench_utils.sae_selection_utils import (
+    get_saes_from_regex,
+    select_saes_multiple_patterns,
+)
+
+EVAL_TYPE_ID_AUTOINTERP = "autointerp"
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
@@ -136,18 +154,19 @@ class AutoInterp:
         self.sae = sae
         self.device = device
         self.api_key = api_key
-        self.batch_size = cfg.total_tokens // sae.cfg.context_size
+        self.llm_batch_size = cfg.total_tokens // sae.cfg.context_size
         self.act_store = ActivationsStore.from_sae(
             model=model,
             sae=sae,
             streaming=True,
-            store_batch_size_prompts=self.batch_size,
+            store_batch_size_prompts=self.llm_batch_size,
             device=str(self.device),
         )
         if cfg.latents is not None:
             self.latents = cfg.latents
         else:
             assert self.cfg.n_latents is not None
+            sparsity *= cfg.total_tokens
             alive_latents = (
                 torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
             )
@@ -350,7 +369,7 @@ class AutoInterp:
         batch_size, seq_len = tokens.shape
         acts = torch.empty((0, seq_len, self.n_latents), device=self.device)
         for _tokens in tqdm(
-            tokens.split(split_size=self.cfg.batch_size, dim=0),
+            tokens.split(split_size=self.cfg.llm_batch_size, dim=0),
             desc="Forward passes to get activation values",
         ):
             token_mask = activation_collection.get_bos_pad_eos_mask(
@@ -451,16 +470,26 @@ def run_eval_single_sae(
     api_key: str,
     sae_sparsity: Optional[torch.Tensor] = None,
 ) -> dict[str, float]:
-    tokenized_dataset = dataset_utils.load_and_tokenize_dataset(
-        sae.cfg.dataset_path, sae.cfg.context_size, config.total_tokens, model.tokenizer
-    )
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+    torch.set_grad_enabled(False)
+
+    tokens_path = os.path.join(artifacts_folder, "tokens.pt")
+
+    if os.path.exists(tokens_path):
+        tokenized_dataset = torch.load(tokens_path)
+    else:
+        tokenized_dataset = dataset_utils.load_and_tokenize_dataset(
+            config.dataset_name, sae.cfg.context_size, config.total_tokens, model.tokenizer
+        )
+        torch.save(tokenized_dataset, tokens_path)
 
     if sae_sparsity is None:
         sae_sparsity = activation_collection.get_feature_activation_sparsity(
             tokenized_dataset,
             model,
             sae,
-            config.batch_size,
+            config.llm_batch_size,
             sae.cfg.hook_layer,
             sae.cfg.hook_name,
             mask_bos_pad_eos_tokens=True,
@@ -475,12 +504,12 @@ def run_eval_single_sae(
 
 def run_eval(
     config: AutoInterpEvalConfig,
-    selected_saes_dict: dict[
-        str, list[str]
-    ],  # dict of SAE release name: list of SAE names to evaluate
+    selected_saes_dict: dict[str, list[str]],
     device: str,
     api_key: str,
-    save_logs_path: str | Path | None = None,
+    output_path: str,
+    force_rerun: bool = False,
+    save_logs_path: Optional[str] = None,
 ) -> dict[str, Any]:
     """
     Runs autointerp eval. Returns results as a dict with the following structure:
@@ -488,12 +517,14 @@ def run_eval(
         custom_eval_config - dict of config parameters used for this evaluation
         custom_eval_results - nested dict of {sae_name: {"score": score}}
     """
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
+
+    artifacts_base_folder = "artifacts"
+    os.makedirs(output_path, exist_ok=True)
+
     results_dict = {}
-
-    random.seed(config.seed)
-    torch.manual_seed(config.seed)
-
-    results_dict = {"custom_eval_results": {}, "custom_eval_config": asdict(config)}
 
     if config.llm_dtype == "bfloat16":
         llm_dtype = torch.bfloat16
@@ -502,51 +533,206 @@ def run_eval(
     else:
         raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
-    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(
+    model: HookedTransformer = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for release, sae_names in selected_saes_dict.items():
-        saes_map = get_pretrained_saes_directory()[release].saes_map
-        for sae_name in sae_names:
-            # Clear memory
+    for sae_release in selected_saes_dict:
+        print(
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+        )
+
+        for sae_id in tqdm(
+            selected_saes_dict[sae_release],
+            desc="Running SAE evaluation on all selected SAEs",
+        ):
             gc.collect()
             torch.cuda.empty_cache()
-
-            # Load in SAE, and randomly choose a number of latents to use for this autointerp instance
-            sae_id = saes_map[sae_name]
-            sae, _, sparsity = SAE.from_pretrained(release, sae_id, device=str(device))
+            sae, _, sparsity = SAE.from_pretrained(sae_release, sae_id, device=str(device))
             sae = sae.to(device=device, dtype=llm_dtype)
 
-            # Get autointerp results
-            results = run_eval_single_sae(
-                config, sae, model, device, config.artifacts_folder, sparsity
-            )
+            artifacts_folder = os.path.join(artifacts_base_folder, EVAL_TYPE_ID_AUTOINTERP)
+            os.makedirs(artifacts_folder, exist_ok=True)
 
-            if save_logs_path is not None:
-                # Get summary results for all latents, as well logs for the best and worst-scoring latents
-                headers = [
-                    "latent",
-                    "explanation",
-                    "predictions",
-                    "correct seqs",
-                    "score",
-                ]
-                logs = "Summary table:\n" + tabulate(
-                    [[results[latent][h] for h in headers] for latent in results],
-                    headers=headers,
-                    tablefmt="simple_outline",
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            if os.path.exists(sae_result_path) and not force_rerun:
+                print(f"Loading existing results from {sae_result_path}")
+                with open(sae_result_path, "r") as f:
+                    eval_output = json.load(f)
+            else:
+                sae_eval_result = run_eval_single_sae(
+                    config, sae, model, device, artifacts_folder, api_key, sparsity
                 )
-                worst_result = min(results.values(), key=lambda x: x["score"])
-                best_result = max(results.values(), key=lambda x: x["score"])
-                logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
-                logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
-                # Save the results to a file
-                with open(save_logs_path, "a") as f:
-                    f.write(logs)
 
-            # Put important results into the results dict
-            score = sum([r["score"] for r in results.values()]) / len(results)
-            results_dict["custom_eval_results"][sae_name] = {"score": score}
+                if save_logs_path is not None:
+                    # Get summary results for all latents, as well logs for the best and worst-scoring latents
+                    headers = [
+                        "latent",
+                        "explanation",
+                        "predictions",
+                        "correct seqs",
+                        "score",
+                    ]
+                    logs = "Summary table:\n" + tabulate(
+                        [
+                            [sae_eval_result[latent][h] for h in headers]
+                            for latent in sae_eval_result
+                        ],
+                        headers=headers,
+                        tablefmt="simple_outline",
+                    )
+                    worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
+                    best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
+                    logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
+                    logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
+                    # Save the results to a file
+                    with open(save_logs_path, "a") as f:
+                        f.write(logs)
+
+                # Put important results into the results dict
+                score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
+                eval_result_metrics = {"autointerp_metrics": {"autointerp_score": score}}
+                results_dict[f"{sae_release}_{sae_id}"] = eval_result_metrics
+
+                eval_output = {
+                    "eval_instance_id": eval_instance_id,
+                    "sae_lens_release": sae_release,
+                    "sae_lens_id": sae_id,
+                    "eval_type_id": EVAL_TYPE_ID_AUTOINTERP,
+                    "sae_lens_version": sae_lens_version,
+                    "sae_bench_version": sae_bench_commit_hash,
+                    "date_time": datetime.now().isoformat(),
+                    "eval_config": asdict(config),
+                    "eval_result_metrics": eval_result_metrics,
+                    "eval_results_unstructured": sae_eval_result,
+                    "eval_artifacts": {"artifacts": artifacts_folder},
+                }
+
+                with open(sae_result_path, "w") as f:
+                    json.dump(eval_output, f, indent=2)
 
     return results_dict
+
+
+def setup_environment():
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    if torch.backends.mps.is_available():
+        device = "mps"
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    print(f"Using device: {device}")
+    return device
+
+
+def create_config_and_selected_saes(
+    args,
+) -> tuple[AutoInterpEvalConfig, dict[str, list[str]]]:
+    config = AutoInterpEvalConfig(
+        random_seed=args.random_seed,
+        model_name=args.model_name,
+    )
+
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run auto interp evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+
+    parser.add_argument(
+        "--api_key",
+        type=str,
+        required=True,
+        help="OpenAI API key",
+    )
+    parser.add_argument(
+        "--sae_regex_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE selection",
+    )
+    parser.add_argument(
+        "--sae_block_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE block selection",
+    )
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default="evals/autointerp/results",
+        help="Output folder",
+    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+
+    return parser
+
+
+if __name__ == "__main__":
+    """
+    python evals/autointerp/main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped \
+    --api_key <API_KEY>
+    
+    
+    """
+    args = arg_parser().parse_args()
+    device = setup_environment()
+
+    start_time = time.time()
+
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+
+    print(selected_saes_dict)
+
+    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
+    ]
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
+
+    # run the evaluation on all selected SAEs
+    results_dict = run_eval(
+        config,
+        selected_saes_dict,
+        device,
+        args.api_key,
+        args.output_folder,
+        args.force_rerun,
+    )
+
+    end_time = time.time()
+
+    print(f"Finished evaluation in {end_time - start_time} seconds")

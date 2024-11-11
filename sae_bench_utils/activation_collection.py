@@ -133,6 +133,8 @@ def get_feature_activation_sparsity(
         else:
             attn_mask_BL = torch.ones_like(tokens_BL, dtype=torch.bool)
 
+        attn_mask_BL = attn_mask_BL.to(device=sae_act_BLF.device)
+
         sae_act_BLF = sae_act_BLF * attn_mask_BL[:, :, None]
         total_tokens += attn_mask_BL.sum().item()
 

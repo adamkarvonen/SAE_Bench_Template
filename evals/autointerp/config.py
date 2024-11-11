@@ -34,17 +34,20 @@ class AutoInterpEvalConfig:
 
     # High-level params (not specific to autointerp)
     model_name: str
-    n_latents: int | None = None
+    n_latents: int = 10
     override_latents: list[int] | None = None
-    dead_latent_threshold: float = -8
-    seed: int = 0
+    dead_latent_threshold: float = 8
+    random_seed: int = 0
+    dataset_name: str = "monology/pile-uncopyrighted"
+
+    llm_batch_size: int = 512  # split up total tokens into batches of this size
+    llm_dtype: str = "bfloat16"
 
     # Main autointerp params
     buffer: int = 10
     no_overlap: bool = True
     act_threshold_frac: float = 0.01
     total_tokens: int = 2_000_000
-    batch_size: int = 512  # split up total tokens into batches of this size
     scoring: bool = True
     max_tokens_in_explanation: int = 30
     use_demos_in_explanation: bool = True
