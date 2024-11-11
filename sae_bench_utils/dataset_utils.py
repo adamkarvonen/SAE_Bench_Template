@@ -41,9 +41,11 @@ def load_and_tokenize_dataset(
 
     # Truncate excess tokens and reshape into (num_rows, row_len)
     num_rows = concatenated_tensor.shape[0] // ctx_len
-    final_tensor = concatenated_tensor[: num_rows * ctx_len].reshape(num_rows, ctx_len)
+    final_tensor_BL = concatenated_tensor[: num_rows * ctx_len].reshape(num_rows, ctx_len)
 
-    return final_tensor
+    final_tensor_BL[:, 0] = tokenizer.bos_token_id
+
+    return final_tensor_BL
 
 
 def gather_dataset_from_df(
