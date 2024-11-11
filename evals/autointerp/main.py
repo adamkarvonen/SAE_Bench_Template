@@ -4,7 +4,7 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Iterator, Literal, TypeAlias
+from typing import Any, Iterator, Literal, TypeAlias, Optional
 
 import torch
 from openai import OpenAI
@@ -13,14 +13,17 @@ from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_direc
 from tabulate import tabulate
 from torch import Tensor
 from tqdm import tqdm
+from transformer_lens import HookedTransformer
 
-from evals.autointerp.config import AutoInterpConfig
+from evals.autointerp.config import AutoInterpEvalConfig
 from evals.autointerp.sae_encode import encode_subset
 from sae_bench_utils.indexing_utils import (
     get_iw_sample_indices,
     get_k_largest_indices,
     index_with_buffer,
 )
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.activation_collection as activation_collection
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
@@ -121,7 +124,7 @@ class AutoInterp:
 
     def __init__(
         self,
-        cfg: AutoInterpConfig,
+        cfg: AutoInterpEvalConfig,
         model: HookedSAETransformer,
         sae: SAE,
         sparsity: Tensor,
@@ -432,8 +435,39 @@ class AutoInterp:
         return generation_examples, scoring_examples
 
 
+def run_eval_single_sae(
+    config: AutoInterpEvalConfig,
+    sae: SAE,
+    model: HookedTransformer,
+    device: str,
+    artifacts_folder: str,
+    api_key: str,
+    sae_sparsity: Optional[torch.Tensor] = None,
+) -> dict[str, float]:
+    tokenized_dataset = dataset_utils.load_and_tokenize_dataset(
+        sae.cfg.dataset_path, sae.cfg.context_size, config.total_tokens, model.tokenizer
+    )
+
+    if sae_sparsity is None:
+        sae_sparsity = activation_collection.get_feature_activation_sparsity(
+            tokenized_dataset,
+            model,
+            sae,
+            config.batch_size,
+            sae.cfg.hook_layer,
+            sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+        )
+
+    autointerp = AutoInterp(
+        cfg=config, model=model, sae=sae, sparsity=sae_sparsity, api_key=api_key, device=device
+    )
+    results = asyncio.run(autointerp.run())
+    return results
+
+
 def run_eval(
-    config: AutoInterpConfig,
+    config: AutoInterpEvalConfig,
     selected_saes_dict: dict[
         str, list[str]
     ],  # dict of SAE release name: list of SAE names to evaluate
@@ -478,10 +512,9 @@ def run_eval(
             sae = sae.to(device=device, dtype=llm_dtype)
 
             # Get autointerp results
-            autointerp = AutoInterp(
-                cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device
+            results = run_eval_single_sae(
+                config, sae, model, device, config.artifacts_folder, sparsity
             )
-            results = asyncio.run(autointerp.run())
 
             if save_logs_path is not None:
                 # Get summary results for all latents, as well logs for the best and worst-scoring latents

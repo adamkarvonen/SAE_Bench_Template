@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class AutoInterpConfig:
+class AutoInterpEvalConfig:
     """
     Controls all parameters for how autointerp will work.
 
