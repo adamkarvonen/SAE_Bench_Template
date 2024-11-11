@@ -353,10 +353,17 @@ class AutoInterp:
             tokens.split(split_size=self.cfg.batch_size, dim=0),
             desc="Forward passes to get activation values",
         ):
+            token_mask = activation_collection.get_bos_pad_eos_mask(
+                _tokens, self.model.tokenizer
+            ).to(self.device)
             sae_in = self.act_store.get_activations(_tokens).squeeze(2).to(self.device)
-            acts = torch.concat(
-                [acts, encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))], dim=0
+
+            sae_acts = (
+                encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))
+                * token_mask[:, :, None]
             )
+
+            acts = torch.concat([acts, sae_acts], dim=0)
 
         generation_examples = {}
         scoring_examples = {}
