@@ -41,5 +41,6 @@ evals/absorption/results/
 **/results/
 **/artifacts/
 **/test_results/
+**/eval_results/
 
 openai_api_key.txt

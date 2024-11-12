@@ -64,13 +64,24 @@ def sae_name_to_info(sae_name: str) -> dict:
             sae_config["d_sae"] = "1M"
         else:
             raise ValueError(f"d_sae not recognized for {sae_name}")
-    elif "sae_bench" in sae_name:
+    elif "sae_bench_gemma" in sae_name:
         if "ef2" in sae_name:
             sae_config["d_sae"] = "4k"
         elif "ef8" in sae_name:
             sae_config["d_sae"] = "16k"
         else:
             raise ValueError(f"d_sae not recognized for {sae_name}")
+    elif "sae_bench_pythia70m" in sae_name:
+        # yes, this is very janky
+        match = re.search(r"trainer_(\d+)", sae_name)
+        if match:
+            trainer_num = int(match.group(1))
+            if (trainer_num // 2) % 2 == 0:
+                sae_config["d_sae"] = "4k"
+            else:
+                sae_config["d_sae"] = "16k"
+        else:
+            raise ValueError("No trainer match found")
 
     # set num training steps
     if "gemma-scope" in sae_name:
