@@ -14,7 +14,6 @@ class UnlearningEvalConfig(BaseEvalConfig):
             "college_computer_science",
             "high_school_geography",
             "human_aging",
-            "college_biology",
         ],
         title="Dataset Names",
         description="List of dataset names. We want to unlearn wmdp-bio while retaining knowledge in other datasets",
