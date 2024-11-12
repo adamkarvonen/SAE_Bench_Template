@@ -52,16 +52,19 @@ def test_end_to_end_different_seed():
         force_rerun=True,
     )
 
+    with open("test.json", "w") as f:
+        json.dump(run_results, f)
+
     with open(results_filename, "r") as f:
         expected_results = json.load(f)
 
     sae_name = "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10"
 
-    run_result_metrics = run_results[sae_name]["autointerp_metrics"]
+    run_result_metrics = run_results[sae_name]["eval_result_metrics"]
 
     testing_utils.compare_dicts_within_tolerance(
         run_result_metrics,
-        expected_results[sae_name]["autointerp_metrics"],
+        expected_results[sae_name]["eval_result_metrics"],
         tolerance,
         keys_to_compare=["autointerp_score"],
     )

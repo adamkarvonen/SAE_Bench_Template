@@ -19,6 +19,13 @@ from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
 from evals.autointerp.eval_config import AutoInterpEvalConfig
+from evals.autointerp.eval_output import (
+    EVAL_TYPE_ID_AUTOINTERP,
+    AutoInterpEvalOutput,
+    AutoInterpMetricCategories,
+    AutoInterpMetrics,
+)
+
 from sae_bench_utils.indexing_utils import (
     get_iw_sample_indices,
     get_k_largest_indices,
@@ -37,8 +44,6 @@ from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
     select_saes_multiple_patterns,
 )
-
-EVAL_TYPE_ID_AUTOINTERP = "autointerp"
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
@@ -595,24 +600,25 @@ def run_eval(
                 # Put important results into the results dict
                 score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
                 eval_result_metrics = {"autointerp_metrics": {"autointerp_score": score}}
-                results_dict[f"{sae_release}_{sae_id}"] = eval_result_metrics
 
-                eval_output = {
-                    "eval_instance_id": eval_instance_id,
-                    "sae_lens_release": sae_release,
-                    "sae_lens_id": sae_id,
-                    "eval_type_id": EVAL_TYPE_ID_AUTOINTERP,
-                    "sae_lens_version": sae_lens_version,
-                    "sae_bench_version": sae_bench_commit_hash,
-                    "date_time": datetime.now().isoformat(),
-                    "eval_config": asdict(config),
-                    "eval_result_metrics": eval_result_metrics,
-                    "eval_results_unstructured": sae_eval_result,
-                    "eval_artifacts": {"artifacts": artifacts_folder},
-                }
+                eval_output = AutoInterpEvalOutput(
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=AutoInterpMetricCategories(
+                        autointerp=AutoInterpMetrics(autointerp_score=score)
+                    ),
+                    eval_result_details=[],
+                    eval_result_unstructured=sae_eval_result,
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
 
-                with open(sae_result_path, "w") as f:
-                    json.dump(eval_output, f, indent=2)
+                results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
+
+                eval_output.to_json_file(sae_result_path, indent=2)
 
     return results_dict
 

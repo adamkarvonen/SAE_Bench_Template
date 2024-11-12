@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from evals.base_eval_output import BaseEvalConfig
 
 
 @dataclass
@@ -33,33 +35,110 @@ class AutoInterpEvalConfig:
     """
 
     # High-level params (not specific to autointerp)
-    model_name: str
-    n_latents: int = 200
-    override_latents: list[int] | None = None
-    dead_latent_threshold: float = 15  # minimum number of required activations
-    random_seed: int = 0
-    dataset_name: str = "monology/pile-uncopyrighted"
-
-    llm_batch_size: int = 512  # split up total tokens into batches of this size
-    llm_dtype: str = "bfloat16"
+    model_name: str = Field(
+        default="",
+        title="Model Name",
+        description="The name of the model to use",
+    )
+    n_latents: int = Field(
+        default=1000,
+        title="Number of Latents",
+        description="The number of latents for the LLM judge to interpret",
+    )
+    override_latents: list[int] | None = Field(
+        default=None,
+        title="Override Latents",
+        description="The latents to use (overrides n_latents if supplied)",
+    )
+    dead_latent_threshold: float = Field(
+        default=15,
+        title="Dead Latent Threshold",
+        description="Minimum number of required activations",
+    )
+    random_seed: int = Field(
+        default=42,
+        title="Random Seed",
+        description="The seed to use for all randomness",
+    )
+    dataset_name: str = Field(
+        default="monology/pile-uncopyrighted",
+        title="Dataset Name",
+        description="The name of the dataset to use",
+    )
+    llm_batch_size: int = Field(
+        default=512,
+        title="LLM Batch Size",
+        description="Split up total tokens into batches of this size",
+    )
+    llm_dtype: str = Field(
+        default="bfloat16",
+        title="LLM Data Type",
+        description="The data type to use for the LLM",
+    )
 
     # Main autointerp params
-    buffer: int = 10
-    no_overlap: bool = True
-    act_threshold_frac: float = 0.01
-    total_tokens: int = 2_000_000
-    scoring: bool = True
-    max_tokens_in_explanation: int = 30
-    use_demos_in_explanation: bool = True
-
-    # Sequences included in generation phase
-    n_top_ex_for_generation: int = 10
-    n_iw_sampled_ex_for_generation: int = 5
+    buffer: int = Field(
+        default=10,
+        title="Buffer Size",
+        description="The size of the buffer to use for scoring",
+    )
+    no_overlap: bool = Field(
+        default=True,
+        title="No Overlap",
+        description="Whether to allow overlapping sequences for scoring",
+    )
+    act_threshold_frac: float = Field(
+        default=0.01,
+        title="Activation Threshold Fraction",
+        description="The fraction of the maximum activation to use as the activation threshold",
+    )
+    total_tokens: int = Field(
+        default=2_000_000,
+        title="Total Tokens",
+        description="The total number of tokens we'll gather data for",
+    )
+    scoring: bool = Field(
+        default=True,
+        title="Scoring",
+        description="Whether to perform the scoring phase, or just return explanation",
+    )
+    max_tokens_in_explanation: int = Field(
+        default=30,
+        title="Max Tokens in Explanation",
+        description="The maximum number of tokens to allow in an explanation",
+    )
+    use_demos_in_explanation: bool = Field(
+        default=True,
+        title="Use Demos in Explanation",
+        description="Whether to use demonstrations in the explanation prompt",
+    )
 
     # Sequences included in scoring phase
-    n_top_ex_for_scoring: int = 2
-    n_random_ex_for_scoring: int = 10
-    n_iw_sampled_ex_for_scoring: int = 2
+    n_top_ex_for_generation: int = Field(
+        default=10,
+        title="Number of Top Examples for Generation",
+        description="The number of top activating sequences to use for the generation phase",
+    )
+    n_iw_sampled_ex_for_generation: int = Field(
+        default=5,
+        title="Number of IW Sampled Examples for Generation",
+        description="The number of importance-sampled sequences to use for the generation phase",
+    )
+    n_top_ex_for_scoring: int = Field(
+        default=2,
+        title="Number of Top Examples for Scoring",
+        description="The number of top sequences to use for scoring",
+    )
+    n_random_ex_for_scoring: int = Field(
+        default=10,
+        title="Number of Random Examples for Scoring",
+        description="The number of random sequences to use for scoring",
+    )
+    n_iw_sampled_ex_for_scoring: int = Field(
+        default=2,
+        title="Number of IW Sampled Examples for Scoring",
+        description="The number of importance-sampled sequences to use for scoring",
+    )
 
     def __post_init__(self):
         if self.n_latents is None:
