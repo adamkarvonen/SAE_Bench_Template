@@ -161,10 +161,13 @@ class AutoInterp:
             alive_latents = (
                 torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
             )
-            assert (
-                len(alive_latents) >= self.cfg.n_latents
-            ), "Error: not enough alive latents to sample from"
-            self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
+            if len(alive_latents) < self.cfg.n_latents:
+                self.latents = alive_latents
+                print(
+                    f"\n\n\nWARNING: Found only {len(alive_latents)} alive latents, which is less than {self.cfg.n_latents}\n\n\n"
+                )
+            else:
+                self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
         self.n_latents = len(self.latents)
 
     async def run(self, explanations_override: dict[int, str] = {}) -> dict[int, dict[str, Any]]:
