@@ -463,7 +463,8 @@ def run_eval_single_sae(
     torch.manual_seed(config.random_seed)
     torch.set_grad_enabled(False)
 
-    tokens_path = os.path.join(artifacts_folder, "tokens.pt")
+    tokens_filename = f"{config.total_tokens}_tokens_{sae.cfg.context_size}_ctx.pt"
+    tokens_path = os.path.join(artifacts_folder, tokens_filename)
 
     if os.path.exists(tokens_path):
         tokenized_dataset = torch.load(tokens_path).to(device)
