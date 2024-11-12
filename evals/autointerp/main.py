@@ -414,7 +414,7 @@ class AutoInterp:
             # Also, if we don't have enough values, then we assume this is a dead feature & continue
             threshold = top_values[:, self.cfg.buffer].min().item()
             acts_thresholded = torch.where(acts[..., i] >= threshold, 0.0, acts[..., i])
-            if acts_thresholded[self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
+            if acts_thresholded[:, self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
                 continue
             iw_indices = get_iw_sample_indices(
                 acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer
