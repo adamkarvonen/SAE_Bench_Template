@@ -3,7 +3,6 @@ import gc
 import random
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
-from pathlib import Path
 from typing import Any, Iterator, Literal, TypeAlias, Optional
 import os
 import time
@@ -13,15 +12,13 @@ from datetime import datetime
 
 import torch
 from openai import OpenAI
-from sae_lens import SAE, ActivationsStore, HookedSAETransformer
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from sae_lens import SAE
 from tabulate import tabulate
 from torch import Tensor
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
 from evals.autointerp.config import AutoInterpEvalConfig
-from evals.autointerp.sae_encode import encode_subset
 from sae_bench_utils.indexing_utils import (
     get_iw_sample_indices,
     get_k_largest_indices,
@@ -66,7 +63,7 @@ class Example:
         toks: list[int],
         acts: list[float],
         act_threshold: float,
-        model: HookedSAETransformer,
+        model: HookedTransformer,
     ):
         self.toks = toks
         self.str_toks = model.to_str_tokens(torch.tensor(self.toks))
@@ -143,8 +140,9 @@ class AutoInterp:
     def __init__(
         self,
         cfg: AutoInterpEvalConfig,
-        model: HookedSAETransformer,
+        model: HookedTransformer,
         sae: SAE,
+        tokenized_dataset: Tensor,
         sparsity: Tensor,
         device: str,
         api_key: str,
@@ -152,16 +150,9 @@ class AutoInterp:
         self.cfg = cfg
         self.model = model
         self.sae = sae
+        self.tokenized_dataset = tokenized_dataset
         self.device = device
         self.api_key = api_key
-        self.llm_batch_size = cfg.total_tokens // sae.cfg.context_size
-        self.act_store = ActivationsStore.from_sae(
-            model=model,
-            sae=sae,
-            streaming=True,
-            store_batch_size_prompts=self.llm_batch_size,
-            device=str(self.device),
-        )
         if cfg.latents is not None:
             self.latents = cfg.latents
         else:
@@ -364,25 +355,19 @@ class AutoInterp:
         """
         Stores top acts / random seqs data, which is used for generation & scoring respectively.
         """
-        # Get all activations, split up into batches
-        tokens = self.act_store.get_batch_tokens()
-        batch_size, seq_len = tokens.shape
-        acts = torch.empty((0, seq_len, self.n_latents), device=self.device)
-        for _tokens in tqdm(
-            tokens.split(split_size=self.cfg.llm_batch_size, dim=0),
-            desc="Forward passes to get activation values",
-        ):
-            token_mask = activation_collection.get_bos_pad_eos_mask(
-                _tokens, self.model.tokenizer
-            ).to(self.device)
-            sae_in = self.act_store.get_activations(_tokens).squeeze(2).to(self.device)
+        dataset_size, seq_len = self.tokenized_dataset.shape
 
-            sae_acts = (
-                encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))
-                * token_mask[:, :, None]
-            )
-
-            acts = torch.concat([acts, sae_acts], dim=0)
+        acts = activation_collection.collect_sae_activations(
+            self.tokenized_dataset,
+            self.model,
+            self.sae,
+            self.cfg.llm_batch_size,
+            self.sae.cfg.hook_layer,
+            self.sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+            selected_latents=self.latents,
+            activation_dtype=torch.bfloat16,  # reduce memory usage, we don't need full precision when sampling activations
+        )
 
         generation_examples = {}
         scoring_examples = {}
@@ -391,7 +376,7 @@ class AutoInterp:
             # (1/3) Get random examples (we don't need their values)
             rand_indices = torch.stack(
                 [
-                    torch.randint(0, batch_size, (self.cfg.n_random_ex_for_scoring,)),
+                    torch.randint(0, dataset_size, (self.cfg.n_random_ex_for_scoring,)),
                     torch.randint(
                         self.cfg.buffer,
                         seq_len - self.cfg.buffer,
@@ -400,7 +385,9 @@ class AutoInterp:
                 ],
                 dim=-1,
             )
-            rand_toks = index_with_buffer(tokens, rand_indices, buffer=self.cfg.buffer)
+            rand_toks = index_with_buffer(
+                self.tokenized_dataset, rand_indices, buffer=self.cfg.buffer
+            )
 
             # (2/3) Get top-scoring examples
             top_indices = get_k_largest_indices(
@@ -409,7 +396,9 @@ class AutoInterp:
                 buffer=self.cfg.buffer,
                 no_overlap=self.cfg.no_overlap,
             )
-            top_toks = index_with_buffer(tokens, top_indices, buffer=self.cfg.buffer)
+            top_toks = index_with_buffer(
+                self.tokenized_dataset, top_indices, buffer=self.cfg.buffer
+            )
             top_values = index_with_buffer(acts[..., i], top_indices, buffer=self.cfg.buffer)
             act_threshold = self.cfg.act_threshold_frac * top_values.max().item()
 
@@ -422,7 +411,7 @@ class AutoInterp:
             iw_indices = get_iw_sample_indices(
                 acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer
             )
-            iw_toks = index_with_buffer(tokens, iw_indices, buffer=self.cfg.buffer)
+            iw_toks = index_with_buffer(self.tokenized_dataset, iw_indices, buffer=self.cfg.buffer)
             iw_values = index_with_buffer(acts[..., i], iw_indices, buffer=self.cfg.buffer)
 
             # Get random values to use for splitting
@@ -477,11 +466,11 @@ def run_eval_single_sae(
     tokens_path = os.path.join(artifacts_folder, "tokens.pt")
 
     if os.path.exists(tokens_path):
-        tokenized_dataset = torch.load(tokens_path)
+        tokenized_dataset = torch.load(tokens_path).to(device)
     else:
         tokenized_dataset = dataset_utils.load_and_tokenize_dataset(
             config.dataset_name, sae.cfg.context_size, config.total_tokens, model.tokenizer
-        )
+        ).to(device)
         torch.save(tokenized_dataset, tokens_path)
 
     if sae_sparsity is None:
@@ -496,7 +485,13 @@ def run_eval_single_sae(
         )
 
     autointerp = AutoInterp(
-        cfg=config, model=model, sae=sae, sparsity=sae_sparsity, api_key=api_key, device=device
+        cfg=config,
+        model=model,
+        sae=sae,
+        tokenized_dataset=tokenized_dataset,
+        sparsity=sae_sparsity,
+        api_key=api_key,
+        device=device,
     )
     results = asyncio.run(autointerp.run())
     return results
@@ -689,6 +684,10 @@ if __name__ == "__main__":
     --model_name pythia-70m-deduped \
     --api_key <API_KEY>
     
+    python evals/autointerp/main.py \
+    --sae_regex_pattern "gemma-scope-2b-pt-res" \
+    --sae_block_pattern "layer_20/width_16k/average_l0_139" \
+    --model_name gemma-2-2b \
     
     """
     args = arg_parser().parse_args()

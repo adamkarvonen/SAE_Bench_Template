@@ -8,6 +8,7 @@ import einops
 from transformer_lens import HookedTransformer
 from transformers import AutoTokenizer
 from sae_lens import SAE
+import os
 
 # Relevant at ctx len 128
 LLM_NAME_TO_BATCH_SIZE = {
@@ -105,6 +106,49 @@ def get_all_llm_activations(
 
 @jaxtyped(typechecker=beartype)
 @torch.no_grad
+def collect_sae_activations(
+    tokens: Int[torch.Tensor, "dataset_size seq_len"],
+    model: HookedTransformer,
+    sae: SAE,
+    batch_size: int,
+    layer: int,
+    hook_name: str,
+    mask_bos_pad_eos_tokens: bool = False,
+    selected_latents: Optional[list[int]] = None,
+    activation_dtype: Optional[torch.dtype] = None,
+) -> Float[torch.Tensor, "dataset_size seq_len indexed_d_sae"]:
+    sae_acts = []
+
+    for i in tqdm(range(0, tokens.shape[0], batch_size)):
+        tokens_BL = tokens[i : i + batch_size]
+        _, cache = model.run_with_cache(tokens_BL, stop_at_layer=layer + 1, names_filter=hook_name)
+        resid_BLD: Float[torch.Tensor, "batch seq_len d_model"] = cache[hook_name]
+
+        sae_act_BLF: Float[torch.Tensor, "batch seq_len d_sae"] = sae.encode(resid_BLD)
+
+        if selected_latents is not None:
+            sae_act_BLF = sae_act_BLF[:, :, selected_latents]
+
+        if mask_bos_pad_eos_tokens:
+            attn_mask_BL = get_bos_pad_eos_mask(tokens_BL, model.tokenizer)
+        else:
+            attn_mask_BL = torch.ones_like(tokens_BL, dtype=torch.bool)
+
+        attn_mask_BL = attn_mask_BL.to(device=sae_act_BLF.device)
+
+        sae_act_BLF = sae_act_BLF * attn_mask_BL[:, :, None]
+
+        if activation_dtype is not None:
+            sae_act_BLF = sae_act_BLF.to(dtype=activation_dtype)
+
+        sae_acts.append(sae_act_BLF)
+
+    all_sae_acts_BLF = torch.cat(sae_acts, dim=0)
+    return all_sae_acts_BLF
+
+
+@jaxtyped(typechecker=beartype)
+@torch.no_grad
 def get_feature_activation_sparsity(
     tokens: Int[torch.Tensor, "dataset_size seq_len"],
     model: HookedTransformer,
@@ -122,9 +166,9 @@ def get_feature_activation_sparsity(
     for i in tqdm(range(0, tokens.shape[0], batch_size)):
         tokens_BL = tokens[i : i + batch_size]
         _, cache = model.run_with_cache(tokens_BL, stop_at_layer=layer + 1, names_filter=hook_name)
-        resid_BLD: Float[torch.Tensor, "batch pos d_model"] = cache[hook_name]
+        resid_BLD: Float[torch.Tensor, "batch seq_len d_model"] = cache[hook_name]
 
-        sae_act_BLF: Float[torch.Tensor, "batch pos d_sae"] = sae.encode(resid_BLD)
+        sae_act_BLF: Float[torch.Tensor, "batch seq_len d_sae"] = sae.encode(resid_BLD)
         # make act to zero or one
         sae_act_BLF = (sae_act_BLF > 0).to(dtype=torch.float32)
 

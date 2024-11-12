@@ -34,9 +34,9 @@ class AutoInterpEvalConfig:
 
     # High-level params (not specific to autointerp)
     model_name: str
-    n_latents: int = 10
+    n_latents: int = 200
     override_latents: list[int] | None = None
-    dead_latent_threshold: float = 8
+    dead_latent_threshold: float = 15  # minimum number of required activations
     random_seed: int = 0
     dataset_name: str = "monology/pile-uncopyrighted"
 
