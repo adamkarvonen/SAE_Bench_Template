@@ -18,7 +18,7 @@ from torch import Tensor
 from tqdm import tqdm
 from transformer_lens import HookedTransformer
 
-from evals.autointerp.config import AutoInterpEvalConfig
+from evals.autointerp.eval_config import AutoInterpEvalConfig
 from sae_bench_utils.indexing_utils import (
     get_iw_sample_indices,
     get_k_largest_indices,
@@ -566,6 +566,7 @@ def run_eval(
                     config, sae, model, device, artifacts_folder, api_key, sparsity
                 )
 
+                # Save nicely formatted logs to a text file, helpful for debugging.
                 if save_logs_path is not None:
                     # Get summary results for all latents, as well logs for the best and worst-scoring latents
                     headers = [
@@ -692,6 +693,7 @@ if __name__ == "__main__":
     --sae_regex_pattern "gemma-scope-2b-pt-res" \
     --sae_block_pattern "layer_20/width_16k/average_l0_139" \
     --model_name gemma-2-2b \
+    --api_key <API_KEY>
     
     """
     args = arg_parser().parse_args()

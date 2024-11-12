@@ -1,6 +1,6 @@
 import json
 import torch
-from evals.autointerp.config import AutoInterpEvalConfig
+from evals.autointerp.eval_config import AutoInterpEvalConfig
 import evals.autointerp.main as autointerp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
