@@ -463,10 +463,10 @@ def get_dataset_activations(
     )
 
     all_train_acts_BLD = activation_collection.get_all_llm_activations(
-        train_data, model, llm_batch_size, layer, hook_point
+        train_data, model, llm_batch_size, layer, hook_point, mask_bos_pad_eos_tokens=True
     )
     all_test_acts_BLD = activation_collection.get_all_llm_activations(
-        test_data, model, llm_batch_size, layer, hook_point
+        test_data, model, llm_batch_size, layer, hook_point, mask_bos_pad_eos_tokens=True
     )
 
     return all_train_acts_BLD, all_test_acts_BLD

@@ -1,0 +1,39 @@
+{
+    "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10": {
+        "eval_type_id": "autointerp",
+        "eval_config": {
+            "model_name": "pythia-70m-deduped",
+            "n_latents": 100,
+            "override_latents": null,
+            "dead_latent_threshold": 15,
+            "random_seed": 48,
+            "dataset_name": "monology/pile-uncopyrighted",
+            "llm_batch_size": 512,
+            "llm_dtype": "float32",
+            "buffer": 10,
+            "no_overlap": true,
+            "act_threshold_frac": 0.01,
+            "total_tokens": 2000000,
+            "scoring": true,
+            "max_tokens_in_explanation": 30,
+            "use_demos_in_explanation": true,
+            "n_top_ex_for_generation": 10,
+            "n_iw_sampled_ex_for_generation": 5,
+            "n_top_ex_for_scoring": 2,
+            "n_random_ex_for_scoring": 10,
+            "n_iw_sampled_ex_for_scoring": 2
+        },
+        "eval_id": "ef92c59d-589d-4f69-b111-410a605071c2",
+        "datetime_epoch_millis": 1731442596972,
+        "eval_result_metrics": {
+            "autointerp": {
+                "autointerp_score": 0.8442857142857144
+            }
+        },
+        "eval_result_details": [],
+        "sae_bench_commit_hash": "de3ce5c629bf844d5cc81f110c22f166b7ff6ff1",
+        "sae_lens_id": "blocks.4.hook_resid_post__trainer_10",
+        "sae_lens_release_id": "sae_bench_pythia70m_sweep_topk_ctx128_0730",
+        "sae_lens_version": "4.3.1"
+    }
+}

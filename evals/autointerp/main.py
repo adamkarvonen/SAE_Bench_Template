@@ -3,26 +3,55 @@ import gc
 import random
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
-from pathlib import Path
-from typing import Any, Iterator, Literal, TypeAlias
+from typing import Any, Iterator, Literal, TypeAlias, Optional
+import os
+import time
+import argparse
+import json
+from datetime import datetime
 
 import torch
 from openai import OpenAI
-from sae_lens import SAE, ActivationsStore, HookedSAETransformer
-from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from sae_lens import SAE
 from tabulate import tabulate
 from torch import Tensor
 from tqdm import tqdm
+from transformer_lens import HookedTransformer
 
-from evals.autointerp.config import AutoInterpConfig
-from evals.autointerp.sae_encode import encode_subset
-from sae_bench_utils.indexing_utils import get_iw_sample_indices, get_k_largest_indices, index_with_buffer
+from evals.autointerp.eval_config import AutoInterpEvalConfig
+from evals.autointerp.eval_output import (
+    EVAL_TYPE_ID_AUTOINTERP,
+    AutoInterpEvalOutput,
+    AutoInterpMetricCategories,
+    AutoInterpMetrics,
+)
+
+from sae_bench_utils.indexing_utils import (
+    get_iw_sample_indices,
+    get_k_largest_indices,
+    index_with_buffer,
+)
+import sae_bench_utils.dataset_utils as dataset_utils
+import sae_bench_utils.activation_collection as activation_collection
+
+
+from sae_bench_utils import (
+    get_eval_uuid,
+    get_sae_lens_version,
+    get_sae_bench_version,
+)
+from sae_bench_utils.sae_selection_utils import (
+    get_saes_from_regex,
+    select_saes_multiple_patterns,
+)
 
 Messages: TypeAlias = list[dict[Literal["role", "content"], str]]
 
 
 def display_messages(messages: Messages) -> str:
-    return tabulate([m.values() for m in messages], tablefmt="simple_grid", maxcolwidths=[None, 120])
+    return tabulate(
+        [m.values() for m in messages], tablefmt="simple_grid", maxcolwidths=[None, 120]
+    )
 
 
 def str_bool(b: bool) -> str:
@@ -39,7 +68,7 @@ class Example:
         toks: list[int],
         acts: list[float],
         act_threshold: float,
-        model: HookedSAETransformer,
+        model: HookedTransformer,
     ):
         self.toks = toks
         self.str_toks = model.to_str_tokens(torch.tensor(self.toks))
@@ -89,7 +118,9 @@ class Examples:
                 ]
                 for i, ex in enumerate(self.examples)
             ],
-            headers=["Top act"] + ([] if predictions is None else ["Active?", "Predicted?"]) + ["Sequence"],
+            headers=["Top act"]
+            + ([] if predictions is None else ["Active?", "Predicted?"])
+            + ["Sequence"],
             tablefmt="simple_outline",
             floatfmt=".3f",
         )
@@ -113,9 +144,10 @@ class AutoInterp:
 
     def __init__(
         self,
-        cfg: AutoInterpConfig,
-        model: HookedSAETransformer,
+        cfg: AutoInterpEvalConfig,
+        model: HookedTransformer,
         sae: SAE,
+        tokenized_dataset: Tensor,
         sparsity: Tensor,
         device: str,
         api_key: str,
@@ -123,23 +155,24 @@ class AutoInterp:
         self.cfg = cfg
         self.model = model
         self.sae = sae
+        self.tokenized_dataset = tokenized_dataset
         self.device = device
         self.api_key = api_key
-        self.batch_size = cfg.total_tokens // sae.cfg.context_size
-        self.act_store = ActivationsStore.from_sae(
-            model=model,
-            sae=sae,
-            streaming=True,
-            store_batch_size_prompts=self.batch_size,
-            device=str(self.device),
-        )
         if cfg.latents is not None:
             self.latents = cfg.latents
         else:
             assert self.cfg.n_latents is not None
-            alive_latents = torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
-            assert len(alive_latents) >= self.cfg.n_latents, "Error: not enough alive latents to sample from"
-            self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
+            sparsity *= cfg.total_tokens
+            alive_latents = (
+                torch.nonzero(sparsity > self.cfg.dead_latent_threshold).squeeze(1).tolist()
+            )
+            if len(alive_latents) < self.cfg.n_latents:
+                self.latents = alive_latents
+                print(
+                    f"\n\n\nWARNING: Found only {len(alive_latents)} alive latents, which is less than {self.cfg.n_latents}\n\n\n"
+                )
+            else:
+                self.latents = random.sample(alive_latents, k=self.cfg.n_latents)
         self.n_latents = len(self.latents)
 
     async def run(self, explanations_override: dict[int, str] = {}) -> dict[int, dict[str, Any]]:
@@ -156,7 +189,9 @@ class AutoInterp:
         latents_with_data = sorted(generation_examples.keys())
         n_dead = self.n_latents - len(latents_with_data)
         if n_dead > 0:
-            print(f"Found data for {len(latents_with_data)}/{self.n_latents} alive latents; {n_dead} dead")
+            print(
+                f"Found data for {len(latents_with_data)}/{self.n_latents} alive latents; {n_dead} dead"
+            )
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             tasks = [
@@ -222,9 +257,12 @@ class AutoInterp:
             score = self.score_predictions(predictions, scoring_examples)
             results |= {
                 "predictions": predictions,
-                "correct seqs": [i for i, ex in enumerate(scoring_examples, start=1) if ex.is_active],
+                "correct seqs": [
+                    i for i, ex in enumerate(scoring_examples, start=1) if ex.is_active
+                ],
                 "score": score,
-                "logs": results["logs"] + f"\nScoring phase\n{logs}\n{scoring_examples.display(predictions)}",
+                "logs": results["logs"]
+                + f"\nScoring phase\n{logs}\n{scoring_examples.display(predictions)}",
             }
 
         return results
@@ -233,7 +271,9 @@ class AutoInterp:
         return explanation.split("activates on")[-1].rstrip(".").strip()
 
     def parse_predictions(self, predictions: str) -> list[int] | None:
-        predictions_split = predictions.strip().rstrip(".").replace("and", ",").replace("None", "").split(",")
+        predictions_split = (
+            predictions.strip().rstrip(".").replace("and", ",").replace("None", "").split(",")
+        )
         predictions_list = [i.strip() for i in predictions_split if i.strip() != ""]
         if predictions_list == []:
             return []
@@ -245,9 +285,13 @@ class AutoInterp:
     def score_predictions(self, predictions: list[int], scoring_examples: Examples) -> float:
         classifications = [i in predictions for i in range(1, len(scoring_examples) + 1)]
         correct_classifications = [ex.is_active for ex in scoring_examples]
-        return sum([c == cc for c, cc in zip(classifications, correct_classifications)]) / len(classifications)
+        return sum([c == cc for c, cc in zip(classifications, correct_classifications)]) / len(
+            classifications
+        )
 
-    def get_api_response(self, messages: Messages, max_tokens: int, n_completions: int = 1) -> tuple[list[str], str]:
+    def get_api_response(
+        self, messages: Messages, max_tokens: int, n_completions: int = 1
+    ) -> tuple[list[str], str]:
         """Generic API usage function for OpenAI"""
         for message in messages:
             assert message.keys() == {"content", "role"}
@@ -275,13 +319,17 @@ class AutoInterp:
     def get_generation_prompts(self, generation_examples: Examples) -> Messages:
         assert len(generation_examples) > 0, "No generation examples found"
 
-        examples_as_str = "\n".join([f"{i+1}. {ex.to_str(mark_toks=True)}" for i, ex in enumerate(generation_examples)])
+        examples_as_str = "\n".join(
+            [f"{i+1}. {ex.to_str(mark_toks=True)}" for i, ex in enumerate(generation_examples)]
+        )
 
         SYSTEM_PROMPT = """We're studying neurons in a neural network. Each neuron activates on some particular word/words/substring/concept in a short document. The activating words in each document are indicated with << ... >>. We will give you a list of documents on which the neuron activates, in order from most strongly activating to least strongly activating. Look at the parts of the document the neuron activates for and summarize in a single sentence what the neuron is activating on. Try not to be overly specific in your explanation. Note that some neurons will activate only on specific words or substrings, but others will activate on most/all words in a sentence provided that sentence contains some particular concept. Your explanation should cover most or all activating words (for example, don't give an explanation which is specific to a single word if all words in a sentence cause the neuron to activate). Pay attention to things like the capitalization and punctuation of the activating words or concepts, if that seems relevant. Keep the explanation as short and simple as possible, limited to 20 words or less. Omit punctuation and formatting. You should avoid giving long lists of words."""
         if self.cfg.use_demos_in_explanation:
             SYSTEM_PROMPT += """ Some examples: "This neuron activates on the word 'knows' in rhetorical questions", and "This neuron activates on verbs related to decision-making and preferences", and "This neuron activates on the substring 'Ent' at the start of words", and "This neuron activates on text about government economic policy"."""
         else:
-            SYSTEM_PROMPT += """Your response should be in the form "This neuron activates on..."."""
+            SYSTEM_PROMPT += (
+                """Your response should be in the form "This neuron activates on..."."""
+            )
         USER_PROMPT = f"""The activating documents are given below:\n\n{examples_as_str}"""
 
         return [
@@ -292,7 +340,9 @@ class AutoInterp:
     def get_scoring_prompts(self, explanation: str, scoring_examples: Examples) -> Messages:
         assert len(scoring_examples) > 0, "No scoring examples found"
 
-        examples_as_str = "\n".join([f"{i+1}. {ex.to_str(mark_toks=False)}" for i, ex in enumerate(scoring_examples)])
+        examples_as_str = "\n".join(
+            [f"{i+1}. {ex.to_str(mark_toks=False)}" for i, ex in enumerate(scoring_examples)]
+        )
 
         example_response = sorted(
             random.sample(
@@ -313,16 +363,19 @@ class AutoInterp:
         """
         Stores top acts / random seqs data, which is used for generation & scoring respectively.
         """
-        # Get all activations, split up into batches
-        tokens = self.act_store.get_batch_tokens()
-        batch_size, seq_len = tokens.shape
-        acts = torch.empty((0, seq_len, self.n_latents), device=self.device)
-        for _tokens in tqdm(
-            tokens.split(split_size=self.cfg.batch_size, dim=0),
-            desc="Forward passes to get activation values",
-        ):
-            sae_in = self.act_store.get_activations(_tokens).squeeze(2).to(self.device)
-            acts = torch.concat([acts, encode_subset(self.sae, sae_in, latents=torch.tensor(self.latents))], dim=0)
+        dataset_size, seq_len = self.tokenized_dataset.shape
+
+        acts = activation_collection.collect_sae_activations(
+            self.tokenized_dataset,
+            self.model,
+            self.sae,
+            self.cfg.llm_batch_size,
+            self.sae.cfg.hook_layer,
+            self.sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+            selected_latents=self.latents,
+            activation_dtype=torch.bfloat16,  # reduce memory usage, we don't need full precision when sampling activations
+        )
 
         generation_examples = {}
         scoring_examples = {}
@@ -331,7 +384,7 @@ class AutoInterp:
             # (1/3) Get random examples (we don't need their values)
             rand_indices = torch.stack(
                 [
-                    torch.randint(0, batch_size, (self.cfg.n_random_ex_for_scoring,)),
+                    torch.randint(0, dataset_size, (self.cfg.n_random_ex_for_scoring,)),
                     torch.randint(
                         self.cfg.buffer,
                         seq_len - self.cfg.buffer,
@@ -340,7 +393,9 @@ class AutoInterp:
                 ],
                 dim=-1,
             )
-            rand_toks = index_with_buffer(tokens, rand_indices, buffer=self.cfg.buffer)
+            rand_toks = index_with_buffer(
+                self.tokenized_dataset, rand_indices, buffer=self.cfg.buffer
+            )
 
             # (2/3) Get top-scoring examples
             top_indices = get_k_largest_indices(
@@ -349,7 +404,9 @@ class AutoInterp:
                 buffer=self.cfg.buffer,
                 no_overlap=self.cfg.no_overlap,
             )
-            top_toks = index_with_buffer(tokens, top_indices, buffer=self.cfg.buffer)
+            top_toks = index_with_buffer(
+                self.tokenized_dataset, top_indices, buffer=self.cfg.buffer
+            )
             top_values = index_with_buffer(acts[..., i], top_indices, buffer=self.cfg.buffer)
             act_threshold = self.cfg.act_threshold_frac * top_values.max().item()
 
@@ -357,10 +414,12 @@ class AutoInterp:
             # Also, if we don't have enough values, then we assume this is a dead feature & continue
             threshold = top_values[:, self.cfg.buffer].min().item()
             acts_thresholded = torch.where(acts[..., i] >= threshold, 0.0, acts[..., i])
-            if acts_thresholded[self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
+            if acts_thresholded[:, self.cfg.buffer : -self.cfg.buffer].max() < 1e-6:
                 continue
-            iw_indices = get_iw_sample_indices(acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer)
-            iw_toks = index_with_buffer(tokens, iw_indices, buffer=self.cfg.buffer)
+            iw_indices = get_iw_sample_indices(
+                acts_thresholded, k=self.cfg.n_iw_sampled_ex, buffer=self.cfg.buffer
+            )
+            iw_toks = index_with_buffer(self.tokenized_dataset, iw_indices, buffer=self.cfg.buffer)
             iw_values = index_with_buffer(acts[..., i], iw_indices, buffer=self.cfg.buffer)
 
             # Get random values to use for splitting
@@ -399,12 +458,62 @@ class AutoInterp:
         return generation_examples, scoring_examples
 
 
+def run_eval_single_sae(
+    config: AutoInterpEvalConfig,
+    sae: SAE,
+    model: HookedTransformer,
+    device: str,
+    artifacts_folder: str,
+    api_key: str,
+    sae_sparsity: Optional[torch.Tensor] = None,
+) -> dict[str, float]:
+    random.seed(config.random_seed)
+    torch.manual_seed(config.random_seed)
+    torch.set_grad_enabled(False)
+
+    tokens_filename = f"{config.total_tokens}_tokens_{sae.cfg.context_size}_ctx.pt"
+    tokens_path = os.path.join(artifacts_folder, tokens_filename)
+
+    if os.path.exists(tokens_path):
+        tokenized_dataset = torch.load(tokens_path).to(device)
+    else:
+        tokenized_dataset = dataset_utils.load_and_tokenize_dataset(
+            config.dataset_name, sae.cfg.context_size, config.total_tokens, model.tokenizer
+        ).to(device)
+        torch.save(tokenized_dataset, tokens_path)
+
+    if sae_sparsity is None:
+        sae_sparsity = activation_collection.get_feature_activation_sparsity(
+            tokenized_dataset,
+            model,
+            sae,
+            config.llm_batch_size,
+            sae.cfg.hook_layer,
+            sae.cfg.hook_name,
+            mask_bos_pad_eos_tokens=True,
+        )
+
+    autointerp = AutoInterp(
+        cfg=config,
+        model=model,
+        sae=sae,
+        tokenized_dataset=tokenized_dataset,
+        sparsity=sae_sparsity,
+        api_key=api_key,
+        device=device,
+    )
+    results = asyncio.run(autointerp.run())
+    return results
+
+
 def run_eval(
-    config: AutoInterpConfig,
-    selected_saes_dict: dict[str, list[str]],  # dict of SAE release name: list of SAE names to evaluate
+    config: AutoInterpEvalConfig,
+    selected_saes_dict: dict[str, list[str]],
     device: str,
     api_key: str,
-    save_logs_path: str | Path | None = None,
+    output_path: str,
+    force_rerun: bool = False,
+    save_logs_path: Optional[str] = None,
 ) -> dict[str, Any]:
     """
     Runs autointerp eval. Returns results as a dict with the following structure:
@@ -412,12 +521,14 @@ def run_eval(
         custom_eval_config - dict of config parameters used for this evaluation
         custom_eval_results - nested dict of {sae_name: {"score": score}}
     """
+    eval_instance_id = get_eval_uuid()
+    sae_lens_version = get_sae_lens_version()
+    sae_bench_commit_hash = get_sae_bench_version()
+
+    artifacts_base_folder = "artifacts"
+    os.makedirs(output_path, exist_ok=True)
+
     results_dict = {}
-
-    random.seed(config.seed)
-    torch.manual_seed(config.seed)
-
-    results_dict = {"custom_eval_results": {}, "custom_eval_config": asdict(config)}
 
     if config.llm_dtype == "bfloat16":
         llm_dtype = torch.bfloat16
@@ -426,48 +537,213 @@ def run_eval(
     else:
         raise ValueError(f"Invalid dtype: {config.llm_dtype}")
 
-    model: HookedSAETransformer = HookedSAETransformer.from_pretrained(config.model_name, device=device, dtype=llm_dtype)
+    model: HookedTransformer = HookedTransformer.from_pretrained_no_processing(
+        config.model_name, device=device, dtype=llm_dtype
+    )
 
-    for release, sae_names in selected_saes_dict.items():
-        saes_map = get_pretrained_saes_directory()[release].saes_map
-        for sae_name in sae_names:
-            # Clear memory
+    for sae_release in selected_saes_dict:
+        print(
+            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+        )
+
+        for sae_id in tqdm(
+            selected_saes_dict[sae_release],
+            desc="Running SAE evaluation on all selected SAEs",
+        ):
             gc.collect()
             torch.cuda.empty_cache()
-
-            # Load in SAE, and randomly choose a number of latents to use for this autointerp instance
-            sae_id = saes_map[sae_name]
-            sae, _, sparsity = SAE.from_pretrained(release, sae_id, device=str(device))
+            sae, _, sparsity = SAE.from_pretrained(sae_release, sae_id, device=str(device))
             sae = sae.to(device=device, dtype=llm_dtype)
 
-            # Get autointerp results
-            autointerp = AutoInterp(cfg=config, model=model, sae=sae, sparsity=sparsity, api_key=api_key, device=device)
-            results = asyncio.run(autointerp.run())
+            artifacts_folder = os.path.join(artifacts_base_folder, EVAL_TYPE_ID_AUTOINTERP)
+            os.makedirs(artifacts_folder, exist_ok=True)
 
-            if save_logs_path is not None:
-                # Get summary results for all latents, as well logs for the best and worst-scoring latents
-                headers = [
-                    "latent",
-                    "explanation",
-                    "predictions",
-                    "correct seqs",
-                    "score",
-                ]
-                logs = "Summary table:\n" + tabulate(
-                    [[results[latent][h] for h in headers] for latent in results],
-                    headers=headers,
-                    tablefmt="simple_outline",
+            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+            sae_result_file = sae_result_file.replace("/", "_")
+            sae_result_path = os.path.join(output_path, sae_result_file)
+
+            if os.path.exists(sae_result_path) and not force_rerun:
+                print(f"Loading existing results from {sae_result_path}")
+                with open(sae_result_path, "r") as f:
+                    eval_output = json.load(f)
+            else:
+                sae_eval_result = run_eval_single_sae(
+                    config, sae, model, device, artifacts_folder, api_key, sparsity
                 )
-                worst_result = min(results.values(), key=lambda x: x["score"])
-                best_result = max(results.values(), key=lambda x: x["score"])
-                logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
-                logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
-                # Save the results to a file
-                with open(save_logs_path, "a") as f:
-                    f.write(logs)
 
-            # Put important results into the results dict
-            score = sum([r["score"] for r in results.values()]) / len(results)
-            results_dict["custom_eval_results"][sae_name] = {"score": score}
+                # Save nicely formatted logs to a text file, helpful for debugging.
+                if save_logs_path is not None:
+                    # Get summary results for all latents, as well logs for the best and worst-scoring latents
+                    headers = [
+                        "latent",
+                        "explanation",
+                        "predictions",
+                        "correct seqs",
+                        "score",
+                    ]
+                    logs = "Summary table:\n" + tabulate(
+                        [
+                            [sae_eval_result[latent][h] for h in headers]
+                            for latent in sae_eval_result
+                        ],
+                        headers=headers,
+                        tablefmt="simple_outline",
+                    )
+                    worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
+                    best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
+                    logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
+                    logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
+                    # Save the results to a file
+                    with open(save_logs_path, "a") as f:
+                        f.write(logs)
+
+                # Put important results into the results dict
+                score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
+                eval_result_metrics = {"autointerp_metrics": {"autointerp_score": score}}
+
+                eval_output = AutoInterpEvalOutput(
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=AutoInterpMetricCategories(
+                        autointerp=AutoInterpMetrics(autointerp_score=score)
+                    ),
+                    eval_result_details=[],
+                    eval_result_unstructured=sae_eval_result,
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
+
+                results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
+
+                eval_output.to_json_file(sae_result_path, indent=2)
 
     return results_dict
+
+
+def setup_environment():
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    if torch.backends.mps.is_available():
+        device = "mps"
+    else:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    print(f"Using device: {device}")
+    return device
+
+
+def create_config_and_selected_saes(
+    args,
+) -> tuple[AutoInterpEvalConfig, dict[str, list[str]]]:
+    config = AutoInterpEvalConfig(
+        random_seed=args.random_seed,
+        model_name=args.model_name,
+    )
+
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+
+    assert len(selected_saes_dict) > 0, "No SAEs selected"
+
+    for release, saes in selected_saes_dict.items():
+        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
+        print(f"Sample SAEs: {saes[:5]}...")
+
+    return config, selected_saes_dict
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(description="Run auto interp evaluation")
+    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+
+    parser.add_argument(
+        "--api_key",
+        type=str,
+        required=True,
+        help="OpenAI API key",
+    )
+    parser.add_argument(
+        "--sae_regex_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE selection",
+    )
+    parser.add_argument(
+        "--sae_block_pattern",
+        type=str,
+        required=True,
+        help="Regex pattern for SAE block selection",
+    )
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default="evals/autointerp/results",
+        help="Output folder",
+    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+
+    return parser
+
+
+if __name__ == "__main__":
+    """
+    python evals/autointerp/main.py \
+    --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
+    --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
+    --model_name pythia-70m-deduped \
+    --api_key <API_KEY>
+    
+    python evals/autointerp/main.py \
+    --sae_regex_pattern "gemma-scope-2b-pt-res" \
+    --sae_block_pattern "layer_20/width_16k/average_l0_139" \
+    --model_name gemma-2-2b \
+    --api_key <API_KEY>
+    
+    """
+    args = arg_parser().parse_args()
+    device = setup_environment()
+
+    start_time = time.time()
+
+    sae_regex_patterns = [
+        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
+        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
+    ]
+
+    sae_regex_patterns = None
+    sae_block_pattern = None
+
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    if sae_regex_patterns is not None:
+        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+
+    print(selected_saes_dict)
+
+    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+        -1
+    ]
+
+    # create output folder
+    os.makedirs(args.output_folder, exist_ok=True)
+
+    # run the evaluation on all selected SAEs
+    results_dict = run_eval(
+        config,
+        selected_saes_dict,
+        device,
+        args.api_key,
+        args.output_folder,
+        args.force_rerun,
+    )
+
+    end_time = time.time()
+
+    print(f"Finished evaluation in {end_time - start_time} seconds")

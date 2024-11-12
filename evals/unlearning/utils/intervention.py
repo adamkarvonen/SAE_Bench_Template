@@ -18,7 +18,7 @@ def anthropic_clamp_resid_SAE_features(
     features_to_ablate: list[int],
     multiplier: float = 1.0,
     random: bool = False,
-):
+) -> Float[Tensor, "batch seq d_model"]:
     """
     Given a list of feature indices, this hook function removes feature activations in a manner similar to the one
     used in "Scaling Monosemanticity": https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html#appendix-methods-steering
@@ -29,8 +29,12 @@ def anthropic_clamp_resid_SAE_features(
         with torch.no_grad():
             # adjust feature activations with scaling (multiplier = 0 just ablates the feature)
             if isinstance(sae, SAE):
-                reconstruction = sae(resid)
                 feature_activations = sae.encode(resid)
+
+                feature_activations[:, 0, :] = 0.0  # We zero out the BOS token for all SAEs.
+                # We don't need to zero out padding tokens because we right pad, so they don't effect the model generation.
+
+                reconstruction = sae.decode(feature_activations)
             # else:
             #     try:
             #         import sys
@@ -62,6 +66,7 @@ def anthropic_clamp_resid_SAE_features(
                         feature_activations[:, :, features_to_ablate],
                     )
                 else:
+                    raise NotImplementedError("Currently deprecated")
                     feature_activations[:, :, features_to_ablate] = torch.where(
                         non_zero_features_BLD,
                         -multiplier.unsqueeze(dim=0).unsqueeze(dim=0),
@@ -71,6 +76,7 @@ def anthropic_clamp_resid_SAE_features(
             # set the next feature id's activations to the multiplier only if the previous feature id's
             # activations are positive
             else:
+                raise NotImplementedError("Currently deprecated")
                 assert isinstance(multiplier, float) or isinstance(multiplier, int)
 
                 next_features_to_ablate = [
@@ -82,16 +88,16 @@ def anthropic_clamp_resid_SAE_features(
                     feature_activations[:, :, next_features_to_ablate],
                 )
 
-            try:
-                modified_reconstruction = (
-                    einops.einsum(
-                        feature_activations, sae.W_dec, "... d_sae, d_sae d_in -> ... d_in"
-                    )
-                    + sae.b_dec
-                )
-            except:
-                # SAEBench doesn't have W_dec and b_dec
-                modified_reconstruction = sae.decode(feature_activations)
+            # try:
+            #     modified_reconstruction = (
+            #         einops.einsum(
+            #             feature_activations, sae.W_dec, "... d_sae, d_sae d_in -> ... d_in"
+            #         )
+            #         + sae.b_dec
+            #     )
+            # except:
+            # SAEBench doesn't have W_dec and b_dec
+            modified_reconstruction = sae.decode(feature_activations)
 
             # Unscale outputs if needed:
             # if sae.input_scaling_factor is not None:

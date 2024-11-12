@@ -10,6 +10,44 @@ import random
 import sae_bench_utils.dataset_info as dataset_info
 
 
+def load_and_tokenize_dataset(
+    dataset_name: str, ctx_len: int, num_tokens: int, tokenizer: AutoTokenizer
+) -> torch.Tensor:
+    """
+    Load a Hugging Face dataset, tokenize each row, and accumulate tokens until reaching the desired count.
+    Returns a tensor of shape (num_rows, ctx_len).
+    """
+    # Load the dataset with streaming enabled
+    dataset = load_dataset(dataset_name, streaming=True, split="train")
+
+    all_tokens = []
+    total_token_count = 0
+
+    # Tokenize rows and accumulate tokens
+    for row in dataset:
+        tokens = tokenizer(row["text"], truncation=True, max_length=ctx_len, return_tensors="pt")[
+            "input_ids"
+        ].squeeze()
+
+        all_tokens.append(tokens)
+        total_token_count += tokens.shape[0]
+
+        # Stop once we reach the target token count
+        if total_token_count >= num_tokens:
+            break
+
+    # Concatenate tokens into a single tensor
+    concatenated_tensor = torch.cat(all_tokens)
+
+    # Truncate excess tokens and reshape into (num_rows, row_len)
+    num_rows = concatenated_tensor.shape[0] // ctx_len
+    final_tensor_BL = concatenated_tensor[: num_rows * ctx_len].reshape(num_rows, ctx_len)
+
+    final_tensor_BL[:, 0] = tokenizer.bos_token_id
+
+    return final_tensor_BL
+
+
 def gather_dataset_from_df(
     df: pd.DataFrame,
     chosen_classes: list[str],
@@ -229,7 +267,7 @@ def get_balanced_dataset(
 
         if min_count < min_samples_per_quadrant:
             continue
-            
+
         sampled_texts = []
         for _, group_df in prof_df.groupby(column2_name):
             sampled_group = group_df.sample(n=min_samples_per_quadrant, random_state=random_seed)
