@@ -25,6 +25,8 @@ class JumpReLUSAE(nn.Module):
         self.threshold = nn.Parameter(torch.zeros(d_sae))
         self.b_enc = nn.Parameter(torch.zeros(d_sae))
         self.b_dec = nn.Parameter(torch.zeros(d_model))
+        self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.dtype: torch.dtype = torch.float32
 
         hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
@@ -45,6 +47,20 @@ class JumpReLUSAE(nn.Module):
         acts = self.encode(acts)
         recon = self.decode(acts)
         return recon
+
+    # required as we have device and dtype class attributes
+    def to(self, *args, **kwargs):
+        super().to(*args, **kwargs)
+        # Update the device and dtype attributes based on the first parameter
+        device = kwargs.get("device", None)
+        dtype = kwargs.get("dtype", None)
+
+        # Update device and dtype if they were provided
+        if device:
+            self.device = device
+        if dtype:
+            self.dtype = dtype
+        return self
 
 
 def load_jumprelu_sae(repo_id: str, filename: str, layer: int) -> JumpReLUSAE:

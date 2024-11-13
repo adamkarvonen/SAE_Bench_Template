@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 from jaxtyping import Bool, Int, Float, jaxtyped
 from beartype import beartype
 import einops
@@ -23,10 +23,11 @@ LLM_NAME_TO_DTYPE = {
 }
 
 
-# @jaxtyped(typechecker=beartype) # TODO: jaxtyped struggles with the tokenizer
+# beartype struggles with the tokenizer
+@jaxtyped(typechecker=beartype)
 @torch.no_grad
 def get_bos_pad_eos_mask(
-    tokens: Int[torch.Tensor, "dataset_size seq_len"], tokenizer: AutoTokenizer
+    tokens: Int[torch.Tensor, "dataset_size seq_len"], tokenizer: AutoTokenizer | Any
 ) -> Bool[torch.Tensor, "dataset_size seq_len"]:
     mask = (
         (tokens == tokenizer.pad_token_id)
@@ -109,7 +110,7 @@ def get_all_llm_activations(
 def collect_sae_activations(
     tokens: Int[torch.Tensor, "dataset_size seq_len"],
     model: HookedTransformer,
-    sae: SAE,
+    sae: SAE | Any,
     batch_size: int,
     layer: int,
     hook_name: str,
@@ -154,7 +155,7 @@ def collect_sae_activations(
 def get_feature_activation_sparsity(
     tokens: Int[torch.Tensor, "dataset_size seq_len"],
     model: HookedTransformer,
-    sae: SAE,
+    sae: SAE | Any,
     batch_size: int,
     layer: int,
     hook_name: str,
@@ -221,7 +222,7 @@ def create_meaned_model_activations(
 @torch.no_grad
 def get_sae_meaned_activations(
     all_llm_activations_BLD: dict[str, Float[torch.Tensor, "batch_size seq_len d_model"]],
-    sae: SAE,
+    sae: SAE | Any,
     sae_batch_size: int,
 ) -> dict[str, Float[torch.Tensor, "batch_size d_sae"]]:
     """Encode LLM activations with an SAE and mean across the sequence length dimension for each class while ignoring padding tokens.
@@ -302,7 +303,7 @@ def save_activations(
 @jaxtyped(typechecker=beartype)
 @torch.no_grad()
 def encode_precomputed_activations(
-    sae: SAE,
+    sae: SAE | Any,
     sae_batch_size: int,
     num_chunks: int,
     activation_dir: str,
