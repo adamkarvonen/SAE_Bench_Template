@@ -71,6 +71,11 @@ class CoreEvalConfig(BaseEvalConfig):
         title="Compute Featurewise Weight-Based Metrics",
         description="Compute featurewise weight-based metrics",
     )
+    exclude_special_tokens_from_reconstruction: bool = Field(
+        default=False,
+        title="Exclude Special Tokens from Reconstruction",
+        description="Exclude special tokens like BOS, EOS, PAD from reconstruction",
+    )
     verbose: bool = Field(
         default=False,
         title="Verbose",

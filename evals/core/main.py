@@ -215,6 +215,7 @@ def run_evals(
             n_batches=eval_config.n_eval_reconstruction_batches,
             eval_batch_size_prompts=actual_batch_size,
             ignore_tokens=ignore_tokens,
+            exclude_special_tokens_from_reconstruction=eval_config.exclude_special_tokens_from_reconstruction,
             verbose=verbose,
         )
 
@@ -375,6 +376,7 @@ def get_downstream_reconstruction_metrics(
     n_batches: int,
     eval_batch_size_prompts: int,
     ignore_tokens: set[int | None] = set(),
+    exclude_special_tokens_from_reconstruction: bool = False,
     verbose: bool = False,
 ):
     metrics_dict = {}
@@ -399,6 +401,8 @@ def get_downstream_reconstruction_metrics(
             activation_store,
             compute_kl=compute_kl,
             compute_ce_loss=compute_ce_loss,
+            ignore_tokens=ignore_tokens,
+            exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
         ).items():
 
             if len(ignore_tokens) > 0:
@@ -621,6 +625,8 @@ def get_recons_loss(
     activation_store: ActivationsStore,
     compute_kl: bool,
     compute_ce_loss: bool,
+    ignore_tokens: set[int | None] = set(),
+    exclude_special_tokens_from_reconstruction: bool = False,
     model_kwargs: Mapping[str, Any] = {},
 ) -> dict[str, Any]:
     hook_name = sae.cfg.hook_name
@@ -629,6 +635,16 @@ def get_recons_loss(
     original_logits, original_ce_loss = model(
         batch_tokens, return_type="both", loss_per_token=True, **model_kwargs
     )
+
+    if len(ignore_tokens) > 0 and exclude_special_tokens_from_reconstruction:
+        mask = torch.logical_not(
+            torch.any(
+                torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
+                dim=0,
+            )
+        )
+    else:
+        mask = torch.ones_like(batch_tokens, dtype=torch.bool)
 
     metrics = {}
 
@@ -643,16 +659,17 @@ def get_recons_loss(
             activations = activation_store.apply_norm_scaling_factor(activations)
 
         # SAE class agnost forward forward pass.
-        activations = sae.decode(sae.encode(activations)).to(activations.dtype)
+        reconstructed_activations = sae.decode(sae.encode(activations)).to(activations.dtype)
 
         # Unscale if activations were scaled prior to going into the SAE
         if activation_store.normalize_activations == "expected_average_only_in":
-            activations = activation_store.unscale(activations)
+            reconstructed_activations = activation_store.unscale(reconstructed_activations)
 
-        return activations.to(original_device)
+        reconstructed_activations = torch.where(mask[..., None], reconstructed_activations, activations)
+
+        return reconstructed_activations.to(original_device)
 
     def all_head_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -673,10 +690,12 @@ def get_recons_loss(
         if activation_store.normalize_activations == "expected_average_only_in":
             new_activations = activation_store.unscale(new_activations)
 
+        # Apply mask to keep original activations for ignored tokens
+        new_activations = torch.where(mask[..., None, None], new_activations, activations)
+
         return new_activations.to(original_device)
 
     def single_head_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -684,15 +703,27 @@ def get_recons_loss(
         if activation_store.normalize_activations == "expected_average_only_in":
             activations = activation_store.apply_norm_scaling_factor(activations)
 
-        new_activations = sae.decode(sae.encode(activations[:, :, head_index])).to(
+        # Create a copy of activations to modify
+        new_activations = activations.clone()
+        
+        # Only reconstruct the specified head
+        head_activations = sae.decode(sae.encode(activations[:, :, head_index])).to(
             activations.dtype
         )
-        activations[:, :, head_index] = new_activations
+        
+        # Apply mask only to the reconstructed head
+        masked_head_activations = torch.where(
+            mask[..., None], 
+            head_activations, 
+            activations[:, :, head_index]
+        )
+        new_activations[:, :, head_index] = masked_head_activations
 
         # Unscale if activations were scaled prior to going into the SAE
         if activation_store.normalize_activations == "expected_average_only_in":
-            activations = activation_store.unscale(activations)
-        return activations.to(original_device)
+            new_activations = activation_store.unscale(new_activations)
+
+        return new_activations.to(original_device)
 
     def standard_zero_ablate_hook(activations: torch.Tensor, hook: Any):
         original_device = activations.device
@@ -908,6 +939,7 @@ def multiple_evals(
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
+    exclude_special_tokens_from_reconstruction: bool = False,
     dataset: str = "Skylion007/openwebtext",
     context_size: int = 128,
     output_folder: str = "eval_results",
@@ -999,6 +1031,7 @@ def multiple_evals(
                 or 16,
                 n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
                 n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
+                exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
                 dataset=dataset,
                 context_size=context_size,
                 compute_kl=multiple_evals_config.compute_kl,
@@ -1094,6 +1127,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
+        exclude_special_tokens_from_reconstruction=args.exclude_special_tokens_from_reconstruction,
         dataset=args.dataset,
         context_size=args.context_size,
         output_folder=args.output_folder,
@@ -1183,6 +1217,11 @@ def arg_parser():
         "--compute_featurewise_weight_based_metrics",
         action="store_true",
         help="Compute featurewise weight-based metrics.",
+    )
+    parser.add_argument(
+        "--exclude_special_tokens_from_reconstruction",
+        action="store_true",
+        help="Exclude special tokens like BOS, EOS, PAD from reconstruction.",
     )
     parser.add_argument(
         "--dataset",
