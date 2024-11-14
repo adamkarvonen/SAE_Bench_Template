@@ -65,6 +65,11 @@ class AutoInterpEvalConfig:
         title="Dataset Name",
         description="The name of the dataset to use",
     )
+    llm_context_size: int = Field(
+        default=128,
+        title="LLM Context Size",
+        description="The context size to use for the LLM",
+    )
     llm_batch_size: int = Field(
         default=512,
         title="LLM Batch Size",
