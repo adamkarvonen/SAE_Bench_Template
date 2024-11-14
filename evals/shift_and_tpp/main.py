@@ -948,24 +948,6 @@ if __name__ == "__main__":
 
     config, selected_saes_dict = create_config_and_selected_saes(args)
 
-    sae_regex_patterns = None
-    sae_block_pattern = None
-
-    # Uncomment these to select multiple SAEs based on multiple regex patterns
-    # This will override the sae_regex_pattern and sae_block_pattern arguments
-
-    sae_regex_patterns = [
-        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
-        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
-    ]
-    sae_block_pattern = [
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    ]
-
-    if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
-
     print(selected_saes_dict)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
