@@ -89,7 +89,7 @@ def _get_sae_acts(
 ) -> torch.Tensor:
     batch_acts = []
     for batch in batchify(input_activations, batch_size):
-        acts = sae.encode(batch.to(sae.device)).cpu()
+        acts = sae.encode(batch.to(device=sae.device, dtype=sae.dtype)).cpu()
         batch_acts.append(acts)
     return torch.cat(batch_acts)
 
