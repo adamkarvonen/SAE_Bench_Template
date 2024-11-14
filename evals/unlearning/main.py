@@ -16,7 +16,11 @@ import argparse
 from datetime import datetime
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
-from evals.unlearning.eval_output import UnlearningEvalOutput, UnlearningMetricCategories, UnlearningMetrics
+from evals.unlearning.eval_output import (
+    UnlearningEvalOutput,
+    UnlearningMetricCategories,
+    UnlearningMetrics,
+)
 from evals.unlearning.utils.eval import run_eval_single_sae
 import sae_bench_utils.activation_collection as activation_collection
 from evals.unlearning.eval_config import UnlearningEvalConfig
@@ -104,12 +108,17 @@ def convert_ndarrays_to_lists(obj):
 
 def run_eval(
     config: UnlearningEvalConfig,
-    selected_saes_dict: dict[str, list[str]],
+    selected_saes_dict: dict[str, list[str] | SAE],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_artifacts: bool = False,
 ):
+    """
+    selected_saes_dict is a dict mapping either:
+       - Release name -> list of SAE IDs to load from that release
+       - Custom name -> Single SAE object
+    """
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
     sae_bench_commit_hash = get_sae_bench_version()
@@ -139,6 +148,10 @@ def run_eval(
             f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
         )
 
+        # Wrap single SAE objects in a list to unify processing of both pretrained and custom SAEs
+        if not isinstance(selected_saes_dict[sae_release], list):
+            selected_saes_dict[sae_release] = [selected_saes_dict[sae_release]]
+
         for sae_id in tqdm(
             selected_saes_dict[sae_release],
             desc="Running SAE evaluation on all selected SAEs",
@@ -146,11 +159,17 @@ def run_eval(
             gc.collect()
             torch.cuda.empty_cache()
 
-            sae, cfg_dict, sparsity = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )
+            # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+            if isinstance(sae_id, str):
+                sae = SAE.from_pretrained(
+                    release=sae_release,
+                    sae_id=sae_id,
+                    device=device,
+                )[0]
+            else:
+                sae = sae_id
+                sae_id = "custom_sae"
+
             sae = sae.to(device=device, dtype=llm_dtype)
 
             sae_release_and_id = f"{sae_release}_{sae_id}"
@@ -158,7 +177,6 @@ def run_eval(
             sae_results_folder = os.path.join(
                 artifacts_folder, sae_release_and_id, "results/metrics"
             )
-            os.makedirs(artifacts_folder, exist_ok=True)
 
             sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
             sae_result_file = sae_result_file.replace("/", "_")
@@ -181,7 +199,9 @@ def run_eval(
                     eval_config=config,
                     eval_id=eval_instance_id,
                     datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=UnlearningMetricCategories(unlearning=UnlearningMetrics(unlearning_score=unlearning_score)),
+                    eval_result_metrics=UnlearningMetricCategories(
+                        unlearning=UnlearningMetrics(unlearning_score=unlearning_score)
+                    ),
                     eval_result_details=[],
                     sae_bench_commit_hash=sae_bench_commit_hash,
                     sae_lens_id=sae_id,
@@ -283,25 +303,7 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    # For Gemma-2-2b
-    sae_regex_patterns = [
-        r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-        r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
-        r"(gemma-scope-2b-pt-res)",
-    ]
-    sae_block_pattern = [
-        r".*blocks\.3(?!.*step).*",
-        r".*blocks\.3(?!.*step).*",
-        r".*layer_(3).*(16k).*",
-    ]
-
-    sae_regex_patterns = None
-    sae_block_pattern = None
-
     config, selected_saes_dict = create_config_and_selected_saes(args)
-
-    if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     print(selected_saes_dict)
 
@@ -325,3 +327,62 @@ if __name__ == "__main__":
     end_time = time.time()
 
     print(f"Finished evaluation in {end_time - start_time} seconds")
+
+# Use this code snippet to use custom SAE objects
+# if __name__ == "__main__":
+#     import baselines.identity_sae as identity_sae
+#     import baselines.jumprelu_sae as jumprelu_sae
+#     """
+#     python evals/unlearning/main.py
+#     """
+#     device = setup_environment()
+
+#     start_time = time.time()
+
+#     random_seed = 42
+#     output_folder = "evals/unlearning/results"
+
+#     baseline_type = "identity_sae"
+#     baseline_type = "jumprelu_sae"
+
+#     model_name = "gemma-2-2b"
+#     hook_layer = 19
+#     d_model = 2304
+
+#     if baseline_type == "identity_sae":
+#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
+#         selected_saes_dict = {f"{model_name}_layer_{hook_layer}_identity_sae": sae}
+#     elif baseline_type == "jumprelu_sae":
+#         repo_id = "google/gemma-scope-2b-pt-res"
+#         filename = "layer_20/width_16k/average_l0_71/params.npz"
+#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
+#         selected_saes_dict = {f"{repo_id}_{filename}_gemmascope_sae": sae}
+#     else:
+#         raise ValueError(f"Invalid baseline type: {baseline_type}")
+
+#     config = UnlearningEvalConfig(
+#         random_seed=random_seed,
+#         model_name=model_name,
+#     )
+
+#     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+#     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
+#         -1
+#     ]
+
+#     # create output folder
+#     os.makedirs(output_folder, exist_ok=True)
+
+#     # run the evaluation on all selected SAEs
+#     results_dict = run_eval(
+#         config,
+#         selected_saes_dict,
+#         device,
+#         output_folder,
+#         force_rerun=True,
+#         clean_up_activations=False,
+#     )
+
+#     end_time = time.time()
+
+#     print(f"Finished evaluation in {end_time - start_time} seconds")

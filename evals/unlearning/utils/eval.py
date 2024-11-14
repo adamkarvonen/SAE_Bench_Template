@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import torch
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
 from evals.unlearning.utils.feature_activation import (
@@ -72,6 +73,11 @@ def run_eval_single_sae(
     force_rerun: bool,
 ):
     """sae_release_and_id: str is the name used when saving data for this SAE. This data will be reused at various points in the evaluation."""
+
+    os.makedirs(artifacts_folder, exist_ok=True)
+
+    torch.set_grad_enabled(False)
+
     # calculate feature sparsity
     save_feature_sparsity(
         model,
