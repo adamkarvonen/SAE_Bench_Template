@@ -24,6 +24,7 @@ def load_and_tokenize_dataset(
     total_token_count = 0
 
     # Tokenize rows and accumulate tokens
+    pbar = tqdm(total=num_tokens, desc="Tokenizing dataset")
     for row in dataset:
         tokens = tokenizer(row["text"], truncation=True, max_length=ctx_len, return_tensors="pt")[
             "input_ids"
@@ -31,10 +32,12 @@ def load_and_tokenize_dataset(
 
         all_tokens.append(tokens)
         total_token_count += tokens.shape[0]
+        pbar.update(tokens.shape[0])
 
         # Stop once we reach the target token count
         if total_token_count >= num_tokens:
             break
+    pbar.close()
 
     # Concatenate tokens into a single tensor
     concatenated_tensor = torch.cat(all_tokens)

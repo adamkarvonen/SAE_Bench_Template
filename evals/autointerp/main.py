@@ -380,7 +380,7 @@ class AutoInterp:
         generation_examples = {}
         scoring_examples = {}
 
-        for i, latent in enumerate(self.latents):
+        for i, latent in tqdm(enumerate(self.latents), desc="Collecting examples for LLM judge"):
             # (1/3) Get random examples (we don't need their values)
             rand_indices = torch.stack(
                 [
