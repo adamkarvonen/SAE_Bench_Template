@@ -26,9 +26,7 @@ from evals.absorption.probing import (
 
 def test_get_exponential_decay_scheduler_decays_from_lr_to_end_lr_over_num_epochs():
     optim = torch.optim.Adam([torch.zeros(1)], lr=0.01)  # type: ignore
-    scheduler = _get_exponential_decay_scheduler(
-        optim, start_lr=0.01, end_lr=1e-5, num_steps=100
-    )
+    scheduler = _get_exponential_decay_scheduler(optim, start_lr=0.01, end_lr=1e-5, num_steps=100)
     lrs = []
     for _ in range(100):
         lrs.append(scheduler.get_last_lr()[0])
@@ -72,15 +70,16 @@ def test_calc_pos_weights_handles_multiclass_samples():
 
 @pytest.mark.parametrize("seed", range(5))
 def test_train_binary_probe_scores_highly_on_fully_separable_datasets(seed):
+    device = torch.device("cpu")
     torch.manual_seed(seed)
-    neg_center = 5.0 * torch.ones(64)
-    pos_center = -5.0 * torch.ones(64)
+    neg_center = 5.0 * torch.ones(64, device=device)
+    pos_center = -5.0 * torch.ones(64, device=device)
 
-    neg_xs = neg_center + torch.randn(1024, 64)
-    pos_xs = pos_center + torch.randn(368, 64)
+    neg_xs = neg_center + torch.randn(1024, 64, device=device)
+    pos_xs = pos_center + torch.randn(368, 64, device=device)
 
     x = torch.cat([neg_xs, pos_xs])
-    y = torch.cat([torch.zeros(len(neg_xs)), torch.ones(len(pos_xs))])
+    y = torch.cat([torch.zeros(len(neg_xs), device=device), torch.ones(len(pos_xs), device=device)])
 
     # shuffle x and y in the same way
     perm = torch.randperm(len(x))
@@ -101,7 +100,8 @@ def test_train_binary_probe_scores_highly_on_fully_separable_datasets(seed):
         weight_decay=1e-7,
         lr=1.0,
         show_progress=False,
-    )
+        device=device,
+    ).to(device)
 
     train_preds = probe(x_train)[:, 0] > 0
     test_preds = probe(x_test)[:, 0] > 0
@@ -113,13 +113,15 @@ def test_train_binary_probe_scores_highly_on_fully_separable_datasets(seed):
     assert test_acc > 0.98
 
     sk_probe = LogisticRegression(max_iter=100, class_weight="balanced").fit(
-        x_train.numpy(), y_train.numpy()
+        x_train.cpu().numpy(), y_train.cpu().numpy()
     )
 
     # since this is a synthetic dataset, we know the correct direction we should learn
     correct_dir = (pos_center - neg_center).unsqueeze(0)
     # just verify that sklearn does get the right answer
-    sk_cos_sim = cosine_similarity(correct_dir, torch.tensor(sk_probe.coef_), dim=1)
+    sk_cos_sim = cosine_similarity(
+        correct_dir.cpu(), torch.tensor(sk_probe.coef_, device=device), dim=1
+    )
     assert sk_cos_sim.min().item() > 0.98
     cos_sim = cosine_similarity(correct_dir, probe.weights, dim=1)
     assert cos_sim.min().item() > 0.98
@@ -127,6 +129,7 @@ def test_train_binary_probe_scores_highly_on_fully_separable_datasets(seed):
 
 @pytest.mark.parametrize("seed", range(5))
 def test_train_binary_probe_scores_highly_on_noisy_datasets(seed):
+    device = torch.device("cpu")
     torch.manual_seed(seed)
     neg_center = 1.0 * torch.ones(64)
     pos_center = -1.0 * torch.ones(64)
@@ -156,6 +159,7 @@ def test_train_binary_probe_scores_highly_on_noisy_datasets(seed):
         weight_decay=1e-7,
         lr=1.0,
         show_progress=False,
+        device=device,
     )
 
     train_preds = probe(x_train)[:, 0] > 0
@@ -182,6 +186,7 @@ def test_train_binary_probe_scores_highly_on_noisy_datasets(seed):
 
 @pytest.mark.parametrize("seed", range(5))
 def test_train_multi_probe_scores_highly_on_fully_separable_datasets(seed):
+    device = torch.device("cpu")
     torch.manual_seed(seed)
     class1_center = 10 * torch.randn(64)
     class2_center = 10 * torch.randn(64)
@@ -214,7 +219,7 @@ def test_train_multi_probe_scores_highly_on_fully_separable_datasets(seed):
     y_test = y[300:]
 
     probe = train_multi_probe(
-        x_train, y_train, num_probes=3, num_epochs=100, batch_size=32
+        x_train, y_train, num_probes=3, num_epochs=100, batch_size=32, device=device
     )
 
     train_preds = probe(x_train) > 0
@@ -229,6 +234,7 @@ def test_train_multi_probe_scores_highly_on_fully_separable_datasets(seed):
 
 @pytest.mark.parametrize("seed", range(5))
 def test_train_multi_probe_scores_highly_on_noisy_datasets(seed):
+    device = torch.device("cpu")
     torch.manual_seed(seed)
     class1_center = 0.5 * torch.randn(64)
     class2_center = 0.5 * torch.randn(64)
@@ -261,7 +267,7 @@ def test_train_multi_probe_scores_highly_on_noisy_datasets(seed):
     y_test = y[500:]
 
     probe = train_multi_probe(
-        x_train, y_train, num_probes=3, num_epochs=100, batch_size=128
+        x_train, y_train, num_probes=3, num_epochs=100, batch_size=128, device=device
     )
 
     train_preds = probe(x_train) > 0
@@ -325,15 +331,11 @@ def test_create_dataset_probe_training():
 def test_gen_and_save_df_acts_probing(mock_to_csv, mock_model, tmp_path):
     dataset = [
         (
-            SpellingPrompt(
-                base="The word 'cat' is spelled:", answer=" c-a-t", word="cat"
-            ),
+            SpellingPrompt(base="The word 'cat' is spelled:", answer=" c-a-t", word="cat"),
             0,
         ),
         (
-            SpellingPrompt(
-                base="The word 'dog' is spelled:", answer=" d-o-g", word="dog"
-            ),
+            SpellingPrompt(base="The word 'dog' is spelled:", answer=" d-o-g", word="dog"),
             1,
         ),
     ]
@@ -405,11 +407,12 @@ def test_train_linear_probe_for_task():
 
 
 def test_gen_probe_stats():
+    device = torch.device("cpu")
     probe = LinearProbe(input_dim=768, num_outputs=26)
     X_val = torch.rand(100, 768)
     y_val = torch.randint(0, 26, (100,))
 
-    results = gen_probe_stats(probe, X_val, y_val)
+    results = gen_probe_stats(probe, X_val, y_val, device=device)
 
     assert len(results) == 26
     for result in results:
