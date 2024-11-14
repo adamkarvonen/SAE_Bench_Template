@@ -90,13 +90,9 @@ def run_eval(
             os.makedirs(artifacts_folder, exist_ok=True)
             k_sparse_probing_file = f"{sae_release}_{sae_id}_k_sparse_probing.json"
             k_sparse_probing_file = k_sparse_probing_file.replace("/", "_")
-            k_sparse_probing_path = os.path.join(
-                artifacts_folder, k_sparse_probing_file
-            )
+            k_sparse_probing_path = os.path.join(artifacts_folder, k_sparse_probing_file)
             os.makedirs(os.path.dirname(k_sparse_probing_path), exist_ok=True)
-            k_sparse_probing_results.to_json(
-                k_sparse_probing_path, orient="records", indent=4
-            )
+            k_sparse_probing_results.to_json(k_sparse_probing_path, orient="records", indent=4)
 
             raw_df = run_feature_absortion_experiment(
                 model=model,
@@ -185,9 +181,7 @@ def _aggregate_results_df(
     )
     agg_df["num_split_feats"] = agg_df["split_feats"].apply(len)
     agg_df["num_absorption"] = agg_df["is_absorption"]
-    agg_df["absorption_rate"] = (
-        agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
-    )
+    agg_df["absorption_rate"] = agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
     return agg_df
 
 
@@ -209,9 +203,7 @@ def _fix_topk(
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run absorption evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument(
-        "--f1_jump_threshold", type=float, default=0.03, help="F1 jump threshold"
-    )
+    parser.add_argument("--f1_jump_threshold", type=float, default=0.03, help="F1 jump threshold")
     parser.add_argument("--max_k_value", type=int, default=10, help="Maximum k value")
     parser.add_argument(
         "--prompt_template",
@@ -219,12 +211,8 @@ def arg_parser():
         default="{word} has the first letter:",
         help="Prompt template",
     )
-    parser.add_argument(
-        "--prompt_token_pos", type=int, default=-6, help="Prompt token position"
-    )
-    parser.add_argument(
-        "--model_name", type=str, default="pythia-70m-deduped", help="Model name"
-    )
+    parser.add_argument("--prompt_token_pos", type=int, default=-6, help="Prompt token position")
+    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -243,9 +231,7 @@ def arg_parser():
         default="evals/absorption/results",
         help="Output folder",
     )
-    parser.add_argument(
-        "--force_rerun", action="store_true", help="Force rerun of experiments"
-    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
 
     return parser
 
@@ -272,9 +258,7 @@ def create_config_and_selected_saes(args):
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(
-        args.sae_regex_pattern, args.sae_block_pattern
-    )
+    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes_dict) > 0, "No SAEs selected"
 
     for release, saes in selected_saes_dict.items():
@@ -289,8 +273,7 @@ if __name__ == "__main__":
     python evals/absorption/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
-    --model_name pythia-70m-deduped \
-    --output_folder results
+    --model_name pythia-70m-deduped
     """
     args = arg_parser().parse_args()
     device = setup_environment()
