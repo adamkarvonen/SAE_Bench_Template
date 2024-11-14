@@ -35,9 +35,6 @@ from sae_bench_utils.sae_selection_utils import (
     select_saes_multiple_patterns,
 )
 
-import baselines.identity_sae as identity_sae
-import baselines.jumprelu_sae as jumprelu_sae
-
 
 def average_test_accuracy(test_accuracies: dict[str, float]) -> float:
     return sum(test_accuracies.values()) / len(test_accuracies)
@@ -197,8 +194,6 @@ def run_eval_single_sae(
     config: SparseProbingEvalConfig,
     sae: SAE,
     model: HookedTransformer,
-    layer: int,
-    hook_point: str,
     device: str,
     artifacts_folder: str,
     save_activations: bool = True,
@@ -210,6 +205,7 @@ def run_eval_single_sae(
 
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
+    os.makedirs(artifacts_folder, exist_ok=True)
 
     results_dict = {}
 
@@ -220,8 +216,8 @@ def run_eval_single_sae(
             config,
             sae,
             model,
-            layer,
-            hook_point,
+            sae.cfg.hook_layer,
+            sae.cfg.hook_name,
             device,
             artifacts_folder,
             save_activations,
@@ -308,7 +304,6 @@ def run_eval(
                 config.model_name,
                 sae.cfg.hook_name,
             )
-            os.makedirs(artifacts_folder, exist_ok=True)
 
             sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
             sae_result_file = sae_result_file.replace("/", "_")
@@ -323,8 +318,6 @@ def run_eval(
                     config,
                     sae,
                     model,
-                    sae.cfg.hook_layer,
-                    sae.cfg.hook_name,
                     device,
                     artifacts_folder,
                 )
@@ -405,7 +398,7 @@ def create_config_and_selected_saes(
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument("--model_name", type=str, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -448,6 +441,10 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
+    config, selected_saes_dict = create_config_and_selected_saes(args)
+
+    # We can use this to select multiple SAEs based on multiple regex patterns
+    # This will override the sae_regex_pattern and sae_block_pattern arguments
     sae_regex_patterns = [
         r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
         r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
@@ -457,10 +454,21 @@ if __name__ == "__main__":
         r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
     ]
 
+    # For Gemma-2-2b
+    sae_regex_patterns = [
+        r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+        r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
+        r"(gemma-scope-2b-pt-res)",
+    ]
+    sae_block_pattern = [
+        r".*blocks\.19(?!.*step).*",
+        r".*blocks\.19(?!.*step).*",
+        r".*layer_(19).*(16k).*",
+    ]
+
+    # To instead use the sae_regex_pattern and sae_block_pattern arguments, set these to None
     sae_regex_patterns = None
     sae_block_pattern = None
-
-    config, selected_saes_dict = create_config_and_selected_saes(args)
 
     if sae_regex_patterns is not None:
         selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
@@ -492,6 +500,8 @@ if __name__ == "__main__":
 
 # Use this code snippet to use custom SAE objects
 # if __name__ == "__main__":
+#     import baselines.identity_sae as identity_sae
+#     import baselines.jumprelu_sae as jumprelu_sae
 #     """
 #     python evals/sparse_probing/main.py
 #     """
