@@ -43,8 +43,10 @@ from sae_bench_utils import (
 
 logger = logging.getLogger(__name__)
 
-# truncate to save space/bandwidth
-DEFAULT_FLOAT_PRECISION = 5
+# you can truncate to save space/bandwidth, but be warned that this will
+# likely screw up the feature density metrics among others. 10 is a good
+# compromise.
+DEFAULT_FLOAT_PRECISION = 10
 
 
 def retry_with_exponential_backoff(
