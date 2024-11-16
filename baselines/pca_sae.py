@@ -164,29 +164,42 @@ if __name__ == "__main__":
     )
 
     model_name = "pythia-70m-deduped"
-    hook_layer = 3
     d_model = 512
+
+    # model_name = "gemma-2-2b"
+    # d_model = 2304
+
+    if model_name == "pythia-70m-deduped":
+        llm_batch_size = 512
+        llm_dtype = torch.float32
+    elif model_name == "gemma-2-2b":
+        llm_batch_size = 64
+        llm_dtype = torch.bfloat16
+    else:
+        raise ValueError("Invalid model")
+
     context_size = 128
 
     dataset_name = "monology/pile-uncopyrighted"
 
-    pca = PCASAE(model_name, d_model, hook_layer, context_size)
     model = HookedTransformer.from_pretrained_no_processing(
-        model_name, device=device, dtype=torch.float32
+        model_name, device=device, dtype=llm_dtype
     )
 
-    pca = fit_PCA(pca, model, dataset_name, 2_000_000, 512, 200_000)
+    for layer in [3, 4]:
+        pca = PCASAE(model_name, d_model, layer, context_size)
+        pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 1_000_000)
 
-    pca.to(device=device)
+        pca.to(device=device)
 
-    test_input = torch.randn(1, 128, d_model, device=device, dtype=torch.float32)
+        test_input = torch.randn(1, 128, d_model, device=device, dtype=torch.float32)
 
-    encoded = pca.encode(test_input)
+        encoded = pca.encode(test_input)
 
-    test_output = pca.decode(encoded)
+        test_output = pca.decode(encoded)
 
-    print(f"L0: {(encoded != 0).sum() / 128}")
+        print(f"L0: {(encoded != 0).sum() / 128}")
 
-    print(f"Diff: {torch.abs(test_input - test_output).mean()}")
+        print(f"Diff: {torch.abs(test_input - test_output).mean()}")
 
-    assert torch.allclose(test_input, test_output, atol=1e-5)
+        assert torch.allclose(test_input, test_output, atol=1e-5)
