@@ -98,6 +98,7 @@ class PCASAE(nn.Module):
         return self
 
 
+@torch.no_grad()
 def fit_PCA(
     pca: PCASAE,
     model: HookedTransformer,
@@ -151,6 +152,7 @@ def fit_PCA(
     return pca
 
 
+@torch.no_grad()
 def fit_PCA_gpu(
     pca: PCASAE,
     model: HookedTransformer,
@@ -161,7 +163,6 @@ def fit_PCA_gpu(
 ) -> PCASAE:
     """Uses CUML for much faster training, requires installing cuml."""
     import cupy as cp
-    import cudf
     from cuml.decomposition import IncrementalPCA as cuIPCA
 
     tokens_BL = dataset_utils.load_and_tokenize_dataset(
@@ -195,11 +196,16 @@ def fit_PCA_gpu(
             show_progress=False,
         )
 
-        if activations_BLD.shape[0] <= pca.cfg.d_in:
-            continue
-
         # Reshape on GPU
-        activations_BD = einops.rearrange(activations_BLD, "B L D -> (B L) D")
+        activations_BD = einops.rearrange(activations_BLD, "B L D -> (B L) D").to(
+            dtype=torch.float32
+        )
+
+        if activations_BD.shape[0] <= pca.cfg.d_in:
+            print(
+                f"Skipping batch {batch_idx} as it has {activations_BLD.shape[0]} sequences, which is less than {pca.cfg.d_in}"
+            )
+            continue
 
         # Convert to cupy array (zero-copy if already on GPU)
         activations_cupy = cp.asarray(activations_BD.detach())
@@ -238,15 +244,19 @@ if __name__ == "__main__":
     model_name = "pythia-70m-deduped"
     d_model = 512
 
-    model_name = "gemma-2-2b"
-    d_model = 2304
+    # model_name = "gemma-2-2b"
+    # d_model = 2304
 
     if model_name == "pythia-70m-deduped":
-        llm_batch_size = 512
+        llm_batch_size = 1024
+        pca_batch_size = 400_000
         llm_dtype = torch.float32
+        layers = [3, 4]
     elif model_name == "gemma-2-2b":
-        llm_batch_size = 64
+        llm_batch_size = 128
+        pca_batch_size = 100_000
         llm_dtype = torch.bfloat16
+        layers = [5, 12, 19]
     else:
         raise ValueError("Invalid model")
 
@@ -258,10 +268,10 @@ if __name__ == "__main__":
         model_name, device=device, dtype=llm_dtype
     )
 
-    for layer in [5, 12, 19]:
+    for layer in layers:
         pca = PCASAE(model_name, d_model, layer, context_size)
         # pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 200_000)
-        pca = fit_PCA_gpu(pca, model, dataset_name, 200_000_000, llm_batch_size, 200_000)
+        pca = fit_PCA_gpu(pca, model, dataset_name, 200_000_000, llm_batch_size, pca_batch_size)
 
         pca.to(device=device)
 
