@@ -27,16 +27,17 @@ def test_all_loadable_saes(mock_pretrained_saes_directory):
         assert ('release2', 'sae3', 0.7, 30) in result
         assert ('release2', 'sae4', 0.6, 40) in result
 
+        
 def test_get_saes_from_regex(mock_pretrained_saes_directory):
     with patch('sae_bench_utils.sae_selection_utils.get_pretrained_saes_directory', return_value=mock_pretrained_saes_directory):
         result = get_saes_from_regex(r"release1", r"sae\d")
-        assert result == {'release1': ['sae1', 'sae2']}
+        assert result == [('release1', 'sae1'), ('release1', 'sae2')]
 
         result = get_saes_from_regex(r"release2", r"sae3")
-        assert result == {'release2': ['sae3']}
+        assert result == [('release2', 'sae3')]
 
         result = get_saes_from_regex(r"release\d", r"sae[24]")
-        assert result == {'release1': ['sae2'], 'release2': ['sae4']}
+        assert result == [('release1', 'sae2'), ('release2', 'sae4')]
 
 
 def test_print_all_sae_releases(capsys):
