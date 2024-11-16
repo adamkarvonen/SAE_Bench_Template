@@ -5,7 +5,7 @@ import evals.unlearning.main as unlearning
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-results_filename = "tests/test_data/unlearning/sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2_eval_results.json"
+results_filename = "tests/test_data/unlearning/unlearning_expected_results.json"
 
 
 def test_end_to_end_different_seed():

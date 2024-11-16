@@ -5,9 +5,7 @@ import evals.autointerp.main as autointerp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-results_filename = (
-    "tests/test_data/autointerp/pythia-70m-deduped_layer_4_expected_eval_results.json"
-)
+results_filename = "tests/test_data/autointerp/autointerp_expected_results.json"
 
 
 def test_end_to_end_different_seed():

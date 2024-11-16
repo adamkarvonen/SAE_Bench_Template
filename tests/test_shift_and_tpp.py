@@ -5,12 +5,8 @@ import evals.shift_and_tpp.main as shift_and_tpp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-tpp_results_filename = (
-    "tests/test_data/shift_and_tpp/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-)
-scr_results_filename = (
-    "tests/test_data/shift_and_tpp/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
-)
+tpp_results_filename = "tests/test_data/shift_and_tpp/tpp_expected_results.json"
+scr_results_filename = "tests/test_data/shift_and_tpp/scr_expected_results.json"
 
 
 def test_scr_end_to_end_different_seed():
