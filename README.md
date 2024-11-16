@@ -46,7 +46,7 @@ python evals/sparse_probing/main.py \
 
 The results will be saved to the evals/sparse_probing/results directory.
 
-We use regex patterns to select SAE Lens SAEs. For more examples of regex patterns, refer to `sae_selection.ipynb`.
+We use regex patterns to select SAE Lens SAEs. For more examples of regex patterns, refer to `sae_regex_selection.ipynb`.
 
 Every eval folder contains an `eval_config.py`, which contains all relevant hyperparamters for that evaluation. The values are currently set to the default recommended values.
 
@@ -68,7 +68,7 @@ There are two ways to evaluate custom SAEs:
    - Simpler interface requiring only model, SAE, and config values
    - Graphing will require manual formatting
 
-We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
+The script `run_all_evals_custom_saes()` will run approach 1 on all SAE Bench evals. We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
 
 ## Training Your Own SAEs
 
