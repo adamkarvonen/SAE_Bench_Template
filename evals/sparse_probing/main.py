@@ -353,17 +353,6 @@ def run_eval(
     return results_dict
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(
     args,
 ) -> tuple[SparseProbingEvalConfig, list[tuple[str, str]]]:
@@ -427,7 +416,7 @@ if __name__ == "__main__":
 
     """
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = formatting_utils.setup_environment()
 
     start_time = time.time()
 
@@ -465,7 +454,7 @@ if __name__ == "__main__":
 #     """
 #     python evals/sparse_probing/main.py
 #     """
-#     device = setup_environment()
+#     device = formatting_utils.setup_environment()
 
 #     start_time = time.time()
 

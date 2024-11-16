@@ -226,18 +226,6 @@ def arg_parser():
     return parser
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(args) -> tuple[AbsorptionEvalConfig, list[tuple[str, str]]]:
     config = AbsorptionEvalConfig(
         random_seed=args.random_seed,
@@ -269,7 +257,7 @@ if __name__ == "__main__":
     --model_name pythia-70m-deduped
     """
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = formatting_utils.setup_environment()
 
     start_time = time.time()
 
@@ -291,7 +279,7 @@ if __name__ == "__main__":
     print(f"Finished evaluation in {end_time - start_time:.2f} seconds")
 
 
-# # Use this code snippet to use custom SAE objects
+# Use this code snippet to use custom SAE objects
 # if __name__ == "__main__":
 #     import baselines.identity_sae as identity_sae
 #     import baselines.jumprelu_sae as jumprelu_sae
@@ -299,7 +287,7 @@ if __name__ == "__main__":
 #     """
 #     python evals/absorption/main.py
 #     """
-#     device = setup_environment()
+#     device = formatting_utils.setup_environment()
 
 #     start_time = time.time()
 
