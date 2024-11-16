@@ -6,7 +6,12 @@ import baselines.sae_config as sae_config
 
 class IdentitySAE(nn.Module):
     def __init__(
-        self, model_name: str, d_model: int, hook_layer: int, hook_name: Optional[str] = None
+        self,
+        model_name: str,
+        d_model: int,
+        hook_layer: int,
+        hook_name: Optional[str] = None,
+        context_size: int = 128,
     ):
         super().__init__()
 
@@ -24,7 +29,12 @@ class IdentitySAE(nn.Module):
 
         # Initialize the configuration dataclass
         self.cfg = sae_config.SAEConfig(
-            model_name, d_in=d_model, d_sae=d_model, hook_name=hook_name, hook_layer=hook_layer
+            model_name,
+            d_in=d_model,
+            d_sae=d_model,
+            hook_name=hook_name,
+            hook_layer=hook_layer,
+            context_size=context_size,
         )
 
     def encode(self, input_acts: torch.Tensor):
