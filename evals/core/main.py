@@ -85,9 +85,7 @@ def retry_with_exponential_backoff(
                         raise
 
                     # Calculate delay with optional jitter
-                    current_delay = min(
-                        delay * (exponential_base**retry_count), max_delay
-                    )
+                    current_delay = min(delay * (exponential_base**retry_count), max_delay)
                     if jitter:
                         current_delay *= 1 + random.random() * 0.1  # 10% jitter
 
@@ -183,11 +181,8 @@ def run_evals(
     ignore_tokens: set[int | None] = set(),
     verbose: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-
     hook_name = sae.cfg.hook_name
-    actual_batch_size = (
-        eval_config.batch_size_prompts or activation_store.store_batch_size_prompts
-    )
+    actual_batch_size = eval_config.batch_size_prompts or activation_store.store_batch_size_prompts
 
     # TODO: Come up with a cleaner long term strategy here for SAEs that do reshaping.
     # turn off hook_z reshaping mode if it's on, and restore it after evals
@@ -225,9 +220,7 @@ def run_evals(
             all_metrics["model_behavior_preservation"].update(
                 {
                     "kl_div_score": reconstruction_metrics["kl_div_score"],
-                    "kl_div_with_ablation": reconstruction_metrics[
-                        "kl_div_with_ablation"
-                    ],
+                    "kl_div_with_ablation": reconstruction_metrics["kl_div_with_ablation"],
                     "kl_div_with_sae": reconstruction_metrics["kl_div_with_sae"],
                 }
             )
@@ -236,13 +229,9 @@ def run_evals(
             all_metrics["model_performance_preservation"].update(
                 {
                     "ce_loss_score": reconstruction_metrics["ce_loss_score"],
-                    "ce_loss_with_ablation": reconstruction_metrics[
-                        "ce_loss_with_ablation"
-                    ],
+                    "ce_loss_with_ablation": reconstruction_metrics["ce_loss_with_ablation"],
                     "ce_loss_with_sae": reconstruction_metrics["ce_loss_with_sae"],
-                    "ce_loss_without_sae": reconstruction_metrics[
-                        "ce_loss_without_sae"
-                    ],
+                    "ce_loss_without_sae": reconstruction_metrics["ce_loss_without_sae"],
                 }
             )
 
@@ -292,9 +281,7 @@ def run_evals(
         if eval_config.compute_variance_metrics:
             all_metrics["reconstruction_quality"].update(
                 {
-                    "explained_variance": sparsity_variance_metrics[
-                        "explained_variance"
-                    ],
+                    "explained_variance": sparsity_variance_metrics["explained_variance"],
                     "mse": sparsity_variance_metrics["mse"],
                     "cossim": sparsity_variance_metrics["cossim"],
                 }
@@ -306,9 +293,7 @@ def run_evals(
         feature_metrics |= get_featurewise_weight_based_metrics(sae)
 
     if len(all_metrics) == 0:
-        raise ValueError(
-            "No metrics were computed, please set at least one metric to True."
-        )
+        raise ValueError("No metrics were computed, please set at least one metric to True.")
 
     # restore previous hook z reshaping mode if necessary
     if "hook_z" in hook_name:
@@ -341,7 +326,6 @@ def run_evals(
 
 
 def get_featurewise_weight_based_metrics(sae: SAE) -> dict[str, Any]:
-
     unit_norm_encoders = (sae.W_enc / sae.W_enc.norm(dim=0, keepdim=True)).cpu()
     unit_norm_decoder = (sae.W_dec.T / sae.W_dec.T.norm(dim=0, keepdim=True)).cpu()
 
@@ -406,13 +390,10 @@ def get_downstream_reconstruction_metrics(
             ignore_tokens=ignore_tokens,
             exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
         ).items():
-
             if len(ignore_tokens) > 0:
                 mask = torch.logical_not(
                     torch.any(
-                        torch.stack(
-                            [batch_tokens == token for token in ignore_tokens], dim=0
-                        ),
+                        torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
                         dim=0,
                     )
                 )
@@ -454,7 +435,6 @@ def get_sparsity_and_variance_metrics(
     ignore_tokens: set[int | None] = set(),
     verbose: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-
     hook_name = sae.cfg.hook_name
     hook_head_index = sae.cfg.hook_head_index
 
@@ -491,9 +471,7 @@ def get_sparsity_and_variance_metrics(
         if len(ignore_tokens) > 0:
             mask = torch.logical_not(
                 torch.any(
-                    torch.stack(
-                        [batch_tokens == token for token in ignore_tokens], dim=0
-                    ),
+                    torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
                     dim=0,
                 )
             )
@@ -563,9 +541,7 @@ def get_sparsity_and_variance_metrics(
             metric_dict["l2_norm_in"].append(l2_norm_in)
             metric_dict["l2_norm_out"].append(l2_norm_out)
             metric_dict["l2_ratio"].append(l2_norm_ratio)
-            metric_dict["relative_reconstruction_bias"].append(
-                relative_reconstruction_bias
-            )
+            metric_dict["relative_reconstruction_bias"].append(relative_reconstruction_bias)
 
         if compute_sparsity_metrics:
             l0 = (flattened_sae_feature_acts > 0).sum(dim=-1).float()
@@ -574,9 +550,7 @@ def get_sparsity_and_variance_metrics(
             metric_dict["l1"].append(l1)
 
         if compute_variance_metrics:
-            resid_sum_of_squares = (
-                (flattened_sae_input - flattened_sae_out).pow(2).sum(dim=-1)
-            )
+            resid_sum_of_squares = (flattened_sae_input - flattened_sae_out).pow(2).sum(dim=-1)
             total_sum_of_squares = (
                 (flattened_sae_input - flattened_sae_input.mean(dim=0)).pow(2).sum(-1)
             )
@@ -584,12 +558,8 @@ def get_sparsity_and_variance_metrics(
             mse = resid_sum_of_squares / flattened_mask.sum()
             explained_variance = 1 - resid_sum_of_squares / total_sum_of_squares
 
-            x_normed = flattened_sae_input / torch.norm(
-                flattened_sae_input, dim=-1, keepdim=True
-            )
-            x_hat_normed = flattened_sae_out / torch.norm(
-                flattened_sae_out, dim=-1, keepdim=True
-            )
+            x_normed = flattened_sae_input / torch.norm(flattened_sae_input, dim=-1, keepdim=True)
+            x_hat_normed = flattened_sae_out / torch.norm(flattened_sae_out, dim=-1, keepdim=True)
             cossim = (x_normed * x_hat_normed).sum(dim=-1)
 
             metric_dict["explained_variance"].append(explained_variance)
@@ -599,9 +569,7 @@ def get_sparsity_and_variance_metrics(
         if compute_featurewise_density_statistics:
             sae_feature_activations_bool = (masked_sae_feature_activations > 0).float()
             total_feature_acts += sae_feature_activations_bool.sum(dim=1).sum(dim=0)
-            total_feature_prompts += (sae_feature_activations_bool.sum(dim=1) > 0).sum(
-                dim=0
-            )
+            total_feature_prompts += (sae_feature_activations_bool.sum(dim=1) > 0).sum(dim=0)
             total_tokens += mask.sum()
 
     # Aggregate scalar metrics
@@ -652,7 +620,6 @@ def get_recons_loss(
 
     # TODO(tomMcGrath): the rescaling below is a bit of a hack and could probably be tidied up
     def standard_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -667,7 +634,9 @@ def get_recons_loss(
         if activation_store.normalize_activations == "expected_average_only_in":
             reconstructed_activations = activation_store.unscale(reconstructed_activations)
 
-        reconstructed_activations = torch.where(mask[..., None], reconstructed_activations, activations)
+        reconstructed_activations = torch.where(
+            mask[..., None], reconstructed_activations, activations
+        )
 
         return reconstructed_activations.to(original_device)
 
@@ -680,9 +649,7 @@ def get_recons_loss(
             activations = activation_store.apply_norm_scaling_factor(activations)
 
         # SAE class agnost forward forward pass.
-        new_activations = sae.decode(sae.encode(activations.flatten(-2, -1))).to(
-            activations.dtype
-        )
+        new_activations = sae.decode(sae.encode(activations.flatten(-2, -1))).to(activations.dtype)
 
         new_activations = new_activations.reshape(
             activations.shape
@@ -707,17 +674,15 @@ def get_recons_loss(
 
         # Create a copy of activations to modify
         new_activations = activations.clone()
-        
+
         # Only reconstruct the specified head
         head_activations = sae.decode(sae.encode(activations[:, :, head_index])).to(
             activations.dtype
         )
-        
+
         # Apply mask only to the reconstructed head
         masked_head_activations = torch.where(
-            mask[..., None], 
-            head_activations, 
-            activations[:, :, head_index]
+            mask[..., None], head_activations, activations[:, :, head_index]
         )
         new_activations[:, :, head_index] = masked_head_activations
 
@@ -799,9 +764,7 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
         for sae_name in lookup.saes_map.keys():
             expected_var_explained = lookup.expected_var_explained[sae_name]
             expected_l0 = lookup.expected_l0[sae_name]
-            all_loadable_saes.append(
-                (release, sae_name, expected_var_explained, expected_l0)
-            )
+            all_loadable_saes.append((release, sae_name, expected_var_explained, expected_l0))
 
     return all_loadable_saes
 
@@ -836,7 +799,7 @@ def dict_to_nested(flat_dict: dict[str, Any]) -> defaultdict[Any, Any]:
 
 
 def convert_feature_metrics(
-    flattened_feature_metrics: Dict[str, List[float]]
+    flattened_feature_metrics: Dict[str, List[float]],
 ) -> List[CoreFeatureMetric]:
     """Convert feature metrics from parallel lists to list of dicts.
 
@@ -926,8 +889,10 @@ def save_single_eval_result(
     )
 
     # Save individual JSON file
-    json_filename = f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
-        "/", "_"
+    json_filename = (
+        f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
+            "/", "_"
+        )
     )
     json_path = output_path / json_filename
     eval_output.to_json_file(json_path)
@@ -947,7 +912,6 @@ def multiple_evals(
     output_folder: str = "eval_results",
     verbose: bool = False,
 ) -> List[Dict[str, Any]]:
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
     filtered_saes = get_saes_from_regex(sae_regex_pattern, sae_block_pattern)
     assert len(filtered_saes) > 0, "No SAEs matched the given regex patterns"
@@ -990,9 +954,7 @@ def multiple_evals(
         try:
             sae = load_sae()
         except Exception as e:
-            logger.error(
-                f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}"
-            )
+            logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
             continue  # Skip this SAE and continue with the next one
 
         sae.to(device)
@@ -1024,13 +986,11 @@ def multiple_evals(
 
         assert current_model is not None
 
- 
         try:
             # Create a CoreEvalConfig for this specific evaluation
             core_eval_config = CoreEvalConfig(
                 model_name=sae.cfg.model_name,
-                batch_size_prompts=multiple_evals_config.batch_size_prompts 
-                or 16,
+                batch_size_prompts=multiple_evals_config.batch_size_prompts or 16,
                 n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
                 n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
                 exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
@@ -1149,6 +1109,7 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
     else:
         return obj
 
+
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run core evaluation")
     parser.add_argument(
@@ -1247,14 +1208,12 @@ def arg_parser():
         action="store_true",
         help="Enable verbose output with tqdm loaders.",
     )
-    parser.add_argument(
-        "--force_rerun", action="store_true", help="Force rerun of experiments"
-    )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
 
     return parser
 
+
 if __name__ == "__main__":
-   
     args = arg_parser().parse_args()
     eval_results = run_evaluations(args)
 
