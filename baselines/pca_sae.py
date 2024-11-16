@@ -154,6 +154,81 @@ def fit_PCA(
     return pca
 
 
+def fit_PCA_gpu(
+    pca: PCASAE,
+    model: HookedTransformer,
+    dataset_name: str,
+    num_tokens: int,
+    llm_batch_size: int,
+    pca_batch_size: int,
+) -> PCASAE:
+    """Uses CUML for much faster training, requires installing cuml."""
+    import cupy as cp
+    import cudf
+    from cuml.decomposition import IncrementalPCA as cuIPCA
+
+    tokens_BL = dataset_utils.load_and_tokenize_dataset(
+        dataset_name, pca.cfg.context_size, num_tokens, model.tokenizer
+    )
+
+    # Calculate batching
+    sequences_per_batch = pca_batch_size // pca.cfg.context_size
+    num_batches = math.ceil(len(tokens_BL) / sequences_per_batch)
+
+    # Initialize cuML's incremental PCA
+    # Note: cuML's IPCA requires batch_size to be specified
+    ipca = cuIPCA(n_components=pca.cfg.d_in, batch_size=min(pca_batch_size, 10000))
+
+    start_time = time.time()
+
+    for batch_idx in tqdm(range(num_batches), desc="Fitting PCA"):
+        batch_start = batch_idx * sequences_per_batch
+        batch_end = min((batch_idx + 1) * sequences_per_batch, len(tokens_BL))
+
+        tokens_batch = tokens_BL[batch_start:batch_end]
+
+        # Get activations (already on GPU)
+        activations_BLD = activation_collection.get_llm_activations(
+            tokens_batch,
+            model,
+            llm_batch_size,
+            pca.cfg.hook_layer,
+            pca.cfg.hook_name,
+            mask_bos_pad_eos_tokens=False,
+            show_progress=False,
+        )
+
+        if activations_BLD.shape[0] <= pca.cfg.d_in:
+            continue
+
+        # Reshape on GPU
+        activations_BD = einops.rearrange(activations_BLD, "B L D -> (B L) D")
+
+        # Convert to cupy array (zero-copy if already on GPU)
+        activations_cupy = cp.asarray(activations_BD.detach())
+
+        # Partial fit using GPU data
+        ipca.partial_fit(activations_cupy)
+
+        # Optional: Clear cache periodically
+        if batch_idx % 10 == 0:
+            torch.cuda.empty_cache()
+            cp.get_default_memory_pool().free_all_blocks()
+
+    print(f"GPU Incremental PCA fit took {time.time() - start_time:.2f} seconds")
+
+    # Get components back as torch tensors
+    components = torch.from_numpy(cp.asnumpy(ipca.components_))
+
+    # Set the learned components
+    pca.W_enc.data = components.float().to(dtype=torch.float32, device="cpu")
+    pca.W_dec.data = components.T.float().to(dtype=torch.float32, device="cpu")
+
+    pca.save_state_dict(f"pca_{pca.cfg.model_name}_{pca.cfg.hook_name}.pt")
+
+    return pca
+
+
 if __name__ == "__main__":
     device = torch.device(
         "mps"
@@ -166,8 +241,8 @@ if __name__ == "__main__":
     model_name = "pythia-70m-deduped"
     d_model = 512
 
-    # model_name = "gemma-2-2b"
-    # d_model = 2304
+    model_name = "gemma-2-2b"
+    d_model = 2304
 
     if model_name == "pythia-70m-deduped":
         llm_batch_size = 512
@@ -186,9 +261,10 @@ if __name__ == "__main__":
         model_name, device=device, dtype=llm_dtype
     )
 
-    for layer in [3, 4]:
+    for layer in [5, 12, 19]:
         pca = PCASAE(model_name, d_model, layer, context_size)
-        pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 1_000_000)
+        # pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 200_000)
+        pca = fit_PCA_gpu(pca, model, dataset_name, 200_000_000, llm_batch_size, 200_000)
 
         pca.to(device=device)
 
