@@ -41,11 +41,11 @@ def test_end_to_end_different_seed():
         rf".*blocks\.([{layer}])\.hook_resid_post__trainer_(10)$",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = autointerp.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         openai_api_key,
         output_path="evals/autointerp/test_results/",

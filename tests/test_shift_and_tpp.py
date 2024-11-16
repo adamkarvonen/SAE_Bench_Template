@@ -5,8 +5,12 @@ import evals.shift_and_tpp.main as shift_and_tpp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-tpp_results_filename = "tests/test_data/shift_and_tpp/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
-scr_results_filename = "tests/test_data/shift_and_tpp/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
+tpp_results_filename = (
+    "tests/test_data/shift_and_tpp/pythia-70m-deduped_tpp_layer_4_expected_eval_results.json"
+)
+scr_results_filename = (
+    "tests/test_data/shift_and_tpp/pythia-70m-deduped_scr_layer_4_expected_eval_results.json"
+)
 
 
 def test_scr_end_to_end_different_seed():
@@ -45,13 +49,11 @@ def test_scr_end_to_end_different_seed():
         rf".*blocks\.([{layer}])\.hook_resid_post__trainer_(10)$",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(
-        sae_regex_patterns, sae_block_pattern
-    )
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = shift_and_tpp.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         output_path="evals/shift_and_tpp/test_results/",
         force_rerun=True,
@@ -105,13 +107,11 @@ def test_tpp_end_to_end_different_seed():
         rf".*blocks\.([{layer}])\.hook_resid_post__trainer_(10)$",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(
-        sae_regex_patterns, sae_block_pattern
-    )
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = shift_and_tpp.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         output_path="evals/shift_and_tpp/test_results/",
         force_rerun=True,

@@ -512,7 +512,7 @@ def run_eval_single_sae(
 
 def run_eval(
     config: AutoInterpEvalConfig,
-    selected_saes_dict: dict[str, list[str] | SAE],
+    selected_saes: list[tuple[str, str]] | list[tuple[str, SAE]],
     device: str,
     api_key: str,
     output_path: str,
@@ -520,9 +520,7 @@ def run_eval(
     save_logs_path: Optional[str] = None,
 ) -> dict[str, Any]:
     """
-    selected_saes_dict is a dict mapping either:
-       - Release name -> list of SAE IDs to load from that release
-       - Custom name -> Single SAE object
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
     """
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
@@ -544,98 +542,85 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
-        )
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
 
-        # Wrap single SAE objects in a list to unify processing of both pretrained and custom SAEs
-        if not isinstance(selected_saes_dict[sae_release], list):
-            selected_saes_dict[sae_release] = [selected_saes_dict[sae_release]]
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            sae, _, sparsity = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
+            sparsity = None
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
+        sae = sae.to(device=device, dtype=llm_dtype)
 
-            # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-            if isinstance(sae_id, str):
-                sae, _, sparsity = SAE.from_pretrained(
-                    release=sae_release,
-                    sae_id=sae_id,
-                    device=device,
+        artifacts_folder = os.path.join(artifacts_base_folder, EVAL_TYPE_ID_AUTOINTERP)
+
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Loading existing results from {sae_result_path}")
+            with open(sae_result_path, "r") as f:
+                eval_output = json.load(f)
+        else:
+            sae_eval_result = run_eval_single_sae(
+                config, sae, model, device, artifacts_folder, api_key, sparsity
+            )
+
+            # Save nicely formatted logs to a text file, helpful for debugging.
+            if save_logs_path is not None:
+                # Get summary results for all latents, as well logs for the best and worst-scoring latents
+                headers = [
+                    "latent",
+                    "explanation",
+                    "predictions",
+                    "correct seqs",
+                    "score",
+                ]
+                logs = "Summary table:\n" + tabulate(
+                    [[sae_eval_result[latent][h] for h in headers] for latent in sae_eval_result],
+                    headers=headers,
+                    tablefmt="simple_outline",
                 )
-            else:
-                sae = sae_id
-                sae_id = "custom_sae"
-                sparsity = None
+                worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
+                best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
+                logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
+                logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
+                # Save the results to a file
+                with open(save_logs_path, "a") as f:
+                    f.write(logs)
 
-            sae = sae.to(device=device, dtype=llm_dtype)
+            # Put important results into the results dict
+            score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
 
-            artifacts_folder = os.path.join(artifacts_base_folder, EVAL_TYPE_ID_AUTOINTERP)
+            eval_output = AutoInterpEvalOutput(
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=AutoInterpMetricCategories(
+                    autointerp=AutoInterpMetrics(autointerp_score=score)
+                ),
+                eval_result_details=[],
+                eval_result_unstructured=sae_eval_result,
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
+            )
 
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
+            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            if os.path.exists(sae_result_path) and not force_rerun:
-                print(f"Loading existing results from {sae_result_path}")
-                with open(sae_result_path, "r") as f:
-                    eval_output = json.load(f)
-            else:
-                sae_eval_result = run_eval_single_sae(
-                    config, sae, model, device, artifacts_folder, api_key, sparsity
-                )
-
-                # Save nicely formatted logs to a text file, helpful for debugging.
-                if save_logs_path is not None:
-                    # Get summary results for all latents, as well logs for the best and worst-scoring latents
-                    headers = [
-                        "latent",
-                        "explanation",
-                        "predictions",
-                        "correct seqs",
-                        "score",
-                    ]
-                    logs = "Summary table:\n" + tabulate(
-                        [
-                            [sae_eval_result[latent][h] for h in headers]
-                            for latent in sae_eval_result
-                        ],
-                        headers=headers,
-                        tablefmt="simple_outline",
-                    )
-                    worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
-                    best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
-                    logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
-                    logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
-                    # Save the results to a file
-                    with open(save_logs_path, "a") as f:
-                        f.write(logs)
-
-                # Put important results into the results dict
-                score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
-
-                eval_output = AutoInterpEvalOutput(
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=AutoInterpMetricCategories(
-                        autointerp=AutoInterpMetrics(autointerp_score=score)
-                    ),
-                    eval_result_details=[],
-                    eval_result_unstructured=sae_eval_result,
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                )
-
-                results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
-
-                eval_output.to_json_file(sae_result_path, indent=2)
+            eval_output.to_json_file(sae_result_path, indent=2)
 
     return results_dict
 
@@ -653,21 +638,23 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-) -> tuple[AutoInterpEvalConfig, dict[str, list[str]]]:
+) -> tuple[AutoInterpEvalConfig, list[tuple[str, str]]]:
     config = AutoInterpEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
@@ -724,9 +711,9 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    config, selected_saes_dict = create_config_and_selected_saes(args)
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    print(selected_saes_dict)
+    print(selected_saes)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
@@ -739,7 +726,7 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.api_key,
         args.output_folder,
@@ -784,12 +771,12 @@ if __name__ == "__main__":
 
 #     if baseline_type == "identity_sae":
 #         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes_dict = {f"{model_name}_layer_{hook_layer}_identity_sae": sae}
+#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
 #     elif baseline_type == "jumprelu_sae":
 #         repo_id = "google/gemma-scope-2b-pt-res"
 #         filename = "layer_20/width_16k/average_l0_71/params.npz"
 #         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes_dict = {f"{repo_id}_{filename}_gemmascope_sae": sae}
+#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 #     else:
 #         raise ValueError(f"Invalid baseline type: {baseline_type}")
 
@@ -809,7 +796,7 @@ if __name__ == "__main__":
 #     # run the evaluation on all selected SAEs
 #     results_dict = run_eval(
 #         config,
-#         selected_saes_dict,
+#         selected_saes,
 #         device,
 #         api_key,
 #         output_folder,

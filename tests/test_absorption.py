@@ -54,12 +54,12 @@ def test_end_to_end_different_seed():
         llm_batch_size=512,
         llm_dtype="float32",
     )
-    selected_saes_dict = get_saes_from_regex(TEST_RELEASE, TEST_SAE_NAME)
-    print(f"Selected SAEs: {selected_saes_dict}")
+    selected_saes = get_saes_from_regex(TEST_RELEASE, TEST_SAE_NAME)
+    print(f"Selected SAEs: {selected_saes}")
 
     run_results = absorption.run_eval(
         config=test_config,
-        selected_saes_dict=selected_saes_dict,
+        selected_saes=selected_saes,
         device=device,
         output_path=test_data_dir,
         force_rerun=True,

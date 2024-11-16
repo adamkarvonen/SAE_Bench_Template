@@ -769,9 +769,7 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
     return all_loadable_saes
 
 
-def get_saes_from_regex(
-    sae_regex_pattern: str, sae_block_pattern: str
-) -> list[tuple[str, str, float, float]]:
+def get_saes_from_regex(sae_regex_pattern: str, sae_block_pattern: str) -> list[tuple[str, str]]:
     sae_regex_compiled = re.compile(sae_regex_pattern)
     sae_block_compiled = re.compile(sae_block_pattern)
     all_saes = all_loadable_saes()
@@ -780,6 +778,7 @@ def get_saes_from_regex(
         for sae in all_saes
         if sae_regex_compiled.fullmatch(sae[0]) and sae_block_compiled.fullmatch(sae[1])
     ]
+    filtered_saes = [(sae[0], sae[1]) for sae in filtered_saes]
     return filtered_saes
 
 

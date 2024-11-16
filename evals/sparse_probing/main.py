@@ -235,16 +235,14 @@ def run_eval_single_sae(
 
 def run_eval(
     config: SparseProbingEvalConfig,
-    selected_saes_dict: dict[str, list[str] | SAE],
+    selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_activations: bool = False,
 ):
     """
-    selected_saes_dict is a dict mapping either:
-       - Release name -> list of SAE IDs to load from that release
-       - Custom name -> Single SAE object
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
 
     If clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
     You may want to use this because activations for all datasets can easily be 10s of GBs.
@@ -269,95 +267,85 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
+
+        sae = sae.to(device=device, dtype=llm_dtype)
+
+        artifacts_folder = os.path.join(
+            artifacts_base_folder,
+            EVAL_TYPE_ID_SPARSE_PROBING,
+            config.model_name,
+            sae.cfg.hook_name,
         )
 
-        # Wrap single SAE objects in a list to unify processing of both pretrained and custom SAEs
-        if not isinstance(selected_saes_dict[sae_release], list):
-            selected_saes_dict[sae_release] = [selected_saes_dict[sae_release]]
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
-
-            # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-            if isinstance(sae_id, str):
-                sae = SAE.from_pretrained(
-                    release=sae_release,
-                    sae_id=sae_id,
-                    device=device,
-                )[0]
-            else:
-                sae = sae_id
-                sae_id = "custom_sae"
-
-            sae = sae.to(device=device, dtype=llm_dtype)
-
-            artifacts_folder = os.path.join(
-                artifacts_base_folder,
-                EVAL_TYPE_ID_SPARSE_PROBING,
-                config.model_name,
-                sae.cfg.hook_name,
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Loading existing results from {sae_result_path}")
+            with open(sae_result_path, "r") as f:
+                eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
+        else:
+            sparse_probing_results = run_eval_single_sae(
+                config,
+                sae,
+                model,
+                device,
+                artifacts_folder,
+            )
+            eval_output = SparseProbingEvalOutput(
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=SparseProbingMetricCategories(
+                    llm=SparseProbingLlmMetrics(
+                        **{
+                            k: v
+                            for k, v in sparse_probing_results.items()
+                            if k.startswith("llm_") and not isinstance(v, dict)
+                        }
+                    ),
+                    sae=SparseProbingSaeMetrics(
+                        **{
+                            k: v
+                            for k, v in sparse_probing_results.items()
+                            if k.startswith("sae_") and not isinstance(v, dict)
+                        }
+                    ),
+                ),
+                eval_result_details=[
+                    SparseProbingResultDetail(
+                        dataset_name=dataset_name,
+                        **result,
+                    )
+                    for dataset_name, result in sparse_probing_results.items()
+                    if isinstance(result, dict)
+                ],
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
             )
 
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
+        results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            if os.path.exists(sae_result_path) and not force_rerun:
-                print(f"Loading existing results from {sae_result_path}")
-                with open(sae_result_path, "r") as f:
-                    eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
-            else:
-                sparse_probing_results = run_eval_single_sae(
-                    config,
-                    sae,
-                    model,
-                    device,
-                    artifacts_folder,
-                )
-                eval_output = SparseProbingEvalOutput(
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=SparseProbingMetricCategories(
-                        llm=SparseProbingLlmMetrics(
-                            **{
-                                k: v
-                                for k, v in sparse_probing_results.items()
-                                if k.startswith("llm_") and not isinstance(v, dict)
-                            }
-                        ),
-                        sae=SparseProbingSaeMetrics(
-                            **{
-                                k: v
-                                for k, v in sparse_probing_results.items()
-                                if k.startswith("sae_") and not isinstance(v, dict)
-                            }
-                        ),
-                    ),
-                    eval_result_details=[
-                        SparseProbingResultDetail(
-                            dataset_name=dataset_name,
-                            **result,
-                        )
-                        for dataset_name, result in sparse_probing_results.items()
-                        if isinstance(result, dict)
-                    ],
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                )
-
-            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
-
-            eval_output.to_json_file(sae_result_path, indent=2)
+        eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_activations:
         shutil.rmtree(artifacts_folder)
@@ -378,21 +366,23 @@ def setup_environment():
 
 def create_config_and_selected_saes(
     args,
-) -> tuple[SparseProbingEvalConfig, dict[str, list[str]]]:
+) -> tuple[SparseProbingEvalConfig, list[tuple[str, str]]]:
     config = SparseProbingEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
@@ -441,9 +431,9 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    config, selected_saes_dict = create_config_and_selected_saes(args)
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    print(selected_saes_dict)
+    print(selected_saes)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
@@ -456,7 +446,7 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.output_folder,
         args.force_rerun,
@@ -495,12 +485,12 @@ if __name__ == "__main__":
 
 #     if baseline_type == "identity_sae":
 #         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes_dict = {f"{model_name}_layer_{hook_layer}_identity_sae": sae}
+#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
 #     elif baseline_type == "jumprelu_sae":
 #         repo_id = "google/gemma-scope-2b-pt-res"
 #         filename = "layer_20/width_16k/average_l0_71/params.npz"
 #         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes_dict = {f"{repo_id}_{filename}_gemmascope_sae": sae}
+#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 #     else:
 #         raise ValueError(f"Invalid baseline type: {baseline_type}")
 
@@ -520,7 +510,7 @@ if __name__ == "__main__":
 #     # run the evaluation on all selected SAEs
 #     results_dict = run_eval(
 #         config,
-#         selected_saes_dict,
+#         selected_saes,
 #         device,
 #         output_folder,
 #         force_rerun=True,

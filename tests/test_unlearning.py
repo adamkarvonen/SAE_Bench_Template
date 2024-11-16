@@ -37,11 +37,11 @@ def test_end_to_end_different_seed():
         r"blocks.3.hook_resid_post__trainer_2",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = unlearning.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         output_path="evals/unlearning/test_results/",
         force_rerun=True,
@@ -53,9 +53,7 @@ def test_end_to_end_different_seed():
 
     sae_name = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2"
 
-    run_result_metrics = run_results[
-        sae_name
-    ]["eval_result_metrics"]
+    run_result_metrics = run_results[sae_name]["eval_result_metrics"]
 
     testing_utils.compare_dicts_within_tolerance(
         run_result_metrics,
