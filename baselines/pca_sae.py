@@ -193,7 +193,6 @@ def fit_PCA_gpu(
             pca.cfg.hook_layer,
             pca.cfg.hook_name,
             mask_bos_pad_eos_tokens=False,
-            show_progress=False,
         )
 
         # Reshape on GPU
