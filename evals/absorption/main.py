@@ -17,8 +17,8 @@ from evals.absorption.eval_output import (
 from evals.absorption.feature_absorption import run_feature_absortion_experiment
 from evals.absorption.k_sparse_probing import run_k_sparse_probing_experiment
 from sae_bench_utils import (
-    formatting_utils,
     activation_collection,
+    general_utils,
     get_eval_uuid,
     get_sae_lens_version,
     get_sae_bench_version,
@@ -257,7 +257,7 @@ if __name__ == "__main__":
     --model_name pythia-70m-deduped
     """
     args = arg_parser().parse_args()
-    device = formatting_utils.setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 

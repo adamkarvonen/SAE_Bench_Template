@@ -21,7 +21,7 @@ from datetime import datetime
 from tqdm import tqdm
 
 from evals.mdl.eval_config import MDLEvalConfig
-from sae_bench_utils import activation_collection, formatting_utils
+from sae_bench_utils import activation_collection, general_utils
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
@@ -559,7 +559,7 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level="INFO")
 
     args = arg_parser().parse_args()
-    device = formatting_utils.setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 

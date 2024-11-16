@@ -33,7 +33,7 @@ from sae_bench_utils.indexing_utils import (
 )
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.activation_collection as activation_collection
-import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.general_utils as general_utils
 
 
 from sae_bench_utils import (
@@ -697,7 +697,7 @@ if __name__ == "__main__":
 
     """
     args = arg_parser().parse_args()
-    device = formatting_utils.setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 

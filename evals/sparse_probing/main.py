@@ -24,7 +24,7 @@ import evals.sparse_probing.probe_training as probe_training
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_info as dataset_info
 import sae_bench_utils.dataset_utils as dataset_utils
-import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.general_utils as general_utils
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
@@ -223,9 +223,7 @@ def run_eval_single_sae(
             save_activations,
         )
 
-    results_dict = formatting_utils.average_results_dictionaries(
-        dataset_results, config.dataset_names
-    )
+    results_dict = general_utils.average_results_dictionaries(dataset_results, config.dataset_names)
 
     for dataset_name, dataset_result in dataset_results.items():
         results_dict[f"{dataset_name}"] = dataset_result
@@ -416,7 +414,7 @@ if __name__ == "__main__":
 
     """
     args = arg_parser().parse_args()
-    device = formatting_utils.setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 

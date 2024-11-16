@@ -33,7 +33,7 @@ from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
     select_saes_multiple_patterns,
 )
-import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.general_utils as general_utils
 
 EVAL_TYPE = "unlearning"
 
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     --model_name gemma-2-2b-it
     """
     args = arg_parser().parse_args()
-    device = formatting_utils.setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 
