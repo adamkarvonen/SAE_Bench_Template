@@ -2,30 +2,26 @@ import torch
 import torch.nn as nn
 import einops
 import time
-from dataclasses import dataclass
 from typing import Optional
 from transformer_lens import HookedTransformer
 from sklearn.decomposition import IncrementalPCA
 import math
 from tqdm import tqdm
 
+import baselines.sae_config as sae_config
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.activation_collection as activation_collection
 
 
-@dataclass
-class SAEConfig:
-    model_name: str
-    d_in: int
-    d_sae: int
-    hook_layer: int
-    hook_name: str
-    context_size: int = 128  # Can be used for auto-interp
-    hook_head_index: Optional[int] = None
-
-
 class PCASAE(nn.Module):
-    def __init__(self, model_name: str, d_model: int, hook_layer: int, context_size: int):
+    def __init__(
+        self,
+        model_name: str,
+        d_model: int,
+        hook_layer: int,
+        context_size: int,
+        hook_name: Optional[str] = None,
+    ):
         """Fit a PCA model to the activations of a model and treat it as an SAE.
         NOTE: There is a major footgun here. encode() saves the mean of the activations, which is
         saved and used in decode(). This introduces statefulness.
@@ -42,10 +38,11 @@ class PCASAE(nn.Module):
         # Mean tensor to store the batch mean during encoding
         self.mean = torch.zeros(d_model, device=self.device, dtype=self.dtype)
 
-        hook_name = f"blocks.{hook_layer}.hook_resid_post"
+        if hook_name is None:
+            hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
         # Initialize the configuration dataclass
-        self.cfg = SAEConfig(
+        self.cfg = sae_config.SAEConfig(
             model_name,
             d_in=d_model,
             d_sae=d_model,

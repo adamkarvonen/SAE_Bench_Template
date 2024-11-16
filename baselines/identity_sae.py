@@ -1,18 +1,7 @@
 import torch
 import torch.nn as nn
-from dataclasses import dataclass
 from typing import Optional
-
-
-@dataclass
-class SAEConfig:
-    model_name: str
-    d_in: int
-    d_sae: int
-    hook_layer: int
-    hook_name: str
-    context_size: int = 128  # Can be used for auto-interp
-    hook_head_index: Optional[int] = None
+import baselines.sae_config as sae_config
 
 
 class IdentitySAE(nn.Module):
@@ -27,11 +16,14 @@ class IdentitySAE(nn.Module):
         self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dtype: torch.dtype = torch.float32
 
+        # required only for the core/main.py SAE evaluation
+        self.b_enc = nn.Parameter(torch.zeros(d_model))
+
         if hook_name is None:
             hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
         # Initialize the configuration dataclass
-        self.cfg = SAEConfig(
+        self.cfg = sae_config.SAEConfig(
             model_name, d_in=d_model, d_sae=d_model, hook_name=hook_name, hook_layer=hook_layer
         )
 

@@ -41,6 +41,8 @@ from sae_bench_utils import (
     get_sae_bench_version,
 )
 
+import sae_bench_utils.sae_selection_utils as sae_selection_utils
+
 logger = logging.getLogger(__name__)
 
 # you can truncate to save space/bandwidth, but be warned that this will
@@ -769,19 +771,6 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
     return all_loadable_saes
 
 
-def get_saes_from_regex(sae_regex_pattern: str, sae_block_pattern: str) -> list[tuple[str, str]]:
-    sae_regex_compiled = re.compile(sae_regex_pattern)
-    sae_block_compiled = re.compile(sae_block_pattern)
-    all_saes = all_loadable_saes()
-    filtered_saes = [
-        sae
-        for sae in all_saes
-        if sae_regex_compiled.fullmatch(sae[0]) and sae_block_compiled.fullmatch(sae[1])
-    ]
-    filtered_saes = [(sae[0], sae[1]) for sae in filtered_saes]
-    return filtered_saes
-
-
 def nested_dict() -> defaultdict[Any, Any]:
     return defaultdict(nested_dict)
 
@@ -900,8 +889,7 @@ def save_single_eval_result(
 
 
 def multiple_evals(
-    sae_regex_pattern: str,
-    sae_block_pattern: str,
+    filtered_saes: list[tuple[str, str]] | list[tuple[str, SAE]],
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
@@ -912,8 +900,7 @@ def multiple_evals(
     verbose: bool = False,
 ) -> List[Dict[str, Any]]:
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    filtered_saes = get_saes_from_regex(sae_regex_pattern, sae_block_pattern)
-    assert len(filtered_saes) > 0, "No SAEs matched the given regex patterns"
+    assert len(filtered_saes) > 0, "No SAEs to evaluate"
 
     eval_results = []
     output_path = Path(output_folder)
@@ -933,7 +920,7 @@ def multiple_evals(
     current_model = None
     current_model_str = None
 
-    for sae_release_name, sae_id, _, _ in tqdm(filtered_saes):
+    for sae_release_name, sae_id in tqdm(filtered_saes):
         # Wrap SAE loading with retry
         @retry_with_exponential_backoff(
             retries=5,
@@ -950,11 +937,16 @@ def multiple_evals(
                 device=device,
             )[0]
 
-        try:
-            sae = load_sae()
-        except Exception as e:
-            logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
-            continue  # Skip this SAE and continue with the next one
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            try:
+                sae = load_sae()
+            except Exception as e:
+                logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
+                continue  # Skip this SAE and continue with the next one
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
 
         sae.to(device)
 
@@ -1068,14 +1060,16 @@ def multiple_evals(
 
 def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     # Filter SAEs based on regex patterns
-    filtered_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    filtered_saes = sae_selection_utils.get_saes_from_regex(
+        args.sae_regex_pattern, args.sae_block_pattern
+    )
 
     # print the filtered SAEs
     print("Filtered SAEs based on provided patterns:")
     for sae in filtered_saes:
         print(sae)
 
-    num_sae_sets = len(set(sae_set for sae_set, _, _, _ in filtered_saes))
+    num_sae_sets = len(set(sae_set for sae_set, _ in filtered_saes))
     num_all_sae_ids = len(filtered_saes)
 
     print("Filtered SAEs based on provided patterns:")
@@ -1083,8 +1077,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     print(f"Total number of SAE IDs: {num_all_sae_ids}")
 
     eval_results = multiple_evals(
-        sae_regex_pattern=args.sae_regex_pattern,
-        sae_block_pattern=args.sae_block_pattern,
+        filtered_saes=filtered_saes,
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
@@ -1219,3 +1212,60 @@ if __name__ == "__main__":
     print("Evaluation complete. All results have been saved incrementally.")  # type: ignore
     # print(f"Combined JSON: {output_files['combined_json']}")
     # print(f"CSV: {output_files['csv']}")
+
+
+# Use this code snippet to use custom SAE objects
+# if __name__ == "__main__":
+#     import baselines.identity_sae as identity_sae
+#     import baselines.jumprelu_sae as jumprelu_sae
+
+#     start_time = time.time()
+
+#     random_seed = 42
+#     output_folder = "evals/core/results"
+
+#     batch_size_prompts = 16
+#     n_eval_reconstruction_batches = 20
+#     n_eval_sparsity_variance_batches = 20
+
+#     baseline_type = "identity_sae"
+#     # baseline_type = "jumprelu_sae"
+
+#     model_name = "pythia-70m-deduped"
+#     hook_layer = 4
+#     d_model = 512
+
+#     # model_name = "gemma-2-2b"
+#     # hook_layer = 19
+#     # d_model = 2304
+
+#     if baseline_type == "identity_sae":
+#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
+#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
+#     elif baseline_type == "jumprelu_sae":
+#         repo_id = "google/gemma-scope-2b-pt-res"
+#         filename = "layer_20/width_16k/average_l0_71/params.npz"
+#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
+#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
+#     else:
+#         raise ValueError(f"Invalid baseline type: {baseline_type}")
+
+#     for sae_name, sae in selected_saes:
+#         if model_name == "pythia-70m-deduped":
+#             sae.cfg.dtype = "float32"
+#         elif model_name == "gemma-2-2b":
+#             sae.cfg.dtype = "bfloat16"
+#         else:
+#             raise ValueError(f"Invalid model name: {model_name}")
+
+#     multiple_evals(
+#         filtered_saes=selected_saes,
+#         n_eval_reconstruction_batches=n_eval_reconstruction_batches,
+#         n_eval_sparsity_variance_batches=n_eval_sparsity_variance_batches,
+#         eval_batch_size_prompts=batch_size_prompts,
+#         exclude_special_tokens_from_reconstruction=True,
+#         dataset="Skylion007/openwebtext",
+#         context_size=128,
+#         output_folder=output_folder,
+#         verbose=True,
+#     )
