@@ -46,6 +46,7 @@ def get_llm_activations(
     layer: int,
     hook_name: str,
     mask_bos_pad_eos_tokens: bool = False,
+    show_progress: bool = True,
 ) -> Float[torch.Tensor, "dataset_size seq_len d_model"]:
     """Collects activations for an LLM model from a given layer for a given set of tokens.
     VERY IMPORTANT NOTE: If mask_bos_pad_eos_tokens is True, we zero out activations for BOS, PAD, and EOS tokens.
@@ -56,6 +57,7 @@ def get_llm_activations(
     for i in tqdm(
         range(0, len(tokens), batch_size),
         desc="Collecting activations",
+        disable=not show_progress,
     ):
         tokens_BL = tokens[i : i + batch_size]
 

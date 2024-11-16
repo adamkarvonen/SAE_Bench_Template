@@ -7,6 +7,7 @@ from transformer_lens import HookedTransformer
 from sklearn.decomposition import IncrementalPCA
 import math
 from tqdm import tqdm
+import gc
 
 import baselines.sae_config as sae_config
 import sae_bench_utils.dataset_utils as dataset_utils
@@ -102,15 +103,10 @@ class PCASAE(nn.Module):
 def fit_PCA(
     pca: PCASAE,
     model: HookedTransformer,
-    dataset_name: str,
-    num_tokens: int,
+    tokens_BL: torch.Tensor,
     llm_batch_size: int,
     pca_batch_size: int,
 ) -> PCASAE:
-    tokens_BL = dataset_utils.load_and_tokenize_dataset(
-        dataset_name, pca.cfg.context_size, num_tokens, model.tokenizer
-    )
-
     # Calculate number of sequences per PCA batch
     sequences_per_batch = pca_batch_size // pca.cfg.context_size
     num_batches = math.ceil(len(tokens_BL) / sequences_per_batch)
@@ -156,18 +152,13 @@ def fit_PCA(
 def fit_PCA_gpu(
     pca: PCASAE,
     model: HookedTransformer,
-    dataset_name: str,
-    num_tokens: int,
+    tokens_BL: torch.Tensor,
     llm_batch_size: int,
     pca_batch_size: int,
 ) -> PCASAE:
     """Uses CUML for much faster training, requires installing cuml."""
     import cupy as cp
     from cuml.decomposition import IncrementalPCA as cuIPCA
-
-    tokens_BL = dataset_utils.load_and_tokenize_dataset(
-        dataset_name, pca.cfg.context_size, num_tokens, model.tokenizer
-    )
 
     # Calculate batching
     sequences_per_batch = pca_batch_size // pca.cfg.context_size
@@ -193,6 +184,7 @@ def fit_PCA_gpu(
             pca.cfg.hook_layer,
             pca.cfg.hook_name,
             mask_bos_pad_eos_tokens=False,
+            show_progress=False,
         )
 
         # Reshape on GPU
@@ -213,9 +205,9 @@ def fit_PCA_gpu(
         ipca.partial_fit(activations_cupy)
 
         # Optional: Clear cache periodically
-        if batch_idx % 10 == 0:
-            torch.cuda.empty_cache()
-            cp.get_default_memory_pool().free_all_blocks()
+        gc.collect()
+        torch.cuda.empty_cache()
+        cp.get_default_memory_pool().free_all_blocks()
 
     print(f"GPU Incremental PCA fit took {time.time() - start_time:.2f} seconds")
 
@@ -240,6 +232,8 @@ if __name__ == "__main__":
         else "cpu"
     )
 
+    torch.set_grad_enabled(False)
+
     model_name = "pythia-70m-deduped"
     d_model = 512
 
@@ -262,15 +256,20 @@ if __name__ == "__main__":
     context_size = 128
 
     dataset_name = "monology/pile-uncopyrighted"
+    num_tokens = 200_000_000
 
     model = HookedTransformer.from_pretrained_no_processing(
         model_name, device=device, dtype=llm_dtype
     )
 
+    tokens_BL = dataset_utils.load_and_tokenize_dataset(
+        dataset_name, context_size, num_tokens, model.tokenizer
+    )
+
     for layer in layers:
         pca = PCASAE(model_name, d_model, layer, context_size)
         # pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 200_000)
-        pca = fit_PCA_gpu(pca, model, dataset_name, 200_000_000, llm_batch_size, pca_batch_size)
+        pca = fit_PCA_gpu(pca, model, tokens_BL, llm_batch_size, pca_batch_size)
 
         pca.to(device=device)
 
