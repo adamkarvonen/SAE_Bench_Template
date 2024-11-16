@@ -16,7 +16,9 @@ class SAEConfig:
 
 
 class IdentitySAE(nn.Module):
-    def __init__(self, model_name: str, d_model: int, hook_layer: int):
+    def __init__(
+        self, model_name: str, d_model: int, hook_layer: int, hook_name: Optional[str] = None
+    ):
         super().__init__()
 
         # Initialize W_enc and W_dec as identity matrices
@@ -25,7 +27,8 @@ class IdentitySAE(nn.Module):
         self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dtype: torch.dtype = torch.float32
 
-        hook_name = f"blocks.{hook_layer}.hook_resid_post"
+        if hook_name is None:
+            hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
         # Initialize the configuration dataclass
         self.cfg = SAEConfig(
@@ -57,3 +60,30 @@ class IdentitySAE(nn.Module):
         if dtype:
             self.dtype = dtype
         return self
+
+
+if __name__ == "__main__":
+    device = torch.device(
+        "mps"
+        if torch.backends.mps.is_available()
+        else "cuda"
+        if torch.cuda.is_available()
+        else "cpu"
+    )
+
+    model_name = "pythia-70m-deduped"
+    hook_layer = 3
+    d_model = 512
+
+    identity = IdentitySAE(model_name, d_model, hook_layer).to(device=device)
+    test_input = torch.randn(1, 128, d_model, device=device, dtype=torch.float32)
+
+    encoded = identity.encode(test_input)
+
+    test_output = identity.decode(encoded)
+
+    print(f"L0: {(encoded != 0).sum() / 128}")
+
+    print(f"Diff: {torch.abs(test_input - test_output).mean()}")
+
+    assert torch.equal(test_input, test_output)
