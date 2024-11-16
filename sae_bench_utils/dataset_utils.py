@@ -2,6 +2,7 @@ from typing import Callable, Optional
 from collections import defaultdict
 import pandas as pd
 import torch
+import einops
 from datasets import load_dataset
 from tqdm import tqdm
 from transformers import AutoTokenizer
@@ -10,45 +11,74 @@ import random
 import sae_bench_utils.dataset_info as dataset_info
 
 
-def load_and_tokenize_dataset(
-    dataset_name: str, ctx_len: int, num_tokens: int, tokenizer: AutoTokenizer
-) -> torch.Tensor:
-    """
-    Load a Hugging Face dataset, tokenize each row, and accumulate tokens until reaching the desired count.
-    Returns a tensor of shape (num_rows, ctx_len).
-    """
-    # Load the dataset with streaming enabled
-    dataset = load_dataset(dataset_name, streaming=True, split="train")
+def get_dataset_list_of_strs(
+    dataset_name: str, column_name: str, min_row_chars: int, total_chars: int
+) -> list[str]:
+    dataset = load_dataset(dataset_name, split="train", streaming=True)
 
-    all_tokens = []
-    total_token_count = 0
+    total_chars_so_far = 0
+    result = []
 
-    # Tokenize rows and accumulate tokens
-    pbar = tqdm(total=num_tokens, desc="Tokenizing dataset")
     for row in dataset:
-        tokens = tokenizer(row["text"], truncation=True, max_length=ctx_len, return_tensors="pt")[
-            "input_ids"
-        ].squeeze()
+        if len(row[column_name]) > min_row_chars:
+            result.append(row[column_name])
+            total_chars_so_far += len(row[column_name])
+            if total_chars_so_far > total_chars:
+                break
 
-        all_tokens.append(tokens)
-        total_token_count += tokens.shape[0]
-        pbar.update(tokens.shape[0])
+    return result
 
-        # Stop once we reach the target token count
-        if total_token_count >= num_tokens:
-            break
-    pbar.close()
 
-    # Concatenate tokens into a single tensor
-    concatenated_tensor = torch.cat(all_tokens)
+def load_and_tokenize_dataset(
+    dataset_name: str,
+    ctx_len: int,
+    num_tokens: int,
+    tokenizer: AutoTokenizer,
+    column_name: str = "text",
+    add_bos: bool = True,
+) -> torch.Tensor:
+    dataset = get_dataset_list_of_strs(dataset_name, column_name, 100, num_tokens * 5)
 
-    # Truncate excess tokens and reshape into (num_rows, row_len)
-    num_rows = concatenated_tensor.shape[0] // ctx_len
-    final_tensor_BL = concatenated_tensor[: num_rows * ctx_len].reshape(num_rows, ctx_len)
+    tokens = tokenize_and_concat_dataset(
+        tokenizer, dataset, ctx_len, add_bos=add_bos, max_tokens=num_tokens
+    )
 
-    final_tensor_BL[:, 0] = tokenizer.bos_token_id
+    assert (tokens.shape[0] * tokens.shape[1]) > num_tokens
 
-    return final_tensor_BL
+    return tokens
+
+
+def tokenize_and_concat_dataset(
+    tokenizer: AutoTokenizer,
+    dataset: list[str],
+    seq_len: int,
+    add_bos: bool = True,
+    max_tokens: Optional[int] = None,
+) -> torch.Tensor:
+    full_text = tokenizer.eos_token.join(dataset)
+
+    # divide into chunks to speed up tokenization
+    num_chunks = 20
+    chunk_length = (len(full_text) - 1) // num_chunks + 1
+    chunks = [full_text[i * chunk_length : (i + 1) * chunk_length] for i in range(num_chunks)]
+    tokens = tokenizer(chunks, return_tensors="pt", padding=True)["input_ids"].flatten()
+
+    # remove pad token
+    tokens = tokens[tokens != tokenizer.pad_token_id]
+
+    if max_tokens is not None:
+        tokens = tokens[: max_tokens + seq_len + 1]
+
+    num_tokens = len(tokens)
+    num_batches = num_tokens // seq_len
+
+    # drop last batch if not full
+    tokens = tokens[: num_batches * seq_len]
+    tokens = einops.rearrange(tokens, "(batch seq) -> batch seq", batch=num_batches, seq=seq_len)
+
+    if add_bos:
+        tokens[:, 0] = tokenizer.bos_token_id
+    return tokens
 
 
 def gather_dataset_from_df(
@@ -423,7 +453,7 @@ def get_multi_label_train_test_data(
     return train_data, test_data
 
 
-def tokenize_data(
+def tokenize_data_dictionary(
     data: dict[str, list[str]], tokenizer: AutoTokenizer, max_length: int, device: str
 ) -> dict[str, dict]:
     tokenized_data = {}

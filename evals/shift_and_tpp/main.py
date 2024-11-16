@@ -455,10 +455,10 @@ def get_dataset_activations(
         train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
         test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
 
-    train_data = dataset_utils.tokenize_data(
+    train_data = dataset_utils.tokenize_data_dictionary(
         train_data, model.tokenizer, config.context_length, device
     )
-    test_data = dataset_utils.tokenize_data(
+    test_data = dataset_utils.tokenize_data_dictionary(
         test_data, model.tokenizer, config.context_length, device
     )
 
