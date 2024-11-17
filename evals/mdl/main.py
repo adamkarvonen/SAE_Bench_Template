@@ -578,9 +578,7 @@ if __name__ == "__main__":
         mse_epsilon_threshold=0.2,
         model_name=args.model_name,
     )
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     logger.info(config)
 
     results_dict = run_eval(

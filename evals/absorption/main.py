@@ -264,10 +264,7 @@ if __name__ == "__main__":
     config, selected_saes = create_config_and_selected_saes(args)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
-
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
 
@@ -287,34 +284,20 @@ if __name__ == "__main__":
 #     """
 #     python evals/absorption/main.py
 #     """
-#     device = formatting_utils.setup_environment()
+#     device = general_utils.setup_environment()
 
 #     start_time = time.time()
 
 #     random_seed = 42
 #     output_folder = "evals/absorption/results"
 
-#     baseline_type = "identity_sae"
-#     # baseline_type = "jumprelu_sae"
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
 
-#     model_name = "pythia-70m-deduped"
-#     hook_layer = 4
-#     d_model = 512
-
-#     # model_name = "gemma-2-2b"
-#     # hook_layer = 19
-#     # d_model = 2304
-
-#     if baseline_type == "identity_sae":
-#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
-#     elif baseline_type == "jumprelu_sae":
-#         repo_id = "google/gemma-scope-2b-pt-res"
-#         filename = "layer_20/width_16k/average_l0_71/params.npz"
-#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
-#     else:
-#         raise ValueError(f"Invalid baseline type: {baseline_type}")
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
 #     config = AbsorptionEvalConfig(
 #         random_seed=random_seed,
@@ -322,9 +305,7 @@ if __name__ == "__main__":
 #     )
 
 #     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-#     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-#         -1
-#     ]
+#     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
 #     # create output folder
 #     os.makedirs(output_folder, exist_ok=True)

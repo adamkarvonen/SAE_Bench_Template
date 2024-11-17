@@ -431,9 +431,7 @@ if __name__ == "__main__":
     print(selected_saes)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
@@ -458,10 +456,11 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     import baselines.identity_sae as identity_sae
 #     import baselines.jumprelu_sae as jumprelu_sae
+
 #     """
 #     python evals/sparse_probing/main.py
 #     """
-#     device = formatting_utils.setup_environment()
+#     device = general_utils.setup_environment()
 
 #     start_time = time.time()
 
@@ -496,9 +495,7 @@ if __name__ == "__main__":
 #     )
 
 #     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-#     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-#         -1
-#     ]
+#     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
 #     # create output folder
 #     os.makedirs(output_folder, exist_ok=True)

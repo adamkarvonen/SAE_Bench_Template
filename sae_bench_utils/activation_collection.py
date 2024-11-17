@@ -12,14 +12,14 @@ import os
 
 # Relevant at ctx len 128
 LLM_NAME_TO_BATCH_SIZE = {
-    "pythia-70m-deduped": 500,
+    "pythia-70m-deduped": 512,
     "gemma-2-2b": 32,
 }
 
 LLM_NAME_TO_DTYPE = {
-    "pythia-70m-deduped": torch.float32,
-    "gemma-2-2b": torch.bfloat16,
-    "gemma-2-2b-it": torch.bfloat16,
+    "pythia-70m-deduped": "float32",
+    "gemma-2-2b": "bfloat16",
+    "gemma-2-2b-it": "bfloat16",
 }
 
 
