@@ -17,6 +17,7 @@ MODEL_CONFIGS = {
     "gemma-2-2b": {"batch_size": 32, "dtype": "bfloat16", "layers": [5, 12, 19], "d_model": 2304},
 }
 
+
 output_folders = {
     "absorption": "evals/absorption/results/",
     "autointerp": "evals/autointerp/results/",
@@ -86,6 +87,7 @@ def run_evals(
                 context_size=128,
                 output_folder="evals/core/results/",
                 verbose=True,
+                dtype=core.str_to_dtype(llm_dtype),
             )
         ),
         "shift": (
@@ -198,6 +200,7 @@ if __name__ == "__main__":
         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
 
         for sae_name, sae in selected_saes:
+            sae = sae.to(dtype=core.str_to_dtype(llm_dtype))
             sae.cfg.dtype = llm_dtype
 
         run_evals(

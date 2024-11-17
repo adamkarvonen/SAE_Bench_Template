@@ -5,7 +5,7 @@ import argparse
 import time
 import functools
 import random
-from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping
+from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optional
 import logging
 import math
 import re
@@ -898,6 +898,7 @@ def multiple_evals(
     context_size: int = 128,
     output_folder: str = "eval_results",
     verbose: bool = False,
+    dtype: Optional[torch.dtype] = None,
 ) -> List[Dict[str, Any]]:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     assert len(filtered_saes) > 0, "No SAEs to evaluate"
@@ -949,6 +950,8 @@ def multiple_evals(
             sae_id = "custom_sae"
 
         sae.to(device)
+        if dtype is not None:
+            sae = sae.to(dtype)
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
@@ -964,6 +967,7 @@ def multiple_evals(
                 return HookedTransformer.from_pretrained_no_processing(
                     sae.cfg.model_name,
                     device=device,
+                    dtype=sae.W_enc.dtype,
                     **sae.cfg.model_from_pretrained_kwargs,
                 )
 
@@ -1086,6 +1090,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         context_size=args.context_size,
         output_folder=args.output_folder,
         verbose=args.verbose,
+        dtype=str_to_dtype(args.dtype),
     )
 
     return eval_results
@@ -1100,6 +1105,18 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
         return -1
     else:
         return obj
+
+
+def str_to_dtype(dtype_str: str) -> Optional[torch.dtype]:
+    if dtype_str.lower() == "none":
+        return None
+    dtype_map = {
+        "float32": torch.float32,
+        "float64": torch.float64,
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+    }
+    return dtype_map.get(dtype_str.lower())
 
 
 def arg_parser():
@@ -1201,6 +1218,13 @@ def arg_parser():
         help="Enable verbose output with tqdm loaders.",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+    parser.add_argument(
+        "--dtype",
+        type=str,
+        default="none",
+        choices=["none", "float32", "float", "float64", "double", "float16", "half", "bfloat16"],
+        help="Data type for computation (default: none)",
+    )
 
     return parser
 
@@ -1253,8 +1277,10 @@ if __name__ == "__main__":
 #     for sae_name, sae in selected_saes:
 #         if model_name == "pythia-70m-deduped":
 #             sae.cfg.dtype = "float32"
+#             llm_dtype = torch.float32
 #         elif model_name == "gemma-2-2b":
 #             sae.cfg.dtype = "bfloat16"
+#             llm_dtype = torch.bfloat16
 #         else:
 #             raise ValueError(f"Invalid model name: {model_name}")
 
@@ -1268,4 +1294,5 @@ if __name__ == "__main__":
 #         context_size=128,
 #         output_folder=output_folder,
 #         verbose=True,
+#         dtype=llm_dtype,
 #     )
