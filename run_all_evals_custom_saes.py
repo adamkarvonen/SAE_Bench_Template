@@ -37,6 +37,7 @@ def run_evals(
     eval_types: list[str],
     api_key: Optional[str] = None,
     force_rerun: bool = False,
+    save_activations: bool = False,
 ):
     """Run selected evaluations for the given model and SAEs."""
 
@@ -101,6 +102,7 @@ def run_evals(
                 "evals/shift_and_tpp/scr/results/",
                 force_rerun,
                 clean_up_activations=True,
+                save_activations=save_activations,
             )
         ),
         "tpp": (
@@ -117,6 +119,7 @@ def run_evals(
                 "evals/shift_and_tpp/tpp/results/",
                 force_rerun,
                 clean_up_activations=True,
+                save_activations=save_activations,
             )
         ),
         "sparse_probing": (
@@ -132,6 +135,7 @@ def run_evals(
                 "evals/sparse_probing/results/",
                 force_rerun,
                 clean_up_activations=True,
+                save_activations=save_activations,
             )
         ),
         "unlearning": (
@@ -152,6 +156,9 @@ def run_evals(
         if eval_type == "autointerp" and api_key is None:
             print("Skipping autointerp evaluation due to missing API key")
             continue
+        if eval_type == "unlearning" and model_name != "gemma-2-2b":
+            print("Skipping unlearning evaluation for non-GEMMA model")
+            continue
         if eval_type in eval_runners:
             os.makedirs(output_folders[eval_type], exist_ok=True)
             eval_runners[eval_type]()
@@ -166,6 +173,7 @@ if __name__ == "__main__":
     device = general_utils.setup_environment()
 
     model_name = "pythia-70m-deduped"
+    model_name = "gemma-2-2b"
     d_model = MODEL_CONFIGS[model_name]["d_model"]
     llm_batch_size = MODEL_CONFIGS[model_name]["batch_size"]
     llm_dtype = MODEL_CONFIGS[model_name]["dtype"]
@@ -178,8 +186,12 @@ if __name__ == "__main__":
         "shift",
         "tpp",
         "sparse_probing",
-        # "unlearning",
+        "unlearning",
     ]
+
+    # If evaluating multiple SAEs on the same layer, set save_activations to True
+    # This will require at least 100GB of disk space
+    save_activations = False
 
     for hook_layer in MODEL_CONFIGS[model_name]["layers"]:
         sae = identity_sae.IdentitySAE(model_name, d_model, hook_layer, context_size=128)
@@ -197,4 +209,5 @@ if __name__ == "__main__":
             eval_types=eval_types,
             api_key=api_key,
             force_rerun=False,
+            save_activations=False,
         )

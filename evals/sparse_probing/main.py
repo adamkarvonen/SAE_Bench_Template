@@ -238,6 +238,7 @@ def run_eval(
     output_path: str,
     force_rerun: bool = False,
     clean_up_activations: bool = False,
+    save_activations: bool = True,
 ):
     """
     selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
@@ -306,6 +307,7 @@ def run_eval(
                 model,
                 device,
                 artifacts_folder,
+                save_activations=save_activations,
             )
             eval_output = SparseProbingEvalOutput(
                 eval_config=config,
@@ -346,7 +348,8 @@ def run_eval(
         eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_activations:
-        shutil.rmtree(artifacts_folder)
+        if os.path.exists(artifacts_folder):
+            shutil.rmtree(artifacts_folder)
 
     return results_dict
 
@@ -400,6 +403,11 @@ def arg_parser():
         action="store_true",
         help="Clean up activations after evaluation",
     )
+    parser.add_argument(
+        "--save_activations",
+        action="store_false",
+        help="Save the generated LLM activations for later use",
+    )
 
     return parser
 
@@ -438,6 +446,7 @@ if __name__ == "__main__":
         args.output_folder,
         args.force_rerun,
         args.clean_up_activations,
+        args.save_activations,
     )
 
     end_time = time.time()
@@ -502,6 +511,7 @@ if __name__ == "__main__":
 #         output_folder,
 #         force_rerun=True,
 #         clean_up_activations=False,
+#         save_activations=True,
 #     )
 
 #     end_time = time.time()
