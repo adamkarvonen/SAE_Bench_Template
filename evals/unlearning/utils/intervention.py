@@ -28,13 +28,12 @@ def anthropic_clamp_resid_SAE_features(
     if len(features_to_ablate) > 0:
         with torch.no_grad():
             # adjust feature activations with scaling (multiplier = 0 just ablates the feature)
-            if isinstance(sae, SAE):
-                feature_activations = sae.encode(resid)
+            feature_activations = sae.encode(resid)
 
-                feature_activations[:, 0, :] = 0.0  # We zero out the BOS token for all SAEs.
-                # We don't need to zero out padding tokens because we right pad, so they don't effect the model generation.
+            feature_activations[:, 0, :] = 0.0  # We zero out the BOS token for all SAEs.
+            # We don't need to zero out padding tokens because we right pad, so they don't effect the model generation.
 
-                reconstruction = sae.decode(feature_activations)
+            reconstruction = sae.decode(feature_activations)
             # else:
             #     try:
             #         import sys
