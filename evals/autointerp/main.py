@@ -746,27 +746,13 @@ if __name__ == "__main__":
 #     with open("openai_api_key.txt", "r") as f:
 #         api_key = f.read().strip()
 
-#     baseline_type = "identity_sae"
-#     # baseline_type = "jumprelu_sae"
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
 
-#     model_name = "pythia-70m-deduped"
-#     hook_layer = 4
-#     d_model = 512
-
-#     # model_name = "gemma-2-2b"
-#     # hook_layer = 19
-#     # d_model = 2304
-
-#     if baseline_type == "identity_sae":
-#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
-#     elif baseline_type == "jumprelu_sae":
-#         repo_id = "google/gemma-scope-2b-pt-res"
-#         filename = "layer_20/width_16k/average_l0_71/params.npz"
-#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
-#     else:
-#         raise ValueError(f"Invalid baseline type: {baseline_type}")
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
 #     config = AutoInterpEvalConfig(
 #         random_seed=random_seed,

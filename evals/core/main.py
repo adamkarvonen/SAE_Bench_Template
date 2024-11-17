@@ -1251,47 +1251,31 @@ if __name__ == "__main__":
 #     batch_size_prompts = 16
 #     n_eval_reconstruction_batches = 20
 #     n_eval_sparsity_variance_batches = 20
+#     context_size = 128
+#     dataset_name = "Skylion007/openwebtext"
+#     exclude_special_tokens_from_reconstruction = True
 
-#     baseline_type = "identity_sae"
-#     # baseline_type = "jumprelu_sae"
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
+#     llm_dtype = torch.bfloat16
 
-#     model_name = "pythia-70m-deduped"
-#     hook_layer = 4
-#     d_model = 512
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
-#     # model_name = "gemma-2-2b"
-#     # hook_layer = 19
-#     # d_model = 2304
-
-#     if baseline_type == "identity_sae":
-#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
-#     elif baseline_type == "jumprelu_sae":
-#         repo_id = "google/gemma-scope-2b-pt-res"
-#         filename = "layer_20/width_16k/average_l0_71/params.npz"
-#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
-#     else:
-#         raise ValueError(f"Invalid baseline type: {baseline_type}")
-
+#     # it's recommended to specify the dtype of the SAE
 #     for sae_name, sae in selected_saes:
-#         if model_name == "pythia-70m-deduped":
-#             sae.cfg.dtype = "float32"
-#             llm_dtype = torch.float32
-#         elif model_name == "gemma-2-2b":
-#             sae.cfg.dtype = "bfloat16"
-#             llm_dtype = torch.bfloat16
-#         else:
-#             raise ValueError(f"Invalid model name: {model_name}")
+#         sae.cfg.dtype = "bfloat16"
 
 #     multiple_evals(
 #         filtered_saes=selected_saes,
 #         n_eval_reconstruction_batches=n_eval_reconstruction_batches,
 #         n_eval_sparsity_variance_batches=n_eval_sparsity_variance_batches,
 #         eval_batch_size_prompts=batch_size_prompts,
-#         exclude_special_tokens_from_reconstruction=True,
-#         dataset="Skylion007/openwebtext",
-#         context_size=128,
+#         exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
+#         dataset=dataset_name,
+#         context_size=context_size,
 #         output_folder=output_folder,
 #         verbose=True,
 #         dtype=llm_dtype,
