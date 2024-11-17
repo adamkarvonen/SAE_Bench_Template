@@ -219,7 +219,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/absorption/results",
+        default="eval_results/absorption",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -290,7 +290,7 @@ if __name__ == "__main__":
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/absorption/results"
+#     output_folder = "eval_results/absorption"
 
 #     model_name = "gemma-2-2b"
 #     hook_layer = 20

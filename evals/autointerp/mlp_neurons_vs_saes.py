@@ -41,7 +41,7 @@ if __name__ == "__main__":
             selected_saes,
             device,
             api_key,
-            "evals/autointerp/results/",
+            "eval_results/autointerp",
             force_rerun,
         )
 
@@ -66,6 +66,6 @@ if __name__ == "__main__":
             selected_saes,
             device,
             api_key,
-            "evals/autointerp/results/",
+            "eval_results/autointerp",
             force_rerun,
         )

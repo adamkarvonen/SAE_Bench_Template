@@ -875,7 +875,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/shift_and_tpp/results",
+        default="eval_results",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -972,7 +972,7 @@ if __name__ == "__main__":
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/shift_and_tpp/results"
+#     output_folder = "eval_results"
 #     perform_scr = True
 
 #     model_name = "gemma-2-2b"

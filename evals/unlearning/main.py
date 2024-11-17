@@ -249,7 +249,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/unlearning/results",
+        default="eval_results/unlearning",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -317,7 +317,7 @@ if __name__ == "__main__":
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/unlearning/results"
+#     output_folder = "eval_results/unlearning"
 
 #     model_name = "gemma-2-2b-it"
 #     hook_layer = 20

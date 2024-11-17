@@ -17,15 +17,14 @@ MODEL_CONFIGS = {
     "gemma-2-2b": {"batch_size": 32, "dtype": "bfloat16", "layers": [5, 12, 19], "d_model": 2304},
 }
 
-
 output_folders = {
-    "absorption": "evals/absorption/results/",
-    "autointerp": "evals/autointerp/results/",
-    "core": "evals/core/results/",
-    "shift": "evals/shift_and_tpp/scr/results/",
-    "tpp": "evals/shift_and_tpp/tpp/results/",
-    "sparse_probing": "evals/sparse_probing/results/",
-    "unlearning": "evals/unlearning/results/",
+    "absorption": "eval_results/absorption",
+    "autointerp": "eval_results/autointerp",
+    "core": "eval_results/core",
+    "shift": "eval_results/shift",
+    "tpp": "eval_results/tpp",
+    "sparse_probing": "eval_results/sparse_probing",
+    "unlearning": "eval_results/unlearning",
 }
 
 
@@ -57,7 +56,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "evals/absorption/results/",
+                "eval_results/absorption",
                 force_rerun,
             )
         ),
@@ -72,7 +71,7 @@ def run_evals(
                 selected_saes,
                 device,
                 api_key,
-                "evals/autointerp/results/",
+                "eval_results/autointerp",
                 force_rerun,
             )
         ),
@@ -85,7 +84,7 @@ def run_evals(
                 exclude_special_tokens_from_reconstruction=True,
                 dataset="Skylion007/openwebtext",
                 context_size=128,
-                output_folder="evals/core/results/",
+                output_folder="eval_results/core",
                 verbose=True,
                 dtype=core.str_to_dtype(llm_dtype),
             )
@@ -101,7 +100,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "evals/shift_and_tpp/scr/results/",
+                "eval_results/shift",
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,
@@ -118,7 +117,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "evals/shift_and_tpp/tpp/results/",
+                "eval_results/tpp",
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,
@@ -134,7 +133,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "evals/sparse_probing/results/",
+                "eval_results/sparse_probing",
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,
@@ -147,7 +146,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "evals/unlearning/results/",
+                "eval_results/unlearning",
                 force_rerun,
             )
         ),
@@ -172,6 +171,7 @@ def run_evals(
 
 if __name__ == "__main__":
     import baselines.identity_sae as identity_sae
+    import baselines.pca_sae as pca_sae
 
     with open("openai_api_key.txt", "r") as f:
         api_key = f.read().strip()

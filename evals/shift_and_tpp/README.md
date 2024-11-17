@@ -11,7 +11,7 @@ Using Gemma-2-2B, at current batch sizes, I see a peak GPU memory usage of 22 GB
 
 All configuration arguments and hyperparameters are located in `eval_config.py`. The full eval config is saved to the results json file.
 
-If ran in the current state, `cd` in to `evals/shift_and_tpp/` and run `python main.py`. It should produce `evals/shift_and_tpp/results/pythia-70m-deduped_tpp_layer_4_eval_results.json`.
+If ran in the current state, `cd` in to `evals/shift_and_tpp/` and run `python main.py`. It should produce `eval_results/shift/pythia-70m-deduped_tpp_layer_4_eval_results.json`.
 
 `tests/test_shift_and_tpp.py` contains an end-to-end test of the evals. Running `pytest -s tests/test_shift_and_tpp` will verify that the actual results are within the specified tolerance of the expected results.
 

@@ -675,7 +675,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/autointerp/results",
+        default="eval_results/autointerp",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -743,7 +743,7 @@ if __name__ == "__main__":
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/autointerp/results"
+#     output_folder = "eval_results/autointerp"
 
 #     with open("openai_api_key.txt", "r") as f:
 #         api_key = f.read().strip()

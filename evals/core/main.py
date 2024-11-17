@@ -1248,7 +1248,7 @@ if __name__ == "__main__":
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/core/results"
+#     output_folder = "eval_results/core"
 
 #     batch_size_prompts = 16
 #     n_eval_reconstruction_batches = 20

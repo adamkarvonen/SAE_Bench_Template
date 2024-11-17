@@ -44,7 +44,7 @@ python evals/sparse_probing/main.py \
     --model_name pythia-70m-deduped
 ```
 
-The results will be saved to the evals/sparse_probing/results directory.
+The results will be saved to the eval_results/sparse_probing directory.
 
 We use regex patterns to select SAE Lens SAEs. For more examples of regex patterns, refer to `sae_regex_selection.ipynb`.
 
