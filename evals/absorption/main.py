@@ -104,7 +104,7 @@ def run_eval(
             model=model,
             sae=sae,
             layer=sae.cfg.hook_layer,
-            sae_name=sae_id,
+            sae_name=f"{sae_release}_{sae_id}",
             force=force_rerun,
             max_k_value=config.max_k_value,
             feature_split_f1_jump_threshold=config.f1_jump_threshold,
