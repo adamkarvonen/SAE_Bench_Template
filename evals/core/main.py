@@ -334,7 +334,9 @@ def get_featurewise_weight_based_metrics(sae: SAE) -> dict[str, Any]:
     encoder_norms = sae.W_enc.norm(dim=-2).cpu().tolist()
 
     # gated models have a different bias (no b_enc)
-    if sae.cfg.architecture != "gated":
+    if not hasattr(sae, "b_enc"):
+        encoder_bias = None
+    elif sae.cfg.architecture != "gated":
         encoder_bias = sae.b_enc.cpu().tolist()
     else:
         encoder_bias = sae.b_mag.cpu().tolist()
