@@ -158,9 +158,13 @@ def run_evals(
         if eval_type == "autointerp" and api_key is None:
             print("Skipping autointerp evaluation due to missing API key")
             continue
-        if eval_type == "unlearning" and model_name != "gemma-2-2b":
-            print("Skipping unlearning evaluation for non-GEMMA model")
-            continue
+        if eval_type == "unlearning":
+            if model_name != "gemma-2-2b":
+                print("Skipping unlearning evaluation for non-GEMMA model")
+                continue
+            if not os.path.exists("./evals/unlearning/data/bio-forget-corpus.jsonl"):
+                print("Skipping unlearning evaluation due to missing bio-forget-corpus.jsonl")
+                continue
         if eval_type in eval_runners:
             os.makedirs(output_folders[eval_type], exist_ok=True)
             eval_runners[eval_type]()

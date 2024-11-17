@@ -38,6 +38,7 @@ def run_eval(
     output_path: str,
     force_rerun: bool = False,
 ):
+    torch.set_grad_enabled(True)
     """
     selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
     """
