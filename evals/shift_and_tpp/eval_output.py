@@ -9,7 +9,7 @@ from evals.base_eval_output import (
 )
 from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
 
-EVAL_TYPE_ID_SHIFT = "shift"
+EVAL_TYPE_ID_SHIFT = "scr"
 EVAL_TYPE_ID_TPP = "tpp"
 
 
