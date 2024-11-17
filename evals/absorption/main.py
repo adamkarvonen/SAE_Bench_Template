@@ -82,7 +82,7 @@ def run_eval(
             model=model,
             sae=sae,
             layer=sae.cfg.hook_layer,
-            sae_name=sae_id,
+            sae_name=f"{sae_release}_{sae_id}",
             force=force_rerun,
             max_k_value=config.max_k_value,
             f1_jump_threshold=config.f1_jump_threshold,
@@ -92,7 +92,7 @@ def run_eval(
         )
 
         # Save k_sparse_probing_results as a separate JSON
-        artifacts_folder = os.path.join(output_path, "artifacts")
+        artifacts_folder = os.path.join("artifacts", "absorption")
         os.makedirs(artifacts_folder, exist_ok=True)
         k_sparse_probing_file = f"{sae_release}_{sae_id}_k_sparse_probing.json"
         k_sparse_probing_file = k_sparse_probing_file.replace("/", "_")
