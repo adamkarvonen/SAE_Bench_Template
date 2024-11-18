@@ -900,7 +900,7 @@ def multiple_evals(
     context_size: int = 128,
     output_folder: str = "eval_results",
     verbose: bool = False,
-    dtype: Optional[torch.dtype] = None,
+    dtype: str = "float32",
 ) -> List[Dict[str, Any]]:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     assert len(filtered_saes) > 0, "No SAEs to evaluate"
@@ -952,8 +952,7 @@ def multiple_evals(
             sae_id = "custom_sae"
 
         sae.to(device)
-        if dtype is not None:
-            sae = sae.to(dtype)
+        sae = sae.to(str_to_dtype(dtype))
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
@@ -1000,6 +999,7 @@ def multiple_evals(
                 compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
                 compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
                 compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+                llm_dtype=dtype,
             )
 
             # Wrap activation store creation with retry
@@ -1092,7 +1092,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         context_size=args.context_size,
         output_folder=args.output_folder,
         verbose=args.verbose,
-        dtype=str_to_dtype(args.dtype),
+        dtype=args.llm_dtype,
     )
 
     return eval_results
@@ -1109,16 +1109,19 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
         return obj
 
 
-def str_to_dtype(dtype_str: str) -> Optional[torch.dtype]:
-    if dtype_str.lower() == "none":
-        return None
+def str_to_dtype(dtype_str: str) -> torch.dtype:
     dtype_map = {
         "float32": torch.float32,
         "float64": torch.float64,
         "float16": torch.float16,
         "bfloat16": torch.bfloat16,
     }
-    return dtype_map.get(dtype_str.lower())
+    dtype = dtype_map.get(dtype_str.lower())
+    if dtype is None:
+        raise ValueError(
+            f"Unsupported dtype: {dtype_str}. Supported dtypes: {list(dtype_map.keys())}"
+        )
+    return dtype
 
 
 def arg_parser():
@@ -1221,11 +1224,11 @@ def arg_parser():
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
-        "--dtype",
+        "--llm_dtype",
         type=str,
-        default="none",
-        choices=["none", "float32", "float", "float64", "double", "float16", "half", "bfloat16"],
-        help="Data type for computation (default: none)",
+        default="float32",
+        choices=["float32", "float", "float64", "double", "float16", "half", "bfloat16"],
+        help="Data type for computation",
     )
 
     return parser

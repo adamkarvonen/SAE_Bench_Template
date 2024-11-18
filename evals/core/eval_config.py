@@ -11,6 +11,11 @@ class CoreEvalConfig(BaseEvalConfig):
         title="Model Name",
         description="Model name",
     )
+    llm_dtype: str = Field(
+        default="float32",
+        title="LLM Data Type",
+        description="LLM data type",
+    )
     batch_size_prompts: int = Field(
         default=16,
         title="Batch Size Prompts",

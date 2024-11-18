@@ -79,6 +79,7 @@ def test_end_to_end():
             compute_featurewise_density_statistics=test_config.compute_featurewise_density_statistics,
             compute_featurewise_weight_based_metrics=test_config.compute_featurewise_weight_based_metrics,
             exclude_special_tokens_from_reconstruction=test_config.exclude_special_tokens_from_reconstruction,
+            llm_dtype=test_config.llm_dtype,
         )
     )
 
@@ -145,6 +146,7 @@ def test_feature_metrics():
             compute_featurewise_density_statistics=test_config.compute_featurewise_density_statistics,
             compute_featurewise_weight_based_metrics=test_config.compute_featurewise_weight_based_metrics,
             exclude_special_tokens_from_reconstruction=test_config.exclude_special_tokens_from_reconstruction,
+            llm_dtype=test_config.llm_dtype,
         )
     )
 
