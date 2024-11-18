@@ -16,15 +16,15 @@ import argparse
 from datetime import datetime
 import pickle
 
-import evals.shift_and_tpp.dataset_creation as dataset_creation
-from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
-from evals.shift_and_tpp.eval_output import (
-    EVAL_TYPE_ID_SHIFT,
+import evals.scr_and_tpp.dataset_creation as dataset_creation
+from evals.scr_and_tpp.eval_config import ScrAndTppEvalConfig
+from evals.scr_and_tpp.eval_output import (
+    EVAL_TYPE_ID_SCR,
     EVAL_TYPE_ID_TPP,
-    ShiftEvalOutput,
-    ShiftMetricCategories,
-    ShiftResultDetail,
-    ShiftMetrics,
+    ScrEvalOutput,
+    ScrMetricCategories,
+    ScrResultDetail,
+    ScrMetrics,
     TppEvalOutput,
     TppMetricCategories,
     TppResultDetail,
@@ -40,10 +40,7 @@ from sae_bench_utils import (
     get_sae_lens_version,
     get_sae_bench_version,
 )
-from sae_bench_utils.sae_selection_utils import (
-    get_saes_from_regex,
-    select_saes_multiple_patterns,
-)
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 
 COLUMN2_VALS_LOOKUP = {
     "LabHC/bias_in_bios_class_set1": ("male", "female"),
@@ -234,15 +231,15 @@ def get_probe_test_accuracy(
         test_accuracies[class_name] = test_acc_probe
 
     if perform_scr:
-        shift_probe_accuracies = get_shift_probe_test_accuracy(
+        scr_probe_accuracies = get_scr_probe_test_accuracy(
             probes, all_class_list, all_activations, probe_batch_size
         )
-        test_accuracies.update(shift_probe_accuracies)
+        test_accuracies.update(scr_probe_accuracies)
 
     return test_accuracies
 
 
-def get_shift_probe_test_accuracy(
+def get_scr_probe_test_accuracy(
     probes: dict[str, probe_training.Probe],
     all_class_list: list[str],
     all_activations: dict[str, torch.Tensor],
@@ -381,7 +378,7 @@ def create_tpp_plotting_dict(
 
     for class_name in classes:
         if " probe on " in class_name:
-            raise ValueError("This is SHIFT spurious correlations, shouldn't be here.")
+            raise ValueError("This is SCR, shouldn't be here.")
 
         intended_clean_acc = llm_clean_accs[class_name]
 
@@ -431,7 +428,7 @@ def create_tpp_plotting_dict(
 
 def get_dataset_activations(
     dataset_name: str,
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     model: HookedTransformer,
     llm_batch_size: int,
     layer: int,
@@ -474,7 +471,7 @@ def get_dataset_activations(
 
 def run_eval_single_dataset(
     dataset_name: str,
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     layer: int,
@@ -608,7 +605,7 @@ def run_eval_single_dataset(
 
 
 def run_eval_single_sae(
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     device: str,
@@ -679,7 +676,7 @@ def run_eval_single_sae(
 
 
 def run_eval(
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
@@ -698,7 +695,7 @@ def run_eval(
     sae_bench_commit_hash = get_sae_bench_version()
 
     if config.perform_scr:
-        eval_type = EVAL_TYPE_ID_SHIFT
+        eval_type = EVAL_TYPE_ID_SCR
     else:
         eval_type = EVAL_TYPE_ID_TPP
     output_path = os.path.join(output_path, eval_type)
@@ -749,14 +746,14 @@ def run_eval(
         if os.path.exists(sae_result_path) and not force_rerun:
             print(f"Loading existing results from {sae_result_path}")
             with open(sae_result_path, "r") as f:
-                if eval_type == EVAL_TYPE_ID_SHIFT:
-                    eval_output = TypeAdapter(ShiftEvalOutput).validate_json(f.read())
+                if eval_type == EVAL_TYPE_ID_SCR:
+                    eval_output = TypeAdapter(ScrEvalOutput).validate_json(f.read())
                 elif eval_type == EVAL_TYPE_ID_TPP:
                     eval_output = TypeAdapter(TppEvalOutput).validate_json(f.read())
                 else:
                     raise ValueError(f"Invalid eval type: {eval_type}")
         else:
-            shift_or_tpp_results = run_eval_single_sae(
+            scr_or_tpp_results = run_eval_single_sae(
                 config,
                 sae,
                 model,
@@ -764,27 +761,27 @@ def run_eval(
                 artifacts_folder,
                 save_activations,
             )
-            if eval_type == EVAL_TYPE_ID_SHIFT:
-                eval_output = ShiftEvalOutput(
+            if eval_type == EVAL_TYPE_ID_SCR:
+                eval_output = ScrEvalOutput(
                     eval_type_id=eval_type,
                     eval_config=config,
                     eval_id=eval_instance_id,
                     datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=ShiftMetricCategories(
-                        shift_metrics=ShiftMetrics(
+                    eval_result_metrics=ScrMetricCategories(
+                        scr_metrics=ScrMetrics(
                             **{
                                 k: v
-                                for k, v in shift_or_tpp_results.items()
+                                for k, v in scr_or_tpp_results.items()
                                 if not isinstance(v, dict)
                             }
                         )
                     ),
                     eval_result_details=[
-                        ShiftResultDetail(
+                        ScrResultDetail(
                             dataset_name=dataset_name,
                             **result,
                         )
-                        for dataset_name, result in shift_or_tpp_results.items()
+                        for dataset_name, result in scr_or_tpp_results.items()
                         if isinstance(result, dict)
                     ],
                     sae_bench_commit_hash=sae_bench_commit_hash,
@@ -802,7 +799,7 @@ def run_eval(
                         tpp_metrics=TppMetrics(
                             **{
                                 k: v
-                                for k, v in shift_or_tpp_results.items()
+                                for k, v in scr_or_tpp_results.items()
                                 if not isinstance(v, dict)
                             }
                         )
@@ -812,7 +809,7 @@ def run_eval(
                             dataset_name=dataset_name,
                             **result,
                         )
-                        for dataset_name, result in shift_or_tpp_results.items()
+                        for dataset_name, result in scr_or_tpp_results.items()
                         if isinstance(result, dict)
                     ],
                     sae_bench_commit_hash=sae_bench_commit_hash,
@@ -836,8 +833,8 @@ def run_eval(
 
 def create_config_and_selected_saes(
     args,
-) -> tuple[ShiftAndTppEvalConfig, list[tuple[str, str]]]:
-    config = ShiftAndTppEvalConfig(
+) -> tuple[ScrAndTppEvalConfig, list[tuple[str, str]]]:
+    config = ScrAndTppEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
         perform_scr=args.perform_scr,
@@ -857,7 +854,7 @@ def create_config_and_selected_saes(
 
 
 def arg_parser():
-    parser = argparse.ArgumentParser(description="Run SHIFT or TPP evaluation")
+    parser = argparse.ArgumentParser(description="Run SCR or TPP evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
@@ -899,7 +896,7 @@ def arg_parser():
         "--perform_scr",
         type=str_to_bool,
         required=True,
-        help="If true, do SHIFT Spurious Correlation Removal (SCR). If false, do TPP.",
+        help="If true, do Spurious Correlation Removal (SCR). If false, do TPP.",
     )
 
     return parser
@@ -908,21 +905,21 @@ def arg_parser():
 if __name__ == "__main__":
     """
     Example pythia-70m usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
     --model_name pythia-70m-deduped \
     --perform_scr true
 
     Example Gemma-2-2B SAE Bench usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
     --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b \
     --perform_scr true
 
     Example Gemma-2-2B Gemma-Scope usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "gemma-scope-2b-pt-res" \
     --sae_block_pattern "layer_20/width_16k/average_l0_139" \
     --model_name gemma-2-2b \
@@ -965,7 +962,7 @@ if __name__ == "__main__":
 #     import baselines.jumprelu_sae as jumprelu_sae
 
 #     """
-#     python evals/shift_and_tpp/main.py
+#     python evals/scr_and_tpp/main.py
 #     """
 #     device = general_utils.setup_environment()
 
@@ -983,7 +980,7 @@ if __name__ == "__main__":
 #     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
 #     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
-#     config = ShiftAndTppEvalConfig(
+#     config = ScrAndTppEvalConfig(
 #         random_seed=random_seed,
 #         model_name=model_name,
 #         perform_scr=perform_scr,

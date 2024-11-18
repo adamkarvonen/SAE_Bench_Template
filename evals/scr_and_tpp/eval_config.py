@@ -4,7 +4,7 @@ from evals.base_eval_output import BaseEvalConfig
 
 
 @dataclass
-class ShiftAndTppEvalConfig(BaseEvalConfig):
+class ScrAndTppEvalConfig(BaseEvalConfig):
     random_seed: int = Field(
         default=42,
         title="Random Seed",
@@ -17,13 +17,13 @@ class ShiftAndTppEvalConfig(BaseEvalConfig):
             "canrager/amazon_reviews_mcauley_1and5",
         ],
         title="Dataset Names",
-        description="List of dataset names for both the SHIFT and TPP metrics",
+        description="List of dataset names for both the SCR and TPP metrics",
     )
 
     perform_scr: bool = Field(
         default=True,
         title="Perform Spurious Correlation Removal",
-        description="If True, the eval will be Spurious Correlation Removal (SCR) using SHIFT. If False, the eval will be TPP.",
+        description="If True, the eval will be Spurious Correlation Removal (SCR). If False, the eval will be TPP.",
     )
 
     early_stopping_patience: int = Field(
@@ -120,5 +120,5 @@ class ShiftAndTppEvalConfig(BaseEvalConfig):
             ],
         },
         title="Column 1 Values Lookup",
-        description="Column1 Values apply only to the SHIFT metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
+        description="Column1 Values apply only to the SCR metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
     )

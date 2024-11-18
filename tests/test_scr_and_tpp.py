@@ -1,12 +1,12 @@
 import torch
 import json
-from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
-import evals.shift_and_tpp.main as shift_and_tpp
+from evals.scr_and_tpp.eval_config import ScrAndTppEvalConfig
+import evals.scr_and_tpp.main as scr_and_tpp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-tpp_results_filename = "tests/test_data/shift_and_tpp/tpp_expected_results.json"
-scr_results_filename = "tests/test_data/shift_and_tpp/scr_expected_results.json"
+tpp_results_filename = "tests/test_data/scr_and_tpp/tpp_expected_results.json"
+scr_results_filename = "tests/test_data/scr_and_tpp/scr_expected_results.json"
 
 
 def test_scr_end_to_end_different_seed():
@@ -18,7 +18,7 @@ def test_scr_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    test_config = ShiftAndTppEvalConfig()
+    test_config = ScrAndTppEvalConfig()
 
     test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
@@ -29,7 +29,7 @@ def test_scr_end_to_end_different_seed():
     test_config.llm_dtype = "float32"
     layer = 4
     tolerance = 0.08  # There can be significant variation in the strength of the correlation learned by a linear probe between random seeds
-    # This causes large shifts in absolute values of the shift metrics, especially as this test only uses a single dataset
+    # This causes large shifts in absolute values of the scr metrics, especially as this test only uses a single dataset
 
     test_config.perform_scr = True
     test_config.column1_vals_lookup = {
@@ -47,11 +47,11 @@ def test_scr_end_to_end_different_seed():
 
     selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
-    run_results = shift_and_tpp.run_eval(
+    run_results = scr_and_tpp.run_eval(
         test_config,
         selected_saes,
         device,
-        output_path="evals/shift_and_tpp/test_results/",
+        output_path="evals/scr_and_tpp/test_results/",
         force_rerun=True,
         clean_up_activations=True,
     )
@@ -66,8 +66,8 @@ def test_scr_end_to_end_different_seed():
     testing_utils.compare_dicts_within_tolerance(
         run_results[
             "sae_bench_pythia70m_sweep_topk_ctx128_0730_blocks.4.hook_resid_post__trainer_10"
-        ]["eval_result_metrics"]["shift_metrics"],
-        expected_results["eval_result_metrics"]["shift_metrics"],
+        ]["eval_result_metrics"]["scr_metrics"],
+        expected_results["eval_result_metrics"]["scr_metrics"],
         tolerance,
         keys_to_compare=keys_to_compare,
     )
@@ -82,7 +82,7 @@ def test_tpp_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    test_config = ShiftAndTppEvalConfig()
+    test_config = ScrAndTppEvalConfig()
 
     test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
@@ -105,11 +105,11 @@ def test_tpp_end_to_end_different_seed():
 
     selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
-    run_results = shift_and_tpp.run_eval(
+    run_results = scr_and_tpp.run_eval(
         test_config,
         selected_saes,
         device,
-        output_path="evals/shift_and_tpp/test_results/",
+        output_path="evals/scr_and_tpp/test_results/",
         force_rerun=True,
         clean_up_activations=True,
     )

@@ -4,7 +4,7 @@ from typing import Any, Optional
 import evals.absorption.main as absorption
 import evals.autointerp.main as autointerp
 import evals.core.main as core
-import evals.shift_and_tpp.main as shift_and_tpp
+import evals.scr_and_tpp.main as scr_and_tpp
 import evals.sparse_probing.main as sparse_probing
 import evals.unlearning.main as unlearning
 import sae_bench_utils.general_utils as general_utils
@@ -21,7 +21,7 @@ output_folders = {
     "absorption": "eval_results/absorption",
     "autointerp": "eval_results/autointerp",
     "core": "eval_results/core",
-    "shift": "eval_results/shift",
+    "scr": "eval_results/scr",
     "tpp": "eval_results/tpp",
     "sparse_probing": "eval_results/sparse_probing",
     "unlearning": "eval_results/unlearning",
@@ -89,9 +89,9 @@ def run_evals(
                 dtype=core.str_to_dtype(llm_dtype),
             )
         ),
-        "shift": (
-            lambda: shift_and_tpp.run_eval(
-                shift_and_tpp.ShiftAndTppEvalConfig(
+        "scr": (
+            lambda: scr_and_tpp.run_eval(
+                scr_and_tpp.scrAndTppEvalConfig(
                     model_name=model_name,
                     random_seed=RANDOM_SEED,
                     perform_scr=True,
@@ -100,15 +100,15 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "eval_results/shift",
+                "eval_results/scr",
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,
             )
         ),
         "tpp": (
-            lambda: shift_and_tpp.run_eval(
-                shift_and_tpp.ShiftAndTppEvalConfig(
+            lambda: scr_and_tpp.run_eval(
+                scr_and_tpp.ScrAndTppEvalConfig(
                     model_name=model_name,
                     random_seed=RANDOM_SEED,
                     perform_scr=False,
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         "absorption",
         "autointerp",
         "core",
-        "shift",
+        "scr",
         "tpp",
         "sparse_probing",
         "unlearning",
@@ -202,6 +202,12 @@ if __name__ == "__main__":
     for hook_layer in MODEL_CONFIGS[model_name]["layers"]:
         sae = identity_sae.IdentitySAE(model_name, d_model, hook_layer, context_size=128)
         selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
+
+        # This will evaluate PCA SAEs
+        # sae = pca_sae.PCASAE(model_name, d_model, hook_layer, context_size=128)
+        # filename = f"gemma-2-2b-pca-sae/pca_gemma-2-2b_blocks.{hook_layer}.hook_resid_post.pt"
+        # sae.load_from_file(filename)
+        # selected_saes = [(f"{model_name}_layer_{hook_layer}_pca_sae", sae)]
 
         for sae_name, sae in selected_saes:
             sae = sae.to(dtype=core.str_to_dtype(llm_dtype))

@@ -25,8 +25,8 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **AutoInterp**
 - **L0 / Loss Recovered**
 - **RAVEL**
-- **SHIFT**
-- **TPP**
+- **Spurious Correlation Removal (SCR)**
+- **Targeted Probe Pertubation (TPP)**
 - **Sparse Probing**
 - **Unlearning**
 

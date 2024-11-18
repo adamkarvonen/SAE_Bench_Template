@@ -717,7 +717,7 @@
       "type": "object"
     }
   },
-  "description": "TPP evaluation description goes here.",
+  "description": "The Targeted Probe Pertubation (TPP) evaluation ablates a set of SAE latents to damage a single targeted linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.",
   "properties": {
     "eval_type_id": {
       "default": "tpp",
