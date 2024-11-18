@@ -15,6 +15,6 @@ class MDLEvalConfig:
     sae_batch_size: int = 64
 
     model_name: str = "pythia-70m-deduped"
-    llm_dtype: str = "bfloat16"
+    llm_dtype: str = "float32"
 
     mse_epsilon_threshold: float = 0.01

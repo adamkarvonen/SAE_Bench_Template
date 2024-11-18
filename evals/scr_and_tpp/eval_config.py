@@ -87,7 +87,7 @@ class ScrAndTppEvalConfig(BaseEvalConfig):
         description="LLM batch size, inference only",
     )
     llm_dtype: str = Field(
-        default="bfloat16",
+        default="float32",
         title="LLM Dtype",
         description="",
     )
