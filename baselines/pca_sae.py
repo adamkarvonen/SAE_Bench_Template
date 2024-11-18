@@ -23,21 +23,15 @@ class PCASAE(nn.Module):
         context_size: int,
         hook_name: Optional[str] = None,
     ):
-        """Fit a PCA model to the activations of a model and treat it as an SAE.
-        NOTE: There is a major footgun here. encode() saves the mean of the activations, which is
-        saved and used in decode(). This introduces statefulness.
-
-        I will leave it as is because this is just a simple baseline and I don't want to add complexity
-        to the codebase."""
+        """Fit a PCA model to the activations of a model and treat it as an SAE."""
         super().__init__()
 
         self.W_enc = nn.Parameter(torch.zeros(d_model, d_model))
         self.W_dec = nn.Parameter(torch.zeros(d_model, d_model))
+        self.mean = nn.Parameter(torch.zeros(d_model))
+
         self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dtype: torch.dtype = torch.float32
-
-        # Mean tensor to store the batch mean during encoding
-        self.mean = torch.zeros(d_model, device=self.device, dtype=self.dtype)
 
         if hook_name is None:
             hook_name = f"blocks.{hook_layer}.hook_resid_post"
@@ -53,19 +47,11 @@ class PCASAE(nn.Module):
         )
 
     def encode(self, input_acts: torch.Tensor):
-        """NOTE: There is a major footgun here. encode() saves the mean of the activations, which is
-        saved and used in decode(). This introduces statefulness."""
-        # Compute the mean across batch and sequence dimensions
-        self.mean = input_acts.mean(dim=(0, 1), keepdim=True)
-        # Center the data and apply the encoder matrix
         centered_acts = input_acts - self.mean
         encoded_acts = centered_acts @ self.W_enc
         return encoded_acts
 
     def decode(self, encoded_acts: torch.Tensor):
-        """NOTE: There is a major footgun here. encode() saves the mean of the activations, which is
-        saved and used in decode(). This introduces statefulness."""
-        # Apply the decoder matrix and re-add the mean
         decoded_acts = encoded_acts @ self.W_dec
         return decoded_acts + self.mean
 
@@ -76,13 +62,16 @@ class PCASAE(nn.Module):
 
     def save_state_dict(self, file_path: str):
         """Save the encoder and decoder to a file."""
-        torch.save({"W_enc": self.W_enc.data, "W_dec": self.W_dec.data}, file_path)
+        torch.save(
+            {"W_enc": self.W_enc.data, "W_dec": self.W_dec.data, "mean": self.mean}, file_path
+        )
 
     def load_from_file(self, file_path: str):
         """Load the encoder and decoder from a file."""
         state_dict = torch.load(file_path, map_location=self.device)
         self.W_enc.data = state_dict["W_enc"]
         self.W_dec.data = state_dict["W_dec"]
+        self.mean = state_dict["mean"]
 
     # required as we have device and dtype class attributes
     def to(self, *args, **kwargs):
@@ -134,12 +123,19 @@ def fit_PCA(
 
         activations_BD = einops.rearrange(activations_BLD, "B L D -> (B L) D")
 
+        if activations_BD.shape[0] <= pca.cfg.d_in:
+            print(
+                f"Skipping batch {batch_idx} as it has {activations_BLD.shape[0]} sequences, which is less than {pca.cfg.d_in}"
+            )
+            continue
+
         # Partial fit on CPU
         ipca.partial_fit(activations_BD.cpu().float().numpy())
 
     print(f"Incremental PCA fit took {time.time() - start_time:.2f} seconds")
 
     # Set the learned components
+    pca.mean.data = torch.tensor(ipca.mean_, dtype=torch.float32, device="cpu")
     pca.W_enc.data = torch.tensor(ipca.components_, dtype=torch.float32, device="cpu")
     pca.W_dec.data = torch.tensor(ipca.components_.T, dtype=torch.float32, device="cpu")
 
@@ -213,8 +209,10 @@ def fit_PCA_gpu(
 
     # Get components back as torch tensors
     components = torch.from_numpy(cp.asnumpy(ipca.components_))
+    pca_mean = torch.from_numpy(cp.asnumpy(ipca.mean_))
 
     # Set the learned components
+    pca.mean.data = pca_mean.to(dtype=torch.float32, device="cpu")
     pca.W_enc.data = components.float().to(dtype=torch.float32, device="cpu")
     pca.W_dec.data = components.T.float().to(dtype=torch.float32, device="cpu")
 
@@ -268,7 +266,7 @@ if __name__ == "__main__":
 
     for layer in layers:
         pca = PCASAE(model_name, d_model, layer, context_size)
-        # pca = fit_PCA(pca, model, dataset_name, 20_000_000, llm_batch_size, 200_000)
+        # pca = fit_PCA(pca, model, tokens_BL, llm_batch_size, pca_batch_size)
         pca = fit_PCA_gpu(pca, model, tokens_BL, llm_batch_size, pca_batch_size)
 
         pca.to(device=device)
