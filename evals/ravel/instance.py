@@ -88,7 +88,7 @@ class RAVELInstance:
             instance.entity_splits = json.load(f)
 
         # Create prompts
-        for i, x in tqdm(enumerate(instance.entity_attributes)):
+        for i, x in tqdm(enumerate(instance.entity_attributes), total=len(instance.entity_attributes)):
             for a, ts in attribute_prompts_dict.items():
                 for t in ts:
                     text = t % x
