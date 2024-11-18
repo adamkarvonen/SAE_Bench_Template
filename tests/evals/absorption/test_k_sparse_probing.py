@@ -45,14 +45,14 @@ def test_train_k_sparse_probes_returns_reasonable_values(gpt2_l4_sae: SAE):
 
 def test_get_sae_acts(gpt2_l4_sae: SAE):
     token_act = torch.randn(768)
-    sae_acts = _get_sae_acts(gpt2_l4_sae, token_act.unsqueeze(0), True).squeeze()
+    sae_acts = _get_sae_acts(gpt2_l4_sae, token_act.unsqueeze(0)).squeeze()
     assert sae_acts.shape == (24576,)
 
 
 def test_get_sae_acts_gives_same_results_batched_and_not_batched(gpt2_l4_sae: SAE):
     token_acts = torch.randn(10, 768)
-    sae_acts_unbatched = _get_sae_acts(gpt2_l4_sae, token_acts, True, batch_size=1)
-    sae_acts_batched = _get_sae_acts(gpt2_l4_sae, token_acts, True, batch_size=5)
+    sae_acts_unbatched = _get_sae_acts(gpt2_l4_sae, token_acts, batch_size=1)
+    sae_acts_batched = _get_sae_acts(gpt2_l4_sae, token_acts, batch_size=5)
     assert torch.allclose(sae_acts_unbatched, sae_acts_batched, atol=1e-3)
 
 

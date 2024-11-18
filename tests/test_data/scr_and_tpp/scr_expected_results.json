@@ -33,7 +33,7 @@
   "eval_id": "f6fe23a1-880b-4bb9-aebf-9fe04a94bf6a",
   "datetime_epoch_millis": 1730416723279,
   "eval_result_metrics": {
-    "shift_metrics": {
+    "scr_metrics": {
       "scr_dir1_threshold_2": null,
       "scr_metric_threshold_2": null,
       "scr_dir2_threshold_2": null,

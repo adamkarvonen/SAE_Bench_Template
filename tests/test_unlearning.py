@@ -1,11 +1,11 @@
 import json
 import torch
-from evals.unlearning.eval_config import EvalConfig
+from evals.unlearning.eval_config import UnlearningEvalConfig
 import evals.unlearning.main as unlearning
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-results_filename = "tests/test_data/unlearning/sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2_eval_results.json"
+results_filename = "tests/test_data/unlearning/unlearning_expected_results.json"
 
 
 def test_end_to_end_different_seed():
@@ -18,7 +18,7 @@ def test_end_to_end_different_seed():
 
     print(f"Using device: {device}")
 
-    test_config = EvalConfig()
+    test_config = UnlearningEvalConfig()
 
     test_config.retain_thresholds = [0.01]
     test_config.n_features_list = [10]
@@ -37,11 +37,11 @@ def test_end_to_end_different_seed():
         r"blocks.3.hook_resid_post__trainer_2",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = unlearning.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         output_path="evals/unlearning/test_results/",
         force_rerun=True,
@@ -53,11 +53,11 @@ def test_end_to_end_different_seed():
 
     sae_name = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2"
 
-    keys_to_compare = ["unlearning_score"]
+    run_result_metrics = run_results[sae_name]["eval_result_metrics"]
 
     testing_utils.compare_dicts_within_tolerance(
-        run_results[sae_name]["eval_results"],
-        expected_results[sae_name]["eval_results"],
+        run_result_metrics,
+        expected_results["eval_result_metrics"],
         tolerance,
-        keys_to_compare=keys_to_compare,
+        keys_to_compare=["unlearning_score"],
     )

@@ -5,7 +5,7 @@ import argparse
 import time
 import functools
 import random
-from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping
+from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optional
 import logging
 import math
 import re
@@ -41,10 +41,14 @@ from sae_bench_utils import (
     get_sae_bench_version,
 )
 
+import sae_bench_utils.sae_selection_utils as sae_selection_utils
+
 logger = logging.getLogger(__name__)
 
-# truncate to save space/bandwidth
-DEFAULT_FLOAT_PRECISION = 5
+# you can truncate to save space/bandwidth, but be warned that this will
+# likely screw up the feature density metrics among others. 10 is a good
+# compromise.
+DEFAULT_FLOAT_PRECISION = 10
 
 
 def retry_with_exponential_backoff(
@@ -83,9 +87,7 @@ def retry_with_exponential_backoff(
                         raise
 
                     # Calculate delay with optional jitter
-                    current_delay = min(
-                        delay * (exponential_base**retry_count), max_delay
-                    )
+                    current_delay = min(delay * (exponential_base**retry_count), max_delay)
                     if jitter:
                         current_delay *= 1 + random.random() * 0.1  # 10% jitter
 
@@ -181,11 +183,8 @@ def run_evals(
     ignore_tokens: set[int | None] = set(),
     verbose: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-
     hook_name = sae.cfg.hook_name
-    actual_batch_size = (
-        eval_config.batch_size_prompts or activation_store.store_batch_size_prompts
-    )
+    actual_batch_size = eval_config.batch_size_prompts or activation_store.store_batch_size_prompts
 
     # TODO: Come up with a cleaner long term strategy here for SAEs that do reshaping.
     # turn off hook_z reshaping mode if it's on, and restore it after evals
@@ -215,6 +214,7 @@ def run_evals(
             n_batches=eval_config.n_eval_reconstruction_batches,
             eval_batch_size_prompts=actual_batch_size,
             ignore_tokens=ignore_tokens,
+            exclude_special_tokens_from_reconstruction=eval_config.exclude_special_tokens_from_reconstruction,
             verbose=verbose,
         )
 
@@ -222,9 +222,7 @@ def run_evals(
             all_metrics["model_behavior_preservation"].update(
                 {
                     "kl_div_score": reconstruction_metrics["kl_div_score"],
-                    "kl_div_with_ablation": reconstruction_metrics[
-                        "kl_div_with_ablation"
-                    ],
+                    "kl_div_with_ablation": reconstruction_metrics["kl_div_with_ablation"],
                     "kl_div_with_sae": reconstruction_metrics["kl_div_with_sae"],
                 }
             )
@@ -233,13 +231,9 @@ def run_evals(
             all_metrics["model_performance_preservation"].update(
                 {
                     "ce_loss_score": reconstruction_metrics["ce_loss_score"],
-                    "ce_loss_with_ablation": reconstruction_metrics[
-                        "ce_loss_with_ablation"
-                    ],
+                    "ce_loss_with_ablation": reconstruction_metrics["ce_loss_with_ablation"],
                     "ce_loss_with_sae": reconstruction_metrics["ce_loss_with_sae"],
-                    "ce_loss_without_sae": reconstruction_metrics[
-                        "ce_loss_without_sae"
-                    ],
+                    "ce_loss_without_sae": reconstruction_metrics["ce_loss_without_sae"],
                 }
             )
 
@@ -289,9 +283,7 @@ def run_evals(
         if eval_config.compute_variance_metrics:
             all_metrics["reconstruction_quality"].update(
                 {
-                    "explained_variance": sparsity_variance_metrics[
-                        "explained_variance"
-                    ],
+                    "explained_variance": sparsity_variance_metrics["explained_variance"],
                     "mse": sparsity_variance_metrics["mse"],
                     "cossim": sparsity_variance_metrics["cossim"],
                 }
@@ -303,9 +295,7 @@ def run_evals(
         feature_metrics |= get_featurewise_weight_based_metrics(sae)
 
     if len(all_metrics) == 0:
-        raise ValueError(
-            "No metrics were computed, please set at least one metric to True."
-        )
+        raise ValueError("No metrics were computed, please set at least one metric to True.")
 
     # restore previous hook z reshaping mode if necessary
     if "hook_z" in hook_name:
@@ -338,14 +328,15 @@ def run_evals(
 
 
 def get_featurewise_weight_based_metrics(sae: SAE) -> dict[str, Any]:
-
     unit_norm_encoders = (sae.W_enc / sae.W_enc.norm(dim=0, keepdim=True)).cpu()
     unit_norm_decoder = (sae.W_dec.T / sae.W_dec.T.norm(dim=0, keepdim=True)).cpu()
 
     encoder_norms = sae.W_enc.norm(dim=-2).cpu().tolist()
 
     # gated models have a different bias (no b_enc)
-    if sae.cfg.architecture != "gated":
+    if not hasattr(sae, "b_enc") and not hasattr(sae, "b_mag"):
+        encoder_bias = torch.zeros(sae.cfg.d_sae).cpu().tolist()
+    elif sae.cfg.architecture != "gated":
         encoder_bias = sae.b_enc.cpu().tolist()
     else:
         encoder_bias = sae.b_mag.cpu().tolist()
@@ -375,6 +366,7 @@ def get_downstream_reconstruction_metrics(
     n_batches: int,
     eval_batch_size_prompts: int,
     ignore_tokens: set[int | None] = set(),
+    exclude_special_tokens_from_reconstruction: bool = False,
     verbose: bool = False,
 ):
     metrics_dict = {}
@@ -399,14 +391,13 @@ def get_downstream_reconstruction_metrics(
             activation_store,
             compute_kl=compute_kl,
             compute_ce_loss=compute_ce_loss,
+            ignore_tokens=ignore_tokens,
+            exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
         ).items():
-
             if len(ignore_tokens) > 0:
                 mask = torch.logical_not(
                     torch.any(
-                        torch.stack(
-                            [batch_tokens == token for token in ignore_tokens], dim=0
-                        ),
+                        torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
                         dim=0,
                     )
                 )
@@ -448,7 +439,6 @@ def get_sparsity_and_variance_metrics(
     ignore_tokens: set[int | None] = set(),
     verbose: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-
     hook_name = sae.cfg.hook_name
     hook_head_index = sae.cfg.hook_head_index
 
@@ -485,9 +475,7 @@ def get_sparsity_and_variance_metrics(
         if len(ignore_tokens) > 0:
             mask = torch.logical_not(
                 torch.any(
-                    torch.stack(
-                        [batch_tokens == token for token in ignore_tokens], dim=0
-                    ),
+                    torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
                     dim=0,
                 )
             )
@@ -557,9 +545,7 @@ def get_sparsity_and_variance_metrics(
             metric_dict["l2_norm_in"].append(l2_norm_in)
             metric_dict["l2_norm_out"].append(l2_norm_out)
             metric_dict["l2_ratio"].append(l2_norm_ratio)
-            metric_dict["relative_reconstruction_bias"].append(
-                relative_reconstruction_bias
-            )
+            metric_dict["relative_reconstruction_bias"].append(relative_reconstruction_bias)
 
         if compute_sparsity_metrics:
             l0 = (flattened_sae_feature_acts > 0).sum(dim=-1).float()
@@ -568,9 +554,7 @@ def get_sparsity_and_variance_metrics(
             metric_dict["l1"].append(l1)
 
         if compute_variance_metrics:
-            resid_sum_of_squares = (
-                (flattened_sae_input - flattened_sae_out).pow(2).sum(dim=-1)
-            )
+            resid_sum_of_squares = (flattened_sae_input - flattened_sae_out).pow(2).sum(dim=-1)
             total_sum_of_squares = (
                 (flattened_sae_input - flattened_sae_input.mean(dim=0)).pow(2).sum(-1)
             )
@@ -578,12 +562,8 @@ def get_sparsity_and_variance_metrics(
             mse = resid_sum_of_squares / flattened_mask.sum()
             explained_variance = 1 - resid_sum_of_squares / total_sum_of_squares
 
-            x_normed = flattened_sae_input / torch.norm(
-                flattened_sae_input, dim=-1, keepdim=True
-            )
-            x_hat_normed = flattened_sae_out / torch.norm(
-                flattened_sae_out, dim=-1, keepdim=True
-            )
+            x_normed = flattened_sae_input / torch.norm(flattened_sae_input, dim=-1, keepdim=True)
+            x_hat_normed = flattened_sae_out / torch.norm(flattened_sae_out, dim=-1, keepdim=True)
             cossim = (x_normed * x_hat_normed).sum(dim=-1)
 
             metric_dict["explained_variance"].append(explained_variance)
@@ -593,9 +573,7 @@ def get_sparsity_and_variance_metrics(
         if compute_featurewise_density_statistics:
             sae_feature_activations_bool = (masked_sae_feature_activations > 0).float()
             total_feature_acts += sae_feature_activations_bool.sum(dim=1).sum(dim=0)
-            total_feature_prompts += (sae_feature_activations_bool.sum(dim=1) > 0).sum(
-                dim=0
-            )
+            total_feature_prompts += (sae_feature_activations_bool.sum(dim=1) > 0).sum(dim=0)
             total_tokens += mask.sum()
 
     # Aggregate scalar metrics
@@ -621,6 +599,8 @@ def get_recons_loss(
     activation_store: ActivationsStore,
     compute_kl: bool,
     compute_ce_loss: bool,
+    ignore_tokens: set[int | None] = set(),
+    exclude_special_tokens_from_reconstruction: bool = False,
     model_kwargs: Mapping[str, Any] = {},
 ) -> dict[str, Any]:
     hook_name = sae.cfg.hook_name
@@ -630,11 +610,20 @@ def get_recons_loss(
         batch_tokens, return_type="both", loss_per_token=True, **model_kwargs
     )
 
+    if len(ignore_tokens) > 0 and exclude_special_tokens_from_reconstruction:
+        mask = torch.logical_not(
+            torch.any(
+                torch.stack([batch_tokens == token for token in ignore_tokens], dim=0),
+                dim=0,
+            )
+        )
+    else:
+        mask = torch.ones_like(batch_tokens, dtype=torch.bool)
+
     metrics = {}
 
     # TODO(tomMcGrath): the rescaling below is a bit of a hack and could probably be tidied up
     def standard_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -643,16 +632,19 @@ def get_recons_loss(
             activations = activation_store.apply_norm_scaling_factor(activations)
 
         # SAE class agnost forward forward pass.
-        activations = sae.decode(sae.encode(activations)).to(activations.dtype)
+        reconstructed_activations = sae.decode(sae.encode(activations)).to(activations.dtype)
 
         # Unscale if activations were scaled prior to going into the SAE
         if activation_store.normalize_activations == "expected_average_only_in":
-            activations = activation_store.unscale(activations)
+            reconstructed_activations = activation_store.unscale(reconstructed_activations)
 
-        return activations.to(original_device)
+        reconstructed_activations = torch.where(
+            mask[..., None], reconstructed_activations, activations
+        )
+
+        return reconstructed_activations.to(original_device)
 
     def all_head_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -661,9 +653,7 @@ def get_recons_loss(
             activations = activation_store.apply_norm_scaling_factor(activations)
 
         # SAE class agnost forward forward pass.
-        new_activations = sae.decode(sae.encode(activations.flatten(-2, -1))).to(
-            activations.dtype
-        )
+        new_activations = sae.decode(sae.encode(activations.flatten(-2, -1))).to(activations.dtype)
 
         new_activations = new_activations.reshape(
             activations.shape
@@ -673,10 +663,12 @@ def get_recons_loss(
         if activation_store.normalize_activations == "expected_average_only_in":
             new_activations = activation_store.unscale(new_activations)
 
+        # Apply mask to keep original activations for ignored tokens
+        new_activations = torch.where(mask[..., None, None], new_activations, activations)
+
         return new_activations.to(original_device)
 
     def single_head_replacement_hook(activations: torch.Tensor, hook: Any):
-
         original_device = activations.device
         activations = activations.to(sae.device)
 
@@ -684,15 +676,25 @@ def get_recons_loss(
         if activation_store.normalize_activations == "expected_average_only_in":
             activations = activation_store.apply_norm_scaling_factor(activations)
 
-        new_activations = sae.decode(sae.encode(activations[:, :, head_index])).to(
+        # Create a copy of activations to modify
+        new_activations = activations.clone()
+
+        # Only reconstruct the specified head
+        head_activations = sae.decode(sae.encode(activations[:, :, head_index])).to(
             activations.dtype
         )
-        activations[:, :, head_index] = new_activations
+
+        # Apply mask only to the reconstructed head
+        masked_head_activations = torch.where(
+            mask[..., None], head_activations, activations[:, :, head_index]
+        )
+        new_activations[:, :, head_index] = masked_head_activations
 
         # Unscale if activations were scaled prior to going into the SAE
         if activation_store.normalize_activations == "expected_average_only_in":
-            activations = activation_store.unscale(activations)
-        return activations.to(original_device)
+            new_activations = activation_store.unscale(new_activations)
+
+        return new_activations.to(original_device)
 
     def standard_zero_ablate_hook(activations: torch.Tensor, hook: Any):
         original_device = activations.device
@@ -766,25 +768,9 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
         for sae_name in lookup.saes_map.keys():
             expected_var_explained = lookup.expected_var_explained[sae_name]
             expected_l0 = lookup.expected_l0[sae_name]
-            all_loadable_saes.append(
-                (release, sae_name, expected_var_explained, expected_l0)
-            )
+            all_loadable_saes.append((release, sae_name, expected_var_explained, expected_l0))
 
     return all_loadable_saes
-
-
-def get_saes_from_regex(
-    sae_regex_pattern: str, sae_block_pattern: str
-) -> list[tuple[str, str, float, float]]:
-    sae_regex_compiled = re.compile(sae_regex_pattern)
-    sae_block_compiled = re.compile(sae_block_pattern)
-    all_saes = all_loadable_saes()
-    filtered_saes = [
-        sae
-        for sae in all_saes
-        if sae_regex_compiled.fullmatch(sae[0]) and sae_block_compiled.fullmatch(sae[1])
-    ]
-    return filtered_saes
 
 
 def nested_dict() -> defaultdict[Any, Any]:
@@ -803,7 +789,7 @@ def dict_to_nested(flat_dict: dict[str, Any]) -> defaultdict[Any, Any]:
 
 
 def convert_feature_metrics(
-    flattened_feature_metrics: Dict[str, List[float]]
+    flattened_feature_metrics: Dict[str, List[float]],
 ) -> List[CoreFeatureMetric]:
     """Convert feature metrics from parallel lists to list of dicts.
 
@@ -893,8 +879,10 @@ def save_single_eval_result(
     )
 
     # Save individual JSON file
-    json_filename = f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
-        "/", "_"
+    json_filename = (
+        f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
+            "/", "_"
+        )
     )
     json_path = output_path / json_filename
     eval_output.to_json_file(json_path)
@@ -903,20 +891,19 @@ def save_single_eval_result(
 
 
 def multiple_evals(
-    sae_regex_pattern: str,
-    sae_block_pattern: str,
+    filtered_saes: list[tuple[str, str]] | list[tuple[str, SAE]],
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
+    exclude_special_tokens_from_reconstruction: bool = False,
     dataset: str = "Skylion007/openwebtext",
     context_size: int = 128,
     output_folder: str = "eval_results",
     verbose: bool = False,
+    dtype: str = "float32",
 ) -> List[Dict[str, Any]]:
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    filtered_saes = get_saes_from_regex(sae_regex_pattern, sae_block_pattern)
-    assert len(filtered_saes) > 0, "No SAEs matched the given regex patterns"
+    assert len(filtered_saes) > 0, "No SAEs to evaluate"
 
     eval_results = []
     output_path = Path(output_folder)
@@ -936,7 +923,7 @@ def multiple_evals(
     current_model = None
     current_model_str = None
 
-    for sae_release_name, sae_id, _, _ in tqdm(filtered_saes):
+    for sae_release_name, sae_id in tqdm(filtered_saes):
         # Wrap SAE loading with retry
         @retry_with_exponential_backoff(
             retries=5,
@@ -953,15 +940,19 @@ def multiple_evals(
                 device=device,
             )[0]
 
-        try:
-            sae = load_sae()
-        except Exception as e:
-            logger.error(
-                f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}"
-            )
-            continue  # Skip this SAE and continue with the next one
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            try:
+                sae = load_sae()
+            except Exception as e:
+                logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
+                continue  # Skip this SAE and continue with the next one
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
 
         sae.to(device)
+        sae = sae.to(str_to_dtype(dtype))
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
@@ -977,6 +968,7 @@ def multiple_evals(
                 return HookedTransformer.from_pretrained_no_processing(
                     sae.cfg.model_name,
                     device=device,
+                    dtype=sae.W_enc.dtype,
                     **sae.cfg.model_from_pretrained_kwargs,
                 )
 
@@ -990,15 +982,14 @@ def multiple_evals(
 
         assert current_model is not None
 
- 
         try:
             # Create a CoreEvalConfig for this specific evaluation
             core_eval_config = CoreEvalConfig(
                 model_name=sae.cfg.model_name,
-                batch_size_prompts=multiple_evals_config.batch_size_prompts 
-                or 16,
+                batch_size_prompts=multiple_evals_config.batch_size_prompts or 16,
                 n_eval_reconstruction_batches=multiple_evals_config.n_eval_reconstruction_batches,
                 n_eval_sparsity_variance_batches=multiple_evals_config.n_eval_sparsity_variance_batches,
+                exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
                 dataset=dataset,
                 context_size=context_size,
                 compute_kl=multiple_evals_config.compute_kl,
@@ -1008,6 +999,7 @@ def multiple_evals(
                 compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
                 compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
                 compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+                llm_dtype=dtype,
             )
 
             # Wrap activation store creation with retry
@@ -1074,14 +1066,16 @@ def multiple_evals(
 
 def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     # Filter SAEs based on regex patterns
-    filtered_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    filtered_saes = sae_selection_utils.get_saes_from_regex(
+        args.sae_regex_pattern, args.sae_block_pattern
+    )
 
     # print the filtered SAEs
     print("Filtered SAEs based on provided patterns:")
     for sae in filtered_saes:
         print(sae)
 
-    num_sae_sets = len(set(sae_set for sae_set, _, _, _ in filtered_saes))
+    num_sae_sets = len(set(sae_set for sae_set, _ in filtered_saes))
     num_all_sae_ids = len(filtered_saes)
 
     print("Filtered SAEs based on provided patterns:")
@@ -1089,15 +1083,16 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     print(f"Total number of SAE IDs: {num_all_sae_ids}")
 
     eval_results = multiple_evals(
-        sae_regex_pattern=args.sae_regex_pattern,
-        sae_block_pattern=args.sae_block_pattern,
+        filtered_saes=filtered_saes,
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
+        exclude_special_tokens_from_reconstruction=args.exclude_special_tokens_from_reconstruction,
         dataset=args.dataset,
         context_size=args.context_size,
         output_folder=args.output_folder,
         verbose=args.verbose,
+        dtype=args.llm_dtype,
     )
 
     return eval_results
@@ -1112,6 +1107,22 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
         return -1
     else:
         return obj
+
+
+def str_to_dtype(dtype_str: str) -> torch.dtype:
+    dtype_map = {
+        "float32": torch.float32,
+        "float64": torch.float64,
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+    }
+    dtype = dtype_map.get(dtype_str.lower())
+    if dtype is None:
+        raise ValueError(
+            f"Unsupported dtype: {dtype_str}. Supported dtypes: {list(dtype_map.keys())}"
+        )
+    return dtype
+
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run core evaluation")
@@ -1185,6 +1196,11 @@ def arg_parser():
         help="Compute featurewise weight-based metrics.",
     )
     parser.add_argument(
+        "--exclude_special_tokens_from_reconstruction",
+        action="store_true",
+        help="Exclude special tokens like BOS, EOS, PAD from reconstruction.",
+    )
+    parser.add_argument(
         "--dataset",
         default="Skylion007/openwebtext",
         help="Dataset to evaluate on, such as 'Skylion007/openwebtext' or 'lighteval/MATH'.",
@@ -1206,17 +1222,66 @@ def arg_parser():
         action="store_true",
         help="Enable verbose output with tqdm loaders.",
     )
+    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
     parser.add_argument(
-        "--force_rerun", action="store_true", help="Force rerun of experiments"
+        "--llm_dtype",
+        type=str,
+        default="float32",
+        choices=["float32", "float", "float64", "double", "float16", "half", "bfloat16"],
+        help="Data type for computation",
     )
 
     return parser
 
+
 if __name__ == "__main__":
-   
     args = arg_parser().parse_args()
     eval_results = run_evaluations(args)
 
     print("Evaluation complete. All results have been saved incrementally.")  # type: ignore
     # print(f"Combined JSON: {output_files['combined_json']}")
     # print(f"CSV: {output_files['csv']}")
+
+
+# Use this code snippet to use custom SAE objects
+# if __name__ == "__main__":
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
+
+#     start_time = time.time()
+
+#     random_seed = 42
+#     output_folder = "eval_results/core"
+
+#     batch_size_prompts = 16
+#     n_eval_reconstruction_batches = 20
+#     n_eval_sparsity_variance_batches = 20
+#     context_size = 128
+#     dataset_name = "Skylion007/openwebtext"
+#     exclude_special_tokens_from_reconstruction = True
+
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
+#     llm_dtype = torch.bfloat16
+
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
+
+#     # it's recommended to specify the dtype of the SAE
+#     for sae_name, sae in selected_saes:
+#         sae.cfg.dtype = "bfloat16"
+
+#     multiple_evals(
+#         filtered_saes=selected_saes,
+#         n_eval_reconstruction_batches=n_eval_reconstruction_batches,
+#         n_eval_sparsity_variance_batches=n_eval_sparsity_variance_batches,
+#         eval_batch_size_prompts=batch_size_prompts,
+#         exclude_special_tokens_from_reconstruction=exclude_special_tokens_from_reconstruction,
+#         dataset=dataset_name,
+#         context_size=context_size,
+#         output_folder=output_folder,
+#         verbose=True,
+#         dtype=llm_dtype,
+#     )

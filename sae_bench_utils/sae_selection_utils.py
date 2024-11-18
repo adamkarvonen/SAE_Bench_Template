@@ -16,7 +16,7 @@ def all_loadable_saes() -> list[tuple[str, str, float, float]]:
     return all_loadable_saes
 
 
-def get_saes_from_regex(sae_regex_pattern: str, sae_id_pattern: str) -> dict[str, list[str]]:
+def get_saes_from_regex(sae_regex_pattern: str, sae_id_pattern: str) -> list[tuple[str, str]]:
     """
     Filter and retrieve SAEs based on regex patterns for release names and SAE IDs.
 
@@ -28,12 +28,13 @@ def get_saes_from_regex(sae_regex_pattern: str, sae_id_pattern: str) -> dict[str
         sae_id_pattern (str): A regex pattern to match against SAE IDs.
 
     Returns:
-        dict[str, list[str]]: A dictionary where keys are matching release names and
-        values are lists of matching SAE IDs within that release.
+        list[tuple[str, str]]: A list of tuples, where each tuple contains
+        (release_name, sae_id) for SAEs matching both regex patterns.
 
     Example:
         >>> get_saes_from_regex(r"sae_bench_pythia.*", r"blocks\.4\.hook_resid_pre.*")
-        {'sae_bench_pythia70m_sweep_standard_ctx128_0712': ['blocks.4.hook_resid_pre__trainer_0', ...]}
+        [('sae_bench_pythia70m_sweep_standard_ctx128_0712', 'blocks.4.hook_resid_pre__trainer_0'),
+         ('sae_bench_pythia70m_sweep_standard_ctx128_0712', 'blocks.4.hook_resid_pre__trainer_1'), ...]
     """
     sae_regex_compiled = re.compile(sae_regex_pattern)
     sae_id_compiled = re.compile(sae_id_pattern)
@@ -44,13 +45,9 @@ def get_saes_from_regex(sae_regex_pattern: str, sae_id_pattern: str) -> dict[str
         if sae_regex_compiled.fullmatch(sae[0]) and sae_id_compiled.fullmatch(sae[1])
     ]
 
-    # Convert to a dictionary with the first element (release) as the key, and all second elements which share the first as a list in the value
-    filtered_saes_dict = {}
-    for sae in filtered_saes:
-        if sae[0] not in filtered_saes_dict:
-            filtered_saes_dict[sae[0]] = []
-        filtered_saes_dict[sae[0]].append(sae[1])
-    return filtered_saes_dict
+    # exclude the expected_var_explained and expected_l0 values
+    filtered_saes = [(sae[0], sae[1]) for sae in filtered_saes]
+    return filtered_saes
 
 
 metadata_rows = [
@@ -106,18 +103,20 @@ def print_release_details(release_name: str):
 
 def select_saes_multiple_patterns(
     sae_regex_patterns: list[str],
-    sae_block_pattern: list[str],
-) -> dict[str, list[str]]:
-    assert len(sae_regex_patterns) == len(sae_block_pattern), "Length mismatch"
+    sae_block_patterns: list[str],
+) -> list[tuple[str, str]]:
+    assert len(sae_regex_patterns) == len(sae_block_patterns), "Length mismatch"
 
-    selected_saes_dict = {}
-    for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_pattern):
-        selected_saes_dict.update(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+    selected_saes = []
+    for sae_regex_pattern, sae_block_pattern in zip(sae_regex_patterns, sae_block_patterns):
+        selected_saes.extend(get_saes_from_regex(sae_regex_pattern, sae_block_pattern))
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return selected_saes

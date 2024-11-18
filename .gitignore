@@ -32,8 +32,6 @@ evals/ravel/data/
 evals/ravel/models/
 evals/ravel/dev/
 
-evals/absorption/results/
-
 # unlearning: the forget dataset cannot be uploaded
 */unlearning/data/bio-forget-corpus.jsonl
 
@@ -42,3 +40,6 @@ evals/absorption/results/
 **/results/
 **/artifacts/
 **/test_results/
+**/eval_results/
+
+openai_api_key.txt

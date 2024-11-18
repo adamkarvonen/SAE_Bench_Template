@@ -69,7 +69,7 @@ class AbsorptionEvalOutput(
 ):
     # This will end up being the description of the eval in the UI.
     """
-    The output of a feature absorption evaluation looking at the first letter.
+    The feature absorption evaluation looking at the first letter.
     """
 
     eval_config: AbsorptionEvalConfig

@@ -11,6 +11,11 @@ class CoreEvalConfig(BaseEvalConfig):
         title="Model Name",
         description="Model name",
     )
+    llm_dtype: str = Field(
+        default="float32",
+        title="LLM Data Type",
+        description="LLM data type",
+    )
     batch_size_prompts: int = Field(
         default=16,
         title="Batch Size Prompts",
@@ -70,6 +75,11 @@ class CoreEvalConfig(BaseEvalConfig):
         default=False,
         title="Compute Featurewise Weight-Based Metrics",
         description="Compute featurewise weight-based metrics",
+    )
+    exclude_special_tokens_from_reconstruction: bool = Field(
+        default=False,
+        title="Exclude Special Tokens from Reconstruction",
+        description="Exclude special tokens like BOS, EOS, PAD from reconstruction",
     )
     verbose: bool = Field(
         default=False,

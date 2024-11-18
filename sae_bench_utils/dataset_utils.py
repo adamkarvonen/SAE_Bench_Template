@@ -2,12 +2,83 @@ from typing import Callable, Optional
 from collections import defaultdict
 import pandas as pd
 import torch
+import einops
 from datasets import load_dataset
 from tqdm import tqdm
 from transformers import AutoTokenizer
 import random
 
 import sae_bench_utils.dataset_info as dataset_info
+
+
+def get_dataset_list_of_strs(
+    dataset_name: str, column_name: str, min_row_chars: int, total_chars: int
+) -> list[str]:
+    dataset = load_dataset(dataset_name, split="train", streaming=True)
+
+    total_chars_so_far = 0
+    result = []
+
+    for row in dataset:
+        if len(row[column_name]) > min_row_chars:
+            result.append(row[column_name])
+            total_chars_so_far += len(row[column_name])
+            if total_chars_so_far > total_chars:
+                break
+
+    return result
+
+
+def load_and_tokenize_dataset(
+    dataset_name: str,
+    ctx_len: int,
+    num_tokens: int,
+    tokenizer: AutoTokenizer,
+    column_name: str = "text",
+    add_bos: bool = True,
+) -> torch.Tensor:
+    dataset = get_dataset_list_of_strs(dataset_name, column_name, 100, num_tokens * 5)
+
+    tokens = tokenize_and_concat_dataset(
+        tokenizer, dataset, ctx_len, add_bos=add_bos, max_tokens=num_tokens
+    )
+
+    assert (tokens.shape[0] * tokens.shape[1]) > num_tokens
+
+    return tokens
+
+
+def tokenize_and_concat_dataset(
+    tokenizer: AutoTokenizer,
+    dataset: list[str],
+    seq_len: int,
+    add_bos: bool = True,
+    max_tokens: Optional[int] = None,
+) -> torch.Tensor:
+    full_text = tokenizer.eos_token.join(dataset)
+
+    # divide into chunks to speed up tokenization
+    num_chunks = 20
+    chunk_length = (len(full_text) - 1) // num_chunks + 1
+    chunks = [full_text[i * chunk_length : (i + 1) * chunk_length] for i in range(num_chunks)]
+    tokens = tokenizer(chunks, return_tensors="pt", padding=True)["input_ids"].flatten()
+
+    # remove pad token
+    tokens = tokens[tokens != tokenizer.pad_token_id]
+
+    if max_tokens is not None:
+        tokens = tokens[: max_tokens + seq_len + 1]
+
+    num_tokens = len(tokens)
+    num_batches = num_tokens // seq_len
+
+    # drop last batch if not full
+    tokens = tokens[: num_batches * seq_len]
+    tokens = einops.rearrange(tokens, "(batch seq) -> batch seq", batch=num_batches, seq=seq_len)
+
+    if add_bos:
+        tokens[:, 0] = tokenizer.bos_token_id
+    return tokens
 
 
 def gather_dataset_from_df(
@@ -229,7 +300,7 @@ def get_balanced_dataset(
 
         if min_count < min_samples_per_quadrant:
             continue
-            
+
         sampled_texts = []
         for _, group_df in prof_df.groupby(column2_name):
             sampled_group = group_df.sample(n=min_samples_per_quadrant, random_state=random_seed)
@@ -382,7 +453,7 @@ def get_multi_label_train_test_data(
     return train_data, test_data
 
 
-def tokenize_data(
+def tokenize_data_dictionary(
     data: dict[str, list[str]], tokenizer: AutoTokenizer, max_length: int, device: str
 ) -> dict[str, dict]:
     tokenized_data = {}

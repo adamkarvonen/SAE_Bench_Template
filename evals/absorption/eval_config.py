@@ -35,7 +35,17 @@ class AbsorptionEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="pythia-70m-deduped",
+        default="gemma-2-2b",
         title="Model Name",
         description="Model name",
+    )
+    llm_batch_size: int = Field(
+        default=32,
+        title="LLM Batch Size",
+        description="LLM batch size, inference only",
+    )
+    llm_dtype: str = Field(
+        default="bfloat16",
+        title="LLM Data Type",
+        description="LLM data type",
     )

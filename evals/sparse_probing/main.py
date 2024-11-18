@@ -24,7 +24,7 @@ import evals.sparse_probing.probe_training as probe_training
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_info as dataset_info
 import sae_bench_utils.dataset_utils as dataset_utils
-import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.general_utils as general_utils
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
@@ -61,18 +61,18 @@ def get_dataset_activations(
     train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
     test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
 
-    train_data = dataset_utils.tokenize_data(
+    train_data = dataset_utils.tokenize_data_dictionary(
         train_data, model.tokenizer, config.context_length, device
     )
-    test_data = dataset_utils.tokenize_data(
+    test_data = dataset_utils.tokenize_data_dictionary(
         test_data, model.tokenizer, config.context_length, device
     )
 
     all_train_acts_BLD = activation_collection.get_all_llm_activations(
-        train_data, model, llm_batch_size, layer, hook_point
+        train_data, model, llm_batch_size, layer, hook_point, mask_bos_pad_eos_tokens=True
     )
     all_test_acts_BLD = activation_collection.get_all_llm_activations(
-        test_data, model, llm_batch_size, layer, hook_point
+        test_data, model, llm_batch_size, layer, hook_point, mask_bos_pad_eos_tokens=True
     )
 
     return all_train_acts_BLD, all_test_acts_BLD
@@ -194,8 +194,6 @@ def run_eval_single_sae(
     config: SparseProbingEvalConfig,
     sae: SAE,
     model: HookedTransformer,
-    layer: int,
-    hook_point: str,
     device: str,
     artifacts_folder: str,
     save_activations: bool = True,
@@ -207,6 +205,7 @@ def run_eval_single_sae(
 
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
+    os.makedirs(artifacts_folder, exist_ok=True)
 
     results_dict = {}
 
@@ -217,16 +216,14 @@ def run_eval_single_sae(
             config,
             sae,
             model,
-            layer,
-            hook_point,
+            sae.cfg.hook_layer,
+            sae.cfg.hook_name,
             device,
             artifacts_folder,
             save_activations,
         )
 
-    results_dict = formatting_utils.average_results_dictionaries(
-        dataset_results, config.dataset_names
-    )
+    results_dict = general_utils.average_results_dictionaries(dataset_results, config.dataset_names)
 
     for dataset_name, dataset_result in dataset_results.items():
         results_dict[f"{dataset_name}"] = dataset_result
@@ -236,14 +233,18 @@ def run_eval_single_sae(
 
 def run_eval(
     config: SparseProbingEvalConfig,
-    selected_saes_dict: dict[str, list[str]],
+    selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_activations: bool = False,
+    save_activations: bool = True,
 ):
-    """By default, clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
-    This is because activations for all datasets can easily be 10s of GBs.
+    """
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
+
+    If clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
+    You may want to use this because activations for all datasets can easily be 10s of GBs.
     Return dict is a dict of SAE name: evaluation results for that SAE."""
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
@@ -265,129 +266,119 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
-        )
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
-
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
                 release=sae_release,
                 sae_id=sae_id,
                 device=device,
             )[0]
-            sae = sae.to(device=device, dtype=llm_dtype)
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
 
-            artifacts_folder = os.path.join(
-                artifacts_base_folder,
-                EVAL_TYPE_ID_SPARSE_PROBING,
-                config.model_name,
-                sae.cfg.hook_name,
+        sae = sae.to(device=device, dtype=llm_dtype)
+
+        artifacts_folder = os.path.join(
+            artifacts_base_folder,
+            EVAL_TYPE_ID_SPARSE_PROBING,
+            config.model_name,
+            sae.cfg.hook_name,
+        )
+
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Loading existing results from {sae_result_path}")
+            with open(sae_result_path, "r") as f:
+                eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
+        else:
+            sparse_probing_results = run_eval_single_sae(
+                config,
+                sae,
+                model,
+                device,
+                artifacts_folder,
+                save_activations=save_activations,
             )
-            os.makedirs(artifacts_folder, exist_ok=True)
-
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
-
-            if os.path.exists(sae_result_path) and not force_rerun:
-                print(f"Loading existing results from {sae_result_path}")
-                with open(sae_result_path, "r") as f:
-                    eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
-            else:
-                sparse_probing_results = run_eval_single_sae(
-                    config,
-                    sae,
-                    model,
-                    sae.cfg.hook_layer,
-                    sae.cfg.hook_name,
-                    device,
-                    artifacts_folder,
-                )
-                eval_output = SparseProbingEvalOutput(
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=SparseProbingMetricCategories(
-                        llm=SparseProbingLlmMetrics(
-                            **{
-                                k: v
-                                for k, v in sparse_probing_results.items()
-                                if k.startswith("llm_") and not isinstance(v, dict)
-                            }
-                        ),
-                        sae=SparseProbingSaeMetrics(
-                            **{
-                                k: v
-                                for k, v in sparse_probing_results.items()
-                                if k.startswith("sae_") and not isinstance(v, dict)
-                            }
-                        ),
+            eval_output = SparseProbingEvalOutput(
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=SparseProbingMetricCategories(
+                    llm=SparseProbingLlmMetrics(
+                        **{
+                            k: v
+                            for k, v in sparse_probing_results.items()
+                            if k.startswith("llm_") and not isinstance(v, dict)
+                        }
                     ),
-                    eval_result_details=[
-                        SparseProbingResultDetail(
-                            dataset_name=dataset_name,
-                            **result,
-                        )
-                        for dataset_name, result in sparse_probing_results.items()
-                        if isinstance(result, dict)
-                    ],
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                )
+                    sae=SparseProbingSaeMetrics(
+                        **{
+                            k: v
+                            for k, v in sparse_probing_results.items()
+                            if k.startswith("sae_") and not isinstance(v, dict)
+                        }
+                    ),
+                ),
+                eval_result_details=[
+                    SparseProbingResultDetail(
+                        dataset_name=dataset_name,
+                        **result,
+                    )
+                    for dataset_name, result in sparse_probing_results.items()
+                    if isinstance(result, dict)
+                ],
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
+            )
 
-            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
+        results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            eval_output.to_json_file(sae_result_path, indent=2)
+        eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_activations:
-        shutil.rmtree(artifacts_folder)
+        if os.path.exists(artifacts_folder):
+            shutil.rmtree(artifacts_folder)
 
     return results_dict
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(
     args,
-) -> tuple[SparseProbingEvalConfig, dict[str, list[str]]]:
+) -> tuple[SparseProbingEvalConfig, list[tuple[str, str]]]:
     config = SparseProbingEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument("--model_name", type=str, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -403,7 +394,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/sparse_probing/results",
+        default="eval_results/sparse_probing",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -411,6 +402,11 @@ def arg_parser():
         "--clean_up_activations",
         action="store_true",
         help="Clean up activations after evaluation",
+    )
+    parser.add_argument(
+        "--save_activations",
+        action="store_false",
+        help="Save the generated LLM activations for later use",
     )
 
     return parser
@@ -421,38 +417,21 @@ if __name__ == "__main__":
     python evals/sparse_probing/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
-    --model_name pythia-70m-deduped 
-    
-    
+    --model_name pythia-70m-deduped
+
+
     """
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 
-    sae_regex_patterns = [
-        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
-        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
-    ]
-    sae_block_pattern = [
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-        r".*blocks\.([4])\.hook_resid_post__trainer_(2|6|10|14)$",
-    ]
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    sae_regex_patterns = None
-    sae_block_pattern = None
-
-    config, selected_saes_dict = create_config_and_selected_saes(args)
-
-    if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
-
-    print(selected_saes_dict)
+    print(selected_saes)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
@@ -460,13 +439,64 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.output_folder,
         args.force_rerun,
         args.clean_up_activations,
+        args.save_activations,
     )
 
     end_time = time.time()
 
     print(f"Finished evaluation in {end_time - start_time} seconds")
+
+
+# Use this code snippet to use custom SAE objects
+# if __name__ == "__main__":
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
+
+#     """
+#     python evals/sparse_probing/main.py
+#     """
+#     device = general_utils.setup_environment()
+
+#     start_time = time.time()
+
+#     random_seed = 42
+#     output_folder = "eval_results/sparse_probing"
+
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
+
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
+
+#     config = SparseProbingEvalConfig(
+#         random_seed=random_seed,
+#         model_name=model_name,
+#     )
+
+#     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+#     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+#     # create output folder
+#     os.makedirs(output_folder, exist_ok=True)
+
+#     # run the evaluation on all selected SAEs
+#     results_dict = run_eval(
+#         config,
+#         selected_saes,
+#         device,
+#         output_folder,
+#         force_rerun=True,
+#         clean_up_activations=False,
+#         save_activations=True,
+#     )
+
+#     end_time = time.time()
+
+#     print(f"Finished evaluation in {end_time - start_time} seconds")

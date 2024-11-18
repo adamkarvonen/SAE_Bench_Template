@@ -133,24 +133,24 @@
       "title": "ShiftAndTppEvalConfig",
       "type": "object"
     },
-    "ShiftMetricCategories": {
+    "TppMetricCategories": {
       "properties": {
-        "shift_metrics": {
-          "$ref": "#/$defs/ShiftMetrics",
-          "description": "SHIFT SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
-          "title": "Shift Metrics",
+        "tpp_metrics": {
+          "$ref": "#/$defs/TppMetrics",
+          "description": "Targeted Probe Perturbation (TPP) results",
+          "title": "TPP Metrics",
           "ui_default_display": true
         }
       },
       "required": [
-        "shift_metrics"
+        "tpp_metrics"
       ],
-      "title": "ShiftMetricCategories",
+      "title": "TppMetricCategories",
       "type": "object"
     },
-    "ShiftMetrics": {
+    "TppMetrics": {
       "properties": {
-        "scr_dir1_threshold_2": {
+        "tpp_threshold_2_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -160,10 +160,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 2 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 2 SAE latents"
+          "description": "TPP metric when ablating the top 2 SAE latents",
+          "title": "TPP Metric, Top 2 SAE latents"
         },
-        "scr_metric_threshold_2": {
+        "tpp_threshold_2_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -173,10 +173,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 2 SAE latents",
-          "title": "SCR Metric, Top 2 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 2 SAE latents",
+          "title": "TPP Intended Class, Top 2 SAE latents"
         },
-        "scr_dir2_threshold_2": {
+        "tpp_threshold_2_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -186,10 +186,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 2 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 2 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 2 SAE latents",
+          "title": "TPP Unintended Class, Top 2 SAE latents"
         },
-        "scr_dir1_threshold_5": {
+        "tpp_threshold_5_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -199,10 +199,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 5 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 5 SAE latents"
+          "description": "TPP metric when ablating the top 5 SAE latents",
+          "title": "TPP Metric, Top 5 SAE latents"
         },
-        "scr_metric_threshold_5": {
+        "tpp_threshold_5_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -212,10 +212,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 5 SAE latents",
-          "title": "SCR Metric, Top 5 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 5 SAE latents",
+          "title": "TPP Intended Class, Top 5 SAE latents"
         },
-        "scr_dir2_threshold_5": {
+        "tpp_threshold_5_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -225,10 +225,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 5 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 5 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 5 SAE latents",
+          "title": "TPP Unintended Class, Top 5 SAE latents"
         },
-        "scr_dir1_threshold_10": {
+        "tpp_threshold_10_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -238,24 +238,11 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 10 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 10 SAE latents"
-        },
-        "scr_metric_threshold_10": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 10 SAE latents",
-          "title": "SCR Metric, Top 10 SAE latents",
+          "description": "TPP metric when ablating the top 10 SAE latents",
+          "title": "TPP Metric, Top 10 SAE latents",
           "ui_default_display": true
         },
-        "scr_dir2_threshold_10": {
+        "tpp_threshold_10_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -265,10 +252,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 10 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 10 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 10 SAE latents",
+          "title": "TPP Intended Class, Top 10 SAE latents"
         },
-        "scr_dir1_threshold_20": {
+        "tpp_threshold_10_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -278,10 +265,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 20 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 20 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 10 SAE latents",
+          "title": "TPP Unintended Class, Top 10 SAE latents"
         },
-        "scr_metric_threshold_20": {
+        "tpp_threshold_20_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -291,10 +278,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 20 SAE latents",
-          "title": "SCR Metric, Top 20 SAE latents"
+          "description": "TPP metric when ablating the top 20 SAE latents",
+          "title": "TPP Metric, Top 20 SAE latents"
         },
-        "scr_dir2_threshold_20": {
+        "tpp_threshold_20_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -304,10 +291,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 20 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 20 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 20 SAE latents",
+          "title": "TPP Intended Class, Top 20 SAE latents"
         },
-        "scr_dir1_threshold_50": {
+        "tpp_threshold_20_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -317,10 +304,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 50 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 50 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 20 SAE latents",
+          "title": "TPP Unintended Class, Top 20 SAE latents"
         },
-        "scr_metric_threshold_50": {
+        "tpp_threshold_50_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -330,10 +317,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 50 SAE latents",
-          "title": "SCR Metric, Top 50 SAE latents"
+          "description": "TPP metric when ablating the top 50 SAE latents",
+          "title": "TPP Metric, Top 50 SAE latents"
         },
-        "scr_dir2_threshold_50": {
+        "tpp_threshold_50_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -343,10 +330,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 50 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 50 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 50 SAE latents",
+          "title": "TPP Intended Class, Top 50 SAE latents"
         },
-        "scr_dir1_threshold_100": {
+        "tpp_threshold_50_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -356,10 +343,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 100 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 100 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 50 SAE latents",
+          "title": "TPP Unintended Class, Top 50 SAE latents"
         },
-        "scr_metric_threshold_100": {
+        "tpp_threshold_100_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -369,10 +356,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 100 SAE latents",
-          "title": "SCR Metric, Top 100 SAE latents"
+          "description": "TPP metric when ablating the top 100 SAE latents",
+          "title": "TPP Metric, Top 100 SAE latents"
         },
-        "scr_dir2_threshold_100": {
+        "tpp_threshold_100_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -382,10 +369,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 100 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 100 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 100 SAE latents",
+          "title": "TPP Intended Class, Top 100 SAE latents"
         },
-        "scr_dir1_threshold_500": {
+        "tpp_threshold_100_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -395,10 +382,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 500 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 500 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 100 SAE latents",
+          "title": "TPP Unintended Class, Top 100 SAE latents"
         },
-        "scr_metric_threshold_500": {
+        "tpp_threshold_500_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -408,10 +395,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 500 SAE latents",
-          "title": "SCR Metric, Top 500 SAE latents"
+          "description": "TPP metric when ablating the top 500 SAE latents",
+          "title": "TPP Metric, Top 500 SAE latents"
         },
-        "scr_dir2_threshold_500": {
+        "tpp_threshold_500_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -421,21 +408,34 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 500 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 500 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 500 SAE latents",
+          "title": "TPP Intended Class, Top 500 SAE latents"
+        },
+        "tpp_threshold_500_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 500 SAE latents",
+          "title": "TPP Unintended Class, Top 500 SAE latents"
         }
       },
-      "title": "ShiftMetrics",
+      "title": "TppMetrics",
       "type": "object"
     },
-    "ShiftResultDetail": {
+    "TppResultDetail": {
       "properties": {
         "dataset_name": {
           "description": "",
           "title": "Dataset Name",
           "type": "string"
         },
-        "scr_dir1_threshold_2": {
+        "tpp_threshold_2_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -445,10 +445,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 2 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 2 SAE latents"
+          "description": "TPP metric when ablating the top 2 SAE latents",
+          "title": "TPP Metric, Top 2 SAE latents"
         },
-        "scr_metric_threshold_2": {
+        "tpp_threshold_2_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -458,10 +458,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 2 SAE latents",
-          "title": "SCR Metric, Top 2 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 2 SAE latents",
+          "title": "TPP Intended Class, Top 2 SAE latents"
         },
-        "scr_dir2_threshold_2": {
+        "tpp_threshold_2_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -471,10 +471,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 2 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 2 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 2 SAE latents",
+          "title": "TPP Unintended Class, Top 2 SAE latents"
         },
-        "scr_dir1_threshold_5": {
+        "tpp_threshold_5_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -484,10 +484,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 5 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 5 SAE latents"
+          "description": "TPP metric when ablating the top 5 SAE latents",
+          "title": "TPP Metric, Top 5 SAE latents"
         },
-        "scr_metric_threshold_5": {
+        "tpp_threshold_5_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -497,10 +497,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 5 SAE latents",
-          "title": "SCR Metric, Top 5 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 5 SAE latents",
+          "title": "TPP Intended Class, Top 5 SAE latents"
         },
-        "scr_dir2_threshold_5": {
+        "tpp_threshold_5_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -510,10 +510,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 5 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 5 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 5 SAE latents",
+          "title": "TPP Unintended Class, Top 5 SAE latents"
         },
-        "scr_dir1_threshold_10": {
+        "tpp_threshold_10_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -523,24 +523,11 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 10 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 10 SAE latents"
-        },
-        "scr_metric_threshold_10": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 10 SAE latents",
-          "title": "SCR Metric, Top 10 SAE latents",
+          "description": "TPP metric when ablating the top 10 SAE latents",
+          "title": "TPP Metric, Top 10 SAE latents",
           "ui_default_display": true
         },
-        "scr_dir2_threshold_10": {
+        "tpp_threshold_10_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -550,10 +537,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 10 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 10 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 10 SAE latents",
+          "title": "TPP Intended Class, Top 10 SAE latents"
         },
-        "scr_dir1_threshold_20": {
+        "tpp_threshold_10_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -563,10 +550,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 20 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 20 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 10 SAE latents",
+          "title": "TPP Unintended Class, Top 10 SAE latents"
         },
-        "scr_metric_threshold_20": {
+        "tpp_threshold_20_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -576,10 +563,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 20 SAE latents",
-          "title": "SCR Metric, Top 20 SAE latents"
+          "description": "TPP metric when ablating the top 20 SAE latents",
+          "title": "TPP Metric, Top 20 SAE latents"
         },
-        "scr_dir2_threshold_20": {
+        "tpp_threshold_20_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -589,10 +576,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 20 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 20 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 20 SAE latents",
+          "title": "TPP Intended Class, Top 20 SAE latents"
         },
-        "scr_dir1_threshold_50": {
+        "tpp_threshold_20_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -602,10 +589,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 50 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 50 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 20 SAE latents",
+          "title": "TPP Unintended Class, Top 20 SAE latents"
         },
-        "scr_metric_threshold_50": {
+        "tpp_threshold_50_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -615,10 +602,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 50 SAE latents",
-          "title": "SCR Metric, Top 50 SAE latents"
+          "description": "TPP metric when ablating the top 50 SAE latents",
+          "title": "TPP Metric, Top 50 SAE latents"
         },
-        "scr_dir2_threshold_50": {
+        "tpp_threshold_50_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -628,10 +615,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 50 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 50 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 50 SAE latents",
+          "title": "TPP Intended Class, Top 50 SAE latents"
         },
-        "scr_dir1_threshold_100": {
+        "tpp_threshold_50_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -641,10 +628,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 100 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 100 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 50 SAE latents",
+          "title": "TPP Unintended Class, Top 50 SAE latents"
         },
-        "scr_metric_threshold_100": {
+        "tpp_threshold_100_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -654,10 +641,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 100 SAE latents",
-          "title": "SCR Metric, Top 100 SAE latents"
+          "description": "TPP metric when ablating the top 100 SAE latents",
+          "title": "TPP Metric, Top 100 SAE latents"
         },
-        "scr_dir2_threshold_100": {
+        "tpp_threshold_100_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -667,10 +654,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 100 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 100 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 100 SAE latents",
+          "title": "TPP Intended Class, Top 100 SAE latents"
         },
-        "scr_dir1_threshold_500": {
+        "tpp_threshold_100_unintended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -680,10 +667,10 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 500 gender latents to increase profession accuracy",
-          "title": "SCR Dir 1, Top 500 SAE latents"
+          "description": "TPP decrease to all unintended classes when ablating the top 100 SAE latents",
+          "title": "TPP Unintended Class, Top 100 SAE latents"
         },
-        "scr_metric_threshold_500": {
+        "tpp_threshold_500_total_metric": {
           "anyOf": [
             {
               "type": "number"
@@ -693,10 +680,10 @@
             }
           ],
           "default": null,
-          "description": "SCR Metric (selecting dir1 if inital profession accuracy is lower than initial gender accuracy, else dir2) ablating the top 500 SAE latents",
-          "title": "SCR Metric, Top 500 SAE latents"
+          "description": "TPP metric when ablating the top 500 SAE latents",
+          "title": "TPP Metric, Top 500 SAE latents"
         },
-        "scr_dir2_threshold_500": {
+        "tpp_threshold_500_intended_diff_only": {
           "anyOf": [
             {
               "type": "number"
@@ -706,21 +693,34 @@
             }
           ],
           "default": null,
-          "description": "Ablating the top 500 profession latents to increase gender accuracy",
-          "title": "SCR Dir 2, Top 500 SAE latents"
+          "description": "TPP decrease to the intended class only when ablating the top 500 SAE latents",
+          "title": "TPP Intended Class, Top 500 SAE latents"
+        },
+        "tpp_threshold_500_unintended_diff_only": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TPP decrease to all unintended classes when ablating the top 500 SAE latents",
+          "title": "TPP Unintended Class, Top 500 SAE latents"
         }
       },
       "required": [
         "dataset_name"
       ],
-      "title": "ShiftResultDetail",
+      "title": "TppResultDetail",
       "type": "object"
     }
   },
-  "description": "The output of a SHIFT evaluation.",
+  "description": "The Targeted Probe Pertubation (TPP) evaluation ablates a set of SAE latents to damage a single targeted linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.",
   "properties": {
     "eval_type_id": {
-      "default": "scr",
+      "default": "tpp",
       "description": "The type of the evaluation",
       "title": "Eval Type ID",
       "type": "string"
@@ -741,16 +741,16 @@
       "type": "integer"
     },
     "eval_result_metrics": {
-      "$ref": "#/$defs/ShiftMetricCategories",
+      "$ref": "#/$defs/TppMetricCategories",
       "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
       "title": "Result Metrics Categorized"
     },
     "eval_result_details": {
-      "description": "Each object is a stat on the SHIFT SCR results for a single dataset.",
+      "description": "Each object is a stat on the TPP results for a single dataset.",
       "items": {
-        "$ref": "#/$defs/ShiftResultDetail"
+        "$ref": "#/$defs/TppResultDetail"
       },
-      "title": "Per-Dataset SHIFT Spurious Correlation Removal (SCR) Results",
+      "title": "Per-Dataset TPP Results",
       "type": "array"
     },
     "sae_bench_commit_hash": {
@@ -816,6 +816,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "SHIFT",
+  "title": "TPP",
   "type": "object"
 }

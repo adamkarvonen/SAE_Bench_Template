@@ -1,7 +1,4 @@
-import json
-import torch
-import pickle
-import os
+import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,32 +12,94 @@ from matplotlib.lines import Line2D
 from typing import Optional, Dict, Any
 from collections import defaultdict
 
-
-# “Gated SAE”, “Gated SAE w/ p-annealing”, “Standard”, “Standard w/ p-annealing”
-label_lookup = {
-    "StandardTrainer": "Standard",
-    # "PAnnealTrainer": "Standard w/ p-annealing",
-    # "GatedSAETrainer": "Gated SAE",
-    "TrainerJumpRelu": "JumpReLU",
-    # "GatedAnnealTrainer": "Gated SAE w/ p-annealing",
-    "TrainerTopK": "Top K",
-    # "Identity": "Identity",
-}
-
-unique_trainers = list(label_lookup.keys())
-
 # create a dictionary mapping trainer types to marker shapes
 
 trainer_markers = {
-    "StandardTrainer": "o",
-    "TrainerJumpRelu": "X",
-    "TrainerTopK": "^",
-    "GatedSAETrainer": "d",
+    "Standard": "o",
+    "JumpReLU": "X",
+    "TopK": "^",
+    "Standard w/ p-annealing": "*",
+    "Gated": "d",
 }
 
 
 # default text size
 plt.rcParams.update({"font.size": 20})
+
+
+def sae_name_to_info(sae_name: str) -> dict:
+    """Yes, this is a bit janky. We could also use the sae_lens `get_sae_config()` method. I didn't for two reasons:
+    get_sae_config() loads the config from huggingface, meaning this can take 30+ seconds for many SAEs. This is
+    annoying for quick iteration when plotting results.
+    The sae_lens config doesn't contain if_panneal_trainer and number of steps, which we should get from the sae name.
+    At this point, why not get everything from the sae name?
+
+    sae_name should be f'{sae_release}_{sae_id}'"""
+    sae_config = {}
+
+    # set trainer type
+    if "gemma-scope" in sae_name:
+        sae_config["sae_class"] = "JumpReLU"
+    elif "sae_bench" in sae_name:
+        if "standard" in sae_name:
+            sae_config["sae_class"] = "Standard"
+        elif "topk" in sae_name:
+            sae_config["sae_class"] = "TopK"
+        elif "gated" in sae_name:
+            sae_config["sae_class"] = "Gated"
+        elif "panneal" in sae_name:
+            sae_config["sae_class"] = "Standard w/ p-annealing"
+        else:
+            raise ValueError(f"Trainer type not recognized for {sae_name}")
+    else:
+        raise ValueError(f"Trainer type not recognized for {sae_name}")
+
+    # set d_sae
+    if "gemma-scope" in sae_name:
+        if "16k" in sae_name:
+            sae_config["d_sae"] = "16k"
+        elif "65k" in sae_name:
+            sae_config["d_sae"] = "65k"
+        elif "1M" in sae_name:
+            sae_config["d_sae"] = "1M"
+        else:
+            raise ValueError(f"d_sae not recognized for {sae_name}")
+    elif "sae_bench_gemma" in sae_name:
+        if "ef2" in sae_name:
+            sae_config["d_sae"] = "4k"
+        elif "ef8" in sae_name:
+            sae_config["d_sae"] = "16k"
+        else:
+            raise ValueError(f"d_sae not recognized for {sae_name}")
+    elif "sae_bench_pythia70m" in sae_name:
+        # yes, this is very janky
+        match = re.search(r"trainer_(\d+)", sae_name)
+        if match:
+            trainer_num = int(match.group(1))
+            if (trainer_num // 2) % 2 == 0:
+                sae_config["d_sae"] = "4k"
+            else:
+                sae_config["d_sae"] = "16k"
+        else:
+            raise ValueError("No trainer match found")
+
+    # set num training steps
+    if "gemma-scope" in sae_name:
+        sae_config["steps"] = -1e6
+    elif "sae_bench" in sae_name:
+        if "step" not in sae_name:
+            sae_config["steps"] = 48828  # TODO: Adjust for 65k width (400M tokens, so 48828 * 2)
+        else:
+            match = re.search(r"step_(\d+)", sae_name)
+            if match:
+                step = int(match.group(1))
+                sae_config["steps"] = step
+            else:
+                raise ValueError("No step match found")
+    else:
+        raise ValueError(f"Trainer type not recognized for {sae_name}")
+
+    return sae_config
 
 
 def plot_3var_graph(
@@ -70,7 +129,7 @@ def plot_3var_graph(
 
     for trainer, marker in trainer_markers.items():
         # Filter data for this trainer
-        trainer_data = {k: v for k, v in results.items() if v["trainer_class"] == trainer}
+        trainer_data = {k: v for k, v in results.items() if v["sae_class"] == trainer}
 
         if not trainer_data:
             continue  # Skip this trainer if no data points
@@ -87,7 +146,7 @@ def plot_3var_graph(
             cmap="viridis",
             marker=marker,
             s=100,
-            label=label_lookup[trainer],
+            label=trainer,
             norm=norm,
             edgecolor="black",
         )
@@ -100,7 +159,7 @@ def plot_3var_graph(
         if marker == "d":
             _handle[0].set_markersize(13)
         handles += _handle
-        labels.append(label_lookup[trainer])
+        labels.append(trainer)
 
     # Add colorbar
     cbar = fig.colorbar(scatter, ax=ax, label=colorbar_label)
@@ -143,9 +202,7 @@ def plot_interactive_3var_graph(
 
     custom_metric_value = [data[custom_color_metric] for data in results.values()]
 
-    dict_size = [data["dict_size"] for data in results.values()]
-    lr = [data["lr"] for data in results.values()]
-    l1_penalty = [data["sparsity_penalty"] for data in results.values()]
+    dict_size = [data["d_sae"] for data in results.values()]
 
     # Create the scatter plot
     fig = go.Figure()
@@ -163,15 +220,13 @@ def plot_interactive_3var_graph(
                 showscale=True,
             ),
             text=[
-                f"AE Path: {ae}<br>L0: {l0:.4f}<br>Frac Recovered: {fr:.4f}<br>Custom Metric: {ad:.4f}<br>Dict Size: {d:.4f}<br>LR: {l:.4f}<br>Sparsity Penalty: {l1:.4f}"
-                for ae, l0, fr, ad, d, l, l1 in zip(
+                f"AE Path: {ae}<br>L0: {l0:.4f}<br>Frac Recovered: {fr:.4f}<br>Custom Metric: {ad:.4f}<br>Dict Size: {d}"
+                for ae, l0, fr, ad, d in zip(
                     ae_paths,
                     l0_values,
                     frac_recovered_values,
                     custom_metric_value,
                     dict_size,
-                    lr,
-                    l1_penalty,
                 )
             ],
             hoverinfo="text",
@@ -222,7 +277,7 @@ def plot_2var_graph(
 
     for trainer, marker in trainer_markers.items():
         # Filter data for this trainer
-        trainer_data = {k: v for k, v in results.items() if v["trainer_class"] == trainer}
+        trainer_data = {k: v for k, v in results.items() if v["sae_class"] == trainer}
 
         if not trainer_data:
             continue  # Skip this trainer if no data points
@@ -236,7 +291,7 @@ def plot_2var_graph(
             custom_metric_values,
             marker=marker,
             s=100,
-            label=label_lookup[trainer],
+            label=trainer,
             edgecolor="black",
         )
 
@@ -248,7 +303,94 @@ def plot_2var_graph(
         if marker == "d":
             _handle[0].set_markersize(13)
         handles += _handle
-        labels.append(label_lookup[trainer])
+        labels.append(trainer)
+
+    # Set labels and title
+    ax.set_xlabel("L0 (Sparsity)")
+    ax.set_ylabel(y_label)
+    ax.set_title(title)
+
+    if original_acc:
+        ax.axhline(original_acc, color="red", linestyle="--", label="Original Probe Accuracy")
+
+    ax.legend(handles, labels, loc=legend_location)
+
+    # Set axis limits
+    if xlims:
+        ax.set_xlim(*xlims)
+    if ylims:
+        ax.set_ylim(*ylims)
+
+    plt.tight_layout()
+
+    # Save and show the plot
+    if output_filename:
+        plt.savefig(output_filename, bbox_inches="tight")
+    plt.show()
+
+
+available_markers = ["o", "s", "D", "^", "v", "<", ">", "p", "h", "*"]
+
+
+def plot_2var_graph_dict_size(
+    results: dict[str, dict[str, float]],
+    custom_metric: str,
+    title: str = "L0 vs Custom Metric",
+    y_label: str = "Custom Metric",
+    xlims: Optional[tuple[float, float]] = None,
+    ylims: Optional[tuple[float, float]] = None,
+    output_filename: Optional[str] = None,
+    legend_location: str = "lower right",
+    original_acc: Optional[float] = None,
+    x_axis_key: str = "l0",
+):
+    # Extract data
+    l0_values = [data[x_axis_key] for data in results.values()]
+    custom_metric_values = [data[custom_metric] for data in results.values()]
+    dict_sizes = [data["d_sae"] for data in results.values()]
+
+    # Identify unique dictionary sizes and assign markers
+    unique_dict_sizes = list(set(dict_sizes))
+    marker_map = {
+        size: available_markers[i % len(available_markers)]
+        for i, size in enumerate(unique_dict_sizes)
+    }
+
+    # Create the scatter plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Iterate over each unique dictionary size
+    handles, labels = [], []
+
+    for dict_size in unique_dict_sizes:
+        # Filter data points for the current dictionary size
+        size_data = {k: v for k, v in results.items() if v["d_sae"] == dict_size}
+
+        # If there are no points, skip this size
+        if not size_data:
+            continue
+
+        # Get values for l0 and custom metric for this dictionary size
+        l0_values = [data[x_axis_key] for data in size_data.values()]
+        custom_metric_values = [data[custom_metric] for data in size_data.values()]
+
+        # Plot data points with the assigned marker
+        scatter = ax.scatter(
+            l0_values,
+            custom_metric_values,
+            marker=marker_map[dict_size],
+            s=100,
+            label=f"Dict Size: {dict_size}",
+            edgecolor="black",
+        )
+
+        # Collect legend handles and labels
+        _handle, _ = scatter.legend_elements(prop="sizes")
+        _handle[0].set_markeredgecolor("black")
+        _handle[0].set_markerfacecolor("white")
+        _handle[0].set_markersize(10)
+        handles += _handle
+        labels.append(f"Dict Size: {dict_size}")
 
     # Set labels and title
     ax.set_xlabel("L0 (Sparsity)")
@@ -512,7 +654,7 @@ def plot_training_steps(
     title: Optional[str] = None,
     y_label: Optional[str] = None,
     output_filename: Optional[str] = None,
-    break_fraction: float = 0.15  # Parameter to control break position
+    break_fraction: float = 0.15,  # Parameter to control break position
 ):
     # Initialize a defaultdict to store data for each trainer
     trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
@@ -521,90 +663,108 @@ def plot_training_steps(
 
     # Extract data from the dictionary
     for key, value in results_dict.items():
-        trainer = key.split("/")[-1].split("_")[1]
-        trainer_class = value["trainer_class"]
-        trainer_label = label_lookup[trainer_class]
-        layer = value["layer"]
+        trainer = key.split("_trainer_")[-1].split("_")[0]
+        trainer_class = value["sae_class"]
         step = int(value[steps_key])
         metric_scores = value[metric_key]
-        trainer_key = f"{trainer_label} Layer {layer} Trainer {trainer}"
-        tokens_per_step = value['buffer']['out_batch_size']
+        trainer_key = f"{trainer_class} Trainer {trainer}"
 
         trainer_data[trainer_key]["steps"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
         trainer_data[trainer_key]["l0"] = value["l0"]
-        trainer_data[trainer_key]['trainer_class'] = trainer_class
+        trainer_data[trainer_key]["sae_class"] = trainer_class
         all_steps.add(step)
         all_trainers.add(trainer_class)
 
     # Calculate average across all trainers
     average_trainer_data = {"steps": [], "metric_scores": []}
     for step in sorted(all_steps):
-        step_diffs = [data["metric_scores"][data["steps"].index(step)] for data in trainer_data.values() if step in data["steps"]]
+        step_diffs = [
+            data["metric_scores"][data["steps"].index(step)]
+            for data in trainer_data.values()
+            if step in data["steps"]
+        ]
         if step_diffs:
             average_trainer_data["steps"].append(step)
             average_trainer_data["metric_scores"].append(np.mean(step_diffs))
     trainer_data["Average"] = average_trainer_data
 
     # Create the plot with broken axis
-    fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(15, 6),
-                                   gridspec_kw={'width_ratios': [break_fraction, 1-break_fraction]})
+    fig, (ax1, ax2) = plt.subplots(
+        1,
+        2,
+        sharey=True,
+        figsize=(15, 6),
+        gridspec_kw={"width_ratios": [break_fraction, 1 - break_fraction]},
+    )
     fig.subplots_adjust(wspace=0.01)  # Adjust space between axes
 
     # Calculate break point based on data
     steps_break_point = min([s for s in all_steps if s > 0]) / 2
-    break_point = steps_break_point # / max(all_steps) * 100  # Convert to percentage
+    break_point = steps_break_point  # / max(all_steps) * 100  # Convert to percentage
 
     for trainer_key, data in trainer_data.items():
         steps = data["steps"]
         metric_scores = data["metric_scores"]
 
         if trainer_key == "Average":
-            color, trainer_class = 'black', 'Average'
-        elif data['trainer_class'] == 'StandardTrainer':
-            color, trainer_class = 'red', label_lookup[data['trainer_class']]
+            color, trainer_class = "black", "Average"
+        elif data["sae_class"] == "StandardTrainer":
+            color, trainer_class = "red", data["sae_class"]
         else:
-            color, trainer_class = 'blue', label_lookup[data['trainer_class']]
+            color, trainer_class = "blue", data["sae_class"]
 
         sorted_data = sorted(zip(steps, metric_scores))
         steps, metric_scores = zip(*sorted_data)
 
-        ax1.plot(steps, metric_scores, marker="o", label=trainer_class,
-                 linewidth=4 if trainer_key == "Average" else 2,
-                 color=color, alpha=1 if trainer_key == "Average" else 0.3,
-                 zorder=10 if trainer_key == "Average" else 1)
-        ax2.plot(steps, metric_scores, marker="o", label=trainer_class,
-                 linewidth=4 if trainer_key == "Average" else 2,
-                 color=color, alpha=1 if trainer_key == "Average" else 0.3,
-                 zorder=10 if trainer_key == "Average" else 1)
+        ax1.plot(
+            steps,
+            metric_scores,
+            marker="o",
+            label=trainer_class,
+            linewidth=4 if trainer_key == "Average" else 2,
+            color=color,
+            alpha=1 if trainer_key == "Average" else 0.3,
+            zorder=10 if trainer_key == "Average" else 1,
+        )
+        ax2.plot(
+            steps,
+            metric_scores,
+            marker="o",
+            label=trainer_class,
+            linewidth=4 if trainer_key == "Average" else 2,
+            color=color,
+            alpha=1 if trainer_key == "Average" else 0.3,
+            zorder=10 if trainer_key == "Average" else 1,
+        )
 
     # Set up the broken axis
-    ax1.set_xlim(-break_point/4, break_point)
+    ax1.set_xlim(-break_point / 4, break_point)
     # ax2.set_xlim(break_point, 100)
-    ax2.set_xscale('log')
+    ax2.set_xscale("log")
 
     # Hide the spines between ax1 and ax2
-    ax1.spines['right'].set_visible(False)
-    ax2.spines['left'].set_visible(False)
+    ax1.spines["right"].set_visible(False)
+    ax2.spines["left"].set_visible(False)
     ax1.yaxis.tick_left()
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
 
     # Add break lines
-    d = .015  # Size of diagonal lines
-    kwargs = dict(transform=ax1.transAxes, color='k', clip_on=False, lw=4)
+    d = 0.015  # Size of diagonal lines
+    kwargs = dict(transform=ax1.transAxes, color="k", clip_on=False, lw=4)
 
-    ax1.plot((1, 1), (-d, +d), **kwargs)        # top-right vertical
-    ax1.plot((1, 1), (1-d, 1+d), **kwargs)      # bottom-right vertical
+    ax1.plot((1, 1), (-d, +d), **kwargs)  # top-right vertical
+    ax1.plot((1, 1), (1 - d, 1 + d), **kwargs)  # bottom-right vertical
     kwargs.update(transform=ax2.transAxes)
-    ax2.plot((0, 0), (-d, +d), **kwargs)        # top-left vertical
-    ax2.plot((0, 0), (1-d, 1+d), **kwargs)      # bottom-left vertical
+    ax2.plot((0, 0), (-d, +d), **kwargs)  # top-left vertical
+    ax2.plot((0, 0), (1 - d, 1 + d), **kwargs)  # bottom-left vertical
 
     # Set labels and title
     if not y_label:
         y_label = metric_key.replace("_", " ").capitalize()
     ax1.set_ylabel(y_label)
-    fig.text(0.5, 0.01, 'Training Tokens', ha='center', va='center')
+    fig.text(0.5, 0.01, "Training Tokens", ha="center", va="center")
     fig.suptitle(title)
 
     # Adjust x-axis ticks
@@ -619,12 +779,12 @@ def plot_training_steps(
 
     # Add custom legend
     legend_elements = []
-    legend_elements.append(Line2D([0], [0], color='black', lw=3, label='Average'))
-    if 'StandardTrainer' in all_trainers:
-        legend_elements.append(Line2D([0], [0], color='red', lw=3, label='Standard'))
-    if 'TrainerTopK' in all_trainers:
-        legend_elements.append(Line2D([0], [0], color='blue', lw=3, label='TopK'))
-    ax2.legend(handles=legend_elements, loc='lower right')
+    legend_elements.append(Line2D([0], [0], color="black", lw=3, label="Average"))
+    if "StandardTrainer" in all_trainers:
+        legend_elements.append(Line2D([0], [0], color="red", lw=3, label="Standard"))
+    if "TrainerTopK" in all_trainers:
+        legend_elements.append(Line2D([0], [0], color="blue", lw=3, label="TopK"))
+    ax2.legend(handles=legend_elements, loc="lower right")
 
     plt.tight_layout()
 
@@ -632,7 +792,6 @@ def plot_training_steps(
         plt.savefig(output_filename, bbox_inches="tight")
 
     plt.show()
-
 
 
 # def plot_training_steps(
@@ -651,7 +810,7 @@ def plot_training_steps(
 #     # Extract data from the dictionary
 #     for key, value in results_dict.items():
 #         trainer = key.split("/")[-1].split("_")[1]
-#         trainer_class = value["trainer_class"]
+#         trainer_class = value["sae_class"]
 #         trainer_label = label_lookup[trainer_class]
 #         layer = value["layer"]
 #         tokens_per_step = value["buffer"]["out_batch_size"]
@@ -662,7 +821,7 @@ def plot_training_steps(
 #         trainer_data[trainer_key]["steps"].append(step)
 #         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
 #         trainer_data[trainer_key]["l0"] = value["l0"]
-#         trainer_data[trainer_key]["trainer_class"] = trainer_class
+#         trainer_data[trainer_key]["sae_class"] = trainer_class
 #         all_steps.add(step)
 #         all_trainers.add(trainer_class)
 
@@ -689,10 +848,10 @@ def plot_training_steps(
 
 #         if trainer_key == "Average":
 #             color, trainer_class = "black", "Average"
-#         elif data["trainer_class"] == "StandardTrainer":
-#             color, trainer_class = "red", label_lookup[data["trainer_class"]]
+#         elif data["sae_class"] == "StandardTrainer":
+#             color, trainer_class = "red", label_lookup[data["sae_class"]]
 #         else:
-#             color, trainer_class = "blue", label_lookup[data["trainer_class"]]
+#             color, trainer_class = "blue", label_lookup[data["sae_class"]]
 
 #         sorted_data = sorted(zip(steps, metric_scores))
 #         steps, metric_scores = zip(*sorted_data)

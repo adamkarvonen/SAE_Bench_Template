@@ -261,8 +261,14 @@ def get_output_probs_abcd(model, prompts, batch_size=2, n_batches=100, verbose=T
             prompt_batch = prompts[i * batch_size : i * batch_size + batch_size]
             current_batch_size = len(prompt_batch)
 
-            token_batch = model.to_tokens(prompt_batch, padding_side="right").to("cuda")
-            token_lens = [len(model.to_tokens(x)[0]) for x in prompt_batch]
+            # prepend_bos is False because the prompt already has a BOS token due to the instruct format
+            token_batch = model.to_tokens(prompt_batch, padding_side="right", prepend_bos=False).to(
+                "cuda"
+            )
+
+            assert (token_batch == model.tokenizer.bos_token_id).sum().item() == len(token_batch)
+
+            token_lens = [len(model.to_tokens(x, prepend_bos=False)[0]) for x in prompt_batch]
             next_token_indices = torch.tensor([x - 1 for x in token_lens]).to("cuda")
 
             vals = model(token_batch, return_type="logits")

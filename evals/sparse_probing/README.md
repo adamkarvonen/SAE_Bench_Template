@@ -9,7 +9,7 @@ Using Gemma-2-2B, at current batch sizes, I see a peak GPU memory usage of 22 GB
 
 All configuration arguments and hyperparameters are located in `eval_config.py`. The full eval config is saved to the results json file.
 
-If ran in the current state, `cd` in to `evals/sparse_probing/` and run `python main.py`. It should produce `evals/sparse_probing/results/pythia-70m-deduped_layer_4_eval_results.json`.
+If ran in the current state, `cd` in to `evals/sparse_probing/` and run `python main.py`. It should produce `eval_results/sparse_probing/pythia-70m-deduped_layer_4_eval_results.json`.
 
 `tests/test_sparse_probing.py` contains an end-to-end test of the sparse probing eval. Expected results are in `tests/test_data/sparse_probing_expected_results.json`. Running `pytest -s tests/test_sparse_probing` will verify that the actual results are within the specified tolerance of the expected results.
 
