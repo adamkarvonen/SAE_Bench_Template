@@ -54,7 +54,7 @@ For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recover
 
 ## Custom SAE Usage
 
-Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with encode(), decode(), and a few config values. For example custom SAEs, refer to the `baselines/` folder.
+Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with encode(), decode(), and a few config values. For example custom SAE implementations and more info, refer to the `baselines/README.md`.
 
 There are two ways to evaluate custom SAEs:
 

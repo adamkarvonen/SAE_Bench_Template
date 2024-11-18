@@ -735,8 +735,8 @@ if __name__ == "__main__":
 #     NOTE: We don't use argparse here. This requires a file openai_api_key.txt to be present in the root directory.
 #     """
 
-#     import baselines.identity_sae as identity_sae
-#     import baselines.jumprelu_sae as jumprelu_sae
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
 
 #     device = general_utils.setup_environment()
 

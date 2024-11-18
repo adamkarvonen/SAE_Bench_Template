@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class SAEConfig:
+class CustomSAEConfig:
     model_name: str
     d_in: int
     d_sae: int

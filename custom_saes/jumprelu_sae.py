@@ -4,7 +4,7 @@ from huggingface_hub import hf_hub_download
 import numpy as np
 from typing import Optional
 
-import baselines.sae_config as sae_config
+import baselines.custom_sae_config as sae_config
 
 
 class JumpReLUSAE(nn.Module):
@@ -28,7 +28,7 @@ class JumpReLUSAE(nn.Module):
         if hook_name is None:
             hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
-        self.cfg = sae_config.SAEConfig(
+        self.cfg = sae_config.CustomSAEConfig(
             model_name, d_in=d_model, d_sae=d_sae, hook_name=hook_name, hook_layer=hook_layer
         )
 

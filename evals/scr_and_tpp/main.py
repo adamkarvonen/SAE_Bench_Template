@@ -958,8 +958,8 @@ if __name__ == "__main__":
 
 # Use this code snippet to use custom SAE objects
 # if __name__ == "__main__":
-#     import baselines.identity_sae as identity_sae
-#     import baselines.jumprelu_sae as jumprelu_sae
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
 
 #     """
 #     python evals/scr_and_tpp/main.py

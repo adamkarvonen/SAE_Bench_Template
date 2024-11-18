@@ -1,4 +1,4 @@
-import baselines.identity_sae as identity_sae
+import custom_saes.identity_sae as identity_sae
 import evals.autointerp.main as autointerp
 import sae_bench_utils.sae_selection_utils as sae_selection_utils
 import sae_bench_utils.general_utils as general_utils

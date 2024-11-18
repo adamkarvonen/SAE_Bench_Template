@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from typing import Optional
-import baselines.sae_config as sae_config
+import baselines.custom_sae_config as sae_config
 
 
 class IdentitySAE(nn.Module):
@@ -28,7 +28,7 @@ class IdentitySAE(nn.Module):
             hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
         # Initialize the configuration dataclass
-        self.cfg = sae_config.SAEConfig(
+        self.cfg = sae_config.CustomSAEConfig(
             model_name,
             d_in=d_model,
             d_sae=d_model,
