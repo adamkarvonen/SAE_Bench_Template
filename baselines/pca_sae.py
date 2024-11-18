@@ -63,7 +63,7 @@ class PCASAE(nn.Module):
     def save_state_dict(self, file_path: str):
         """Save the encoder and decoder to a file."""
         torch.save(
-            {"W_enc": self.W_enc.data, "W_dec": self.W_dec.data, "mean": self.mean}, file_path
+            {"W_enc": self.W_enc.data, "W_dec": self.W_dec.data, "mean": self.mean.data}, file_path
         )
 
     def load_from_file(self, file_path: str):
@@ -71,7 +71,7 @@ class PCASAE(nn.Module):
         state_dict = torch.load(file_path, map_location=self.device)
         self.W_enc.data = state_dict["W_enc"]
         self.W_dec.data = state_dict["W_dec"]
-        self.mean = state_dict["mean"]
+        self.mean.data = state_dict["mean"]
 
     # required as we have device and dtype class attributes
     def to(self, *args, **kwargs):
@@ -268,6 +268,8 @@ if __name__ == "__main__":
         pca = PCASAE(model_name, d_model, layer, context_size)
         # pca = fit_PCA(pca, model, tokens_BL, llm_batch_size, pca_batch_size)
         pca = fit_PCA_gpu(pca, model, tokens_BL, llm_batch_size, pca_batch_size)
+
+        pca.load_from_file(f"pca_{model_name}_blocks.{layer}.hook_resid_post.pt")
 
         pca.to(device=device)
 
