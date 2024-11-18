@@ -30,7 +30,7 @@ def prepare_probe_data(
     Float[torch.Tensor, "num_datapoints_per_class_x_2 ... d_model"],
     Int[torch.Tensor, "num_datapoints_per_class_x_2"],
 ]:
-    """perform_scr is for the SHIFT metric. In this case, all_activations has 3 pairs of keys, or 6 total.
+    """perform_scr is for the SCR metric. In this case, all_activations has 3 pairs of keys, or 6 total.
     It's a bit unfortunate to introduce coupling between the metrics, but most of the code is reused between them.
     The ... means we can have an optional seq_len dimension between num_datapoints_per_class and d_model.
     """
@@ -242,7 +242,7 @@ def train_probe_gpu(
     early_stopping_patience: int = 10,
 ) -> tuple[Probe, float]:
     """We have a GPU training function for training on all SAE features, which was very slow (1 minute+) on CPU.
-    This is also used for SHIFT / TPP, which require probe weights."""
+    This is also used for SCR / TPP, which require probe weights."""
     device = train_inputs.device
     model_dtype = train_inputs.dtype
 

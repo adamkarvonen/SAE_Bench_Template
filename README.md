@@ -10,13 +10,14 @@
 
 ### Installation
 Set up a virtual environment with python >= 3.10.
+
 ```
-git clone https://github.com/adamkarvonen/SAE_Bench_Template.git
-cd SAE_Bench_Template
+git clone https://github.com/adamkarvonen/SAEBench.git
+cd SAEBench
 pip install -e .
 ```
 
-All evals can be ran with current batch sizes on Gemma-2-2B on a 24GB VRAM GPU (e.g. a RTX 3090).
+All evals can be ran with current batch sizes on Gemma-2-2B on a 24GB VRAM GPU (e.g. a RTX 3090). By default, some evals cache LLM activations, which can require up to 100 GB of disk space. However, this can be disabled.
 
 ## Overview
 
@@ -25,10 +26,10 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **AutoInterp**
 - **L0 / Loss Recovered**
 - **RAVEL**
-- **SHIFT**
-- **TPP**
+- **Spurious Correlation Removal (SCR)**
+- **Targeted Probe Pertubation (TPP)**
 - **Sparse Probing**
-- **Unlearning**
+- **Unlearning** (requires access to the WMDP dataset, see README)
 
 ### Supported Models and SAEs
 - **SAE Lens Pretrained Models**: Supports evaluations on any SAE Lens pretrained model.
@@ -44,9 +45,9 @@ python evals/sparse_probing/main.py \
     --model_name pythia-70m-deduped
 ```
 
-The results will be saved to the evals/sparse_probing/results directory.
+The results will be saved to the eval_results/sparse_probing directory.
 
-We use regex patterns to select SAE Lens SAEs. For more examples of regex patterns, refer to `sae_selection.ipynb`.
+We use regex patterns to select SAE Lens SAEs. For more examples of regex patterns, refer to `sae_regex_selection.ipynb`.
 
 Every eval folder contains an `eval_config.py`, which contains all relevant hyperparamters for that evaluation. The values are currently set to the default recommended values.
 
@@ -54,7 +55,7 @@ For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recover
 
 ## Custom SAE Usage
 
-Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with encode(), decode(), and a few config values. For example custom SAEs, refer to the `baselines/` folder.
+Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with encode(), decode(), and a few config values. For example custom SAE implementations and more info, refer to the `custom_saes/README.md`.
 
 There are two ways to evaluate custom SAEs:
 
@@ -68,7 +69,7 @@ There are two ways to evaluate custom SAEs:
    - Simpler interface requiring only model, SAE, and config values
    - Graphing will require manual formatting
 
-We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
+The script `run_all_evals_custom_saes()` will run approach 1 on all SAE Bench evals. We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens with checkpoints at various points. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
 
 ## Training Your Own SAEs
 

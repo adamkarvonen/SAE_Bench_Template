@@ -33,6 +33,7 @@ from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
     select_saes_multiple_patterns,
 )
+import sae_bench_utils.general_utils as general_utils
 
 EVAL_TYPE = "unlearning"
 
@@ -108,16 +109,14 @@ def convert_ndarrays_to_lists(obj):
 
 def run_eval(
     config: UnlearningEvalConfig,
-    selected_saes_dict: dict[str, list[str] | SAE],
+    selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_artifacts: bool = False,
 ):
     """
-    selected_saes_dict is a dict mapping either:
-       - Release name -> list of SAE IDs to load from that release
-       - Custom name -> Single SAE object
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
     """
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
@@ -143,75 +142,63 @@ def run_eval(
         config.model_name, device=device, dtype=config.llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
-        )
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
 
-        # Wrap single SAE objects in a list to unify processing of both pretrained and custom SAEs
-        if not isinstance(selected_saes_dict[sae_release], list):
-            selected_saes_dict[sae_release] = [selected_saes_dict[sae_release]]
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
+        sae = sae.to(device=device, dtype=llm_dtype)
 
-            # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-            if isinstance(sae_id, str):
-                sae = SAE.from_pretrained(
-                    release=sae_release,
-                    sae_id=sae_id,
-                    device=device,
-                )[0]
-            else:
-                sae = sae_id
-                sae_id = "custom_sae"
+        sae_release_and_id = f"{sae_release}_{sae_id}"
 
-            sae = sae.to(device=device, dtype=llm_dtype)
+        sae_results_folder = os.path.join(artifacts_folder, sae_release_and_id, "results/metrics")
 
-            sae_release_and_id = f"{sae_release}_{sae_id}"
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
 
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Loading existing results from {sae_result_path}")
+            with open(sae_result_path, "r") as f:
+                eval_output = TypeAdapter(UnlearningEvalOutput).validate_json(f.read())
+        else:
+            run_eval_single_sae(
+                model, sae, config, artifacts_folder, sae_release_and_id, force_rerun
+            )
             sae_results_folder = os.path.join(
                 artifacts_folder, sae_release_and_id, "results/metrics"
             )
+            metrics_df = get_metrics_df(sae_results_folder)
+            unlearning_score = get_unlearning_scores(metrics_df)
+            eval_output = UnlearningEvalOutput(
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=UnlearningMetricCategories(
+                    unlearning=UnlearningMetrics(unlearning_score=unlearning_score)
+                ),
+                eval_result_details=[],
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
+            )
 
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
+        results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            if os.path.exists(sae_result_path) and not force_rerun:
-                print(f"Loading existing results from {sae_result_path}")
-                with open(sae_result_path, "r") as f:
-                    eval_output = TypeAdapter(UnlearningEvalOutput).validate_json(f.read())
-            else:
-                run_eval_single_sae(
-                    model, sae, config, artifacts_folder, sae_release_and_id, force_rerun
-                )
-                sae_results_folder = os.path.join(
-                    artifacts_folder, sae_release_and_id, "results/metrics"
-                )
-                metrics_df = get_metrics_df(sae_results_folder)
-                unlearning_score = get_unlearning_scores(metrics_df)
-                eval_output = UnlearningEvalOutput(
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=UnlearningMetricCategories(
-                        unlearning=UnlearningMetrics(unlearning_score=unlearning_score)
-                    ),
-                    eval_result_details=[],
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                )
-
-            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
-
-            eval_output.to_json_file(sae_result_path, indent=2)
+        eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_artifacts:
         for folder in os.listdir(artifacts_folder):
@@ -222,34 +209,25 @@ def run_eval(
     return results_dict
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(
     args,
-) -> tuple[UnlearningEvalConfig, dict[str, list[str]]]:
+) -> tuple[UnlearningEvalConfig, list[tuple[str, str]]]:
     config = UnlearningEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
@@ -271,7 +249,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/unlearning/results",
+        default="eval_results/unlearning",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -299,17 +277,15 @@ if __name__ == "__main__":
     --model_name gemma-2-2b-it
     """
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 
-    config, selected_saes_dict = create_config_and_selected_saes(args)
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    print(selected_saes_dict)
+    print(selected_saes)
 
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
@@ -317,7 +293,7 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.output_folder,
         args.force_rerun,
@@ -330,35 +306,26 @@ if __name__ == "__main__":
 
 # Use this code snippet to use custom SAE objects
 # if __name__ == "__main__":
-#     import baselines.identity_sae as identity_sae
-#     import baselines.jumprelu_sae as jumprelu_sae
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
+
 #     """
 #     python evals/unlearning/main.py
 #     """
-#     device = setup_environment()
+#     device = general_utils.setup_environment()
 
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/unlearning/results"
+#     output_folder = "eval_results/unlearning"
 
-#     baseline_type = "identity_sae"
-#     baseline_type = "jumprelu_sae"
+#     model_name = "gemma-2-2b-it"
+#     hook_layer = 20
 
-#     model_name = "gemma-2-2b"
-#     hook_layer = 19
-#     d_model = 2304
-
-#     if baseline_type == "identity_sae":
-#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes_dict = {f"{model_name}_layer_{hook_layer}_identity_sae": sae}
-#     elif baseline_type == "jumprelu_sae":
-#         repo_id = "google/gemma-scope-2b-pt-res"
-#         filename = "layer_20/width_16k/average_l0_71/params.npz"
-#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes_dict = {f"{repo_id}_{filename}_gemmascope_sae": sae}
-#     else:
-#         raise ValueError(f"Invalid baseline type: {baseline_type}")
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
 #     config = UnlearningEvalConfig(
 #         random_seed=random_seed,
@@ -366,9 +333,7 @@ if __name__ == "__main__":
 #     )
 
 #     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-#     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-#         -1
-#     ]
+#     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
 #     # create output folder
 #     os.makedirs(output_folder, exist_ok=True)
@@ -376,7 +341,7 @@ if __name__ == "__main__":
 #     # run the evaluation on all selected SAEs
 #     results_dict = run_eval(
 #         config,
-#         selected_saes_dict,
+#         selected_saes,
 #         device,
 #         output_folder,
 #         force_rerun=True,

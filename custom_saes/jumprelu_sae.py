@@ -2,23 +2,20 @@ import torch
 import torch.nn as nn
 from huggingface_hub import hf_hub_download
 import numpy as np
-from dataclasses import dataclass
 from typing import Optional
 
-
-@dataclass
-class SAEConfig:
-    model_name: str
-    d_in: int
-    d_sae: int
-    hook_layer: int
-    hook_name: str
-    context_size: int = 128  # Can be used for auto-interp
-    hook_head_index: Optional[int] = None
+import baselines.custom_sae_config as sae_config
 
 
 class JumpReLUSAE(nn.Module):
-    def __init__(self, d_model: int, d_sae: int, hook_layer: int, model_name: str = "gemma-2-2b"):
+    def __init__(
+        self,
+        d_model: int,
+        d_sae: int,
+        hook_layer: int,
+        model_name: str = "gemma-2-2b",
+        hook_name: Optional[str] = None,
+    ):
         super().__init__()
         self.W_enc = nn.Parameter(torch.zeros(d_model, d_sae))
         self.W_dec = nn.Parameter(torch.zeros(d_sae, d_model))
@@ -28,10 +25,11 @@ class JumpReLUSAE(nn.Module):
         self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dtype: torch.dtype = torch.float32
 
-        hook_name = f"blocks.{hook_layer}.hook_resid_post"
+        if hook_name is None:
+            hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
-        self.cfg = SAEConfig(
-            model_name, d_in=d_model, d_sae=d_model, hook_name=hook_name, hook_layer=hook_layer
+        self.cfg = sae_config.CustomSAEConfig(
+            model_name, d_in=d_model, d_sae=d_sae, hook_name=hook_name, hook_layer=hook_layer
         )
 
     def encode(self, input_acts):

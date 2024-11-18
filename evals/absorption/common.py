@@ -29,7 +29,7 @@ from evals.absorption.vocab import get_alpha_tokens
 DEFAULT_DTYPE = torch.bfloat16 if torch.cuda.is_available() else torch.float32
 DEFAULT_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-RESULTS_DIR = Path(__file__).parent / "results"
+RESULTS_DIR = Path(__file__).parent.parent.parent / "artifacts" / "absorption"
 PROBES_DIR = RESULTS_DIR / "probes"
 
 
@@ -46,9 +46,7 @@ def load_or_train_probe(
     dtype: torch.dtype = DEFAULT_DTYPE,
     device: str = DEFAULT_DEVICE,
 ) -> LinearProbe:
-    probe_path = (
-        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
-    )
+    probe_path = Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
     if not probe_path.exists():
         print(f"Probe for layer {layer} not found, training...")
         train_and_save_probes(
@@ -86,9 +84,7 @@ def load_probe_data_split_or_train(
     dtype: torch.dtype = DEFAULT_DTYPE,
     device: str = DEFAULT_DEVICE,
 ) -> tuple[torch.Tensor, list[tuple[str, int]]]:
-    probe_path = (
-        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
-    )
+    probe_path = Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "probe.pth"
     if not probe_path.exists():
         print(f"Probe for layer {layer} not found, training...")
         train_and_save_probes(
@@ -122,17 +118,17 @@ def load_probe_data_split(
         Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / "data.npz",
     )
     df = pd.read_csv(
-        Path(probes_dir)
-        / f"{model.cfg.model_name}"
-        / f"layer_{layer}"
-        / f"{split}_df.csv",
+        Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}" / f"{split}_df.csv",
         keep_default_na=False,
         na_values=[""],
     )
     activations = torch.from_numpy(np_data[f"X_{split}"]).to(device, dtype=dtype)
     labels = np_data[f"y_{split}"].tolist()
     return _parse_probe_data_split(
-        model.tokenizer, activations, split_labels=labels, df=df  # type: ignore
+        model.tokenizer,
+        activations,
+        split_labels=labels,
+        df=df,  # type: ignore
     )
 
 
@@ -234,16 +230,14 @@ def create_and_train_probe(
 
     layer = int(hook_point.split(".")[1])
 
-    train_df, test_df, train_activations, test_activations = (
-        gen_and_save_df_acts_probing(
-            model=model,
-            train_dataset=train_dataset,
-            test_dataset=test_dataset,
-            path=Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}",
-            hook_point=hook_point,
-            batch_size=batch_size,
-            position_idx=pos_idx,
-        )
+    train_df, test_df, train_activations, test_activations = gen_and_save_df_acts_probing(
+        model=model,
+        train_dataset=train_dataset,
+        test_dataset=test_dataset,
+        path=Path(probes_dir) / f"{model.cfg.model_name}" / f"layer_{layer}",
+        hook_point=hook_point,
+        batch_size=batch_size,
+        position_idx=pos_idx,
     )
 
     num_classes = 26

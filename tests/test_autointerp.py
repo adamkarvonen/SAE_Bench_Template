@@ -5,9 +5,7 @@ import evals.autointerp.main as autointerp
 import sae_bench_utils.testing_utils as testing_utils
 from sae_bench_utils.sae_selection_utils import select_saes_multiple_patterns
 
-results_filename = (
-    "tests/test_data/autointerp/pythia-70m-deduped_layer_4_expected_eval_results.json"
-)
+results_filename = "tests/test_data/autointerp/autointerp_expected_results.json"
 
 
 def test_end_to_end_different_seed():
@@ -41,11 +39,11 @@ def test_end_to_end_different_seed():
         rf".*blocks\.([{layer}])\.hook_resid_post__trainer_(10)$",
     ]
 
-    selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
+    selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
 
     run_results = autointerp.run_eval(
         test_config,
-        selected_saes_dict,
+        selected_saes,
         device,
         openai_api_key,
         output_path="evals/autointerp/test_results/",

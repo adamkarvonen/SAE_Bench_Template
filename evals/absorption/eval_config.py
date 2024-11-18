@@ -35,7 +35,7 @@ class AbsorptionEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="pythia-70m-deduped",
+        default="gemma-2-2b",
         title="Model Name",
         description="Model name",
     )

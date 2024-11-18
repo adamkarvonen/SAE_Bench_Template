@@ -21,7 +21,7 @@ from datetime import datetime
 from tqdm import tqdm
 
 from evals.mdl.eval_config import MDLEvalConfig
-from sae_bench_utils import activation_collection, formatting_utils
+from sae_bench_utils import activation_collection, general_utils
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
@@ -418,11 +418,14 @@ def run_eval_single_sae(
 
 def run_eval(
     config: MDLEvalConfig,
-    selected_saes_dict: dict[str, list[str]],
+    selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
 ) -> dict[str, Any]:
+    """
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
+    """
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
     sae_bench_commit_hash = get_sae_bench_version()
@@ -442,88 +445,77 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
-        )
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
-
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
                 release=sae_release,
                 sae_id=sae_id,
                 device=device,
             )[0]
-            sae = sae.to(device=device, dtype=llm_dtype)
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
 
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
 
-            eval_output = run_eval_single_sae(
-                config=config,
-                sae=sae,
-                model=model,
-                dataset_name=config.dataset_name,
-                device=device,
-            )
+        eval_output = run_eval_single_sae(
+            config=config,
+            sae=sae,
+            model=model,
+            dataset_name=config.dataset_name,
+            device=device,
+        )
 
-            sae_eval_result = {
-                "eval_instance_id": eval_instance_id,
-                "sae_lens_release": sae_release,
-                "sae_lens_id": sae_id,
-                "eval_type_id": EVAL_TYPE,
-                "sae_lens_version": sae_lens_version,
-                "sae_bench_version": sae_bench_commit_hash,
-                "date_time": datetime.now().isoformat(),
-                "eval_config": asdict(config),
-                "eval_results": eval_output,
-                "eval_artifacts": {"artifacts": "None"},
-            }
+        sae_eval_result = {
+            "eval_instance_id": eval_instance_id,
+            "sae_lens_release": sae_release,
+            "sae_lens_id": sae_id,
+            "eval_type_id": EVAL_TYPE,
+            "sae_lens_version": sae_lens_version,
+            "sae_bench_version": sae_bench_commit_hash,
+            "date_time": datetime.now().isoformat(),
+            "eval_config": asdict(config),
+            "eval_results": eval_output,
+            "eval_artifacts": {"artifacts": "None"},
+        }
 
-            with open(sae_result_path, "w") as f:
-                json.dump(sae_eval_result, f, indent=4)
+        with open(sae_result_path, "w") as f:
+            json.dump(sae_eval_result, f, indent=4)
 
-            results_dict[sae_result_file] = eval_output
+        results_dict[sae_result_file] = eval_output
 
     results_dict["custom_eval_config"] = asdict(config)
 
     return results_dict
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(
     args,
-) -> tuple[MDLEvalConfig, dict[str, list[str]]]:
+) -> tuple[MDLEvalConfig, list[tuple[str, str]]]:
     config = MDLEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
@@ -545,7 +537,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/mdl/results",
+        default="eval_results/mdl",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -567,39 +559,13 @@ if __name__ == "__main__":
     logger.add(sys.stdout, level="INFO")
 
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 
-    sae_regex_patterns = [
-        r"(sae_bench_pythia70m_sweep_topk_ctx128_0730).*",
-        r"(sae_bench_pythia70m_sweep_standard_ctx128_0712).*",
-    ]
-    sae_block_pattern = [
-        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
-        r".*blocks\.([4])\.hook_resid_post__trainer_(1|2|5|6|9|10|17|18)$",
-    ]
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    # sae_regex_patterns = [
-    #     r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
-    #     r"sae_bench_gemma-2-2b_sweep_standard_ctx128_ef8_0824",
-    #     r"(gemma-scope-2b-pt-res)",
-    # ]
-    # sae_block_pattern = [
-    #     r".*blocks\.19(?!.*step).*",
-    #     r".*blocks\.19(?!.*step).*",
-    #     r".*layer_(19).*(16k).*",
-    # ]
-
-    sae_regex_patterns = None
-    sae_block_pattern = None
-
-    config, selected_saes_dict = create_config_and_selected_saes(args)
-
-    if sae_regex_patterns is not None:
-        selected_saes_dict = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
-
-    print(selected_saes_dict)
+    print(selected_saes)
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
@@ -612,14 +578,12 @@ if __name__ == "__main__":
         mse_epsilon_threshold=0.2,
         model_name=args.model_name,
     )
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     logger.info(config)
 
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.output_folder,
         args.force_rerun,

@@ -14,6 +14,7 @@ from sae_lens import SAE
 from transformer_lens import HookedTransformer
 
 from sae_bench_utils.activation_collection import get_feature_activation_sparsity
+import sae_bench_utils.dataset_utils as dataset_utils
 
 FORGET_FILENAME = "feature_sparsity_forget.txt"
 RETAIN_FILENAME = "feature_sparsity_retain.txt"
@@ -49,32 +50,6 @@ def get_forget_retain_data(
     return forget_dataset, retain_dataset
 
 
-def tokenize_dataset(
-    model: HookedTransformer, dataset: list[str], seq_len: int = 1024, max_batch: int = 32
-):
-    # just for quick testing on smaller tokens
-    # dataset = dataset[:max_batch]
-    full_text = model.tokenizer.eos_token.join(dataset)
-
-    # divide into chunks to speed up tokenization
-    num_chunks = 20
-    chunk_length = (len(full_text) - 1) // num_chunks + 1
-    chunks = [full_text[i * chunk_length : (i + 1) * chunk_length] for i in range(num_chunks)]
-    tokens = model.tokenizer(chunks, return_tensors="pt", padding=True)["input_ids"].flatten()
-
-    # remove pad token
-    tokens = tokens[tokens != model.tokenizer.pad_token_id]
-    num_tokens = len(tokens)
-    num_batches = num_tokens // seq_len
-
-    # drop last batch if not full
-    tokens = tokens[: num_batches * seq_len]
-    tokens = einops.rearrange(tokens, "(batch seq) -> batch seq", batch=num_batches, seq=seq_len)
-    # change first token to bos
-    tokens[:, 0] = model.tokenizer.bos_token_id
-    return tokens.to("cuda")
-
-
 def get_shuffled_forget_retain_tokens(
     model: HookedTransformer,
     forget_corpora: str = "bio-forget-corpus",
@@ -93,8 +68,12 @@ def get_shuffled_forget_retain_tokens(
 
     shuffled_forget_dataset = random.sample(forget_dataset, min(batch_size, len(forget_dataset)))
 
-    forget_tokens = tokenize_dataset(model, shuffled_forget_dataset, seq_len=seq_len)
-    retain_tokens = tokenize_dataset(model, retain_dataset, seq_len=seq_len)
+    forget_tokens = dataset_utils.tokenize_and_concat_dataset(
+        model.tokenizer, shuffled_forget_dataset, seq_len=seq_len
+    ).to("cuda")
+    retain_tokens = dataset_utils.tokenize_and_concat_dataset(
+        model.tokenizer, retain_dataset, seq_len=seq_len
+    ).to("cuda")
 
     print(forget_tokens.shape, retain_tokens.shape)
     shuffled_forget_tokens = forget_tokens[torch.randperm(forget_tokens.shape[0])]

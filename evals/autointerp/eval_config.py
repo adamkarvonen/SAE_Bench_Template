@@ -76,7 +76,7 @@ class AutoInterpEvalConfig:
         description="Split up total tokens into batches of this size",
     )
     llm_dtype: str = Field(
-        default="bfloat16",
+        default="float32",
         title="LLM Data Type",
         description="The data type to use for the LLM",
     )

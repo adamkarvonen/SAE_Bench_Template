@@ -16,15 +16,15 @@ import argparse
 from datetime import datetime
 import pickle
 
-import evals.shift_and_tpp.dataset_creation as dataset_creation
-from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
-from evals.shift_and_tpp.eval_output import (
-    EVAL_TYPE_ID_SHIFT,
+import evals.scr_and_tpp.dataset_creation as dataset_creation
+from evals.scr_and_tpp.eval_config import ScrAndTppEvalConfig
+from evals.scr_and_tpp.eval_output import (
+    EVAL_TYPE_ID_SCR,
     EVAL_TYPE_ID_TPP,
-    ShiftEvalOutput,
-    ShiftMetricCategories,
-    ShiftResultDetail,
-    ShiftMetrics,
+    ScrEvalOutput,
+    ScrMetricCategories,
+    ScrResultDetail,
+    ScrMetrics,
     TppEvalOutput,
     TppMetricCategories,
     TppResultDetail,
@@ -34,16 +34,13 @@ import evals.sparse_probing.probe_training as probe_training
 import sae_bench_utils.activation_collection as activation_collection
 import sae_bench_utils.dataset_info as dataset_info
 import sae_bench_utils.dataset_utils as dataset_utils
-import sae_bench_utils.formatting_utils as formatting_utils
+import sae_bench_utils.general_utils as general_utils
 from sae_bench_utils import (
     get_eval_uuid,
     get_sae_lens_version,
     get_sae_bench_version,
 )
-from sae_bench_utils.sae_selection_utils import (
-    get_saes_from_regex,
-    select_saes_multiple_patterns,
-)
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 
 COLUMN2_VALS_LOOKUP = {
     "LabHC/bias_in_bios_class_set1": ("male", "female"),
@@ -234,15 +231,15 @@ def get_probe_test_accuracy(
         test_accuracies[class_name] = test_acc_probe
 
     if perform_scr:
-        shift_probe_accuracies = get_shift_probe_test_accuracy(
+        scr_probe_accuracies = get_scr_probe_test_accuracy(
             probes, all_class_list, all_activations, probe_batch_size
         )
-        test_accuracies.update(shift_probe_accuracies)
+        test_accuracies.update(scr_probe_accuracies)
 
     return test_accuracies
 
 
-def get_shift_probe_test_accuracy(
+def get_scr_probe_test_accuracy(
     probes: dict[str, probe_training.Probe],
     all_class_list: list[str],
     all_activations: dict[str, torch.Tensor],
@@ -381,7 +378,7 @@ def create_tpp_plotting_dict(
 
     for class_name in classes:
         if " probe on " in class_name:
-            raise ValueError("This is SHIFT spurious correlations, shouldn't be here.")
+            raise ValueError("This is SCR, shouldn't be here.")
 
         intended_clean_acc = llm_clean_accs[class_name]
 
@@ -431,7 +428,7 @@ def create_tpp_plotting_dict(
 
 def get_dataset_activations(
     dataset_name: str,
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     model: HookedTransformer,
     llm_batch_size: int,
     layer: int,
@@ -455,10 +452,10 @@ def get_dataset_activations(
         train_data = dataset_utils.filter_dataset(train_data, chosen_classes)
         test_data = dataset_utils.filter_dataset(test_data, chosen_classes)
 
-    train_data = dataset_utils.tokenize_data(
+    train_data = dataset_utils.tokenize_data_dictionary(
         train_data, model.tokenizer, config.context_length, device
     )
-    test_data = dataset_utils.tokenize_data(
+    test_data = dataset_utils.tokenize_data_dictionary(
         test_data, model.tokenizer, config.context_length, device
     )
 
@@ -474,7 +471,7 @@ def get_dataset_activations(
 
 def run_eval_single_dataset(
     dataset_name: str,
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     layer: int,
@@ -608,7 +605,7 @@ def run_eval_single_dataset(
 
 
 def run_eval_single_sae(
-    config: ShiftAndTppEvalConfig,
+    config: ScrAndTppEvalConfig,
     sae: SAE,
     model: HookedTransformer,
     device: str,
@@ -672,24 +669,23 @@ def run_eval_single_sae(
 
             averaging_names.append(run_name)
 
-    results_dict = formatting_utils.average_results_dictionaries(dataset_results, averaging_names)
+    results_dict = general_utils.average_results_dictionaries(dataset_results, averaging_names)
     results_dict.update(dataset_results)
 
     return results_dict
 
 
 def run_eval(
-    config: ShiftAndTppEvalConfig,
-    selected_saes_dict: dict[str, list[str] | SAE],
+    config: ScrAndTppEvalConfig,
+    selected_saes: list[tuple[str, SAE]] | list[tuple[str, str]],
     device: str,
     output_path: str,
     force_rerun: bool = False,
     clean_up_activations: bool = False,
+    save_activations: bool = True,
 ):
     """
-    selected_saes_dict is a dict mapping either:
-       - Release name -> list of SAE IDs to load from that release
-       - Custom name -> Single SAE object
+    selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
 
     If clean_up_activations is True, which means that the activations are deleted after the evaluation is done.
     You may want to use this because activations for all datasets can easily be 10s of GBs.
@@ -699,7 +695,7 @@ def run_eval(
     sae_bench_commit_hash = get_sae_bench_version()
 
     if config.perform_scr:
-        eval_type = EVAL_TYPE_ID_SHIFT
+        eval_type = EVAL_TYPE_ID_SCR
     else:
         eval_type = EVAL_TYPE_ID_TPP
     output_path = os.path.join(output_path, eval_type)
@@ -720,162 +716,145 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release in selected_saes_dict:
-        print(
-            f"Running evaluation for SAE release: {sae_release}, SAEs: {selected_saes_dict[sae_release]}"
+    for sae_release, sae_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
+        if isinstance(sae_id, str):
+            sae = SAE.from_pretrained(
+                release=sae_release,
+                sae_id=sae_id,
+                device=device,
+            )[0]
+        else:
+            sae = sae_id
+            sae_id = "custom_sae"
+
+        sae = sae.to(device=device, dtype=llm_dtype)
+
+        artifacts_folder = os.path.join(
+            artifacts_base_folder, eval_type, config.model_name, sae.cfg.hook_name
         )
 
-        # Wrap single SAE objects in a list to unify processing of both pretrained and custom SAEs
-        if not isinstance(selected_saes_dict[sae_release], list):
-            selected_saes_dict[sae_release] = [selected_saes_dict[sae_release]]
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
 
-        for sae_id in tqdm(
-            selected_saes_dict[sae_release],
-            desc="Running SAE evaluation on all selected SAEs",
-        ):
-            gc.collect()
-            torch.cuda.empty_cache()
-
-            # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-            if isinstance(sae_id, str):
-                sae = SAE.from_pretrained(
-                    release=sae_release,
-                    sae_id=sae_id,
-                    device=device,
-                )[0]
-            else:
-                sae = sae_id
-                sae_id = "custom_sae"
-
-            sae = sae.to(device=device, dtype=llm_dtype)
-
-            artifacts_folder = os.path.join(
-                artifacts_base_folder, eval_type, config.model_name, sae.cfg.hook_name
-            )
-
-            sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-            sae_result_file = sae_result_file.replace("/", "_")
-            sae_result_path = os.path.join(output_path, sae_result_file)
-
-            if os.path.exists(sae_result_path) and not force_rerun:
-                print(f"Loading existing results from {sae_result_path}")
-                with open(sae_result_path, "r") as f:
-                    if eval_type == EVAL_TYPE_ID_SHIFT:
-                        eval_output = TypeAdapter(ShiftEvalOutput).validate_json(f.read())
-                    elif eval_type == EVAL_TYPE_ID_TPP:
-                        eval_output = TypeAdapter(TppEvalOutput).validate_json(f.read())
-                    else:
-                        raise ValueError(f"Invalid eval type: {eval_type}")
-            else:
-                shift_or_tpp_results = run_eval_single_sae(
-                    config,
-                    sae,
-                    model,
-                    device,
-                    artifacts_folder,
-                )
-                if eval_type == EVAL_TYPE_ID_SHIFT:
-                    eval_output = ShiftEvalOutput(
-                        eval_type_id=eval_type,
-                        eval_config=config,
-                        eval_id=eval_instance_id,
-                        datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                        eval_result_metrics=ShiftMetricCategories(
-                            shift_metrics=ShiftMetrics(
-                                **{
-                                    k: v
-                                    for k, v in shift_or_tpp_results.items()
-                                    if not isinstance(v, dict)
-                                }
-                            )
-                        ),
-                        eval_result_details=[
-                            ShiftResultDetail(
-                                dataset_name=dataset_name,
-                                **result,
-                            )
-                            for dataset_name, result in shift_or_tpp_results.items()
-                            if isinstance(result, dict)
-                        ],
-                        sae_bench_commit_hash=sae_bench_commit_hash,
-                        sae_lens_id=sae_id,
-                        sae_lens_release_id=sae_release,
-                        sae_lens_version=sae_lens_version,
-                    )
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Loading existing results from {sae_result_path}")
+            with open(sae_result_path, "r") as f:
+                if eval_type == EVAL_TYPE_ID_SCR:
+                    eval_output = TypeAdapter(ScrEvalOutput).validate_json(f.read())
                 elif eval_type == EVAL_TYPE_ID_TPP:
-                    eval_output = TppEvalOutput(
-                        eval_type_id=eval_type,
-                        eval_config=config,
-                        eval_id=eval_instance_id,
-                        datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                        eval_result_metrics=TppMetricCategories(
-                            tpp_metrics=TppMetrics(
-                                **{
-                                    k: v
-                                    for k, v in shift_or_tpp_results.items()
-                                    if not isinstance(v, dict)
-                                }
-                            )
-                        ),
-                        eval_result_details=[
-                            TppResultDetail(
-                                dataset_name=dataset_name,
-                                **result,
-                            )
-                            for dataset_name, result in shift_or_tpp_results.items()
-                            if isinstance(result, dict)
-                        ],
-                        sae_bench_commit_hash=sae_bench_commit_hash,
-                        sae_lens_id=sae_id,
-                        sae_lens_release_id=sae_release,
-                        sae_lens_version=sae_lens_version,
-                    )
+                    eval_output = TypeAdapter(TppEvalOutput).validate_json(f.read())
                 else:
                     raise ValueError(f"Invalid eval type: {eval_type}")
+        else:
+            scr_or_tpp_results = run_eval_single_sae(
+                config,
+                sae,
+                model,
+                device,
+                artifacts_folder,
+                save_activations,
+            )
+            if eval_type == EVAL_TYPE_ID_SCR:
+                eval_output = ScrEvalOutput(
+                    eval_type_id=eval_type,
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=ScrMetricCategories(
+                        scr_metrics=ScrMetrics(
+                            **{
+                                k: v
+                                for k, v in scr_or_tpp_results.items()
+                                if not isinstance(v, dict)
+                            }
+                        )
+                    ),
+                    eval_result_details=[
+                        ScrResultDetail(
+                            dataset_name=dataset_name,
+                            **result,
+                        )
+                        for dataset_name, result in scr_or_tpp_results.items()
+                        if isinstance(result, dict)
+                    ],
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
+            elif eval_type == EVAL_TYPE_ID_TPP:
+                eval_output = TppEvalOutput(
+                    eval_type_id=eval_type,
+                    eval_config=config,
+                    eval_id=eval_instance_id,
+                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                    eval_result_metrics=TppMetricCategories(
+                        tpp_metrics=TppMetrics(
+                            **{
+                                k: v
+                                for k, v in scr_or_tpp_results.items()
+                                if not isinstance(v, dict)
+                            }
+                        )
+                    ),
+                    eval_result_details=[
+                        TppResultDetail(
+                            dataset_name=dataset_name,
+                            **result,
+                        )
+                        for dataset_name, result in scr_or_tpp_results.items()
+                        if isinstance(result, dict)
+                    ],
+                    sae_bench_commit_hash=sae_bench_commit_hash,
+                    sae_lens_id=sae_id,
+                    sae_lens_release_id=sae_release,
+                    sae_lens_version=sae_lens_version,
+                )
+            else:
+                raise ValueError(f"Invalid eval type: {eval_type}")
 
-            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
+        results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            eval_output.to_json_file(sae_result_path, indent=2)
+        eval_output.to_json_file(sae_result_path, indent=2)
 
     if clean_up_activations:
-        shutil.rmtree(artifacts_folder)
+        if os.path.exists(artifacts_folder):
+            shutil.rmtree(artifacts_folder)
 
     return results_dict
 
 
-def setup_environment():
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    if torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    print(f"Using device: {device}")
-    return device
-
-
 def create_config_and_selected_saes(
     args,
-) -> tuple[ShiftAndTppEvalConfig, dict[str, list[str]]]:
-    config = ShiftAndTppEvalConfig(
+) -> tuple[ScrAndTppEvalConfig, list[tuple[str, str]]]:
+    config = ScrAndTppEvalConfig(
         random_seed=args.random_seed,
         model_name=args.model_name,
         perform_scr=args.perform_scr,
     )
 
-    selected_saes_dict = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
+    assert len(selected_saes) > 0, "No SAEs selected"
 
-    assert len(selected_saes_dict) > 0, "No SAEs selected"
+    releases = set([release for release, _ in selected_saes])
 
-    for release, saes in selected_saes_dict.items():
-        print(f"SAE release: {release}, Number of SAEs: {len(saes)}")
-        print(f"Sample SAEs: {saes[:5]}...")
+    print(f"Selected SAEs from releases: {releases}")
 
-    return config, selected_saes_dict
+    for release, sae in selected_saes:
+        print(f"Sample SAEs: {release}, {sae}")
+
+    return config, selected_saes
 
 
 def arg_parser():
-    parser = argparse.ArgumentParser(description="Run SHIFT or TPP evaluation")
+    parser = argparse.ArgumentParser(description="Run SCR or TPP evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
     parser.add_argument(
@@ -893,7 +872,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/shift_and_tpp/results",
+        default="eval_results",
         help="Output folder",
     )
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
@@ -901,6 +880,11 @@ def arg_parser():
         "--clean_up_activations",
         action="store_true",
         help="Clean up activations after evaluation",
+    )
+    parser.add_argument(
+        "--save_activations",
+        action="store_false",
+        help="Save the generated LLM activations for later use",
     )
 
     def str_to_bool(value):
@@ -912,7 +896,7 @@ def arg_parser():
         "--perform_scr",
         type=str_to_bool,
         required=True,
-        help="If true, do SHIFT Spurious Correlation Removal (SCR). If false, do TPP.",
+        help="If true, do Spurious Correlation Removal (SCR). If false, do TPP.",
     )
 
     return parser
@@ -921,39 +905,37 @@ def arg_parser():
 if __name__ == "__main__":
     """
     Example pythia-70m usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
     --model_name pythia-70m-deduped \
     --perform_scr true
 
     Example Gemma-2-2B SAE Bench usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
     --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b \
     --perform_scr true
 
     Example Gemma-2-2B Gemma-Scope usage:
-    python evals/shift_and_tpp/main.py \
+    python evals/scr_and_tpp/main.py \
     --sae_regex_pattern "gemma-scope-2b-pt-res" \
     --sae_block_pattern "layer_20/width_16k/average_l0_139" \
     --model_name gemma-2-2b \
     --perform_scr true
     """
     args = arg_parser().parse_args()
-    device = setup_environment()
+    device = general_utils.setup_environment()
 
     start_time = time.time()
 
-    config, selected_saes_dict = create_config_and_selected_saes(args)
+    config, selected_saes = create_config_and_selected_saes(args)
 
-    print(selected_saes_dict)
+    print(selected_saes)
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-        -1
-    ]
+    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
@@ -961,11 +943,12 @@ if __name__ == "__main__":
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
-        selected_saes_dict,
+        selected_saes,
         device,
         args.output_folder,
         args.force_rerun,
         args.clean_up_activations,
+        args.save_activations,
     )
 
     end_time = time.time()
@@ -975,52 +958,36 @@ if __name__ == "__main__":
 
 # Use this code snippet to use custom SAE objects
 # if __name__ == "__main__":
-#     import baselines.identity_sae as identity_sae
-#     import baselines.jumprelu_sae as jumprelu_sae
+#     import custom_saes.identity_sae as identity_sae
+#     import custom_saes.jumprelu_sae as jumprelu_sae
 
 #     """
-#     python evals/shift_and_tpp/main.py
+#     python evals/scr_and_tpp/main.py
 #     """
-#     device = setup_environment()
+#     device = general_utils.setup_environment()
 
 #     start_time = time.time()
 
 #     random_seed = 42
-#     output_folder = "evals/shift_and_tpp/results"
+#     output_folder = "eval_results"
 #     perform_scr = True
 
-#     baseline_type = "identity_sae"
-#     # baseline_type = "jumprelu_sae"
+#     model_name = "gemma-2-2b"
+#     hook_layer = 20
 
-#     model_name = "pythia-70m-deduped"
-#     hook_layer = 4
-#     d_model = 512
+#     repo_id = "google/gemma-scope-2b-pt-res"
+#     filename = f"layer_{hook_layer}/width_16k/average_l0_71/params.npz"
+#     sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, hook_layer)
+#     selected_saes = [(f"{repo_id}_{filename}_gemmascope_sae", sae)]
 
-#     # model_name = "gemma-2-2b"
-#     # hook_layer = 19
-#     # d_model = 2304
-
-#     if baseline_type == "identity_sae":
-#         sae = identity_sae.IdentitySAE(model_name, d_model=d_model, hook_layer=hook_layer)
-#         selected_saes_dict = {f"{model_name}_layer_{hook_layer}_identity_sae": sae}
-#     elif baseline_type == "jumprelu_sae":
-#         repo_id = "google/gemma-scope-2b-pt-res"
-#         filename = "layer_20/width_16k/average_l0_71/params.npz"
-#         sae = jumprelu_sae.load_jumprelu_sae(repo_id, filename, 20)
-#         selected_saes_dict = {f"{repo_id}_{filename}_gemmascope_sae": sae}
-#     else:
-#         raise ValueError(f"Invalid baseline type: {baseline_type}")
-
-#     config = ShiftAndTppEvalConfig(
+#     config = ScrAndTppEvalConfig(
 #         random_seed=random_seed,
 #         model_name=model_name,
 #         perform_scr=perform_scr,
 #     )
 
 #     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-#     config.llm_dtype = str(activation_collection.LLM_NAME_TO_DTYPE[config.model_name]).split(".")[
-#         -1
-#     ]
+#     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
 #     # create output folder
 #     os.makedirs(output_folder, exist_ok=True)
@@ -1028,11 +995,12 @@ if __name__ == "__main__":
 #     # run the evaluation on all selected SAEs
 #     results_dict = run_eval(
 #         config,
-#         selected_saes_dict,
+#         selected_saes,
 #         device,
 #         output_folder,
 #         force_rerun=True,
 #         clean_up_activations=False,
+#         save_activations=True,
 #     )
 
 #     end_time = time.time()

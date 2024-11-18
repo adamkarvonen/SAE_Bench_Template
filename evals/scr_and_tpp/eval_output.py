@@ -7,16 +7,14 @@ from evals.base_eval_output import (
     BaseMetrics,
     BaseResultDetail,
 )
-from evals.shift_and_tpp.eval_config import ShiftAndTppEvalConfig
+from evals.scr_and_tpp.eval_config import ScrAndTppEvalConfig
 
-EVAL_TYPE_ID_SHIFT = "scr"
+EVAL_TYPE_ID_SCR = "scr"
 EVAL_TYPE_ID_TPP = "tpp"
-
-# ========= SHIFT Output
 
 
 @dataclass
-class ShiftMetrics(BaseMetrics):
+class ScrMetrics(BaseMetrics):
     scr_dir1_threshold_2: float | None = Field(
         None,
         title="SCR Dir 1, Top 2 SAE latents",
@@ -126,16 +124,16 @@ class ShiftMetrics(BaseMetrics):
 
 
 @dataclass
-class ShiftMetricCategories(BaseMetricCategories):
-    shift_metrics: ShiftMetrics = Field(
-        title="Shift Metrics",
-        description="SHIFT SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
+class ScrMetricCategories(BaseMetricCategories):
+    scr_metrics: ScrMetrics = Field(
+        title="SCR Metrics",
+        description="SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
         json_schema_extra=DEFAULT_DISPLAY,
     )
 
 
 @dataclass
-class ShiftResultDetail(BaseResultDetail):
+class ScrResultDetail(BaseResultDetail):
     dataset_name: str = Field(title="Dataset Name", description="")
 
     scr_dir1_threshold_2: float | None = Field(
@@ -246,25 +244,23 @@ class ShiftResultDetail(BaseResultDetail):
     )
 
 
-@dataclass(config=ConfigDict(title="SHIFT"))
-class ShiftEvalOutput(
-    BaseEvalOutput[ShiftAndTppEvalConfig, ShiftMetricCategories, ShiftResultDetail]
-):
+@dataclass(config=ConfigDict(title="SCR"))
+class ScrEvalOutput(BaseEvalOutput[ScrAndTppEvalConfig, ScrMetricCategories, ScrResultDetail]):
     """
-    The SHIFT Spurious Correlation Removal (SCR) evaluation ablates SAE latents to shift the bias of a biased linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.
+    The Spurious Correlation Removal (SCR) evaluation ablates SAE latents to shift the bias of a biased linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.
     """
 
-    eval_config: ShiftAndTppEvalConfig
+    eval_config: ScrAndTppEvalConfig
     eval_id: str
     datetime_epoch_millis: int
-    eval_result_metrics: ShiftMetricCategories
-    eval_result_details: list[ShiftResultDetail] = Field(
+    eval_result_metrics: ScrMetricCategories
+    eval_result_details: list[ScrResultDetail] = Field(
         default_factory=list,
-        title="Per-Dataset SHIFT Spurious Correlation Removal (SCR) Results",
-        description="Each object is a stat on the SHIFT SCR results for a single dataset.",
+        title="Per-Dataset Spurious Correlation Removal (SCR) Results",
+        description="Each object is a stat on the SCR results for a single dataset.",
     )
     eval_type_id: str = Field(
-        default=EVAL_TYPE_ID_SHIFT,
+        default=EVAL_TYPE_ID_SCR,
         title="Eval Type ID",
         description="The type of the evaluation",
     )
@@ -505,12 +501,12 @@ class TppResultDetail(BaseResultDetail):
 
 
 @dataclass(config=ConfigDict(title="TPP"))
-class TppEvalOutput(BaseEvalOutput[ShiftAndTppEvalConfig, TppMetricCategories, TppResultDetail]):
+class TppEvalOutput(BaseEvalOutput[ScrAndTppEvalConfig, TppMetricCategories, TppResultDetail]):
     """
     The Targeted Probe Pertubation (TPP) evaluation ablates a set of SAE latents to damage a single targeted linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.
     """
 
-    eval_config: ShiftAndTppEvalConfig
+    eval_config: ScrAndTppEvalConfig
     eval_id: str
     datetime_epoch_millis: int
     eval_result_metrics: TppMetricCategories

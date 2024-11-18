@@ -22,5 +22,5 @@ The hyperparameters were set to obtain a good unlearning score on TopK and Stand
 * after executing `main.py`, the following will happen:
     1. the feature sparsity for the forget and retain dataset will be saved at `artifacts/unlearning/{model_name}/{sae_name}/results/sparsities/`
     2. for each hyperparameter set, the eval results will be saved at `artifacts/unlearning/{model_name}/{sae_name}/results/metrics` as `.pkl` files
-    3. The standard results json will be saved to `evals/unlearning/results/{sae_name}.json`, which contains the unlearning score.
+    3. The standard results json will be saved to `eval_results/unlearning/{sae_name}.json`, which contains the unlearning score.
 * use `example.ipynb` to combine the sweeping metrics and retrieve one scalar (the unlearning score) for each SAE

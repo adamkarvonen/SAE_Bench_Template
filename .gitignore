@@ -31,8 +31,6 @@ auth/*
 evals/ravel/data/
 evals/ravel/models/
 
-evals/absorption/results/
-
 # unlearning: the forget dataset cannot be uploaded
 */unlearning/data/bio-forget-corpus.jsonl
 
