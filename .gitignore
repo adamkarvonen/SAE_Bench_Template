@@ -30,6 +30,7 @@ auth/*
 
 evals/ravel/data/
 evals/ravel/models/
+evals/ravel/dev/
 
 evals/absorption/results/
 
