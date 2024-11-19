@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from typing import Optional
-import baselines.custom_sae_config as sae_config
+import custom_saes.custom_sae_config as sae_config
 
 
 class IdentitySAE(nn.Module):

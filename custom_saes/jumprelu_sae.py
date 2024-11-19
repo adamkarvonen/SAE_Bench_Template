@@ -4,7 +4,7 @@ from huggingface_hub import hf_hub_download
 import numpy as np
 from typing import Optional
 
-import baselines.custom_sae_config as sae_config
+import custom_saes.custom_sae_config as sae_config
 
 
 class JumpReLUSAE(nn.Module):

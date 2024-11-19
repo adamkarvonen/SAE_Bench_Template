@@ -9,7 +9,7 @@ import math
 from tqdm import tqdm
 import gc
 
-import baselines.custom_sae_config as sae_config
+import custom_saes.custom_sae_config as sae_config
 import sae_bench_utils.dataset_utils as dataset_utils
 import sae_bench_utils.activation_collection as activation_collection
 

@@ -172,11 +172,8 @@ def run_evals(
 
 
 if __name__ == "__main__":
-    import baselines.identity_sae as identity_sae
-    import baselines.pca_sae as pca_sae
-
-    with open("openai_api_key.txt", "r") as f:
-        api_key = f.read().strip()
+    import custom_saes.identity_sae as identity_sae
+    import custom_saes.pca_sae as pca_sae
 
     device = general_utils.setup_environment()
 
@@ -196,6 +193,12 @@ if __name__ == "__main__":
         "sparse_probing",
         "unlearning",
     ]
+
+    if "autointerp" in eval_types:
+        with open("openai_api_key.txt", "r") as f:
+            api_key = f.read().strip()
+    else:
+        api_key = None
 
     # If evaluating multiple SAEs on the same layer, set save_activations to True
     # This will require at least 100GB of disk space
