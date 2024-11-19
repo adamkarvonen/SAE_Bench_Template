@@ -10,15 +10,16 @@ import os
 import random
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
+import pickle as pkl
 
 import torch
 from nnsight import LanguageModel
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
-from validation import evaluate_completion
-from eval_config import RAVELEvalConfig
-from generation import generate_batched
+from evals.ravel.validation import evaluate_completion
+from evals.ravel.eval_config import RAVELEvalConfig
+from evals.ravel.generation import generate_batched
 
 
 # Set random seed for reproducibility
@@ -289,3 +290,86 @@ class RAVELInstance:
 
     def __len__(self) -> int:
         return len(self.prompts)
+
+
+def create_filtered_dataset(
+    model_id: str,
+    chosen_entity: str,
+    model,
+    REPO_DIR: str,
+    force_recompute: bool = False,
+    llm_batch_size: int = 512,
+    top_n_entities: int = 400,
+    top_n_templates: int = 12,
+    max_prompt_length: int = 64,
+    n_samples_per_attribute_class: Optional[int] = None,
+    full_dataset_downsample: int = 8192,
+):
+    """
+    Creates and saves filtered dataset of correct model completions.
+
+    Args:
+        model_id: Identifier for model
+        chosen_entity: Entity type to analyze
+        model: Language model instance
+        force_recompute: Whether to recompute even if cached file exists
+        prompt_max_length: Maximum length for prompts
+        batch_size: Batch size for generation
+        top_n_entities: Number of top entities to keep
+        top_n_templates: Number of top templates per attribute to keep
+        full_dataset_downsample: Number of prompts to sample from full dataset
+
+    Returns:
+        filtered_data: Dataset containing correct completions
+        accuracy: Average accuracy of model completions
+    """
+    DATA_DIR = os.path.join(REPO_DIR, "evals/ravel/data/")
+    os.makedirs(os.path.join(DATA_DIR, model_id), exist_ok=True)
+    filename = os.path.join(DATA_DIR, f"{model_id}/{chosen_entity}_instance.pkl")
+
+    if force_recompute or not os.path.exists(filename):
+        # Load and sample data
+        print("Tokenizing full dataset")
+        full_dataset = RAVELInstance.from_files(
+            chosen_entity,
+            DATA_DIR,
+            model.tokenizer,
+            max_prompt_length=max_prompt_length,
+            n_samples_per_attribute_class=n_samples_per_attribute_class,
+        )
+        sampled_dataset = full_dataset.downsample(full_dataset_downsample)
+        print(f"Number of prompts sampled: {len(full_dataset.prompts)}")
+
+        # Generate and evaluate completions
+        sampled_dataset.generate_completions(
+            model,
+            model.tokenizer,
+            max_new_tokens=8,
+            llm_batch_size=llm_batch_size,
+        )
+        sampled_dataset.evaluate_correctness()
+
+        # Filter data
+        dataset = sampled_dataset.filter_correct()
+        dataset = dataset.filter_top_entities_and_templates(
+            top_n_entities=top_n_entities, top_n_templates_per_attribute=top_n_templates
+        )
+
+        # Calculate metrics
+        accuracy = sampled_dataset.calculate_average_accuracy()
+        print(f"Average accuracy: {accuracy:.2%}")
+        print(f"Prompts remaining: {len(dataset)}")
+        print(
+            f"Entities after filtering: {len(set([p.entity for p in list(dataset.prompts.values())]))}"
+        )
+
+        # Save results
+        with open(filename, "wb") as f:
+            pkl.dump(dataset, f)
+
+    else:
+        print("Loading cached data")
+        dataset = pkl.load(open(filename, "rb"))
+        accuracy = dataset.calculate_average_accuracy()
+
+    return dataset
