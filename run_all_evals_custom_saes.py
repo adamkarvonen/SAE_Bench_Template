@@ -86,7 +86,7 @@ def run_evals(
                 context_size=128,
                 output_folder="eval_results/core",
                 verbose=True,
-                dtype=core.str_to_dtype(llm_dtype),
+                dtype=llm_dtype,
             )
         ),
         "scr": (
