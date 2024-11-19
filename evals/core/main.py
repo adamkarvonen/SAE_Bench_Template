@@ -146,8 +146,6 @@ class MultipleEvalsConfig:
     compute_l2_norms: bool = False
     compute_sparsity_metrics: bool = False
     compute_variance_metrics: bool = False
-    compute_featurewise_density_statistics: bool = False
-    compute_featurewise_weight_based_metrics: bool = False
     library_version: str = field(default_factory=get_library_version)
     git_hash: str = field(default_factory=get_git_hash)
 
@@ -169,8 +167,6 @@ def get_multiple_evals_everything_config(
         n_eval_sparsity_variance_batches=n_eval_sparsity_variance_batches,
         compute_sparsity_metrics=True,
         compute_variance_metrics=True,
-        compute_featurewise_density_statistics=True,
-        compute_featurewise_weight_based_metrics=True,
     )
 
 
@@ -896,6 +892,8 @@ def multiple_evals(
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
+    compute_featurewise_density_statistics: bool = False,
+    compute_featurewise_weight_based_metrics: bool = False,
     exclude_special_tokens_from_reconstruction: bool = False,
     dataset: str = "Skylion007/openwebtext",
     context_size: int = 128,
@@ -998,8 +996,8 @@ def multiple_evals(
                 compute_l2_norms=multiple_evals_config.compute_l2_norms,
                 compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
                 compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
-                compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
-                compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+                compute_featurewise_density_statistics=compute_featurewise_density_statistics,
+                compute_featurewise_weight_based_metrics=compute_featurewise_weight_based_metrics,
                 llm_dtype=dtype,
             )
 
@@ -1037,7 +1035,9 @@ def multiple_evals(
                 verbose=verbose,
             )
             eval_metrics["metrics"] = scalar_metrics
-            eval_metrics["feature_metrics"] = feature_metrics
+
+            if compute_featurewise_density_statistics or compute_featurewise_weight_based_metrics:
+                eval_metrics["feature_metrics"] = feature_metrics
 
             # Clean NaN values before saving
             cleaned_metrics = replace_nans_with_negative_one(eval_metrics)
@@ -1088,6 +1088,8 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
+        compute_featurewise_density_statistics=args.compute_featurewise_density_statistics,
+        compute_featurewise_weight_based_metrics=args.compute_featurewise_weight_based_metrics,
         exclude_special_tokens_from_reconstruction=args.exclude_special_tokens_from_reconstruction,
         dataset=args.dataset,
         context_size=args.context_size,

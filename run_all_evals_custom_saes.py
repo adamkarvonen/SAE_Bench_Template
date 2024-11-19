@@ -81,6 +81,8 @@ def run_evals(
                 n_eval_reconstruction_batches=200,
                 n_eval_sparsity_variance_batches=2000,
                 eval_batch_size_prompts=16,
+                compute_featurewise_density_statistics=False,
+                compute_featurewise_weight_based_metrics=False,
                 exclude_special_tokens_from_reconstruction=True,
                 dataset="Skylion007/openwebtext",
                 context_size=128,
