@@ -210,7 +210,7 @@ if __name__ == "__main__":
         # selected_saes = [(f"{model_name}_layer_{hook_layer}_pca_sae", sae)]
 
         for sae_name, sae in selected_saes:
-            sae = sae.to(dtype=core.str_to_dtype(llm_dtype))
+            sae = sae.to(dtype=general_utils.str_to_dtype(llm_dtype))
             sae.cfg.dtype = llm_dtype
 
         run_evals(

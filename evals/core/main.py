@@ -42,6 +42,7 @@ from sae_bench_utils import (
 )
 
 import sae_bench_utils.sae_selection_utils as sae_selection_utils
+import sae_bench_utils.general_utils as general_utils
 
 logger = logging.getLogger(__name__)
 
@@ -952,7 +953,7 @@ def multiple_evals(
             sae_id = "custom_sae"
 
         sae.to(device)
-        sae = sae.to(str_to_dtype(dtype))
+        sae = sae.to(general_utils.str_to_dtype(dtype))
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
@@ -1109,21 +1110,6 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
         return obj
 
 
-def str_to_dtype(dtype_str: str) -> torch.dtype:
-    dtype_map = {
-        "float32": torch.float32,
-        "float64": torch.float64,
-        "float16": torch.float16,
-        "bfloat16": torch.bfloat16,
-    }
-    dtype = dtype_map.get(dtype_str.lower())
-    if dtype is None:
-        raise ValueError(
-            f"Unsupported dtype: {dtype_str}. Supported dtypes: {list(dtype_map.keys())}"
-        )
-    return dtype
-
-
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run core evaluation")
     parser.add_argument(
@@ -1235,6 +1221,14 @@ def arg_parser():
 
 
 if __name__ == "__main__":
+    """
+    python evals/core/main.py "sae_bench_pythia70m_sweep_standard_ctx128_0712" "blocks.4.hook_resid_post__trainer_10" \
+    --batch_size_prompts 16 \
+    --n_eval_sparsity_variance_batches 2000 \
+    --n_eval_reconstruction_batches 200 \
+    --output_folder "eval_results/core" \
+    --exclude_special_tokens_from_reconstruction --verbose
+    """
     args = arg_parser().parse_args()
     eval_results = run_evaluations(args)
 
