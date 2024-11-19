@@ -15,11 +15,14 @@ The scoring consists of three steps:
 
 #### Open TODOs
 - [ ] move hardcoded hyperparameters from all files to eval config
+- [ ] move dependency paths
+- [ ] add type annotations
+- [ ] format result file s.t. it’s easily graphable
+- [ ] save artifacts
 - [ ] test on multiple SAEs
 - [ ] test on pythia
 - [ ] test on bigger datset, multiple entities, multiple attributes
-- [ ] format result file s.t. it’s easily graphable
 - [ ] Doublecheck BOS token handling in `uniprobe.py` 
 - [ ] Doublecheck the dataset selection used in the paper for training the probe in `uniprobe.py` 
-- [ ] save artifacts
 - [ ] write tests
+

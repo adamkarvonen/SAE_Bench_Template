@@ -71,15 +71,15 @@ def generate_with_intervention(
     source_prompts: List[Prompt],
     sae_latent_idxs: torch.Tensor,
     n_generated_tokens: int = 8,
-    llm_batch_size: int = 5,
+    inv_batch_size: int = 5,
     tracer_kwargs={"scan": False, "validate": False},
 ):
     inverted_latent_mask = create_inverted_latent_mask(sae_latent_idxs, sae_dict_size=sae.cfg.d_sae)
     ## Iterate over batches
     generated_output_tokens = []
-    for batch_idx in range(0, len(base_prompts), llm_batch_size):
-        base_batch = base_prompts[batch_idx : batch_idx + llm_batch_size]
-        source_batch = source_prompts[batch_idx : batch_idx + llm_batch_size]
+    for batch_idx in range(0, len(base_prompts), inv_batch_size):
+        base_batch = base_prompts[batch_idx : batch_idx + inv_batch_size]
+        source_batch = source_prompts[batch_idx : batch_idx + inv_batch_size]
 
         base_encoding, base_entity_pos = format_prompt_batch(base_batch, device=model.device)
         source_encoding, source_entity_pos = format_prompt_batch(source_batch, device=model.device)
@@ -148,7 +148,7 @@ def compute_disentanglement_BtoA(
     attribute_feature_dict: Dict[str, Dict[float, torch.Tensor]],
     n_interventions=10,
     n_generated_tokens=4,
-    llm_batch_size=5,
+    inv_batch_size=5,
     tracer_kwargs={"scan": False, "validate": False},
 ):
     base_A_prompts, source_A_prompts, source_B_prompts = get_prompt_pairs(
@@ -169,7 +169,7 @@ def compute_disentanglement_BtoA(
             source_A_prompts,
             sae_latent_idxs,
             n_generated_tokens=n_generated_tokens,
-            llm_batch_size=llm_batch_size,
+            inv_batch_size=inv_batch_size,
             tracer_kwargs=tracer_kwargs,
         )
         cause_A_accuracies[threshold] = evaluate_intervention(
@@ -192,7 +192,7 @@ def compute_disentanglement_BtoA(
             source_B_prompts,
             sae_latent_idxs,
             n_generated_tokens=n_generated_tokens,
-            llm_batch_size=llm_batch_size,
+            inv_batch_size=inv_batch_size,
             tracer_kwargs=tracer_kwargs,
         )
         isolation_BtoA_accuracies[threshold] = evaluate_intervention(
@@ -211,7 +211,7 @@ def compute_disentanglement_AB_bidirectional(
     attribute_feature_dict: Dict[str, Dict[float, torch.Tensor]],
     n_interventions=10,
     n_generated_tokens=4,
-    llm_batch_size=5,
+    inv_batch_size=5,
     tracer_kwargs={"scan": False, "validate": False},
 ):
     print(f"1/2 Computing disentanglement score for {attribute_A} -> {attribute_B}")
@@ -225,7 +225,7 @@ def compute_disentanglement_AB_bidirectional(
         attribute_feature_dict,
         n_interventions,
         n_generated_tokens,
-        llm_batch_size,
+        inv_batch_size,
         tracer_kwargs,
     )
 
@@ -240,7 +240,7 @@ def compute_disentanglement_AB_bidirectional(
         attribute_feature_dict,
         n_interventions,
         n_generated_tokens,
-        llm_batch_size,
+        inv_batch_size,
         tracer_kwargs,
     )
 

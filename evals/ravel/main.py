@@ -108,27 +108,16 @@ def run_eval(
         # sae_result_path = os.path.join(output_path, sae_result_file)
 
 
-        if DEBUG_MODE:
-            n_samples_per_attribute_class = 50
-            top_n_entities = 10
-            top_n_templates = 2
-        else:
-            n_samples_per_attribute_class = None
-            top_n_entities = 400
-            top_n_templates = 12
-
-
         dataset = create_filtered_dataset(
             model_id=model_id,
-            chosen_entity="nobel_prize_winner",
+            chosen_entity=config.entity_class,
             model=model,
             REPO_DIR=REPO_DIR,
-            force_recompute=False,
-            n_samples_per_attribute_class=n_samples_per_attribute_class,
-            top_n_entities=top_n_entities,
-            top_n_templates=top_n_templates,
+            force_recompute=config.force_dataset_recompute,
+            n_samples_per_attribute_class=config.n_samples_per_attribute_class,
+            top_n_entities=config.top_n_entities,
+            top_n_templates=config.top_n_templates,
         )
-
 
         # TODO save results
         all_attributes = dataset.get_attributes()
@@ -139,10 +128,10 @@ def run_eval(
             sae,
             dataset,
             all_attributes=all_attributes,
-            coeffs=[0.01, 0.1, 10, 100, 1000],
-            max_samples_per_attribute=1024,
-            layer=11,
-            llm_batch_size=512,
+            coeffs=config.probe_coefficients,
+            max_samples_per_attribute=config.max_samples_per_attribute,
+            layer=sae.cfg.hook_layer,
+            llm_batch_size=config.llm_batch_size,
         )
 
 
@@ -150,12 +139,12 @@ def run_eval(
             model,
             sae,
             dataset,
-            attribute_A="Field",
-            attribute_B="Country of Birth",
+            attribute_A=config.attribute_class_A,
+            attribute_B=config.attribute_class_B,
             attribute_feature_dict=attribute_feature_dict,
-            n_interventions=128,
-            n_generated_tokens=8,
-            llm_batch_size=16,
+            n_interventions=config.n_interventions,
+            n_generated_tokens=config.n_generated_tokens,
+            inv_batch_size=config.sae_batch_size,
             tracer_kwargs={"scan": False, "validate": False},
         )
 
