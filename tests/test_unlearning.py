@@ -22,7 +22,7 @@ def test_end_to_end_different_seed():
 
     test_config.retain_thresholds = [0.01]
     test_config.n_features_list = [10]
-    test_config.multipliers = [25]
+    test_config.multipliers = [25, 50]
 
     test_config.dataset_size = 256
 
@@ -31,10 +31,10 @@ def test_end_to_end_different_seed():
     test_config.llm_dtype = "bfloat16"
 
     sae_regex_patterns = [
-        r"sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824",
+        r"sae_bench_gemma-2-2b_topk_width-2pow14_date-1109",
     ]
     sae_block_pattern = [
-        r"blocks.3.hook_resid_post__trainer_2",
+        r"blocks.5.hook_resid_post__trainer_2",
     ]
 
     selected_saes = select_saes_multiple_patterns(sae_regex_patterns, sae_block_pattern)
@@ -48,16 +48,21 @@ def test_end_to_end_different_seed():
         clean_up_artifacts=True,
     )
 
+    with open("test_data.json", "w") as f:
+        json.dump(run_results, f, indent=4)
+
     with open(results_filename, "r") as f:
         expected_results = json.load(f)
 
-    sae_name = "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824_blocks.3.hook_resid_post__trainer_2"
+    sae_name = (
+        "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109_blocks.5.hook_resid_post__trainer_2"
+    )
 
     run_result_metrics = run_results[sae_name]["eval_result_metrics"]
 
     testing_utils.compare_dicts_within_tolerance(
         run_result_metrics,
-        expected_results["eval_result_metrics"],
+        expected_results[sae_name]["eval_result_metrics"],
         tolerance,
         keys_to_compare=["unlearning_score"],
     )

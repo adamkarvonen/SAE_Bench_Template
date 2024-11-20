@@ -6,7 +6,7 @@
 To run this eval, run `cd SAE_Bench_Template` and a command such as this one:
 
 ```
-python evals/unlearning/main.py     --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824"     --sae_block_pattern "blocks.3.hook_resid_post__trainer_2"     --model_name gemma-2-2b-it --force_rerun
+python evals/unlearning/main.py     --sae_regex_pattern "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109"     --sae_block_pattern "blocks.5.hook_resid_post__trainer_2"     --model_name gemma-2-2b-it --force_rerun
 ```
 
 Currently, the instruct prompt template is only added for Gemma-2-2B-it. Other prompt templates can be added in `evals/unlearning/utils/var.py`. This eval should only be ran on instruct models.

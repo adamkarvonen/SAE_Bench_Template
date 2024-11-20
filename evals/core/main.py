@@ -1230,6 +1230,13 @@ if __name__ == "__main__":
     --n_eval_reconstruction_batches 200 \
     --output_folder "eval_results/core" \
     --exclude_special_tokens_from_reconstruction --verbose
+
+    python evals/core/main.py "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" "blocks.19.hook_resid_post__trainer_2" \
+    --batch_size_prompts 16 \
+    --n_eval_sparsity_variance_batches 2000 \
+    --n_eval_reconstruction_batches 200 \
+    --output_folder "eval_results/core" \
+    --exclude_special_tokens_from_reconstruction --verbose --llm_dtype bfloat16
     """
     args = arg_parser().parse_args()
     eval_results = run_evaluations(args)

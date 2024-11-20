@@ -266,8 +266,8 @@ if __name__ == "__main__":
     """
     Example Gemma-2-2B SAE Bench usage:
     python evals/unlearning/main.py \
-    --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
-    --sae_block_pattern "blocks.3.hook_resid_post__trainer_2" \
+    --sae_regex_pattern "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" \
+    --sae_block_pattern "blocks.5.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b-it
 
     Example Gemma-2-2B Gemma-Scope usage:

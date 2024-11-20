@@ -913,7 +913,7 @@ if __name__ == "__main__":
 
     Example Gemma-2-2B SAE Bench usage:
     python evals/scr_and_tpp/main.py \
-    --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
+    --sae_regex_pattern "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" \
     --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b \
     --perform_scr true
