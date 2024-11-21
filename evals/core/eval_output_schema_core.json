@@ -8,6 +8,12 @@
           "title": "Model Name",
           "type": "string"
         },
+        "llm_dtype": {
+          "default": "float32",
+          "description": "LLM data type",
+          "title": "LLM Data Type",
+          "type": "string"
+        },
         "batch_size_prompts": {
           "default": 16,
           "description": "Batch size for evaluation prompts",
@@ -78,6 +84,12 @@
           "default": false,
           "description": "Compute featurewise weight-based metrics",
           "title": "Compute Featurewise Weight-Based Metrics",
+          "type": "boolean"
+        },
+        "exclude_special_tokens_from_reconstruction": {
+          "default": false,
+          "description": "Exclude special tokens like BOS, EOS, PAD from reconstruction",
+          "title": "Exclude Special Tokens from Reconstruction",
           "type": "boolean"
         },
         "verbose": {
