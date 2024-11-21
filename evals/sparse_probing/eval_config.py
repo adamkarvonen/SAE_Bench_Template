@@ -59,9 +59,9 @@ class SparseProbingEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="gemma-2-2b",
+        default="",
         title="Model Name",
-        description="Model name",
+        description="Model name. Must be set with a command line argument.",
     )
 
     k_values: list[int] = Field(

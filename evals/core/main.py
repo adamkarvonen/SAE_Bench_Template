@@ -1117,7 +1117,7 @@ def arg_parser():
     parser.add_argument(
         "--model_name",
         type=str,
-        default="pythia-70m-deduped",
+        required=True,
         help="Model name",
     )
     parser.add_argument(

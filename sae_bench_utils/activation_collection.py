@@ -15,6 +15,8 @@ LLM_NAME_TO_BATCH_SIZE = {
     "pythia-70m-deduped": 512,
     "gemma-2-2b": 32,
     "gemma-2-9b": 32,
+    "gemma-2-2b-it": 32,
+    "gemma-2-9b-it": 32,
 }
 
 LLM_NAME_TO_DTYPE = {

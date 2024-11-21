@@ -35,9 +35,9 @@ class AbsorptionEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="gemma-2-2b",
+        default="",
         title="Model Name",
-        description="Model name",
+        description="Model name. Must be set with a command line argument. For this eval, we currently recommend to only use models >= 2B parameters.",
     )
     llm_batch_size: int = Field(
         default=None,

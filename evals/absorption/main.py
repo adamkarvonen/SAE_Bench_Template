@@ -296,6 +296,10 @@ if __name__ == "__main__":
     --model_name pythia-70m-deduped
     """
     args = arg_parser().parse_args()
+
+    if "gemma" not in args.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
+
     device = general_utils.setup_environment()
 
     start_time = time.time()

@@ -41,17 +41,6 @@ class UnlearningEvalConfig(BaseEvalConfig):
         description="A list of negative values. We iterate over this list, clamping the selected features to each value",
     )
 
-    llm_batch_size: int = Field(
-        default=4,
-        title="LLM Batch Size",
-        description="LLM batch size",
-    )
-    mcq_batch_size: int = Field(
-        default=8,
-        title="MCQ Batch Size",
-        description="MCQ batch size. Multiple choice questions are shorter, so we can afford a larger batch size",
-    )
-
     dataset_size: int = Field(
         default=1024,
         title="Dataset Size",
@@ -80,12 +69,17 @@ class UnlearningEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="gemma-2-2b-it",
+        default="",
         title="Model Name",
-        description="Model name. Note that this should be a instruct model.",
+        description="Model name. Must be set with a command line argument. We recommend instruct tuned models >= 2B parameters.",
+    )
+    llm_batch_size: int = Field(
+        default=None,
+        title="LLM Batch Size",
+        description="LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
     )
     llm_dtype: str = Field(
-        default="bfloat16",
+        default="",
         title="LLM Data Type",
-        description="LLM data type",
+        description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )

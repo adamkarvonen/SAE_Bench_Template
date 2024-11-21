@@ -93,9 +93,9 @@ class ScrAndTppEvalConfig(BaseEvalConfig):
     )
 
     model_name: str = Field(
-        default="pythia-70m-deduped",
+        default="",
         title="Model Name",
-        description="",
+        description="Model name. Must be set with a command line argument.",
     )
 
     n_values: list[int] = Field(

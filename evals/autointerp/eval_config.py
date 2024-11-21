@@ -38,7 +38,7 @@ class AutoInterpEvalConfig:
     model_name: str = Field(
         default="",
         title="Model Name",
-        description="The name of the model to use",
+        description="Model name. Must be set with a command line argument.",
     )
     n_latents: int = Field(
         default=1000,

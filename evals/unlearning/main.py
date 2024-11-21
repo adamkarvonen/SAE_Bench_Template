@@ -214,12 +214,14 @@ def create_config_and_selected_saes(
 
     if args.llm_batch_size is not None:
         config.llm_batch_size = args.llm_batch_size
+    else:
+        # // 8 is because the LLM_NAME_TO_BATCH_SIZE is for ctx len 128, but we use 1024 in this eval
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name] // 8
 
     if args.llm_dtype is not None:
         config.llm_dtype = args.llm_dtype
-
-    if args.random_seed is not None:
-        config.random_seed = args.random_seed
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -237,7 +239,7 @@ def create_config_and_selected_saes(
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run unlearning evaluation")
     parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="gemma-2-2b-it", help="Model name")
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -294,6 +296,13 @@ if __name__ == "__main__":
     --model_name gemma-2-2b-it
     """
     args = arg_parser().parse_args()
+
+    if "gemma" not in args.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
+
+    if "it" not in args.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on instruct tuned models\n\n\n")
+
     device = general_utils.setup_environment()
 
     start_time = time.time()

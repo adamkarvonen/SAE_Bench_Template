@@ -7,9 +7,9 @@ from evals.base_eval_output import BaseEvalConfig
 @dataclass
 class CoreEvalConfig(BaseEvalConfig):
     model_name: str = Field(
-        default="pythia-70m-deduped",
+        default="",
         title="Model Name",
-        description="Model name",
+        description="Model name. Must be set with a command line argument.",
     )
     llm_dtype: str = Field(
         default="float32",
