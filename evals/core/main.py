@@ -1117,8 +1117,8 @@ def arg_parser():
     parser.add_argument(
         "--model_name",
         type=str,
-        required=True,
-        help="Model name",
+        default="",
+        help="Model name. Currently this flag is ignored and the model name is inferred from sae.cfg.model_name.",
     )
     parser.add_argument(
         "sae_regex_pattern",

@@ -6,10 +6,11 @@ from evals.base_eval_output import BaseEvalConfig
 # Define the eval config, which inherits from BaseEvalConfig, and include fields with titles and descriptions.
 @dataclass
 class CoreEvalConfig(BaseEvalConfig):
+    # TODO: Improve handling of model name
     model_name: str = Field(
         default="",
         title="Model Name",
-        description="Model name. Must be set with a command line argument.",
+        description="Model name. This is currently ignored and inferred from sae.cfg.model_name",
     )
     llm_dtype: str = Field(
         default="float32",
