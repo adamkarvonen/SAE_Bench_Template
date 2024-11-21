@@ -60,15 +60,19 @@ def sae_name_to_info(sae_name: str) -> dict:
             sae_config["d_sae"] = "16k"
         elif "65k" in sae_name:
             sae_config["d_sae"] = "65k"
+        elif "131k" in sae_name:
+            sae_config["d_sae"] = "131k"
         elif "1M" in sae_name:
             sae_config["d_sae"] = "1M"
         else:
             raise ValueError(f"d_sae not recognized for {sae_name}")
     elif "sae_bench_gemma" in sae_name:
-        if "ef2" in sae_name:
+        if "2pow12" in sae_name:
             sae_config["d_sae"] = "4k"
-        elif "ef8" in sae_name:
+        elif "2pow14" in sae_name:
             sae_config["d_sae"] = "16k"
+        elif "2pow16" in sae_name:
+            sae_config["d_sae"] = "65k"
         else:
             raise ValueError(f"d_sae not recognized for {sae_name}")
     elif "sae_bench_pythia70m" in sae_name:
