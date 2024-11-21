@@ -128,12 +128,7 @@ def run_eval(
 
     results_dict = {}
 
-    if config.llm_dtype == "bfloat16":
-        llm_dtype = torch.bfloat16
-    elif config.llm_dtype == "float32":
-        llm_dtype = torch.float32
-    else:
-        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+    llm_dtype = general_utils.str_to_dtype(config.llm_dtype)
 
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
