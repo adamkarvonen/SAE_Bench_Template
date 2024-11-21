@@ -22,6 +22,7 @@ LLM_NAME_TO_DTYPE = {
     "gemma-2-2b": "bfloat16",
     "gemma-2-2b-it": "bfloat16",
     "gemma-2-9b": "bfloat16",
+    "gemma-2-9b-it": "bfloat16",
 }
 
 
