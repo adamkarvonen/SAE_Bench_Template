@@ -32,7 +32,7 @@ evals/ravel/data/
 evals/ravel/models/
 
 # unlearning: the forget dataset cannot be uploaded
-*/unlearning/data/bio-forget-corpus.jsonl
+**bio-forget-corpus.jsonl
 
 
 **/images/
