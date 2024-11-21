@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "ShiftAndTppEvalConfig": {
+    "ScrAndTppEvalConfig": {
       "properties": {
         "random_seed": {
           "default": 42,
@@ -9,7 +9,7 @@
           "type": "integer"
         },
         "dataset_names": {
-          "description": "List of dataset names for both the SHIFT and TPP metrics",
+          "description": "List of dataset names for both the SCR and TPP metrics",
           "items": {
             "type": "string"
           },
@@ -18,7 +18,7 @@
         },
         "perform_scr": {
           "default": true,
-          "description": "If True, the eval will be Spurious Correlation Removal (SCR) using SHIFT. If False, the eval will be TPP.",
+          "description": "If True, the eval will be Spurious Correlation Removal (SCR). If False, the eval will be TPP.",
           "title": "Perform Spurious Correlation Removal",
           "type": "boolean"
         },
@@ -89,7 +89,7 @@
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "bfloat16",
+          "default": "float32",
           "description": "",
           "title": "LLM Dtype",
           "type": "string"
@@ -125,12 +125,12 @@
             },
             "type": "array"
           },
-          "description": "Column1 Values apply only to the SHIFT metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
+          "description": "Column1 Values apply only to the SCR metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
           "title": "Column 1 Values Lookup",
           "type": "object"
         }
       },
-      "title": "ShiftAndTppEvalConfig",
+      "title": "ScrAndTppEvalConfig",
       "type": "object"
     },
     "TppMetricCategories": {
@@ -726,7 +726,7 @@
       "type": "string"
     },
     "eval_config": {
-      "$ref": "#/$defs/ShiftAndTppEvalConfig",
+      "$ref": "#/$defs/ScrAndTppEvalConfig",
       "description": "The configuration of the evaluation.",
       "title": "Eval Config Type"
     },

@@ -33,9 +33,21 @@
           "type": "integer"
         },
         "model_name": {
-          "default": "pythia-70m-deduped",
+          "default": "gemma-2-2b",
           "description": "Model name",
           "title": "Model Name",
+          "type": "string"
+        },
+        "llm_batch_size": {
+          "default": 32,
+          "description": "LLM batch size, inference only",
+          "title": "LLM Batch Size",
+          "type": "integer"
+        },
+        "llm_dtype": {
+          "default": "bfloat16",
+          "description": "LLM data type",
+          "title": "LLM Data Type",
           "type": "string"
         }
       },
