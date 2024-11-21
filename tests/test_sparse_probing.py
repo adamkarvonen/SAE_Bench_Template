@@ -22,6 +22,7 @@ def test_end_to_end_different_seed():
     test_config.dataset_names = ["LabHC/bias_in_bios_class_set1"]
     test_config.model_name = "pythia-70m-deduped"
     test_config.random_seed = 44
+    test_config.llm_batch_size = 512
     tolerance = 0.04
     test_config.k_values = [1, 2, 5, 10, 20, 50, 100]
     test_config.llm_dtype = "float32"

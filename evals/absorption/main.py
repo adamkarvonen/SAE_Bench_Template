@@ -187,18 +187,34 @@ def _aggregate_results_df(
 
 
 def arg_parser():
+    default_config = AbsorptionEvalConfig()
+
     parser = argparse.ArgumentParser(description="Run absorption evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--f1_jump_threshold", type=float, default=0.03, help="F1 jump threshold")
-    parser.add_argument("--max_k_value", type=int, default=10, help="Maximum k value")
+    parser.add_argument(
+        "--random_seed", type=int, default=default_config.random_seed, help="Random seed"
+    )
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
+    parser.add_argument(
+        "--f1_jump_threshold",
+        type=float,
+        default=default_config.f1_jump_threshold,
+        help="F1 jump threshold",
+    )
+    parser.add_argument(
+        "--max_k_value", type=int, default=default_config.max_k_value, help="Maximum k value"
+    )
     parser.add_argument(
         "--prompt_template",
         type=str,
-        default="{word} has the first letter:",
+        default=default_config.prompt_template,
         help="Prompt template",
     )
-    parser.add_argument("--prompt_token_pos", type=int, default=-6, help="Prompt token position")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument(
+        "--prompt_token_pos",
+        type=int,
+        default=default_config.prompt_token_pos,
+        help="Prompt token position",
+    )
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -217,6 +233,20 @@ def arg_parser():
         default="eval_results/absorption",
         help="Output folder",
     )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
+    )
+
     parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
 
     return parser
@@ -231,6 +261,19 @@ def create_config_and_selected_saes(args) -> tuple[AbsorptionEvalConfig, list[tu
         prompt_token_pos=args.prompt_token_pos,
         model_name=args.model_name,
     )
+
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+    else:
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+    if args.random_seed is not None:
+        config.random_seed = args.random_seed
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -258,9 +301,6 @@ if __name__ == "__main__":
     start_time = time.time()
 
     config, selected_saes = create_config_and_selected_saes(args)
-
-    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
 

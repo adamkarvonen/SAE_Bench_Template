@@ -212,6 +212,15 @@ def create_config_and_selected_saes(
         model_name=args.model_name,
     )
 
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+
+    if args.random_seed is not None:
+        config.random_seed = args.random_seed
+
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
 
@@ -227,7 +236,7 @@ def create_config_and_selected_saes(
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run unlearning evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
     parser.add_argument("--model_name", type=str, default="gemma-2-2b-it", help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
@@ -252,6 +261,19 @@ def arg_parser():
         "--clean_up_artifacts",
         action="store_true",
         help="Clean up artifacts after evaluation",
+    )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
     )
 
     return parser
@@ -279,8 +301,6 @@ if __name__ == "__main__":
     config, selected_saes = create_config_and_selected_saes(args)
 
     print(selected_saes)
-
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

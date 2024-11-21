@@ -1215,7 +1215,7 @@ def arg_parser():
         "--llm_dtype",
         type=str,
         default="float32",
-        choices=["float32", "float", "float64", "double", "float16", "half", "bfloat16"],
+        choices=["float32", "float64", "float16", "bfloat16"],
         help="Data type for computation",
     )
 
