@@ -48,14 +48,14 @@ class SparseProbingEvalConfig(BaseEvalConfig):
         description="SAE batch size, inference only",
     )
     llm_batch_size: int = Field(
-        default=32,
+        default=None,
         title="LLM Batch Size",
-        description="LLM batch size, inference only",
+        description="LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
     )
     llm_dtype: str = Field(
-        default="bfloat16",
+        default="",
         title="LLM Data Type",
-        description="LLM data type",
+        description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )
 
     model_name: str = Field(

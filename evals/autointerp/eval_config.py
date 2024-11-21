@@ -71,14 +71,14 @@ class AutoInterpEvalConfig:
         description="The context size to use for the LLM",
     )
     llm_batch_size: int = Field(
-        default=512,
+        default=None,
         title="LLM Batch Size",
-        description="Split up total tokens into batches of this size",
+        description="LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
     )
     llm_dtype: str = Field(
-        default="float32",
+        default="",
         title="LLM Data Type",
-        description="The data type to use for the LLM",
+        description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )
 
     # Main autointerp params

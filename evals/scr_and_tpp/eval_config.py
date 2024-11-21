@@ -8,7 +8,7 @@ class ScrAndTppEvalConfig(BaseEvalConfig):
     random_seed: int = Field(
         default=42,
         title="Random Seed",
-        description="NOTE: This will be overwritten by argparse",
+        description="random seed",
     )
 
     dataset_names: list[str] = Field(
@@ -82,14 +82,14 @@ class ScrAndTppEvalConfig(BaseEvalConfig):
         description="SAE Batch size, inference only",
     )
     llm_batch_size: int = Field(
-        default=32,
+        default=None,
         title="LLM Batch Size",
-        description="LLM batch size, inference only",
+        description="LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
     )
     llm_dtype: str = Field(
-        default="float32",
-        title="LLM Dtype",
-        description="",
+        default="",
+        title="LLM Data Type",
+        description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )
 
     model_name: str = Field(
