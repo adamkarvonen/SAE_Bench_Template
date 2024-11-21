@@ -496,7 +496,6 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[MDLEvalConfig, list[tuple[str, str]]]:
     config = MDLEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
 

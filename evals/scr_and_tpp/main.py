@@ -830,7 +830,6 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[ScrAndTppEvalConfig, list[tuple[str, str]]]:
     config = ScrAndTppEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
         perform_scr=args.perform_scr,
     )

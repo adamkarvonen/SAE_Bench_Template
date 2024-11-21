@@ -627,7 +627,6 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[AutoInterpEvalConfig, list[tuple[str, str]]]:
     config = AutoInterpEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
 

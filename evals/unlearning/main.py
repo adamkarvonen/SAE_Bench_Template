@@ -208,7 +208,6 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[UnlearningEvalConfig, list[tuple[str, str]]]:
     config = UnlearningEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
 
