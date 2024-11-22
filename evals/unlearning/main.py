@@ -118,6 +118,14 @@ def run_eval(
     """
     selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
     """
+
+    if "gemma" not in config.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
+
+    if "it" not in config.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on instruct tuned models\n\n\n")
+        raise ValueError("Model should be instruct tuned")
+
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
     sae_bench_commit_hash = get_sae_bench_version()
@@ -295,12 +303,6 @@ if __name__ == "__main__":
     --model_name gemma-2-2b-it
     """
     args = arg_parser().parse_args()
-
-    if "gemma" not in args.model_name:
-        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
-
-    if "it" not in args.model_name:
-        print("\n\n\nWARNING: We recommend running this eval on instruct tuned models\n\n\n")
 
     device = general_utils.setup_environment()
 
