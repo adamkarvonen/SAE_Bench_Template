@@ -69,3 +69,9 @@ class SparseProbingEvalConfig(BaseEvalConfig):
         title="K Values",
         description="K represents the number of SAE features or residual stream channels we train the linear probe on. We iterate over all values of K.",
     )
+
+    lower_memory_usage: bool = Field(
+        default=False,
+        title="Lower Memory Usage",
+        description="Lower memory usage by doing more computation on the CPU. Useful on 1M width SAEs",
+    )

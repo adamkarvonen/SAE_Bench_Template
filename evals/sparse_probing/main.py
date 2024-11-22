@@ -150,9 +150,6 @@ def run_eval_single_dataset(
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-    all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
-
     all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
         all_train_acts_BLD, sae, config.sae_batch_size
     )
@@ -160,22 +157,35 @@ def run_eval_single_dataset(
         all_test_acts_BLD, sae, config.sae_batch_size
     )
 
-    # This is optional, checking the accuracy of a probe trained on the entire SAE activations
-    # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
-    _, sae_test_accuracies = probe_training.train_probe_on_activations(
-        all_sae_train_acts_BF,
-        all_sae_test_acts_BF,
-        select_top_k=None,
-        use_sklearn=False,
-        batch_size=250,
-        epochs=100,
-        lr=1e-2,
-    )
+    for key in list(all_train_acts_BLD.keys()):
+        del all_train_acts_BLD[key]
+        del all_test_acts_BLD[key]
+
+    if not config.lower_memory_usage:
+        # This is optional, checking the accuracy of a probe trained on the entire SAE activations
+        # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
+        _, sae_test_accuracies = probe_training.train_probe_on_activations(
+            all_sae_train_acts_BF,
+            all_sae_test_acts_BF,
+            select_top_k=None,
+            use_sklearn=False,
+            batch_size=250,
+            epochs=100,
+            lr=1e-2,
+        )
+        results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
+    else:
+        results_dict["sae_test_accuracy"] = -1
+
+        for key in all_sae_train_acts_BF.keys():
+            all_sae_train_acts_BF[key] = all_sae_train_acts_BF[key].cpu()
+            all_sae_test_acts_BF[key] = all_sae_test_acts_BF[key].cpu()
+
+        torch.cuda.empty_cache()
+        gc.collect()
 
     for llm_result_key, llm_result_value in llm_results.items():
         results_dict[llm_result_key] = llm_result_value
-
-    results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
 
     for k in config.k_values:
         sae_top_k_probes, sae_top_k_test_accuracies = probe_training.train_probe_on_activations(
@@ -372,6 +382,9 @@ def create_config_and_selected_saes(
     if args.random_seed is not None:
         config.random_seed = args.random_seed
 
+    if args.lower_memory_usage:
+        config.lower_memory_usage = True
+
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
 
@@ -436,6 +449,11 @@ def arg_parser():
         type=int,
         default=None,
         help="Batch size for SAE. If None, will be populated using default config value",
+    )
+    parser.add_argument(
+        "--lower_memory_usage",
+        action="store_true",
+        help="Lower memory usage during evaluation by performing more operations on CPU. This will increase evaluation time.",
     )
 
     return parser
