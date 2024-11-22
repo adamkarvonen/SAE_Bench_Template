@@ -506,6 +506,8 @@ def run_eval_single_dataset(
     probes_path = os.path.join(artifacts_folder, probes_filename)
 
     if not os.path.exists(activations_path):
+        if config.lower_vram_usage:
+            model = model.to(device)
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name,
             config,
@@ -518,6 +520,8 @@ def run_eval_single_dataset(
             column1_vals,
             column2_vals,
         )
+        if config.lower_vram_usage:
+            model = model.to("cpu")
 
         all_meaned_train_acts_BD = activation_collection.create_meaned_model_activations(
             all_train_acts_BLD
@@ -566,6 +570,8 @@ def run_eval_single_dataset(
             with open(probes_path, "wb") as f:
                 pickle.dump(llm_probes_dict, f)
     else:
+        if config.lower_vram_usage:
+            model = model.to("cpu")
         print(f"Loading activations from {activations_path}")
         acts = torch.load(activations_path)
         all_train_acts_BLD = acts["train"]
@@ -671,6 +677,9 @@ def run_eval_single_sae(
 
     results_dict = general_utils.average_results_dictionaries(dataset_results, averaging_names)
     results_dict.update(dataset_results)
+
+    if config.lower_vram_usage:
+        model = model.to(device)
 
     return results_dict
 
@@ -847,6 +856,9 @@ def create_config_and_selected_saes(
     if args.random_seed is not None:
         config.random_seed = args.random_seed
 
+    if args.lower_vram_usage:
+        config.lower_vram_usage = True
+
     if args.sae_batch_size is not None:
         config.sae_batch_size = args.sae_batch_size
 
@@ -926,6 +938,11 @@ def arg_parser():
         type=int,
         default=None,
         help="Batch size for SAE. If None, will be populated using default config value",
+    )
+    parser.add_argument(
+        "--lower_vram_usage",
+        action="store_true",
+        help="Lower GPU memory usage by moving model to CPU when not required. Useful on 1M width SAEs. Will be slower and require more system memory.",
     )
 
     return parser

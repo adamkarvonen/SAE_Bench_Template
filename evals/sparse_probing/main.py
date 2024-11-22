@@ -99,6 +99,8 @@ def run_eval_single_dataset(
     activations_path = os.path.join(artifacts_folder, activations_filename)
 
     if not os.path.exists(activations_path):
+        if config.lower_vram_usage:
+            model = model.to(device)
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name,
             config,
@@ -108,6 +110,8 @@ def run_eval_single_dataset(
             hook_point,
             device,
         )
+        if config.lower_vram_usage:
+            model = model.to("cpu")
 
         all_train_acts_BD = activation_collection.create_meaned_model_activations(
             all_train_acts_BLD
@@ -144,6 +148,8 @@ def run_eval_single_dataset(
         if save_activations:
             torch.save(acts, activations_path)
     else:
+        if config.lower_vram_usage:
+            model = model.to("cpu")
         print(f"Loading activations from {activations_path}")
         acts = torch.load(activations_path)
         all_train_acts_BLD = acts["train"]
@@ -161,7 +167,7 @@ def run_eval_single_dataset(
         del all_train_acts_BLD[key]
         del all_test_acts_BLD[key]
 
-    if not config.lower_memory_usage:
+    if not config.lower_vram_usage:
         # This is optional, checking the accuracy of a probe trained on the entire SAE activations
         # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
         _, sae_test_accuracies = probe_training.train_probe_on_activations(
@@ -237,6 +243,9 @@ def run_eval_single_sae(
 
     for dataset_name, dataset_result in dataset_results.items():
         results_dict[f"{dataset_name}"] = dataset_result
+
+    if config.lower_vram_usage:
+        model = model.to(device)
 
     return results_dict
 
@@ -382,8 +391,8 @@ def create_config_and_selected_saes(
     if args.random_seed is not None:
         config.random_seed = args.random_seed
 
-    if args.lower_memory_usage:
-        config.lower_memory_usage = True
+    if args.lower_vram_usage:
+        config.lower_vram_usage = True
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -451,9 +460,9 @@ def arg_parser():
         help="Batch size for SAE. If None, will be populated using default config value",
     )
     parser.add_argument(
-        "--lower_memory_usage",
+        "--lower_vram_usage",
         action="store_true",
-        help="Lower memory usage during evaluation by performing more operations on CPU. This will increase evaluation time.",
+        help="Lower GPU memory usage by doing more computation on the CPU. Useful on 1M width SAEs. Will be slower and require more system memory.",
     )
 
     return parser

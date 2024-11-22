@@ -26,6 +26,7 @@ def test_end_to_end_different_seed():
     tolerance = 0.04
     test_config.k_values = [1, 2, 5, 10, 20, 50, 100]
     test_config.llm_dtype = "float32"
+    test_config.lower_vram_usage = True
 
     layer = 4
 

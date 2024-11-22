@@ -91,6 +91,11 @@ class ScrAndTppEvalConfig(BaseEvalConfig):
         title="LLM Data Type",
         description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )
+    lower_vram_usage: bool = Field(
+        default=False,
+        title="Lower Memory Usage",
+        description="Lower GPU memory usage by moving model to CPU when not required. Will be slower and require more system memory.",
+    )
 
     model_name: str = Field(
         default="",
