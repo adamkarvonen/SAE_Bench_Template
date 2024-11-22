@@ -27,8 +27,10 @@ def test_end_to_end_different_seed():
     test_config.dataset_size = 256
 
     test_config.random_seed = 48
+    test_config.model_name = "gemma-2-2b-it"
     tolerance = 0.04
     test_config.llm_dtype = "bfloat16"
+    test_config.llm_batch_size = 4
 
     sae_regex_patterns = [
         r"sae_bench_gemma-2-2b_topk_width-2pow14_date-1109",
