@@ -61,12 +61,15 @@ def get_effects_per_class_precomputed_acts(
         precomputed_acts, class_idx, perform_scr
     )
 
-    all_acts_list_F = []
-
     assert inputs_train_BLD.shape[0] == len(labels_train_B)
 
     device = inputs_train_BLD.device
     dtype = inputs_train_BLD.dtype
+
+    running_sum_pos_F = torch.zeros(sae.W_dec.data.shape[0], dtype=torch.float32, device=device)
+    running_sum_neg_F = torch.zeros(sae.W_dec.data.shape[0], dtype=torch.float32, device=device)
+    count_pos = 0
+    count_neg = 0
 
     for i in range(0, inputs_train_BLD.shape[0], sae_batch_size):
         activation_batch_BLD = inputs_train_BLD[i : i + sae_batch_size]
@@ -74,26 +77,33 @@ def get_effects_per_class_precomputed_acts(
 
         activations_BL = einops.reduce(activation_batch_BLD, "B L D -> B L", "sum")
         nonzero_acts_BL = (activations_BL != 0.0).to(dtype=dtype)
-        nonzero_acts_B = einops.reduce(nonzero_acts_BL, "B L -> B", "sum")
+        nonzero_acts_B = einops.reduce(nonzero_acts_BL, "B L -> B", "sum").to(torch.float32)
 
         f_BLF = sae.encode(activation_batch_BLD)
         f_BLF = f_BLF * nonzero_acts_BL[:, :, None]  # zero out masked tokens
 
         # Get the average activation per input. We divide by the number of nonzero activations for the attention mask
-        average_sae_acts_BF = einops.reduce(f_BLF, "B L F -> B F", "sum") / nonzero_acts_B[:, None]
+        average_sae_acts_BF = (
+            einops.reduce(f_BLF, "B L F -> B F", "sum").to(torch.float32) / nonzero_acts_B[:, None]
+        )
 
-        pos_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL]
-        neg_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL]
+        # Separate positive and negative samples
+        pos_mask = labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL
+        neg_mask = labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL
 
-        average_pos_sae_acts_F = einops.reduce(pos_sae_acts_BF, "B F -> F", "mean")
-        average_neg_sae_acts_F = einops.reduce(neg_sae_acts_BF, "B F -> F", "mean")
+        # Accumulate sums in fp32
+        running_sum_pos_F += einops.reduce(average_sae_acts_BF[pos_mask], "B F -> F", "sum")
+        running_sum_neg_F += einops.reduce(average_sae_acts_BF[neg_mask], "B F -> F", "sum")
 
-        sae_acts_diff_F = average_pos_sae_acts_F - average_neg_sae_acts_F
+        count_pos += pos_mask.sum().item()
+        count_neg += neg_mask.sum().item()
 
-        all_acts_list_F.append(sae_acts_diff_F)
+    # Calculate means in fp32
+    average_pos_sae_acts_F = running_sum_pos_F / count_pos if count_pos > 0 else running_sum_pos_F
+    average_neg_sae_acts_F = running_sum_neg_F / count_neg if count_neg > 0 else running_sum_neg_F
 
-    all_acts_BF = torch.stack(all_acts_list_F, dim=0)
-    average_acts_F = einops.reduce(all_acts_BF, "B F -> F", "mean").to(dtype=dtype)
+    # The decoder matrix can be very large, so we move it to the same device as the activations
+    average_acts_F = (average_pos_sae_acts_F - average_neg_sae_acts_F).to(dtype)
 
     probe_weight_D = probe.net.weight.to(dtype=dtype, device=device)
     decoder_weight_DF = sae.W_dec.data.T.to(dtype=dtype, device=device)
