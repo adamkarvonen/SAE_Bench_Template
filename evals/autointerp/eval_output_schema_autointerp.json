@@ -5,7 +5,7 @@
       "properties": {
         "model_name": {
           "default": "",
-          "description": "The name of the model to use",
+          "description": "Model name. Must be set with a command line argument.",
           "title": "Model Name",
           "type": "string"
         },
@@ -56,14 +56,14 @@
           "type": "integer"
         },
         "llm_batch_size": {
-          "default": 512,
-          "description": "Split up total tokens into batches of this size",
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Batch Size",
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "float32",
-          "description": "The data type to use for the LLM",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
         },

@@ -41,20 +41,20 @@
           "type": "integer"
         },
         "llm_batch_size": {
-          "default": 32,
-          "description": "LLM batch size, inference only",
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Batch Size",
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "bfloat16",
-          "description": "LLM data type",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
         },
         "model_name": {
-          "default": "gemma-2-2b",
-          "description": "Model name",
+          "default": "",
+          "description": "Model name. Must be set with a command line argument.",
           "title": "Model Name",
           "type": "string"
         },
@@ -65,6 +65,12 @@
           },
           "title": "K Values",
           "type": "array"
+        },
+        "lower_vram_usage": {
+          "default": false,
+          "description": "Lower GPU memory usage by doing more computation on the CPU. Useful on 1M width SAEs. Will be slower and require more system memory.",
+          "title": "Lower Memory Usage",
+          "type": "boolean"
         }
       },
       "title": "SparseProbingEvalConfig",

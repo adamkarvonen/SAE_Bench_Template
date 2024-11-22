@@ -4,7 +4,7 @@
       "properties": {
         "random_seed": {
           "default": 42,
-          "description": "NOTE: This will be overwritten by argparse",
+          "description": "random seed",
           "title": "Random Seed",
           "type": "integer"
         },
@@ -83,20 +83,26 @@
           "type": "integer"
         },
         "llm_batch_size": {
-          "default": 32,
-          "description": "LLM batch size, inference only",
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Batch Size",
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "float32",
-          "description": "",
-          "title": "LLM Dtype",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Data Type",
           "type": "string"
         },
+        "lower_vram_usage": {
+          "default": false,
+          "description": "Lower GPU memory usage by moving model to CPU when not required. Will be slower and require more system memory.",
+          "title": "Lower Memory Usage",
+          "type": "boolean"
+        },
         "model_name": {
-          "default": "pythia-70m-deduped",
-          "description": "",
+          "default": "",
+          "description": "Model name. Must be set with a command line argument.",
           "title": "Model Name",
           "type": "string"
         },

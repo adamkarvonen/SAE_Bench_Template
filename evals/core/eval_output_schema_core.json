@@ -3,8 +3,8 @@
     "CoreEvalConfig": {
       "properties": {
         "model_name": {
-          "default": "pythia-70m-deduped",
-          "description": "Model name",
+          "default": "",
+          "description": "Model name. This is currently ignored and inferred from sae.cfg.model_name",
           "title": "Model Name",
           "type": "string"
         },

@@ -51,18 +51,6 @@
           "title": "Multipliers",
           "type": "array"
         },
-        "llm_batch_size": {
-          "default": 4,
-          "description": "LLM batch size",
-          "title": "LLM Batch Size",
-          "type": "integer"
-        },
-        "mcq_batch_size": {
-          "default": 8,
-          "description": "MCQ batch size. Multiple choice questions are shorter, so we can afford a larger batch size",
-          "title": "MCQ Batch Size",
-          "type": "integer"
-        },
         "dataset_size": {
           "default": 1024,
           "description": "Dataset size we use when calculating feature sparsity",
@@ -94,14 +82,20 @@
           "type": "boolean"
         },
         "model_name": {
-          "default": "gemma-2-2b-it",
-          "description": "Model name. Note that this should be a instruct model.",
+          "default": "",
+          "description": "Model name. Must be set with a command line argument. We recommend instruct tuned models >= 2B parameters.",
           "title": "Model Name",
           "type": "string"
         },
+        "llm_batch_size": {
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Batch Size",
+          "type": "integer"
+        },
         "llm_dtype": {
-          "default": "bfloat16",
-          "description": "LLM data type",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
         }
