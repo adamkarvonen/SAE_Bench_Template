@@ -57,8 +57,6 @@ def get_effects_per_class_precomputed_acts(
     perform_scr: bool,
     sae_batch_size: int,
 ) -> torch.Tensor:
-    device = sae.device
-
     inputs_train_BLD, labels_train_B = probe_training.prepare_probe_data(
         precomputed_acts, class_idx, perform_scr
     )
@@ -67,10 +65,12 @@ def get_effects_per_class_precomputed_acts(
 
     assert inputs_train_BLD.shape[0] == len(labels_train_B)
 
+    device = inputs_train_BLD.device
+    dtype = inputs_train_BLD.dtype
+
     for i in range(0, inputs_train_BLD.shape[0], sae_batch_size):
         activation_batch_BLD = inputs_train_BLD[i : i + sae_batch_size]
         labels_batch_B = labels_train_B[i : i + sae_batch_size]
-        dtype = activation_batch_BLD.dtype
 
         activations_BL = einops.reduce(activation_batch_BLD, "B L D -> B L", "sum")
         nonzero_acts_BL = (activations_BL != 0.0).to(dtype=dtype)
@@ -93,11 +93,10 @@ def get_effects_per_class_precomputed_acts(
         all_acts_list_F.append(sae_acts_diff_F)
 
     all_acts_BF = torch.stack(all_acts_list_F, dim=0)
-    average_acts_F = einops.reduce(all_acts_BF, "B F -> F", "mean").to(dtype=torch.float32)
+    average_acts_F = einops.reduce(all_acts_BF, "B F -> F", "mean").to(dtype=dtype)
 
-    probe_weight_D = probe.net.weight.to(dtype=torch.float32, device=device)
-
-    decoder_weight_DF = sae.W_dec.data.T.to(dtype=torch.float32, device=device)
+    probe_weight_D = probe.net.weight.to(dtype=dtype, device=device)
+    decoder_weight_DF = sae.W_dec.data.T.to(dtype=dtype, device=device)
 
     dot_prod_F = (probe_weight_D @ decoder_weight_DF).squeeze()
 
@@ -105,7 +104,7 @@ def get_effects_per_class_precomputed_acts(
         # Only consider activations from the positive class
         average_acts_F.clamp_(min=0.0)
 
-    effects_F = average_acts_F * dot_prod_F
+    effects_F = (average_acts_F * dot_prod_F).to(dtype=torch.float32)
 
     if perform_scr:
         effects_F = effects_F.abs()
