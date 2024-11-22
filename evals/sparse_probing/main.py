@@ -150,9 +150,6 @@ def run_eval_single_dataset(
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
 
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-    all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
-
     all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
         all_train_acts_BLD, sae, config.sae_batch_size
     )
@@ -160,22 +157,44 @@ def run_eval_single_dataset(
         all_test_acts_BLD, sae, config.sae_batch_size
     )
 
+    print(f"Memory allocated before: {torch.cuda.memory_allocated() // 1_000_000} bytes")
+    for key in list(all_train_acts_BLD.keys()):
+        all_train_acts_BLD[key] = all_train_acts_BLD[key].to("cpu")
+        del all_train_acts_BLD[key]
+    del all_train_acts_BLD
+
+    for key in list(all_test_acts_BLD.keys()):
+        all_test_acts_BLD[key] = all_test_acts_BLD[key].to("cpu")
+        del all_test_acts_BLD[key]
+    del all_test_acts_BLD
+
+    torch.cuda.empty_cache()
+    gc.collect()
+
+    print(f"Memory allocated after: {torch.cuda.memory_allocated() // 1_000_000} bytes")
+
     # This is optional, checking the accuracy of a probe trained on the entire SAE activations
     # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
-    _, sae_test_accuracies = probe_training.train_probe_on_activations(
-        all_sae_train_acts_BF,
-        all_sae_test_acts_BF,
-        select_top_k=None,
-        use_sklearn=False,
-        batch_size=250,
-        epochs=100,
-        lr=1e-2,
-    )
+    # _, sae_test_accuracies = probe_training.train_probe_on_activations(
+    #     all_sae_train_acts_BF,
+    #     all_sae_test_acts_BF,
+    #     select_top_k=None,
+    #     use_sklearn=False,
+    #     batch_size=250,
+    #     epochs=100,
+    #     lr=1e-2,
+    # )
+
+    for key in all_sae_train_acts_BF.keys():
+        all_sae_train_acts_BF[key] = all_sae_train_acts_BF[key].to("cpu")
+    for key in all_sae_test_acts_BF.keys():
+        all_sae_test_acts_BF[key] = all_sae_test_acts_BF[key].to("cpu")
 
     for llm_result_key, llm_result_value in llm_results.items():
         results_dict[llm_result_key] = llm_result_value
 
-    results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
+    # results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
+    results_dict["sae_test_accuracy"] = -1
 
     for k in config.k_values:
         sae_top_k_probes, sae_top_k_test_accuracies = probe_training.train_probe_on_activations(
