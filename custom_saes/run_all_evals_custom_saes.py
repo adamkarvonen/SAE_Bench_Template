@@ -1,5 +1,6 @@
 import os
 from typing import Any, Optional
+from tqdm import tqdm
 
 import evals.absorption.main as absorption
 import evals.autointerp.main as autointerp
@@ -75,6 +76,7 @@ def run_evals(
                 force_rerun,
             )
         ),
+        # TODO: Do a better job of setting num_batches and batch size
         "core": (
             lambda: core.multiple_evals(
                 filtered_saes=selected_saes,
@@ -155,7 +157,7 @@ def run_evals(
     }
 
     # Run selected evaluations
-    for eval_type in eval_types:
+    for eval_type in tqdm(eval_types, desc="Evaluations"):
         if eval_type == "autointerp" and api_key is None:
             print("Skipping autointerp evaluation due to missing API key")
             continue
@@ -163,9 +165,14 @@ def run_evals(
             if model_name != "gemma-2-2b":
                 print("Skipping unlearning evaluation for non-GEMMA model")
                 continue
+            print("Skipping, need to clean up unlearning interface")
+            continue  # TODO:
             if not os.path.exists("./evals/unlearning/data/bio-forget-corpus.jsonl"):
                 print("Skipping unlearning evaluation due to missing bio-forget-corpus.jsonl")
                 continue
+
+        print(f"\n\n\nRunning {eval_type} evaluation\n\n\n")
+
         if eval_type in eval_runners:
             os.makedirs(output_folders[eval_type], exist_ok=True)
             eval_runners[eval_type]()

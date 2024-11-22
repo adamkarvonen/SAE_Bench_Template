@@ -953,6 +953,8 @@ def multiple_evals(
         sae.to(device)
         sae = sae.to(general_utils.str_to_dtype(dtype))
 
+        # TODO: Check if results already exist and skip if so, add force_rerun flag
+
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
             @retry_with_exponential_backoff(

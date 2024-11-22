@@ -55,7 +55,7 @@ For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recover
 
 ## Custom SAE Usage
 
-Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with `encode()`, `decode()`, and a few config values. We recommend referring to `custom_saes/custom_sae_demo.ipynb`. In this notebook, we load a custom SAE and an SAE Bench baseline SAE, run them on two evals, and graph the results.
+Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with `encode()`, `decode()`, and a few config values. We recommend referring to `custom_sae_demo.ipynb`. In this notebook, we load a custom SAE and an SAE Bench baseline SAE, run them on two evals, and graph the results.
 
 There are two ways to evaluate custom SAEs:
 
