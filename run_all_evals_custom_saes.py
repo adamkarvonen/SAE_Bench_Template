@@ -195,8 +195,11 @@ if __name__ == "__main__":
     ]
 
     if "autointerp" in eval_types:
-        with open("openai_api_key.txt", "r") as f:
-            api_key = f.read().strip()
+        try:
+            with open("openai_api_key.txt") as f:
+                api_key = f.read().strip()
+        except FileNotFoundError:
+            raise Exception("Please create openai_api_key.txt with your API key")
     else:
         api_key = None
 

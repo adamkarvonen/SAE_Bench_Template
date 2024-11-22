@@ -662,12 +662,6 @@ def arg_parser():
     parser.add_argument("--model_name", type=str, required=True, help="Model name")
 
     parser.add_argument(
-        "--api_key",
-        type=str,
-        required=True,
-        help="OpenAI API key",
-    )
-    parser.add_argument(
         "--sae_regex_pattern",
         type=str,
         required=True,
@@ -708,14 +702,12 @@ if __name__ == "__main__":
     python evals/autointerp/main.py \
     --sae_regex_pattern "sae_bench_pythia70m_sweep_standard_ctx128_0712" \
     --sae_block_pattern "blocks.4.hook_resid_post__trainer_10" \
-    --model_name pythia-70m-deduped \
-    --api_key <API_KEY>
+    --model_name pythia-70m-deduped
 
     python evals/autointerp/main.py \
     --sae_regex_pattern "gemma-scope-2b-pt-res" \
     --sae_block_pattern "layer_20/width_16k/average_l0_139" \
-    --model_name gemma-2-2b \
-    --api_key <API_KEY>
+    --model_name gemma-2-2b
 
     """
     args = arg_parser().parse_args()
@@ -730,12 +722,18 @@ if __name__ == "__main__":
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)
 
+    try:
+        with open("openai_api_key.txt") as f:
+            api_key = f.read().strip()
+    except FileNotFoundError:
+        raise Exception("Please create openai_api_key.txt with your API key")
+
     # run the evaluation on all selected SAEs
     results_dict = run_eval(
         config,
         selected_saes,
         device,
-        args.api_key,
+        api_key,
         args.output_folder,
         args.force_rerun,
     )
