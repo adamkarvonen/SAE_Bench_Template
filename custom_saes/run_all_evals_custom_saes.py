@@ -93,7 +93,7 @@ def run_evals(
         ),
         "scr": (
             lambda: scr_and_tpp.run_eval(
-                scr_and_tpp.scrAndTppEvalConfig(
+                scr_and_tpp.ScrAndTppEvalConfig(
                     model_name=model_name,
                     random_seed=RANDOM_SEED,
                     perform_scr=True,

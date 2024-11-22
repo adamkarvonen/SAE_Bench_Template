@@ -14,7 +14,7 @@ from collections import defaultdict
 
 # create a dictionary mapping trainer types to marker shapes
 
-trainer_markers = {
+TRAINER_MARKERS = {
     "Standard": "o",
     "JumpReLU": "X",
     "TopK": "^",
@@ -117,7 +117,11 @@ def plot_3var_graph(
     legend_location: str = "lower right",
     x_axis_key: str = "l0",
     y_axis_key: str = "frac_recovered",
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
+    if not trainer_markers:
+        trainer_markers = TRAINER_MARKERS
+
     # Extract data from results
     l0_values = [data[x_axis_key] for data in results.values()]
     frac_recovered_values = [data[y_axis_key] for data in results.values()]
@@ -269,7 +273,10 @@ def plot_2var_graph(
     legend_location: str = "lower right",
     original_acc: Optional[float] = None,
     x_axis_key: str = "l0",
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
+    if not trainer_markers:
+        trainer_markers = TRAINER_MARKERS
     # Extract data from results
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]

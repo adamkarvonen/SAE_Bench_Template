@@ -55,7 +55,7 @@ For a tutorial of using SAE Lens SAEs, including calculating L0 and Loss Recover
 
 ## Custom SAE Usage
 
-Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with encode(), decode(), and a few config values. For example custom SAE implementations and more info, refer to the `custom_saes/README.md`.
+Our goal is to have first class support for custom SAEs as the field is rapidly evolving. Our evaluations can run on any SAE object with `encode()`, `decode()`, and a few config values. We recommend referring to `custom_saes/custom_sae_demo.ipynb`. In this notebook, we load a custom SAE and an SAE Bench baseline SAE, run them on two evals, and graph the results.
 
 There are two ways to evaluate custom SAEs:
 
@@ -69,7 +69,7 @@ There are two ways to evaluate custom SAEs:
    - Simpler interface requiring only model, SAE, and config values
    - Graphing will require manual formatting
 
-The script `run_all_evals_custom_saes()` will run approach 1 on all SAE Bench evals. We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens with checkpoints at various points. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
+TWe currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens with checkpoints at various points. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
 
 ## Training Your Own SAEs
 
