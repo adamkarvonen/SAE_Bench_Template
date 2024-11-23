@@ -9,6 +9,7 @@ from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optio
 import logging
 import math
 import re
+import gc
 import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -939,9 +940,11 @@ def multiple_evals(
                 device=device,
             )[0]
 
+        del_sae = False
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             try:
+                del_sae = True
                 sae = load_sae()
             except Exception as e:
                 logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
@@ -1063,6 +1066,11 @@ def multiple_evals(
                 f"with context length {context_size} on dataset {dataset}: {str(e)}"
             )
             continue  # Skip this combination and continue with the next one
+
+        if del_sae:
+            del sae
+        gc.collect()
+        torch.cuda.empty_cache()
 
     return eval_results
 

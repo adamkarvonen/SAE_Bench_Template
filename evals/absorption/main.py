@@ -61,9 +61,7 @@ def run_eval(
     for sae_release, sae_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        gc.collect()
-        torch.cuda.empty_cache()
-
+        del_sae = False
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
@@ -71,6 +69,8 @@ def run_eval(
                 sae_id=sae_id,
                 device=device,
             )[0]
+            # If loading from pretrained, we delete the SAE object after use
+            del_sae = True
         else:
             sae = sae_id
             sae_id = "custom_sae"
@@ -158,6 +158,11 @@ def run_eval(
         sae_result_path = os.path.join(output_path, sae_result_file)
 
         eval_output.to_json_file(sae_result_path, indent=2)
+
+        if del_sae:
+            del sae
+        gc.collect()
+        torch.cuda.empty_cache()
 
     return results_dict
 
