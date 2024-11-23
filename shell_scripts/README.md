@@ -1,0 +1,1 @@
+I recommend running these from the root directory of the repo. Using these, you can run the full set of evaluations (or a subset) on a selection of SAE Lens SAEs.
