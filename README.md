@@ -36,7 +36,7 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **Custom SAEs**: Supports any general SAE object with `encode()` and `decode()` methods (see [Custom SAE Usage](#custom-sae-usage)).
 
 ## Running Evaluations
-Each evaluation has an example command located in its respective `main.py` file. Here's how to run a sparse probing evaluation on a single SAE Bench Pythia-70M SAE:
+Each evaluation has an example command located in its respective `main.py` file. To run all evaluations on a selection of SAE Lens SAEs, refer to `shell_scripts/`. Here's how to run a sparse probing evaluation on a single SAE Bench Pythia-70M SAE:
 
 ```
 python evals/sparse_probing/main.py \

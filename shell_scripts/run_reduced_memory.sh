@@ -1,14 +1,26 @@
 # User configuration
-sae_regex_pattern="gemma-scope-9b-pt-res"
-model_name="gemma-2-9b"
-model_name_it="gemma-2-9b-it"
+sae_regex_pattern="gemma-scope-2b-pt-res-canonical"
+model_name="gemma-2-2b"
+model_name_it="gemma-2-2b-it"
 
 # Create array of patterns
 declare -a sae_block_patterns=(
-    ".*layer_9.*(1m).*"
-    ".*layer_20.*(1m).*"
-    ".*layer_31.*(1m).*"
+    ".*layer_9.*(65k).*"
+    ".*layer_20.*(65k).*"
+    ".*layer_31.*(65k).*"
 )
+
+for sae_block_pattern in "${sae_block_patterns[@]}"; do
+    echo "Starting pattern ${sae_block_pattern}..."
+    python evals/absorption/main.py \
+        --sae_regex_pattern "${sae_regex_pattern}" \
+        --sae_block_pattern "${sae_block_pattern}" \
+        --model_name ${model_name} --llm_batch_size 4 || {
+            echo "Pattern ${sae_block_pattern} failed, continuing to next pattern..."
+            continue
+        }
+    echo "Completed pattern ${sae_block_pattern}"
+done
 
 for sae_block_pattern in "${sae_block_patterns[@]}"; do
     echo "Starting pattern ${sae_block_pattern}..."

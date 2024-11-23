@@ -12,6 +12,18 @@ declare -a sae_block_patterns=(
 
 for sae_block_pattern in "${sae_block_patterns[@]}"; do
     echo "Starting pattern ${sae_block_pattern}..."
+    python evals/absorption/main.py \
+        --sae_regex_pattern "${sae_regex_pattern}" \
+        --sae_block_pattern "${sae_block_pattern}" \
+        --model_name ${model_name} || {
+            echo "Pattern ${sae_block_pattern} failed, continuing to next pattern..."
+            continue
+        }
+    echo "Completed pattern ${sae_block_pattern}"
+done
+
+for sae_block_pattern in "${sae_block_patterns[@]}"; do
+    echo "Starting pattern ${sae_block_pattern}..."
     python evals/autointerp/main.py \
         --sae_regex_pattern "${sae_regex_pattern}" \
         --sae_block_pattern "${sae_block_pattern}" \
