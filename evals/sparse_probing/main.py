@@ -361,14 +361,14 @@ def run_eval(
 
         eval_output.to_json_file(sae_result_path, indent=2)
 
+        if del_sae:
+            del sae
+        gc.collect()
+        torch.cuda.empty_cache()
+
     if clean_up_activations:
         if os.path.exists(artifacts_folder):
             shutil.rmtree(artifacts_folder)
-
-    if del_sae:
-        del sae
-    gc.collect()
-    torch.cuda.empty_cache()
 
     return results_dict
 

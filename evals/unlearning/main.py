@@ -203,16 +203,16 @@ def run_eval(
 
         eval_output.to_json_file(sae_result_path, indent=2)
 
+        if del_sae:
+            del sae
+        gc.collect()
+        torch.cuda.empty_cache()
+
     if clean_up_artifacts:
         for folder in os.listdir(artifacts_folder):
             folder_path = os.path.join(artifacts_folder, folder)
             if os.path.isdir(folder_path) and folder != "data":
                 shutil.rmtree(folder_path)
-
-    if del_sae:
-        del sae
-    gc.collect()
-    torch.cuda.empty_cache()
 
     return results_dict
 

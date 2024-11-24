@@ -944,8 +944,8 @@ def multiple_evals(
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             try:
-                del_sae = True
                 sae = load_sae()
+                del_sae = True
             except Exception as e:
                 logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
                 continue  # Skip this SAE and continue with the next one
