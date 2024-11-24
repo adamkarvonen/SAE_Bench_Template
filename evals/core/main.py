@@ -902,7 +902,7 @@ def multiple_evals(
     verbose: bool = False,
     dtype: str = "float32",
 ) -> List[Dict[str, Any]]:
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = general_utils.setup_environment()
     assert len(filtered_saes) > 0, "No SAEs to evaluate"
 
     eval_results = []
