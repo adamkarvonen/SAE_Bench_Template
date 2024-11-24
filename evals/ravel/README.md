@@ -26,3 +26,8 @@ The scoring consists of three steps:
 - [ ] Doublecheck the dataset selection used in the paper for training the probe in `uniprobe.py` 
 - [ ] write tests
 
+script is always executed from home directory
+artifacts folder: relative
+output folder as argument
+
+

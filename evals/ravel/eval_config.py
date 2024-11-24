@@ -3,6 +3,7 @@ from pydantic import Field
 from evals.base_eval_output import BaseEvalConfig
 from typing import List
 
+CAN_MODE = True
 DEBUG_MODE = False
 
 @dataclass
@@ -50,10 +51,10 @@ class RAVELEvalConfig(BaseEvalConfig):
         title="Model Name",
         description="Model name",
     )
-    layer: int = Field(
-        default=11,
-        title="Layer",
-        description="Layer",
+    model_dir: str = Field(
+        default="None",
+        title="Model Directory",
+        description="Model directory for cached hf model",
     )
     llm_dtype: str = Field(
         default="bfloat16",
@@ -116,3 +117,6 @@ class RAVELEvalConfig(BaseEvalConfig):
 
         n_interventions = 10
         llm_batch_size = 5
+
+    if CAN_MODE:
+        model_dir = "/share/u/can/models"

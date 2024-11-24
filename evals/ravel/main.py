@@ -25,11 +25,8 @@ from evals.ravel.uniprobe import run_feature_selection_probe
 from evals.ravel.intervention import compute_disentanglement_AB_bidirectional
 
 
-DEBUG_MODE = False
-MODEL_DIR = "/share/u/can/models" # Set to None to disable model caching
-REPO_DIR = "/share/u/can/SAE_Bench_Template"
+
 RESULTS_DIR = "/share/u/can/SAE_Bench_Template/evals/ravel/results"
-ARTIFACTS_DIR = "/share/u/can/SAE_Bench_Template/evals/ravel/artifacts"
 
 eval_config = RAVELEvalConfig()
 rng = random.Random(eval_config.random_seed)
@@ -39,6 +36,7 @@ rng = random.Random(eval_config.random_seed)
 def run_eval(
     eval_config: RAVELEvalConfig,
     selected_saes: list[tuple[str, str]],
+    output_path: str,
     device: torch.device,
 ):
     # Instanciate evaluation run
@@ -65,7 +63,7 @@ def run_eval(
 
     model = LanguageModel(
         model_id,
-        cache_dir=MODEL_DIR,
+        cache_dir=config.model_dir,
         device_map=device,
         torch_dtype=llm_dtype,
         dispatch=True,
@@ -74,9 +72,10 @@ def run_eval(
     model.requires_grad_(False)
     model.eval()
 
-    # Initialize directories
-    os.makedirs(RESULTS_DIR, exist_ok=True)
-    os.makedirs(ARTIFACTS_DIR, exist_ok=True)
+    # Initialize directories and output file
+    artifacts_base_folder = 'artifacts/ravel'
+    os.makedirs(artifacts_base_folder, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
     results_dict = {}
 
     # Iteratively evaluate each SAE
@@ -99,20 +98,20 @@ def run_eval(
 
         sae = sae.to(device=device, dtype=llm_dtype)
 
-        # # Initialize SAE specific directories
-        # artifacts_folder = os.path.join(
-        #     artifacts_base_folder, eval_type, eval_config.model_name, sae.cfg.hook_name
-        # )
-        # sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-        # sae_result_file = sae_result_file.replace("/", "_")
-        # sae_result_path = os.path.join(output_path, sae_result_file)
+        # Initialize SAE specific directories
+        artifacts_folder = os.path.join(
+            artifacts_base_folder, eval_config.model_name, sae.cfg.hook_name
+        )
+        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+        sae_result_file = sae_result_file.replace("/", "_")
+        sae_result_path = os.path.join(output_path, sae_result_file)
 
 
+        # Create filtered dataset IFF it does not exist
         dataset = create_filtered_dataset(
             model_id=model_id,
             chosen_entity=config.entity_class,
             model=model,
-            REPO_DIR=REPO_DIR,
             force_recompute=config.force_dataset_recompute,
             n_samples_per_attribute_class=config.n_samples_per_attribute_class,
             top_n_entities=config.top_n_entities,
@@ -178,6 +177,8 @@ def run_eval(
 
         plot_disentanglement(results, "Disentanglement score for Field and Country of Birth")
 
+        results_dict[sae_id] = results
+
 
 
 def create_config_and_selected_saes(
@@ -205,7 +206,6 @@ def arg_parser():
     parser = argparse.ArgumentParser(description="Run SCR or TPP evaluation")
     parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
-    parser.add_argument("--layer", type=int, help="SAE layer")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -217,6 +217,11 @@ def arg_parser():
         type=str,
         required=True,
         help="Regex pattern for SAE block selection",
+    )
+    parser.add_argument(
+        "--output_folder",
+        type=str,
+        default="evals/ravel/output",
     )
     return parser
 
@@ -241,7 +246,6 @@ if __name__ == "__main__":
 
     config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
     config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
-    config.layer = args.layer
 
     # create output folder
     # os.makedirs(args.output_folder, exist_ok=True)

@@ -296,7 +296,6 @@ def create_filtered_dataset(
     model_id: str,
     chosen_entity: str,
     model,
-    REPO_DIR: str,
     force_recompute: bool = False,
     llm_batch_size: int = 512,
     top_n_entities: int = 400,
@@ -323,7 +322,7 @@ def create_filtered_dataset(
         filtered_data: Dataset containing correct completions
         accuracy: Average accuracy of model completions
     """
-    DATA_DIR = os.path.join(REPO_DIR, "evals/ravel/data/")
+    DATA_DIR =  "evals/ravel/data/"
     os.makedirs(os.path.join(DATA_DIR, model_id), exist_ok=True)
     filename = os.path.join(DATA_DIR, f"{model_id}/{chosen_entity}_instance.pkl")
 
