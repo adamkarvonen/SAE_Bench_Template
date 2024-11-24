@@ -41,7 +41,7 @@ def sae_name_to_info(sae_name: str) -> dict:
     if "gemma-scope" in sae_name:
         sae_config["sae_class"] = "JumpReLU"
     elif "sae_bench" in sae_name:
-        if "standard" in sae_name:
+        if "standard" in sae_name or "vanilla" in sae_name:
             sae_config["sae_class"] = "Standard"
         elif "topk" in sae_name:
             sae_config["sae_class"] = "TopK"
@@ -682,7 +682,7 @@ def plot_training_steps(
 
         trainer_data[trainer_key]["steps"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
-        trainer_data[trainer_key]["l0"] = value["l0"]
+        # trainer_data[trainer_key]["l0"] = value["l0"] # currently not shown in plot
         trainer_data[trainer_key]["sae_class"] = trainer_class
         all_steps.add(step)
         all_trainers.add(trainer_class)
@@ -720,10 +720,12 @@ def plot_training_steps(
 
         if trainer_key == "Average":
             color, trainer_class = "black", "Average"
-        elif data["sae_class"] == "StandardTrainer":
+        elif data["sae_class"] == "Standard" or data["sae_class"] == "Vanilla":
             color, trainer_class = "red", data["sae_class"]
-        else:
+        elif data["sae_class"] == "TopK":
             color, trainer_class = "blue", data["sae_class"]
+        else:
+            raise ValueError(f"Trainer type not recognized for {trainer_key}")
 
         sorted_data = sorted(zip(steps, metric_scores))
         steps, metric_scores = zip(*sorted_data)
@@ -775,7 +777,7 @@ def plot_training_steps(
     if not y_label:
         y_label = metric_key.replace("_", " ").capitalize()
     ax1.set_ylabel(y_label)
-    fig.text(0.5, 0.01, "Training Tokens", ha="center", va="center")
+    fig.text(0.5, 0.01, "Training Steps", ha="center", va="center")
     fig.suptitle(title)
 
     # Adjust x-axis ticks
@@ -791,9 +793,9 @@ def plot_training_steps(
     # Add custom legend
     legend_elements = []
     legend_elements.append(Line2D([0], [0], color="black", lw=3, label="Average"))
-    if "StandardTrainer" in all_trainers:
+    if "Standard" in all_trainers or "Vanilla" in all_trainers:
         legend_elements.append(Line2D([0], [0], color="red", lw=3, label="Standard"))
-    if "TrainerTopK" in all_trainers:
+    if "TopK" in all_trainers:
         legend_elements.append(Line2D([0], [0], color="blue", lw=3, label="TopK"))
     ax2.legend(handles=legend_elements, loc="lower right")
 
