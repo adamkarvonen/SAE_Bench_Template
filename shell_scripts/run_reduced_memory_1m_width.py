@@ -1,66 +1,37 @@
 import subprocess
+from sae_bench_utils.sae_selection_utils import get_saes_from_regex
 
 # User configuration
-sae_regex_pattern = "gemma-scope-9b-pt-res"
-model_name = "gemma-2-9b"
-model_name_it = "gemma-2-9b-it"
+sae_regex_pattern = "gemma-scope-2b-pt-res"
+model_name = "gemma-2-2b"
+model_name_it = "gemma-2-2b-it"
 
-# Create list of patterns
-sae_block_patterns = [
-    "layer_20/width_1m/average_l0_101",
-    "layer_20/width_1m/average_l0_11",
-    "layer_20/width_1m/average_l0_19",
-    "layer_20/width_1m/average_l0_193",
-    "layer_20/width_1m/average_l0_34",
-    "layer_20/width_1m/average_l0_57",
-    "layer_31/width_1m/average_l0_11",
-    "layer_31/width_1m/average_l0_132",
-    "layer_31/width_1m/average_l0_25",
-    "layer_31/width_1m/average_l0_27",
-    "layer_31/width_1m/average_l0_45",
-    "layer_31/width_1m/average_l0_77",
-    "layer_9/width_1m/average_l0_122",
-    "layer_9/width_1m/average_l0_14",
-    "layer_9/width_1m/average_l0_24",
-    "layer_9/width_1m/average_l0_41",
-    "layer_9/width_1m/average_l0_70",
-    "layer_9/width_1m/average_l0_9",
-]
+layers = [5, 12, 19]
 
-# These are the final pattern for each SAE layer that signal time to cleanup activations
-clean_up_patterns = [
-    "layer_20/width_1m/average_l0_57",
-    "layer_31/width_1m/average_l0_77",
-    "layer_9/width_1m/average_l0_9",
-]
+sae_block_patterns = []
+clean_up_patterns = []
 
-# gemma-2-2b patterns
-# sae_block_patterns = [
-#     "layer_5/width_1m/average_l0_114",
-#     "layer_5/width_1m/average_l0_13",
-#     "layer_5/width_1m/average_l0_21",
-#     "layer_5/width_1m/average_l0_36",
-#     "layer_5/width_1m/average_l0_63",
-#     "layer_5/width_1m/average_l0_9",
-#     "layer_12/width_1m/average_l0_107",
-#     "layer_12/width_1m/average_l0_19",
-#     "layer_12/width_1m/average_l0_207",
-#     "layer_12/width_1m/average_l0_26",
-#     "layer_12/width_1m/average_l0_58",
-#     "layer_12/width_1m/average_l0_73",
-#     "layer_19/width_1m/average_l0_157",
-#     "layer_19/width_1m/average_l0_16",
-#     "layer_19/width_1m/average_l0_18",
-#     "layer_19/width_1m/average_l0_29",
-#     "layer_19/width_1m/average_l0_50",
-#     "layer_19/width_1m/average_l0_88",
-# ]
+for layer in layers:
+    # Also configure this to select the SAE width
+    single_sae_block_pattern = rf".*layer_({layer}).*(1m).*"
 
-# clean_up_patterns = [
-#     "layer_5/width_1m/average_l0_9",
-#     "layer_12/width_1m/average_l0_73",
-#     "layer_19/width_1m/average_l0_88",
-# ]
+    selected_saes = get_saes_from_regex(sae_regex_pattern, single_sae_block_pattern)
+
+    print(f"Selected {len(selected_saes)} SAEs:")
+
+    count = 0
+    for sae_release, sae_id in selected_saes:
+        count += 1
+        sae_block_patterns.append(sae_id)
+
+        if count == len(selected_saes):
+            clean_up_patterns.append(sae_id)
+
+print("SAE block patterns:")
+print(sae_block_patterns)
+print()
+print("Clean up patterns:")
+print(clean_up_patterns)
 
 # Get total number of patterns
 total_patterns = len(sae_block_patterns)
