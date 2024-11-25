@@ -44,7 +44,9 @@ def run_eval(
     """
 
     if "gemma" not in config.model_name:
-        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
+        print(
+            "\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n"
+        )
 
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
@@ -88,6 +90,9 @@ def run_eval(
             prompt_template=config.prompt_template,
             prompt_token_pos=config.prompt_token_pos,
             device=device,
+            k_sparse_probe_l1_decay=config.k_sparse_probe_l1_decay,
+            k_sparse_probe_batch_size=config.k_sparse_probe_batch_size,
+            k_sparse_probe_num_epochs=config.k_sparse_probe_num_epochs,
         )
 
         # Save k_sparse_probing_results as a separate JSON
@@ -97,7 +102,9 @@ def run_eval(
         k_sparse_probing_file = k_sparse_probing_file.replace("/", "_")
         k_sparse_probing_path = os.path.join(artifacts_folder, k_sparse_probing_file)
         os.makedirs(os.path.dirname(k_sparse_probing_path), exist_ok=True)
-        k_sparse_probing_results.to_json(k_sparse_probing_path, orient="records", indent=4)
+        k_sparse_probing_results.to_json(
+            k_sparse_probing_path, orient="records", indent=4
+        )
 
         raw_df = run_feature_absortion_experiment(
             model=model,
@@ -191,7 +198,9 @@ def _aggregate_results_df(
     )
     agg_df["num_split_feats"] = agg_df["split_feats"].apply(len)
     agg_df["num_absorption"] = agg_df["is_absorption"]
-    agg_df["absorption_rate"] = agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
+    agg_df["absorption_rate"] = (
+        agg_df["num_absorption"] / agg_df["num_probe_true_positives"]
+    )
     return agg_df
 
 
@@ -200,7 +209,10 @@ def arg_parser():
 
     parser = argparse.ArgumentParser(description="Run absorption evaluation")
     parser.add_argument(
-        "--random_seed", type=int, default=default_config.random_seed, help="Random seed"
+        "--random_seed",
+        type=int,
+        default=default_config.random_seed,
+        help="Random seed",
     )
     parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
@@ -210,7 +222,10 @@ def arg_parser():
         help="F1 jump threshold",
     )
     parser.add_argument(
-        "--max_k_value", type=int, default=default_config.max_k_value, help="Maximum k value"
+        "--max_k_value",
+        type=int,
+        default=default_config.max_k_value,
+        help="Maximum k value",
     )
     parser.add_argument(
         "--prompt_template",
@@ -255,13 +270,23 @@ def arg_parser():
         choices=[None, "float32", "float64", "float16", "bfloat16"],
         help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
     )
+    parser.add_argument(
+        "--k_sparse_probe_l1_decay",
+        type=float,
+        default=default_config.k_sparse_probe_l1_decay,
+        help="L1 decay for k-sparse probes.",
+    )
 
-    parser.add_argument("--force_rerun", action="store_true", help="Force rerun of experiments")
+    parser.add_argument(
+        "--force_rerun", action="store_true", help="Force rerun of experiments"
+    )
 
     return parser
 
 
-def create_config_and_selected_saes(args) -> tuple[AbsorptionEvalConfig, list[tuple[str, str]]]:
+def create_config_and_selected_saes(
+    args,
+) -> tuple[AbsorptionEvalConfig, list[tuple[str, str]]]:
     config = AbsorptionEvalConfig(
         random_seed=args.random_seed,
         f1_jump_threshold=args.f1_jump_threshold,
@@ -269,12 +294,15 @@ def create_config_and_selected_saes(args) -> tuple[AbsorptionEvalConfig, list[tu
         prompt_template=args.prompt_template,
         prompt_token_pos=args.prompt_token_pos,
         model_name=args.model_name,
+        k_sparse_probe_l1_decay=args.k_sparse_probe_l1_decay,
     )
 
     if args.llm_batch_size is not None:
         config.llm_batch_size = args.llm_batch_size
     else:
-        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[
+            config.model_name
+        ]
 
     if args.llm_dtype is not None:
         config.llm_dtype = args.llm_dtype
@@ -315,7 +343,9 @@ if __name__ == "__main__":
     os.makedirs(args.output_folder, exist_ok=True)
 
     # run the evaluation on all selected SAEs
-    results_dict = run_eval(config, selected_saes, device, args.output_folder, args.force_rerun)
+    results_dict = run_eval(
+        config, selected_saes, device, args.output_folder, args.force_rerun
+    )
 
     end_time = time.time()
 
