@@ -32,7 +32,6 @@ from sae_bench_utils import (
 )
 from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
-    select_saes_multiple_patterns,
 )
 
 
