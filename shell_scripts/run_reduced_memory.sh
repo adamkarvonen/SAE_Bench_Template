@@ -15,7 +15,8 @@ for sae_block_pattern in "${sae_block_patterns[@]}"; do
     python evals/absorption/main.py \
         --sae_regex_pattern "${sae_regex_pattern}" \
         --sae_block_pattern "${sae_block_pattern}" \
-        --model_name ${model_name} --llm_batch_size 4 || {
+        --model_name ${model_name} --llm_batch_size 4 \
+        --k_sparse_probe_batch_size 512 || {
             echo "Pattern ${sae_block_pattern} failed, continuing to next pattern..."
             continue
         }
