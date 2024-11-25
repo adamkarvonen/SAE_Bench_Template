@@ -7,6 +7,7 @@ from evals.base_eval_output import BaseEvalConfig
 @dataclass
 class AbsorptionEvalConfig(BaseEvalConfig):
     model_name: str = Field(
+        default="",
         title="Model Name",
         description="Model name. Must be set with a command line argument. For this eval, we currently recommend to only use models >= 2B parameters.",
     )

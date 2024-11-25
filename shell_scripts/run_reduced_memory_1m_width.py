@@ -149,6 +149,8 @@ for sae_block_pattern in sae_block_patterns:
         model_name,
         "--llm_batch_size",
         "4",
+        "--k_sparse_probe_batch_size",
+        "512",
     ]
     if run_command(cmd, f"Absorption eval for pattern {sae_block_pattern} failed"):
         print(f"Completed absorption eval for pattern {sae_block_pattern}")
