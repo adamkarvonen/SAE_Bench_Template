@@ -49,6 +49,12 @@
           "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
+        },
+        "k_sparse_probe_l1_decay": {
+          "default": 0.01,
+          "description": "L1 decay for k-sparse probes.",
+          "title": "K-Sparse Probe L1 Decay",
+          "type": "number"
         }
       },
       "title": "AbsorptionEvalConfig",

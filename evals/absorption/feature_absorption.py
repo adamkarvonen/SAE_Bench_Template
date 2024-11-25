@@ -182,7 +182,7 @@ def run_feature_absortion_experiment(
     prompt_template: str,
     prompt_token_pos: int,
     device: str,
-    experiment_dir: Path | str = RESULTS_DIR / SPARSE_PROBING_EXPERIMENT_NAME,
+    experiment_dir: Path | str = RESULTS_DIR / FEATURE_ABSORPTION_EXPERIMENT_NAME,
     sparse_probing_experiment_dir: Path | str = RESULTS_DIR
     / SPARSE_PROBING_EXPERIMENT_NAME,
     probes_dir: Path | str = PROBES_DIR,
