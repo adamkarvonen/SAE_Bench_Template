@@ -9,20 +9,12 @@ DEBUG_MODE = False
 @dataclass
 class RAVELEvalConfig(BaseEvalConfig):
     # Dataset
-    entity_class: str = Field(
-        default="nobel_prize_winner",
-        title="Chosen Entity",
-        description="Entity to be evaluated.",
-    )
-    attribute_class_A: str = Field(
-        default="Field",
-        title="Attribute Class A",
-        description="Attribute class A.",
-    )
-    attribute_class_B: str = Field(
-        default="Country of Birth",
-        title="Attribute Class B",
-        description="Attribute class B.",
+    entity_attribute_selection: dict[str, list[str]] = Field(
+        default={
+            "nobel_prize_winner": ["Field of Work", "Birth Year"],
+        },
+        title="Selection of entity and attribute classes",
+        description="Subset of the RAVEL datset to be evaluated. Each key is an entity class, and the value is a list of at least two attribute classes.",
     )
     n_samples_per_attribute_class: int = Field(
         default=None,

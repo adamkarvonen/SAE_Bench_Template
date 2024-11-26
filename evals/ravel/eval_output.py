@@ -14,18 +14,18 @@ EVAL_TYPE_ID_RAVEL = "RAVEL"
 
 @dataclass
 class RAVELMetricResults(BaseMetrics):
-    disentanglement: float = Field(
-        title="Disentanglement",
-        description="Mean of cause and isolation scores from RAVEL evaluation.",
+    disentanglement_score: float = Field(
+        title="Disentanglement Score",
+        description="Mean of cause and isolation scores across RAVEL datasets.",
         json_schema_extra=DEFAULT_DISPLAY,
     )
     cause_score: float = Field(
-        title="Mean Cause Score",
+        title="Cause Score",
         description="Cause score: Patching attribute-related SAE latents. High cause accuracy indicates that the SAE latents are related to the attribute.",
         json_schema_extra=DEFAULT_DISPLAY,
     )
     isolation_score: float = Field(
-        title="Mean Isolation Score",
+        title="Isolation Score",
         description="Isolation score: Patching SAE latents related to another attribute. High isolation accuracy indicates that latents related to another attribute are not related to this attribute.",
         json_schema_extra=DEFAULT_DISPLAY,
     )
@@ -33,7 +33,7 @@ class RAVELMetricResults(BaseMetrics):
 
 @dataclass
 class RAVELMetricCategories(BaseMetricCategories):
-    llm: RAVELMetricResults = Field(
+    sae: RAVELMetricResults = Field(
         title="RAVEL",
         description="RAVEL metrics",
         json_schema_extra=DEFAULT_DISPLAY,
@@ -43,52 +43,33 @@ class RAVELMetricCategories(BaseMetricCategories):
 
 @dataclass
 class RAVELResultDetail(BaseResultDetail):
-    dataset_name: str = Field(
-        title="Dataset Name",
-        description="Dataset name",
-    )
-    disentanglement: float = Field(
-        title="Disentanglement",
-        description="Mean of cause and isolation scores from RAVEL evaluation.",
-        json_schema_extra=DEFAULT_DISPLAY,
-    )
     entity_class: str = Field(
         title="Entity Class",
         description="Entity Class",
     )
-    attribute_A_name: str = Field(
-        title="Attribute A Name",
-        description="Attribute A name",
-        json_schema_extra=DEFAULT_DISPLAY,
+    attribute_classes: list[str] = Field(
+        title="Attribute Classes",
+        description="Attribute Classes",
     )
-    attribute_B_name: str = Field(
-        title="Attribute B Name",
-        description="Attribute B name",
-        json_schema_extra=DEFAULT_DISPLAY,
+    latent_selection_thresholds: list[float] = Field(
+        title="Latent Selection Threshold",
+        description="Latent Selection Threshold",
     )
-    cause_A_score: float = Field(
-        title="Cause Score",
-        description="Cause score: Patching attribute-related SAE latents. High cause accuracy indicates that the SAE latents are related to the attribute.",
-        json_schema_extra=DEFAULT_DISPLAY,
+    cause_scores: dict[float, list[float]] = Field(
+        title="Cause Scores",
+        description="1D row of cause scores, ordered by attribute_classes. Cause score: Patching attribute-related SAE latents. High cause accuracy indicates that the SAE latents are related to the attribute.",
     )
-    cause_B_score: float = Field(
-        title="Cause Score",
-        description="Cause score: Patching attribute-related SAE latents. High cause accuracy indicates that the SAE latents are related to the attribute.",
-        json_schema_extra=DEFAULT_DISPLAY,
+    isolation_scores: dict[float, list[list[float]]] = Field(
+        title="Isolation Scores",
+        description="2D row of isolation scores, ordered by attribute_classes(base) x attribute_classes(source). Isolation score: Patching SAE latents related to another attribute. High isolation accuracy indicates that latents related to another attribute are not related to this attribute.",
     )
-    isolation_AtoB_score: float = Field(
-        title="Isolation Score",
-        description="Isolation score: Patching SAE latents related to another attribute. High isolation accuracy indicates that latents related to another attribute are not related to this attribute.",
-        json_schema_extra=DEFAULT_DISPLAY,
-    )
-    isolation_BtoA_score: float = Field(
-        title="Isolation Score AtoB",
-        description="Isolation score: Patching SAE latents related to another attribute. High isolation accuracy indicates that latents related to another attribute are not related to this attribute.",
-        json_schema_extra=DEFAULT_DISPLAY,
+    mean_disentanglement: dict[float, float] = Field(
+        title="Mean Disentanglement",
+        description="Mean of cause and disentanglement with balanced weights: Mean(mean(cause_scores), mean(isolation_scores)).",
     )
 
 
-@dataclass(config=ConfigDict(title="Sparse Probing"))
+@dataclass(config=ConfigDict(title="RAVEL"))
 class RAVELEvalOutput(
     BaseEvalOutput[
         RAVELEvalConfig,
@@ -98,16 +79,16 @@ class RAVELEvalOutput(
 ):
     # This will end up being the description of the eval in the UI.
     """
-    An evaluation using SAEs to probe for supervised concepts in LLMs. We use sparse probing with the top K SAE latents and probe for over 30 different classes across 5 datasets.
+    An evaluation using SAEs for targeted modification of language model output. We leverage the RAVEL dataset of entity-attribute pairs. After filtering for known pairs, we identify attribute-related SAE latents and deterimine the effect on model predictions with activation patching experiments.
     """
 
-    eval_config: SparseProbingEvalConfig
+    eval_config: RAVELEvalConfig
     eval_id: str
     datetime_epoch_millis: int
-    eval_result_metrics: SparseProbingMetricCategories
-    eval_result_details: list[SparseProbingResultDetail] = Field(
+    eval_result_metrics: RAVELMetricCategories
+    eval_result_details: list[RAVELResultDetail] = Field(
         default_factory=list,
-        title="Per-Dataset Sparse Probing Results",
-        description="Each object is a stat on the sparse probing results for a dataset.",
+        title="Per-Entity-Dataset RAVEL Results",
+        description="Each object is a stat on the RAVEL results for an entity dataset.",
     )
-    eval_type_id: str = Field(default=EVAL_TYPE_ID_SPARSE_PROBING)
+    eval_type_id: str = Field(default=EVAL_TYPE_ID_RAVEL)

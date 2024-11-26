@@ -9,6 +9,7 @@ from sklearn.feature_selection import SelectFromModel
 from transformers import BatchEncoding
 from typing import Dict
 
+
 def get_attribute_activations_nnsight(
     model,
     dataset,
@@ -28,9 +29,7 @@ def get_attribute_activations_nnsight(
     # Randomly sample prompts for each attribute
     all_attribute_activations_BD = {}
     for attr in all_attributes:
-        attr_prompts = dataset.get_prompts_by_attribute(
-            attr, n_samples=max_samples_per_attribute
-        )
+        attr_prompts = dataset.get_prompts_by_attribute(attr, n_samples=max_samples_per_attribute)
         print(f"Number of prompts for {attr}: {len(attr_prompts)}")
 
         # Prepare inputs
@@ -48,10 +47,12 @@ def get_attribute_activations_nnsight(
             input_ids_BL = input_ids[batch_begin : batch_begin + llm_batch_size]
             attn_masks_BL = attn_masks[batch_begin : batch_begin + llm_batch_size]
             entity_pos_B = entity_positions[batch_begin : batch_begin + llm_batch_size]
-            encoding_BL = BatchEncoding({
-                "input_ids": input_ids_BL,
-                "attention_mask": attn_masks_BL,
-            })
+            encoding_BL = BatchEncoding(
+                {
+                    "input_ids": input_ids_BL,
+                    "attention_mask": attn_masks_BL,
+                }
+            )
 
             # Get activations
             with torch.no_grad(), model.trace(encoding_BL, **tracer_kwargs):
@@ -63,6 +64,7 @@ def get_attribute_activations_nnsight(
 
         all_attribute_activations_BD[attr] = torch.cat(batch_activations, dim=0)
     return all_attribute_activations_BD
+
 
 def prepare_attribute_probe_data(
     chosen_attribute: str,
@@ -116,7 +118,7 @@ def run_feature_selection_probe(
     max_samples_per_attribute=1024,
     layer=11,
     llm_batch_size=512,
-):
+) -> Dict[float, Dict[str, list[int]]]:
 
     # Cache activations
     all_attribute_activations_BD = get_attribute_activations_nnsight(
@@ -137,5 +139,11 @@ def run_feature_selection_probe(
         selected_features[attr] = select_features_with_classifier(
             sae, balanced_attribute_acts, labels, coeff=coeffs
         )
+
+    # Reverse dict due to for use in intervention
+    selected_features = {
+        c: {attr: dims for attr, dims in attr_dict.items()}
+        for c, attr_dict in selected_features.items()
+    }
 
     return selected_features

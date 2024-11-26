@@ -14,10 +14,10 @@ The scoring consists of three steps:
     - see `intervention.py`
 
 #### Open TODOs
-- [ ] move hardcoded hyperparameters from all files to eval config
-- [ ] move dependency paths
-- [ ] add type annotations
+- [x] move hardcoded hyperparameters from all files to eval config
+- [x] move dependency paths
 - [ ] format result file s.t. it’s easily graphable
+- [ ] add type annotations
 - [ ] save artifacts
 - [ ] test on multiple SAEs
 - [ ] test on pythia

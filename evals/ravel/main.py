@@ -4,6 +4,7 @@ import time
 import random
 import argparse
 from tqdm import tqdm
+from typing import Literal
 
 import torch
 from sae_lens import SAE
@@ -22,14 +23,90 @@ from sae_bench_utils import (
 from evals.ravel.instance import create_filtered_dataset
 from evals.ravel.eval_config import RAVELEvalConfig
 from evals.ravel.uniprobe import run_feature_selection_probe
-from evals.ravel.intervention import compute_disentanglement_AB_bidirectional
+from evals.ravel.intervention import compute_disentanglement
+from evals.ravel.eval_output import (
+    RAVELEvalOutput,
+    RAVELMetricResults,
+    RAVELMetricCategories,
+)
 
 
-
-RESULTS_DIR = "/share/u/can/SAE_Bench_Template/evals/ravel/results"
 
 eval_config = RAVELEvalConfig()
 rng = random.Random(eval_config.random_seed)
+
+
+def run_eval_single_dataset(
+    config: RAVELEvalConfig,
+    model: LanguageModel,
+    model_id: str,
+    sae: SAE,
+    entity_class: str,
+):
+
+
+    # TODO restrict to chosen attributes
+    # Create filtered dataset IFF it does not exist
+    dataset = create_filtered_dataset(
+        model_id=model_id,
+        chosen_entity=entity_class,
+        model=model,
+        force_recompute=config.force_dataset_recompute,
+        n_samples_per_attribute_class=config.n_samples_per_attribute_class,
+        top_n_entities=config.top_n_entities,
+        top_n_templates=config.top_n_templates,
+    )
+
+    # TODO save results
+    all_attributes = dataset.get_attributes()
+    print(f"All attributes: {all_attributes}")
+
+    attribute_feature_dict = run_feature_selection_probe(
+        model,
+        sae,
+        dataset,
+        all_attributes=all_attributes,
+        coeffs=config.probe_coefficients,
+        max_samples_per_attribute=config.max_samples_per_attribute,
+        layer=sae.cfg.hook_layer,
+        llm_batch_size=config.llm_batch_size,
+    )
+
+
+    results_detail = compute_disentanglement(
+        model,
+        sae,
+        sae.cfg.hook_layer,
+        dataset,
+        entity_class,
+        all_attributes,
+        attribute_feature_dict,
+        n_interventions=config.n_interventions,
+        n_generated_tokens=config.n_generated_tokens,
+        inv_batch_size=config.inv_batch_size,
+    )
+
+    return results_detail
+
+
+def run_eval_single_sae(
+    config: RAVELEvalConfig,
+    model: LanguageModel,
+    model_id: str,
+    sae: SAE,
+):
+    results_detail_per_entity = []
+    for entity_class in config.entity_attribute_selection:
+        results_detail = run_eval_single_dataset(
+            config=config,
+            model=model,
+            model_id=model_id,
+            sae=sae,
+            entity_class=entity_class,
+        )
+        results_detail_per_entity.append(results_detail)
+    return results_detail_per_entity
+
 
 
 # TODO test for MODEL_ID = 'pythia-70m'
@@ -37,7 +114,7 @@ def run_eval(
     eval_config: RAVELEvalConfig,
     selected_saes: list[tuple[str, str]],
     output_path: str,
-    device: torch.device,
+    device: Literal["cpu", "cuda", 'mps'],
 ):
     # Instanciate evaluation run
     eval_instance_id = get_eval_uuid()
@@ -63,7 +140,7 @@ def run_eval(
 
     model = LanguageModel(
         model_id,
-        cache_dir=config.model_dir,
+        cache_dir=eval_config.model_dir,
         device_map=device,
         torch_dtype=llm_dtype,
         dispatch=True,
@@ -106,78 +183,52 @@ def run_eval(
         sae_result_file = sae_result_file.replace("/", "_")
         sae_result_path = os.path.join(output_path, sae_result_file)
 
-
-        # Create filtered dataset IFF it does not exist
-        dataset = create_filtered_dataset(
-            model_id=model_id,
-            chosen_entity=config.entity_class,
+        # Run evaluation
+        result_details = run_eval_single_sae(
+            config=eval_config,
             model=model,
-            force_recompute=config.force_dataset_recompute,
-            n_samples_per_attribute_class=config.n_samples_per_attribute_class,
-            top_n_entities=config.top_n_entities,
-            top_n_templates=config.top_n_templates,
+            model_id=model_id,
+            sae=sae,
         )
 
-        # TODO save results
-        all_attributes = dataset.get_attributes()
-        print(f"All attributes: {all_attributes}")
+        # Aggregate results
+        # Find cause, isolation, and disentanglement scores for max disentanglement
+        max_disentanglement_scores, max_cause_scores, max_isolation_scores = [], [], []
+        for result_detail in result_details:
+            max_disentanglement = 0
+            best_threshold = 0
+            for t, score in result_detail["mean_disentanglement"].items():
+                if score > max_disentanglement:
+                    max_disentanglement = score
+                    best_threshold = t
+            max_disentanglement_scores.append(max_disentanglement)
+            max_cause_scores.append(result_detail["cause_scores"][best_threshold])
+            max_isolation_scores.append(result_detail["isolation_scores"][best_threshold])
 
-        attribute_feature_dict = run_feature_selection_probe(
-            model,
-            sae,
-            dataset,
-            all_attributes=all_attributes,
-            coeffs=config.probe_coefficients,
-            max_samples_per_attribute=config.max_samples_per_attribute,
-            layer=sae.cfg.hook_layer,
-            llm_batch_size=config.llm_batch_size,
+        mean_max_disentanglement = sum(max_disentanglement_scores) / len(max_disentanglement_scores)
+        mean_max_cause = sum(max_cause_scores) / len(max_cause_scores)
+        mean_max_isolation = sum(max_isolation_scores) / len(max_isolation_scores)
+            
+        aggregated_results = RAVELMetricResults(
+            disentanglement_score=mean_max_disentanglement,
+            cause_score=mean_max_cause,
+            isolation_score=mean_max_isolation,
         )
 
 
-        results = compute_disentanglement_AB_bidirectional(
-            model,
-            sae,
-            dataset,
-            attribute_A=config.attribute_class_A,
-            attribute_B=config.attribute_class_B,
-            attribute_feature_dict=attribute_feature_dict,
-            n_interventions=config.n_interventions,
-            n_generated_tokens=config.n_generated_tokens,
-            inv_batch_size=config.sae_batch_size,
-            tracer_kwargs={"scan": False, "validate": False},
+        # Save results
+        results = RAVELEvalOutput(
+            eval_config=eval_config,
+            eval_id=eval_instance_id,
+            datetime_epoch_millis=int(time.time() * 1000),
+            eval_result_metrics=RAVELMetricCategories(sae=aggregated_results),
+            eval_result_details=result_details,
+            sae_lens_id=sae_id,
+            sae_lens_release_id=sae_release,
+            sae_lens_version=sae_lens_version,
+            sae_bench_commit_hash=sae_bench_commit_hash,
         )
 
-        
-
-
-        def plot_disentanglement(results, title):
-            thresholds = list(results.keys())
-            print(results)
-            cause_A = [results[t]["cause_A"] for t in thresholds]
-            isolation_BtoA = [results[t]["isolation_BtoA"] for t in thresholds]
-            cause_B = [results[t]["cause_B"] for t in thresholds]
-            isolation_AtoB = [results[t]["isolation_AtoB"] for t in thresholds]
-            disentanglement = [results[t]["disentanglement"] for t in thresholds]
-
-            fig_dir = os.path.join(RESULTS_DIR, "disentanglement_plot.png")
-            plt.figure(figsize=(12, 6))
-            plt.plot(thresholds, cause_A, label="Cause A")
-            plt.plot(thresholds, isolation_BtoA, label="Isolation B->A")
-            plt.plot(thresholds, cause_B, label="Cause B")
-            plt.plot(thresholds, isolation_AtoB, label="Isolation A->B")
-            plt.plot(thresholds, disentanglement, label="Disentanglement")
-            plt.xlabel("Threshold")
-            plt.ylabel("Accuracy")
-            plt.xscale("log")
-            plt.title(title)
-            plt.legend()
-            plt.savefig(fig_dir)
-            plt.show()
-
-
-        plot_disentanglement(results, "Disentanglement score for Field and Country of Birth")
-
-        results_dict[sae_id] = results
 
 
 
@@ -221,7 +272,7 @@ def arg_parser():
     parser.add_argument(
         "--output_folder",
         type=str,
-        default="evals/ravel/output",
+        default="eval_results/ravel",
     )
     return parser
 
@@ -233,7 +284,6 @@ if __name__ == "__main__":
     --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
     --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
     --model_name "gemma-2-2b" \
-    --layer 11 
     """
     args = arg_parser().parse_args()
     device = general_utils.setup_environment()
@@ -254,6 +304,7 @@ if __name__ == "__main__":
     results_dict = run_eval(
         config,
         selected_saes,
+        args.output_folder,
         device,
     )
 
