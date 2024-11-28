@@ -6,9 +6,11 @@ import time
 import functools
 import random
 from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optional
+from dataclasses import asdict
 import logging
 import math
 import re
+import gc
 import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -23,6 +25,8 @@ from transformer_lens.hook_points import HookedRootModule
 from sae_lens.sae import SAE
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens.training.activations_store import ActivationsStore
+
+
 from evals.core.eval_config import CoreEvalConfig
 from evals.core.eval_output import (
     CoreEvalOutput,
@@ -42,6 +46,7 @@ from sae_bench_utils import (
 )
 
 import sae_bench_utils.sae_selection_utils as sae_selection_utils
+import sae_bench_utils.general_utils as general_utils
 
 logger = logging.getLogger(__name__)
 
@@ -145,8 +150,6 @@ class MultipleEvalsConfig:
     compute_l2_norms: bool = False
     compute_sparsity_metrics: bool = False
     compute_variance_metrics: bool = False
-    compute_featurewise_density_statistics: bool = False
-    compute_featurewise_weight_based_metrics: bool = False
     library_version: str = field(default_factory=get_library_version)
     git_hash: str = field(default_factory=get_git_hash)
 
@@ -168,8 +171,6 @@ def get_multiple_evals_everything_config(
         n_eval_sparsity_variance_batches=n_eval_sparsity_variance_batches,
         compute_sparsity_metrics=True,
         compute_variance_metrics=True,
-        compute_featurewise_density_statistics=True,
-        compute_featurewise_weight_based_metrics=True,
     )
 
 
@@ -837,6 +838,7 @@ def save_single_eval_result(
     sae_lens_version: str,
     sae_bench_commit_hash: str,
     output_path: Path,
+    sae: SAE,
 ) -> Path:
     """Save a single evaluation result to a JSON file."""
     # Get the eval_config directly - it's already a CoreEvalConfig object
@@ -876,6 +878,7 @@ def save_single_eval_result(
         sae_lens_id=result["sae_id"],
         sae_lens_release_id=result["sae_set"],
         sae_lens_version=sae_lens_version,
+        sae_cfg_dict=asdict(sae.cfg),
     )
 
     # Save individual JSON file
@@ -895,6 +898,8 @@ def multiple_evals(
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
+    compute_featurewise_density_statistics: bool = False,
+    compute_featurewise_weight_based_metrics: bool = False,
     exclude_special_tokens_from_reconstruction: bool = False,
     dataset: str = "Skylion007/openwebtext",
     context_size: int = 128,
@@ -902,7 +907,7 @@ def multiple_evals(
     verbose: bool = False,
     dtype: str = "float32",
 ) -> List[Dict[str, Any]]:
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = general_utils.setup_environment()
     assert len(filtered_saes) > 0, "No SAEs to evaluate"
 
     eval_results = []
@@ -952,7 +957,9 @@ def multiple_evals(
             sae_id = "custom_sae"
 
         sae.to(device)
-        sae = sae.to(str_to_dtype(dtype))
+        sae = sae.to(general_utils.str_to_dtype(dtype))
+
+        # TODO: Check if results already exist and skip if so, add force_rerun flag
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
@@ -997,8 +1004,8 @@ def multiple_evals(
                 compute_l2_norms=multiple_evals_config.compute_l2_norms,
                 compute_sparsity_metrics=multiple_evals_config.compute_sparsity_metrics,
                 compute_variance_metrics=multiple_evals_config.compute_variance_metrics,
-                compute_featurewise_density_statistics=multiple_evals_config.compute_featurewise_density_statistics,
-                compute_featurewise_weight_based_metrics=multiple_evals_config.compute_featurewise_weight_based_metrics,
+                compute_featurewise_density_statistics=compute_featurewise_density_statistics,
+                compute_featurewise_weight_based_metrics=compute_featurewise_weight_based_metrics,
                 llm_dtype=dtype,
             )
 
@@ -1018,7 +1025,7 @@ def multiple_evals(
             activation_store.shuffle_input_dataset(seed=42)
 
             eval_metrics = nested_dict()
-            eval_metrics["unique_id"] = f"{sae_release_name}-{sae_id}"
+            eval_metrics["unique_id"] = f"{sae_release_name}_{sae_id}"
             eval_metrics["sae_set"] = f"{sae_release_name}"
             eval_metrics["sae_id"] = f"{sae_id}"
             eval_metrics["eval_cfg"] = core_eval_config
@@ -1036,7 +1043,9 @@ def multiple_evals(
                 verbose=verbose,
             )
             eval_metrics["metrics"] = scalar_metrics
-            eval_metrics["feature_metrics"] = feature_metrics
+
+            if compute_featurewise_density_statistics or compute_featurewise_weight_based_metrics:
+                eval_metrics["feature_metrics"] = feature_metrics
 
             # Clean NaN values before saving
             cleaned_metrics = replace_nans_with_negative_one(eval_metrics)
@@ -1048,6 +1057,7 @@ def multiple_evals(
                 sae_lens_version,
                 sae_bench_commit_hash,
                 output_path,
+                sae,
             )
 
             if verbose:
@@ -1060,6 +1070,9 @@ def multiple_evals(
                 f"with context length {context_size} on dataset {dataset}: {str(e)}"
             )
             continue  # Skip this combination and continue with the next one
+
+        gc.collect()
+        torch.cuda.empty_cache()
 
     return eval_results
 
@@ -1087,6 +1100,8 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
+        compute_featurewise_density_statistics=args.compute_featurewise_density_statistics,
+        compute_featurewise_weight_based_metrics=args.compute_featurewise_weight_based_metrics,
         exclude_special_tokens_from_reconstruction=args.exclude_special_tokens_from_reconstruction,
         dataset=args.dataset,
         context_size=args.context_size,
@@ -1109,28 +1124,13 @@ def replace_nans_with_negative_one(obj: Any) -> Any:
         return obj
 
 
-def str_to_dtype(dtype_str: str) -> torch.dtype:
-    dtype_map = {
-        "float32": torch.float32,
-        "float64": torch.float64,
-        "float16": torch.float16,
-        "bfloat16": torch.bfloat16,
-    }
-    dtype = dtype_map.get(dtype_str.lower())
-    if dtype is None:
-        raise ValueError(
-            f"Unsupported dtype: {dtype_str}. Supported dtypes: {list(dtype_map.keys())}"
-        )
-    return dtype
-
-
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run core evaluation")
     parser.add_argument(
         "--model_name",
         type=str,
-        default="pythia-70m-deduped",
-        help="Model name",
+        default="",
+        help="Model name. Currently this flag is ignored and the model name is inferred from sae.cfg.model_name.",
     )
     parser.add_argument(
         "sae_regex_pattern",
@@ -1227,7 +1227,7 @@ def arg_parser():
         "--llm_dtype",
         type=str,
         default="float32",
-        choices=["float32", "float", "float64", "double", "float16", "half", "bfloat16"],
+        choices=["float32", "float64", "float16", "bfloat16"],
         help="Data type for computation",
     )
 
@@ -1235,6 +1235,21 @@ def arg_parser():
 
 
 if __name__ == "__main__":
+    """
+    python evals/core/main.py "sae_bench_pythia70m_sweep_standard_ctx128_0712" "blocks.4.hook_resid_post__trainer_10" \
+    --batch_size_prompts 16 \
+    --n_eval_sparsity_variance_batches 2000 \
+    --n_eval_reconstruction_batches 200 \
+    --output_folder "eval_results/core" \
+    --exclude_special_tokens_from_reconstruction --verbose
+
+    python evals/core/main.py "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" "blocks.19.hook_resid_post__trainer_2" \
+    --batch_size_prompts 16 \
+    --n_eval_sparsity_variance_batches 2000 \
+    --n_eval_reconstruction_batches 200 \
+    --output_folder "eval_results/core" \
+    --exclude_special_tokens_from_reconstruction --verbose --llm_dtype bfloat16
+    """
     args = arg_parser().parse_args()
     eval_results = run_evaluations(args)
 

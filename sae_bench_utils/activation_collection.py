@@ -14,12 +14,17 @@ import os
 LLM_NAME_TO_BATCH_SIZE = {
     "pythia-70m-deduped": 512,
     "gemma-2-2b": 32,
+    "gemma-2-9b": 32,
+    "gemma-2-2b-it": 32,
+    "gemma-2-9b-it": 32,
 }
 
 LLM_NAME_TO_DTYPE = {
     "pythia-70m-deduped": "float32",
     "gemma-2-2b": "bfloat16",
     "gemma-2-2b-it": "bfloat16",
+    "gemma-2-9b": "bfloat16",
+    "gemma-2-9b-it": "bfloat16",
 }
 
 
@@ -165,9 +170,8 @@ def get_feature_activation_sparsity(
 ) -> Float[torch.Tensor, "d_sae"]:
     """Get the activation sparsity for each SAE feature.
     Note: If evaluating many SAEs, it is more efficient to use save_activations() and get the sparsity from the saved activations."""
-    # I concatanate summed activations (which is less efficient) so we can easily use this function as long as the SAE
-    # has an encode() function
-    sae_acts = []
+    device = sae.device
+    running_sum_F = torch.zeros(sae.W_dec.shape[0], dtype=torch.float32, device=device)
     total_tokens = 0
 
     for i in tqdm(range(0, tokens.shape[0], batch_size)):
@@ -189,12 +193,9 @@ def get_feature_activation_sparsity(
         sae_act_BLF = sae_act_BLF * attn_mask_BL[:, :, None]
         total_tokens += attn_mask_BL.sum().item()
 
-        sae_act_F = einops.reduce(sae_act_BLF, "B L F -> F", "sum")
+        running_sum_F += einops.reduce(sae_act_BLF, "B L F -> F", "sum")
 
-        sae_acts.append(sae_act_F)
-
-    total_sae_acts_F = torch.stack(sae_acts).sum(dim=0)
-    return total_sae_acts_F / total_tokens
+    return running_sum_F / total_tokens
 
 
 @jaxtyped(typechecker=beartype)

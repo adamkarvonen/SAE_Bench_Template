@@ -57,47 +57,56 @@ def get_effects_per_class_precomputed_acts(
     perform_scr: bool,
     sae_batch_size: int,
 ) -> torch.Tensor:
-    device = sae.device
-
     inputs_train_BLD, labels_train_B = probe_training.prepare_probe_data(
         precomputed_acts, class_idx, perform_scr
     )
 
-    all_acts_list_F = []
-
     assert inputs_train_BLD.shape[0] == len(labels_train_B)
+
+    device = inputs_train_BLD.device
+    dtype = inputs_train_BLD.dtype
+
+    running_sum_pos_F = torch.zeros(sae.W_dec.data.shape[0], dtype=torch.float32, device=device)
+    running_sum_neg_F = torch.zeros(sae.W_dec.data.shape[0], dtype=torch.float32, device=device)
+    count_pos = 0
+    count_neg = 0
 
     for i in range(0, inputs_train_BLD.shape[0], sae_batch_size):
         activation_batch_BLD = inputs_train_BLD[i : i + sae_batch_size]
         labels_batch_B = labels_train_B[i : i + sae_batch_size]
-        dtype = activation_batch_BLD.dtype
 
         activations_BL = einops.reduce(activation_batch_BLD, "B L D -> B L", "sum")
         nonzero_acts_BL = (activations_BL != 0.0).to(dtype=dtype)
-        nonzero_acts_B = einops.reduce(nonzero_acts_BL, "B L -> B", "sum")
+        nonzero_acts_B = einops.reduce(nonzero_acts_BL, "B L -> B", "sum").to(torch.float32)
 
         f_BLF = sae.encode(activation_batch_BLD)
         f_BLF = f_BLF * nonzero_acts_BL[:, :, None]  # zero out masked tokens
 
         # Get the average activation per input. We divide by the number of nonzero activations for the attention mask
-        average_sae_acts_BF = einops.reduce(f_BLF, "B L F -> B F", "sum") / nonzero_acts_B[:, None]
+        average_sae_acts_BF = (
+            einops.reduce(f_BLF, "B L F -> B F", "sum").to(torch.float32) / nonzero_acts_B[:, None]
+        )
 
-        pos_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL]
-        neg_sae_acts_BF = average_sae_acts_BF[labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL]
+        # Separate positive and negative samples
+        pos_mask = labels_batch_B == dataset_info.POSITIVE_CLASS_LABEL
+        neg_mask = labels_batch_B == dataset_info.NEGATIVE_CLASS_LABEL
 
-        average_pos_sae_acts_F = einops.reduce(pos_sae_acts_BF, "B F -> F", "mean")
-        average_neg_sae_acts_F = einops.reduce(neg_sae_acts_BF, "B F -> F", "mean")
+        # Accumulate sums in fp32
+        running_sum_pos_F += einops.reduce(average_sae_acts_BF[pos_mask], "B F -> F", "sum")
+        running_sum_neg_F += einops.reduce(average_sae_acts_BF[neg_mask], "B F -> F", "sum")
 
-        sae_acts_diff_F = average_pos_sae_acts_F - average_neg_sae_acts_F
+        count_pos += pos_mask.sum().item()
+        count_neg += neg_mask.sum().item()
 
-        all_acts_list_F.append(sae_acts_diff_F)
+    # Calculate means in fp32
+    average_pos_sae_acts_F = running_sum_pos_F / count_pos if count_pos > 0 else running_sum_pos_F
+    average_neg_sae_acts_F = running_sum_neg_F / count_neg if count_neg > 0 else running_sum_neg_F
 
-    all_acts_BF = torch.stack(all_acts_list_F, dim=0)
-    average_acts_F = einops.reduce(all_acts_BF, "B F -> F", "mean").to(dtype=torch.float32)
+    # The decoder matrix can be very large, so we move it to the same device as the activations
+    average_acts_F = (average_pos_sae_acts_F - average_neg_sae_acts_F).to(dtype)
 
-    probe_weight_D = probe.net.weight.to(dtype=torch.float32, device=device)
-
-    decoder_weight_DF = sae.W_dec.data.T.to(dtype=torch.float32, device=device)
+    probe_weight_D = probe.net.weight.to(dtype=dtype, device=device)
+    decoder_weight_DF = sae.W_dec.data.T.to(dtype=dtype, device=device)
 
     dot_prod_F = (probe_weight_D @ decoder_weight_DF).squeeze()
 
@@ -105,7 +114,7 @@ def get_effects_per_class_precomputed_acts(
         # Only consider activations from the positive class
         average_acts_F.clamp_(min=0.0)
 
-    effects_F = average_acts_F * dot_prod_F
+    effects_F = (average_acts_F * dot_prod_F).to(dtype=torch.float32)
 
     if perform_scr:
         effects_F = effects_F.abs()
@@ -506,6 +515,8 @@ def run_eval_single_dataset(
     probes_path = os.path.join(artifacts_folder, probes_filename)
 
     if not os.path.exists(activations_path):
+        if config.lower_vram_usage:
+            model = model.to(device)
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name,
             config,
@@ -518,6 +529,8 @@ def run_eval_single_dataset(
             column1_vals,
             column2_vals,
         )
+        if config.lower_vram_usage:
+            model = model.to("cpu")
 
         all_meaned_train_acts_BD = activation_collection.create_meaned_model_activations(
             all_train_acts_BLD
@@ -566,6 +579,8 @@ def run_eval_single_dataset(
             with open(probes_path, "wb") as f:
                 pickle.dump(llm_probes_dict, f)
     else:
+        if config.lower_vram_usage:
+            model = model.to("cpu")
         print(f"Loading activations from {activations_path}")
         acts = torch.load(activations_path)
         all_train_acts_BLD = acts["train"]
@@ -672,6 +687,9 @@ def run_eval_single_sae(
     results_dict = general_utils.average_results_dictionaries(dataset_results, averaging_names)
     results_dict.update(dataset_results)
 
+    if config.lower_vram_usage:
+        model = model.to(device)
+
     return results_dict
 
 
@@ -705,12 +723,7 @@ def run_eval(
 
     results_dict = {}
 
-    if config.llm_dtype == "bfloat16":
-        llm_dtype = torch.bfloat16
-    elif config.llm_dtype == "float32":
-        llm_dtype = torch.float32
-    else:
-        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+    llm_dtype = general_utils.str_to_dtype(config.llm_dtype)
 
     model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
@@ -719,9 +732,6 @@ def run_eval(
     for sae_release, sae_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        gc.collect()
-        torch.cuda.empty_cache()
-
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
@@ -788,6 +798,7 @@ def run_eval(
                     sae_lens_id=sae_id,
                     sae_lens_release_id=sae_release,
                     sae_lens_version=sae_lens_version,
+                    sae_cfg_dict=asdict(sae.cfg),
                 )
             elif eval_type == EVAL_TYPE_ID_TPP:
                 eval_output = TppEvalOutput(
@@ -816,6 +827,7 @@ def run_eval(
                     sae_lens_id=sae_id,
                     sae_lens_release_id=sae_release,
                     sae_lens_version=sae_lens_version,
+                    sae_cfg_dict=asdict(sae.cfg),
                 )
             else:
                 raise ValueError(f"Invalid eval type: {eval_type}")
@@ -823,6 +835,9 @@ def run_eval(
         results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
         eval_output.to_json_file(sae_result_path, indent=2)
+
+        gc.collect()
+        torch.cuda.empty_cache()
 
     if clean_up_activations:
         if os.path.exists(artifacts_folder):
@@ -835,10 +850,28 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[ScrAndTppEvalConfig, list[tuple[str, str]]]:
     config = ScrAndTppEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
         perform_scr=args.perform_scr,
     )
+
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+    else:
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+    if args.random_seed is not None:
+        config.random_seed = args.random_seed
+
+    if args.lower_vram_usage:
+        config.lower_vram_usage = True
+
+    if args.sae_batch_size is not None:
+        config.sae_batch_size = args.sae_batch_size
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -855,8 +888,8 @@ def create_config_and_selected_saes(
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run SCR or TPP evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -898,6 +931,30 @@ def arg_parser():
         required=True,
         help="If true, do Spurious Correlation Removal (SCR). If false, do TPP.",
     )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
+    )
+    parser.add_argument(
+        "--sae_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for SAE. If None, will be populated using default config value",
+    )
+    parser.add_argument(
+        "--lower_vram_usage",
+        action="store_true",
+        help="Lower GPU memory usage by moving model to CPU when not required. Useful on 1M width SAEs. Will be slower and require more system memory.",
+    )
 
     return parser
 
@@ -913,7 +970,7 @@ if __name__ == "__main__":
 
     Example Gemma-2-2B SAE Bench usage:
     python evals/scr_and_tpp/main.py \
-    --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
+    --sae_regex_pattern "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" \
     --sae_block_pattern "blocks.19.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b \
     --perform_scr true
@@ -933,9 +990,6 @@ if __name__ == "__main__":
     config, selected_saes = create_config_and_selected_saes(args)
 
     print(selected_saes)
-
-    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

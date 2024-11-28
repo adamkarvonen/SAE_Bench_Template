@@ -432,12 +432,7 @@ def run_eval(
 
     results_dict = {}
 
-    if config.llm_dtype == "bfloat16":
-        llm_dtype = torch.bfloat16
-    elif config.llm_dtype == "float32":
-        llm_dtype = torch.float32
-    else:
-        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+    llm_dtype = general_utils.str_to_dtype(config.llm_dtype)
 
     print(f"Using dtype: {llm_dtype}")
 
@@ -448,9 +443,6 @@ def run_eval(
     for sae_release, sae_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        gc.collect()
-        torch.cuda.empty_cache()
-
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
@@ -485,6 +477,7 @@ def run_eval(
             "eval_config": asdict(config),
             "eval_results": eval_output,
             "eval_artifacts": {"artifacts": "None"},
+            "sae_cfg_dict": asdict(sae.cfg),
         }
 
         with open(sae_result_path, "w") as f:
@@ -494,6 +487,9 @@ def run_eval(
 
     results_dict["custom_eval_config"] = asdict(config)
 
+    gc.collect()
+    torch.cuda.empty_cache()
+
     return results_dict
 
 
@@ -501,9 +497,21 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[MDLEvalConfig, list[tuple[str, str]]]:
     config = MDLEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
+
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+    else:
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+    if args.random_seed is not None:
+        config.random_seed = args.random_seed
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -520,8 +528,8 @@ def create_config_and_selected_saes(
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run MDL evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="pythia-70m-deduped", help="Model name")
+    parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -545,6 +553,19 @@ def arg_parser():
         "--clean_up_activations",
         action="store_false",
         help="Clean up activations after evaluation",
+    )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
     )
 
     return parser
@@ -578,7 +599,6 @@ if __name__ == "__main__":
         mse_epsilon_threshold=0.2,
         model_name=args.model_name,
     )
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
     logger.info(config)
 
     results_dict = run_eval(

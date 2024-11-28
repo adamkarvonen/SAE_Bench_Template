@@ -118,6 +118,14 @@ def run_eval(
     """
     selected_saes is a list of either tuples of (sae_lens release, sae_lens id) or (sae_name, SAE object)
     """
+
+    if "gemma" not in config.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on LLMS >= 2B parameters\n\n\n")
+
+    if "it" not in config.model_name:
+        print("\n\n\nWARNING: We recommend running this eval on instruct tuned models\n\n\n")
+        raise ValueError("Model should be instruct tuned")
+
     eval_instance_id = get_eval_uuid()
     sae_lens_version = get_sae_lens_version()
     sae_bench_commit_hash = get_sae_bench_version()
@@ -128,12 +136,7 @@ def run_eval(
 
     results_dict = {}
 
-    if config.llm_dtype == "bfloat16":
-        llm_dtype = torch.bfloat16
-    elif config.llm_dtype == "float32":
-        llm_dtype = torch.float32
-    else:
-        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+    llm_dtype = general_utils.str_to_dtype(config.llm_dtype)
 
     random.seed(config.random_seed)
     torch.manual_seed(config.random_seed)
@@ -145,9 +148,6 @@ def run_eval(
     for sae_release, sae_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        gc.collect()
-        torch.cuda.empty_cache()
-
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
@@ -194,11 +194,15 @@ def run_eval(
                 sae_lens_id=sae_id,
                 sae_lens_release_id=sae_release,
                 sae_lens_version=sae_lens_version,
+                sae_cfg_dict=asdict(sae.cfg),
             )
 
         results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
         eval_output.to_json_file(sae_result_path, indent=2)
+
+        gc.collect()
+        torch.cuda.empty_cache()
 
     if clean_up_artifacts:
         for folder in os.listdir(artifacts_folder):
@@ -213,9 +217,19 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[UnlearningEvalConfig, list[tuple[str, str]]]:
     config = UnlearningEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
+
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+    else:
+        # // 8 is because the LLM_NAME_TO_BATCH_SIZE is for ctx len 128, but we use 1024 in this eval
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name] // 8
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -232,8 +246,8 @@ def create_config_and_selected_saes(
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run unlearning evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, default="gemma-2-2b-it", help="Model name")
+    parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -258,6 +272,19 @@ def arg_parser():
         action="store_true",
         help="Clean up artifacts after evaluation",
     )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
+    )
 
     return parser
 
@@ -266,8 +293,8 @@ if __name__ == "__main__":
     """
     Example Gemma-2-2B SAE Bench usage:
     python evals/unlearning/main.py \
-    --sae_regex_pattern "sae_bench_gemma-2-2b_sweep_topk_ctx128_ef8_0824" \
-    --sae_block_pattern "blocks.3.hook_resid_post__trainer_2" \
+    --sae_regex_pattern "sae_bench_gemma-2-2b_topk_width-2pow14_date-1109" \
+    --sae_block_pattern "blocks.5.hook_resid_post__trainer_2" \
     --model_name gemma-2-2b-it
 
     Example Gemma-2-2B Gemma-Scope usage:
@@ -277,6 +304,7 @@ if __name__ == "__main__":
     --model_name gemma-2-2b-it
     """
     args = arg_parser().parse_args()
+
     device = general_utils.setup_environment()
 
     start_time = time.time()
@@ -284,8 +312,6 @@ if __name__ == "__main__":
     config, selected_saes = create_config_and_selected_saes(args)
 
     print(selected_saes)
-
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

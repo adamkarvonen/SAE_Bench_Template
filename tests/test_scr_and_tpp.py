@@ -27,6 +27,7 @@ def test_scr_end_to_end_different_seed():
     test_config.sae_batch_size = 250
     test_config.llm_batch_size = 500
     test_config.llm_dtype = "float32"
+    test_config.lower_vram_usage = True
     layer = 4
     tolerance = 0.08  # There can be significant variation in the strength of the correlation learned by a linear probe between random seeds
     # This causes large shifts in absolute values of the scr metrics, especially as this test only uses a single dataset

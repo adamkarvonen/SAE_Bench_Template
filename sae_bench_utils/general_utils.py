@@ -5,6 +5,21 @@ import torch
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 
 
+def str_to_dtype(dtype_str: str) -> torch.dtype:
+    dtype_map = {
+        "float32": torch.float32,
+        "float64": torch.float64,
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+    }
+    dtype = dtype_map.get(dtype_str.lower())
+    if dtype is None:
+        raise ValueError(
+            f"Unsupported dtype: {dtype_str}. Supported dtypes: {list(dtype_map.keys())}"
+        )
+    return dtype
+
+
 def setup_environment():
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 

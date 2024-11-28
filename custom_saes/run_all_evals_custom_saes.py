@@ -1,5 +1,6 @@
 import os
 from typing import Any, Optional
+from tqdm import tqdm
 
 import evals.absorption.main as absorption
 import evals.autointerp.main as autointerp
@@ -75,23 +76,26 @@ def run_evals(
                 force_rerun,
             )
         ),
+        # TODO: Do a better job of setting num_batches and batch size
         "core": (
             lambda: core.multiple_evals(
                 filtered_saes=selected_saes,
                 n_eval_reconstruction_batches=200,
                 n_eval_sparsity_variance_batches=2000,
                 eval_batch_size_prompts=16,
+                compute_featurewise_density_statistics=False,
+                compute_featurewise_weight_based_metrics=False,
                 exclude_special_tokens_from_reconstruction=True,
                 dataset="Skylion007/openwebtext",
                 context_size=128,
                 output_folder="eval_results/core",
                 verbose=True,
-                dtype=core.str_to_dtype(llm_dtype),
+                dtype=llm_dtype,
             )
         ),
         "scr": (
             lambda: scr_and_tpp.run_eval(
-                scr_and_tpp.scrAndTppEvalConfig(
+                scr_and_tpp.ScrAndTppEvalConfig(
                     model_name=model_name,
                     random_seed=RANDOM_SEED,
                     perform_scr=True,
@@ -153,7 +157,7 @@ def run_evals(
     }
 
     # Run selected evaluations
-    for eval_type in eval_types:
+    for eval_type in tqdm(eval_types, desc="Evaluations"):
         if eval_type == "autointerp" and api_key is None:
             print("Skipping autointerp evaluation due to missing API key")
             continue
@@ -161,20 +165,22 @@ def run_evals(
             if model_name != "gemma-2-2b":
                 print("Skipping unlearning evaluation for non-GEMMA model")
                 continue
+            print("Skipping, need to clean up unlearning interface")
+            continue  # TODO:
             if not os.path.exists("./evals/unlearning/data/bio-forget-corpus.jsonl"):
                 print("Skipping unlearning evaluation due to missing bio-forget-corpus.jsonl")
                 continue
+
+        print(f"\n\n\nRunning {eval_type} evaluation\n\n\n")
+
         if eval_type in eval_runners:
             os.makedirs(output_folders[eval_type], exist_ok=True)
             eval_runners[eval_type]()
 
 
 if __name__ == "__main__":
-    import baselines.identity_sae as identity_sae
-    import baselines.pca_sae as pca_sae
-
-    with open("openai_api_key.txt", "r") as f:
-        api_key = f.read().strip()
+    import custom_saes.identity_sae as identity_sae
+    import custom_saes.pca_sae as pca_sae
 
     device = general_utils.setup_environment()
 
@@ -195,6 +201,15 @@ if __name__ == "__main__":
         "unlearning",
     ]
 
+    if "autointerp" in eval_types:
+        try:
+            with open("openai_api_key.txt") as f:
+                api_key = f.read().strip()
+        except FileNotFoundError:
+            raise Exception("Please create openai_api_key.txt with your API key")
+    else:
+        api_key = None
+
     # If evaluating multiple SAEs on the same layer, set save_activations to True
     # This will require at least 100GB of disk space
     save_activations = False
@@ -210,7 +225,7 @@ if __name__ == "__main__":
         # selected_saes = [(f"{model_name}_layer_{hook_layer}_pca_sae", sae)]
 
         for sae_name, sae in selected_saes:
-            sae = sae.to(dtype=core.str_to_dtype(llm_dtype))
+            sae = sae.to(dtype=general_utils.str_to_dtype(llm_dtype))
             sae.cfg.dtype = llm_dtype
 
         run_evals(

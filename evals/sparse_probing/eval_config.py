@@ -48,24 +48,30 @@ class SparseProbingEvalConfig(BaseEvalConfig):
         description="SAE batch size, inference only",
     )
     llm_batch_size: int = Field(
-        default=32,
+        default=None,
         title="LLM Batch Size",
-        description="LLM batch size, inference only",
+        description="LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
     )
     llm_dtype: str = Field(
-        default="bfloat16",
+        default="",
         title="LLM Data Type",
-        description="LLM data type",
+        description="LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
     )
 
     model_name: str = Field(
-        default="gemma-2-2b",
+        default="",
         title="Model Name",
-        description="Model name",
+        description="Model name. Must be set with a command line argument.",
     )
 
     k_values: list[int] = Field(
         default_factory=lambda: [1, 2, 5, 10, 20, 50],
         title="K Values",
         description="K represents the number of SAE features or residual stream channels we train the linear probe on. We iterate over all values of K.",
+    )
+
+    lower_vram_usage: bool = Field(
+        default=False,
+        title="Lower Memory Usage",
+        description="Lower GPU memory usage by doing more computation on the CPU. Useful on 1M width SAEs. Will be slower and require more system memory.",
     )

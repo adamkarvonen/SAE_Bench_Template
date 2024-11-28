@@ -8,6 +8,7 @@ from pydantic.config import JsonDict
 # adding this to the json_schema_extra field of a field will make it display by default in UIs
 DEFAULT_DISPLAY: JsonDict = {"ui_default_display": True}
 
+
 @dataclass
 class BaseEvalConfig:
     """
@@ -27,7 +28,6 @@ BaseEvalConfigType = TypeVar("BaseEvalConfigType", bound=BaseEvalConfig)
 # Metrics for a single eval category
 @dataclass
 class BaseMetrics:
-
     def __init__(self):
         if type(self) is BaseMetrics:
             raise ValueError(
@@ -50,7 +50,6 @@ BaseMetricsType = TypeVar("BaseMetricsType", bound=BaseMetrics)
 
 @dataclass
 class BaseMetricCategories:
-
     def __init__(self):
         if type(self) is BaseMetricCategories:
             raise ValueError(
@@ -69,9 +68,7 @@ class BaseMetricCategories:
         return data
 
 
-BaseMetricCategoriesType = TypeVar(
-    "BaseMetricCategoriesType", bound=BaseMetricCategories
-)
+BaseMetricCategoriesType = TypeVar("BaseMetricCategoriesType", bound=BaseMetricCategories)
 
 
 @dataclass
@@ -83,10 +80,7 @@ BaseResultDetailType = TypeVar("BaseResultDetailType", bound=BaseResultDetail)
 
 
 @dataclass
-class BaseEvalOutput(
-    Generic[BaseEvalConfigType, BaseMetricCategoriesType, BaseResultDetailType]
-):
-
+class BaseEvalOutput(Generic[BaseEvalConfigType, BaseMetricCategoriesType, BaseResultDetailType]):
     def to_json(self, indent: int = 2) -> str:
         """
         Dump the BaseEvalOutput object to a JSON string.
@@ -163,6 +157,11 @@ class BaseEvalOutput(
     sae_lens_version: str | None = Field(
         title="SAE Lens Version",
         description="The version of SAE Lens that ran the evaluation.",
+    )
+
+    sae_cfg_dict: dict[str, Any] | None = Field(
+        title="SAE Config Dict",
+        description="The configuration of the SAE (custom or from SAE Lens) that ran the evaluation. This should match the SAE Lens config schema.",
     )
 
     eval_result_unstructured: Any | None = Field(

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
-from typing import Sequence
+from typing import Callable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,9 @@ class KSparseProbe(nn.Module):
     bias: torch.Tensor  # scalar
     feature_ids: torch.Tensor  # shape (k)
 
-    def __init__(self, weight: torch.Tensor, bias: torch.Tensor, feature_ids: torch.Tensor):
+    def __init__(
+        self, weight: torch.Tensor, bias: torch.Tensor, feature_ids: torch.Tensor
+    ):
         super().__init__()
         self.weight = weight
         self.bias = bias
@@ -45,7 +47,9 @@ class KSparseProbe(nn.Module):
         return self.weight.shape[0]
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        filtered_acts = x[:, self.feature_ids] if len(x.shape) == 2 else x[self.feature_ids]
+        filtered_acts = (
+            x[:, self.feature_ids] if len(x.shape) == 2 else x[self.feature_ids]
+        )
         return filtered_acts @ self.weight + self.bias
 
 
@@ -62,6 +66,8 @@ def train_sparse_multi_probe(
     l2_decay: float = 1e-6,
     show_progress: bool = True,
     verbose: bool = False,
+    map_acts: Callable[[torch.Tensor], torch.Tensor] | None = None,
+    probe_dim: int | None = None,
 ) -> LinearProbe:
     """
     Train a multi-probe with L1 regularization on the weights.
@@ -78,7 +84,10 @@ def train_sparse_multi_probe(
         show_progress=show_progress,
         verbose=verbose,
         device=device,
-        extra_loss_fn=lambda probe, _x, _y: l1_decay * probe.weights.abs().sum(dim=-1).mean(),
+        extra_loss_fn=lambda probe, _x, _y: l1_decay
+        * probe.weights.abs().sum(dim=-1).mean(),
+        map_acts=map_acts,
+        probe_dim=probe_dim,
     )
 
 
@@ -86,11 +95,14 @@ def _get_sae_acts(
     sae: SAE,
     input_activations: torch.Tensor,
     batch_size: int = 4096,
+    sparse_feat_ids: torch.Tensor | None = None,
 ) -> torch.Tensor:
     batch_acts = []
     for batch in batchify(input_activations, batch_size):
-        acts = sae.encode(batch.to(device=sae.device, dtype=sae.dtype)).cpu()
-        batch_acts.append(acts)
+        acts = sae.encode(batch.to(device=sae.device, dtype=sae.dtype))
+        if sparse_feat_ids is not None:
+            acts = acts[:, sparse_feat_ids]
+        batch_acts.append(acts.cpu())
     return torch.cat(batch_acts)
 
 
@@ -99,6 +111,9 @@ def train_k_sparse_probes(
     train_labels: list[tuple[str, int]],  # list of (token, letter number) pairs
     train_activations: torch.Tensor,  # n_vocab X d_model
     ks: Sequence[int],
+    l1_decay: float = 0.01,
+    batch_size: int = 4096,
+    num_epochs: int = 50,
 ) -> dict[int, dict[int, KSparseProbe]]:  # dict[k, dict[letter_id, probe]]
     """
     Train k-sparse probes for each k in ks.
@@ -107,15 +122,20 @@ def train_k_sparse_probes(
     results: dict[int, dict[int, KSparseProbe]] = defaultdict(dict)
     with torch.no_grad():
         labels = {label for _, label in train_labels}
-        sparse_train_y = torch.nn.functional.one_hot(torch.tensor([idx for _, idx in train_labels]))
-        sae_feat_acts = _get_sae_acts(sae, train_activations)
+        sparse_train_y = torch.nn.functional.one_hot(
+            torch.tensor([idx for _, idx in train_labels])
+        )
+        train_activations = train_activations.to(sae.device, dtype=sae.dtype)
     l1_probe = (
         train_sparse_multi_probe(
-            sae_feat_acts.to(sae.device),
-            sparse_train_y.to(sae.device),
-            l1_decay=0.01,
-            num_epochs=50,
+            train_activations,
+            sparse_train_y,
+            l1_decay=l1_decay,
+            num_epochs=num_epochs,
+            batch_size=batch_size,
             device=sae.device,
+            map_acts=lambda acts: sae.encode(acts.to(sae.device, dtype=sae.dtype)),
+            probe_dim=sae.cfg.d_sae,
         )
         .float()
         .cpu()
@@ -126,16 +146,25 @@ def train_k_sparse_probes(
             for k in ks:
                 for label in labels:
                     # using topk and not abs() because we only want features that directly predict the label
-                    sparse_feat_ids = l1_probe.weights[label].topk(k).indices.numpy()
-                    train_k_x = sae_feat_acts[:, sparse_feat_ids].float().numpy()
-                    # Use SKLearn here because it's much faster than torch if the data is small
-                    sk_probe = LogisticRegression(max_iter=500, class_weight="balanced").fit(
-                        train_k_x, (train_k_y == label).astype(np.int64)
+                    sparse_feat_ids = l1_probe.weights[label].topk(k).indices
+                    train_k_x = (
+                        _get_sae_acts(
+                            sae,
+                            train_activations,
+                            sparse_feat_ids=sparse_feat_ids,
+                            batch_size=batch_size,
+                        )
+                        .float()
+                        .numpy()
                     )
+                    # Use SKLearn here because it's much faster than torch if the data is small
+                    sk_probe = LogisticRegression(
+                        max_iter=500, class_weight="balanced"
+                    ).fit(train_k_x, (train_k_y == label).astype(np.int64))
                     probe = KSparseProbe(
                         weight=torch.tensor(sk_probe.coef_[0]).float(),
                         bias=torch.tensor(sk_probe.intercept_[0]).float(),
-                        feature_ids=torch.tensor(sparse_feat_ids),
+                        feature_ids=sparse_feat_ids,
                     )
                     results[k][label] = probe
                     pbar.update(1)
@@ -154,12 +183,18 @@ def sae_k_sparse_metadata(
     norm_W_enc = sae.W_enc / torch.norm(sae.W_enc, dim=0, keepdim=True)
     norm_W_dec = sae.W_dec / torch.norm(sae.W_dec, dim=-1, keepdim=True)
     probe_dec_cos = (
-        (norm_probe_weights.to(dtype=norm_W_dec.dtype, device=norm_W_dec.device) @ norm_W_dec.T)
+        (
+            norm_probe_weights.to(dtype=norm_W_dec.dtype, device=norm_W_dec.device)
+            @ norm_W_dec.T
+        )
         .cpu()
         .float()
     )
     probe_enc_cos = (
-        (norm_probe_weights.to(dtype=norm_W_enc.dtype, device=norm_W_enc.device) @ norm_W_enc)
+        (
+            norm_probe_weights.to(dtype=norm_W_enc.dtype, device=norm_W_enc.device)
+            @ norm_W_enc
+        )
         .cpu()
         .float()
     )
@@ -176,8 +211,12 @@ def sae_k_sparse_metadata(
             row["letter"] = letter
             row["k"] = k
             row["feats"] = k_probe.feature_ids.numpy()
-            row["cos_probe_sae_enc"] = probe_enc_cos[letter_i, k_probe.feature_ids].numpy()
-            row["cos_probe_sae_dec"] = probe_dec_cos[letter_i, k_probe.feature_ids].numpy()
+            row["cos_probe_sae_enc"] = probe_enc_cos[
+                letter_i, k_probe.feature_ids
+            ].numpy()
+            row["cos_probe_sae_dec"] = probe_dec_cos[
+                letter_i, k_probe.feature_ids
+            ].numpy()
             row["weights"] = k_probe.weight.float().numpy()
             row["bias"] = k_probe.bias.item()
             rows.append(row)
@@ -207,7 +246,9 @@ def eval_probe_and_sae_k_sparse_raw_scores(
             sae_acts = (
                 _get_sae_acts(sae, token_act.unsqueeze(0).to(sae.device)).float().cpu()
             ).squeeze()
-            for letter_i, (letter, probe_score) in enumerate(zip(LETTERS, probe_scores)):
+            for letter_i, (letter, probe_score) in enumerate(
+                zip(LETTERS, probe_scores)
+            ):
                 row[f"score_probe_{letter}"] = probe_score
                 for k, k_probes in k_sparse_probes.items():
                     k_probe = k_probes[letter_i]
@@ -232,6 +273,9 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
     probes_dir: Path | str,
     device: str,
     verbose: bool = True,
+    k_sparse_probe_l1_decay: float = 0.01,
+    k_sparse_probe_batch_size: int = 4096,
+    k_sparse_probe_num_epochs: int = 50,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     if verbose:
         print("Loading probe and training data", flush=True)
@@ -259,6 +303,9 @@ def load_and_run_eval_probe_and_sae_k_sparse_raw_scores(
         train_data,
         train_activations,
         ks=list(range(1, max_k_value + 1)),
+        l1_decay=k_sparse_probe_l1_decay,
+        batch_size=k_sparse_probe_batch_size,
+        num_epochs=k_sparse_probe_num_epochs,
     )
     with torch.no_grad():
         if verbose:
@@ -333,7 +380,9 @@ def build_metrics_df(results_df, metadata_df, max_k_value: int):
             auc_info[f"recall_sum_sparse_sae_{k}"] = recall_sum_sae
             auc_info[f"precision_sum_sparse_sae_{k}"] = precision_sum_sae
 
-            meta_row = metadata_df[(metadata_df["letter"] == letter) & (metadata_df["k"] == k)]
+            meta_row = metadata_df[
+                (metadata_df["letter"] == letter) & (metadata_df["k"] == k)
+            ]
             auc_info[f"sparse_sae_k_{k}_feats"] = meta_row["feats"].iloc[0]
             auc_info[f"cos_probe_sae_enc_k_{k}"] = meta_row["cos_probe_sae_enc"].iloc[0]
             auc_info[f"cos_probe_sae_dec_k_{k}"] = meta_row["cos_probe_sae_dec"].iloc[0]
@@ -365,7 +414,9 @@ def add_feature_splits_to_metrics_df(
                 split_feats_by_letter[letter] = k_feats
             else:
                 break
-    df["split_feats"] = df["letter"].apply(lambda letter: split_feats_by_letter.get(letter, []))
+    df["split_feats"] = df["letter"].apply(
+        lambda letter: split_feats_by_letter.get(letter, [])
+    )
     df["num_split_features"] = df["split_feats"].apply(len) - 1
 
 
@@ -394,12 +445,21 @@ def run_k_sparse_probing_experiment(
     probes_dir: Path | str = PROBES_DIR,
     force: bool = False,
     f1_jump_threshold: float = 0.03,  # noqa: ARG001
+    k_sparse_probe_l1_decay: float = 0.01,  # noqa: ARG001
+    k_sparse_probe_batch_size: int = 4096,
+    k_sparse_probe_num_epochs: int = 50,
     verbose: bool = True,
 ) -> pd.DataFrame:
     task_output_dir = get_or_make_dir(experiment_dir) / sae_name
-    raw_results_path = task_output_dir / get_sparse_probing_raw_results_filename(sae_name, layer)
-    metadata_results_path = task_output_dir / get_sparse_probing_metadata_filename(sae_name, layer)
-    metrics_results_path = task_output_dir / get_sparse_probing_metrics_filename(sae_name, layer)
+    raw_results_path = task_output_dir / get_sparse_probing_raw_results_filename(
+        sae_name, layer
+    )
+    metadata_results_path = task_output_dir / get_sparse_probing_metadata_filename(
+        sae_name, layer
+    )
+    metrics_results_path = task_output_dir / get_sparse_probing_metrics_filename(
+        sae_name, layer
+    )
 
     def get_raw_results_df():
         return load_dfs_or_run(
@@ -413,6 +473,9 @@ def run_k_sparse_probing_experiment(
                 max_k_value=max_k_value,
                 prompt_template=prompt_template,
                 prompt_token_pos=prompt_token_pos,
+                k_sparse_probe_l1_decay=k_sparse_probe_l1_decay,
+                k_sparse_probe_batch_size=k_sparse_probe_batch_size,
+                k_sparse_probe_num_epochs=k_sparse_probe_num_epochs,
                 device=device,
             ),
             (raw_results_path, metadata_results_path),

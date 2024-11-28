@@ -32,7 +32,6 @@ from sae_bench_utils import (
 )
 from sae_bench_utils.sae_selection_utils import (
     get_saes_from_regex,
-    select_saes_multiple_patterns,
 )
 
 
@@ -99,6 +98,8 @@ def run_eval_single_dataset(
     activations_path = os.path.join(artifacts_folder, activations_filename)
 
     if not os.path.exists(activations_path):
+        if config.lower_vram_usage:
+            model = model.to(device)
         all_train_acts_BLD, all_test_acts_BLD = get_dataset_activations(
             dataset_name,
             config,
@@ -108,6 +109,8 @@ def run_eval_single_dataset(
             hook_point,
             device,
         )
+        if config.lower_vram_usage:
+            model = model.to("cpu")
 
         all_train_acts_BD = activation_collection.create_meaned_model_activations(
             all_train_acts_BLD
@@ -144,14 +147,13 @@ def run_eval_single_dataset(
         if save_activations:
             torch.save(acts, activations_path)
     else:
+        if config.lower_vram_usage:
+            model = model.to("cpu")
         print(f"Loading activations from {activations_path}")
         acts = torch.load(activations_path)
         all_train_acts_BLD = acts["train"]
         all_test_acts_BLD = acts["test"]
         llm_results = acts["llm_results"]
-
-    all_train_acts_BD = activation_collection.create_meaned_model_activations(all_train_acts_BLD)
-    all_test_acts_BD = activation_collection.create_meaned_model_activations(all_test_acts_BLD)
 
     all_sae_train_acts_BF = activation_collection.get_sae_meaned_activations(
         all_train_acts_BLD, sae, config.sae_batch_size
@@ -160,22 +162,35 @@ def run_eval_single_dataset(
         all_test_acts_BLD, sae, config.sae_batch_size
     )
 
-    # This is optional, checking the accuracy of a probe trained on the entire SAE activations
-    # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
-    _, sae_test_accuracies = probe_training.train_probe_on_activations(
-        all_sae_train_acts_BF,
-        all_sae_test_acts_BF,
-        select_top_k=None,
-        use_sklearn=False,
-        batch_size=250,
-        epochs=100,
-        lr=1e-2,
-    )
+    for key in list(all_train_acts_BLD.keys()):
+        del all_train_acts_BLD[key]
+        del all_test_acts_BLD[key]
+
+    if not config.lower_vram_usage:
+        # This is optional, checking the accuracy of a probe trained on the entire SAE activations
+        # We use GPU here as sklearn.fit is slow on large input dimensions, all other probe training is done with sklearn.fit
+        _, sae_test_accuracies = probe_training.train_probe_on_activations(
+            all_sae_train_acts_BF,
+            all_sae_test_acts_BF,
+            select_top_k=None,
+            use_sklearn=False,
+            batch_size=250,
+            epochs=100,
+            lr=1e-2,
+        )
+        results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
+    else:
+        results_dict["sae_test_accuracy"] = -1
+
+        for key in all_sae_train_acts_BF.keys():
+            all_sae_train_acts_BF[key] = all_sae_train_acts_BF[key].cpu()
+            all_sae_test_acts_BF[key] = all_sae_test_acts_BF[key].cpu()
+
+        torch.cuda.empty_cache()
+        gc.collect()
 
     for llm_result_key, llm_result_value in llm_results.items():
         results_dict[llm_result_key] = llm_result_value
-
-    results_dict["sae_test_accuracy"] = average_test_accuracy(sae_test_accuracies)
 
     for k in config.k_values:
         sae_top_k_probes, sae_top_k_test_accuracies = probe_training.train_probe_on_activations(
@@ -228,6 +243,9 @@ def run_eval_single_sae(
     for dataset_name, dataset_result in dataset_results.items():
         results_dict[f"{dataset_name}"] = dataset_result
 
+    if config.lower_vram_usage:
+        model = model.to(device)
+
     return results_dict
 
 
@@ -255,12 +273,7 @@ def run_eval(
 
     results_dict = {}
 
-    if config.llm_dtype == "bfloat16":
-        llm_dtype = torch.bfloat16
-    elif config.llm_dtype == "float32":
-        llm_dtype = torch.float32
-    else:
-        raise ValueError(f"Invalid dtype: {config.llm_dtype}")
+    llm_dtype = general_utils.str_to_dtype(config.llm_dtype)
 
     model = HookedTransformer.from_pretrained_no_processing(
         config.model_name, device=device, dtype=llm_dtype
@@ -269,9 +282,6 @@ def run_eval(
     for sae_release, sae_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        gc.collect()
-        torch.cuda.empty_cache()
-
         # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
         if isinstance(sae_id, str):
             sae = SAE.from_pretrained(
@@ -341,11 +351,15 @@ def run_eval(
                 sae_lens_id=sae_id,
                 sae_lens_release_id=sae_release,
                 sae_lens_version=sae_lens_version,
+                sae_cfg_dict=asdict(sae.cfg),
             )
 
         results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
         eval_output.to_json_file(sae_result_path, indent=2)
+
+        gc.collect()
+        torch.cuda.empty_cache()
 
     if clean_up_activations:
         if os.path.exists(artifacts_folder):
@@ -358,9 +372,27 @@ def create_config_and_selected_saes(
     args,
 ) -> tuple[SparseProbingEvalConfig, list[tuple[str, str]]]:
     config = SparseProbingEvalConfig(
-        random_seed=args.random_seed,
         model_name=args.model_name,
     )
+
+    if args.llm_batch_size is not None:
+        config.llm_batch_size = args.llm_batch_size
+    else:
+        config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
+
+    if args.llm_dtype is not None:
+        config.llm_dtype = args.llm_dtype
+    else:
+        config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
+
+    if args.sae_batch_size is not None:
+        config.sae_batch_size = args.sae_batch_size
+
+    if args.random_seed is not None:
+        config.random_seed = args.random_seed
+
+    if args.lower_vram_usage:
+        config.lower_vram_usage = True
 
     selected_saes = get_saes_from_regex(args.sae_regex_pattern, args.sae_block_pattern)
     assert len(selected_saes) > 0, "No SAEs selected"
@@ -377,8 +409,8 @@ def create_config_and_selected_saes(
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="Run sparse probing evaluation")
-    parser.add_argument("--random_seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--model_name", type=str, help="Model name")
+    parser.add_argument("--random_seed", type=int, default=None, help="Random seed")
+    parser.add_argument("--model_name", type=str, required=True, help="Model name")
     parser.add_argument(
         "--sae_regex_pattern",
         type=str,
@@ -408,6 +440,30 @@ def arg_parser():
         action="store_false",
         help="Save the generated LLM activations for later use",
     )
+    parser.add_argument(
+        "--llm_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for LLM. If None, will be populated using LLM_NAME_TO_BATCH_SIZE",
+    )
+    parser.add_argument(
+        "--llm_dtype",
+        type=str,
+        default=None,
+        choices=[None, "float32", "float64", "float16", "bfloat16"],
+        help="Data type for LLM. If None, will be populated using LLM_NAME_TO_DTYPE",
+    )
+    parser.add_argument(
+        "--sae_batch_size",
+        type=int,
+        default=None,
+        help="Batch size for SAE. If None, will be populated using default config value",
+    )
+    parser.add_argument(
+        "--lower_vram_usage",
+        action="store_true",
+        help="Lower GPU memory usage by doing more computation on the CPU. Useful on 1M width SAEs. Will be slower and require more system memory.",
+    )
 
     return parser
 
@@ -429,9 +485,6 @@ if __name__ == "__main__":
     config, selected_saes = create_config_and_selected_saes(args)
 
     print(selected_saes)
-
-    config.llm_batch_size = activation_collection.LLM_NAME_TO_BATCH_SIZE[config.model_name]
-    config.llm_dtype = activation_collection.LLM_NAME_TO_DTYPE[config.model_name]
 
     # create output folder
     os.makedirs(args.output_folder, exist_ok=True)

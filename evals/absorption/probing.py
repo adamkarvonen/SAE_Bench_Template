@@ -65,6 +65,8 @@ def train_multi_probe(
     ) = None,
     verbose: bool = False,
     device: torch.device = DEFAULT_DEVICE,
+    map_acts: Callable[[torch.Tensor], torch.Tensor] | None = None,
+    probe_dim: int | None = None,
 ) -> LinearProbe:
     """
     Train a multi-class one-vs-rest logistic regression probe on the given data.
@@ -83,16 +85,16 @@ def train_multi_probe(
     """
     dtype = x_train.dtype
     num_probes = num_probes or y_train.shape[-1]
-    dataset = TensorDataset(x_train.to(device), y_train.to(device, dtype=dtype))
+    dataset = TensorDataset(x_train, y_train.to(dtype=dtype))
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    probe = LinearProbe(x_train.shape[-1], num_outputs=num_probes).to(
-        device, dtype=dtype
-    )
+    if probe_dim is None:
+        probe_dim = x_train.shape[-1]
+    probe = LinearProbe(probe_dim, num_outputs=num_probes).to(device, dtype=dtype)
 
     _run_probe_training(
         probe,
         loader,
-        loss_fn=nn.BCEWithLogitsLoss(pos_weight=_calc_pos_weights(y_train)),
+        loss_fn=nn.BCEWithLogitsLoss(pos_weight=_calc_pos_weights(y_train).to(device)),
         num_epochs=num_epochs,
         lr=lr,
         end_lr=end_lr,
@@ -101,6 +103,8 @@ def train_multi_probe(
         optimizer_name=optimizer,
         extra_loss_fn=extra_loss_fn,
         verbose=verbose,
+        device=device,
+        map_acts=map_acts,
     )
 
     return probe
@@ -176,6 +180,8 @@ def _run_probe_training(
         Callable[[LinearProbe, torch.Tensor, torch.Tensor], torch.Tensor] | None
     ),
     verbose: bool,
+    device: torch.device,
+    map_acts: Callable[[torch.Tensor], torch.Tensor] | None = None,
 ) -> None:
     probe.train()
     if optimizer_name == "Adam":
@@ -201,6 +207,10 @@ def _run_probe_training(
         )
 
         for batch_embeddings, batch_labels in batch_pbar:
+            if map_acts is not None:
+                batch_embeddings = map_acts(batch_embeddings)
+            batch_embeddings = batch_embeddings.to(device)
+            batch_labels = batch_labels.to(device)
             optimizer.zero_grad()
             logits = probe(batch_embeddings)
             loss = loss_fn(logits, batch_labels)

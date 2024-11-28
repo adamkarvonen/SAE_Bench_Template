@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import seaborn as sns
 import matplotlib.pyplot as plt
+import json
+import os
 
 from scipy import stats
 from matplotlib.colors import Normalize
@@ -14,12 +16,20 @@ from collections import defaultdict
 
 # create a dictionary mapping trainer types to marker shapes
 
-trainer_markers = {
-    "Standard": "o",
-    "JumpReLU": "X",
-    "TopK": "^",
-    "Standard w/ p-annealing": "*",
-    "Gated": "d",
+TRAINER_MARKERS = {
+    "standard": "o",
+    "jumprelu": "X",
+    "topk": "^",
+    "p_anneal": "*",
+    "gated": "d",
+}
+
+TRAINER_LABELS = {
+    "standard": "Standard",
+    "jumprelu": "JumpReLU",
+    "topk": "TopK",
+    "p_anneal": "Standard with P-Annealing",
+    "gated": "Gated",
 }
 
 
@@ -27,79 +37,204 @@ trainer_markers = {
 plt.rcParams.update({"font.size": 20})
 
 
-def sae_name_to_info(sae_name: str) -> dict:
-    """Yes, this is a bit janky. We could also use the sae_lens `get_sae_config()` method. I didn't for two reasons:
-    get_sae_config() loads the config from huggingface, meaning this can take 30+ seconds for many SAEs. This is
-    annoying for quick iteration when plotting results.
-    The sae_lens config doesn't contain if_panneal_trainer and number of steps, which we should get from the sae name.
-    At this point, why not get everything from the sae name?
+def get_results_dict(
+    selected_saes: list[tuple[str, str]], results_path: str, core_results_path: str
+) -> dict:
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
 
-    sae_name should be f'{sae_release}_{sae_id}'"""
-    sae_config = {}
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
 
-    # set trainer type
-    if "gemma-scope" in sae_name:
-        sae_config["sae_class"] = "JumpReLU"
-    elif "sae_bench" in sae_name:
-        if "standard" in sae_name:
-            sae_config["sae_class"] = "Standard"
-        elif "topk" in sae_name:
-            sae_config["sae_class"] = "TopK"
-        elif "gated" in sae_name:
-            sae_config["sae_class"] = "Gated"
-        elif "panneal" in sae_name:
-            sae_config["sae_class"] = "Standard w/ p-annealing"
-        else:
-            raise ValueError(f"Trainer type not recognized for {sae_name}")
+    return eval_results
+
+
+def plot_results(
+    selected_saes: list[tuple[str, str]],
+    results_path: str,
+    core_results_path: str,
+    image_base_name: str,
+    k: Optional[int] = None,
+    trainer_markers: Optional[dict[str, str]] = None,
+):
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
+
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
+
+    custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
+
+    title_3var = f"L0 vs Loss Recovered vs {custom_metric_name}"
+    title_2var = f"L0 vs {custom_metric_name}"
+
+    plot_3var_graph(
+        eval_results,
+        title_3var,
+        custom_metric,
+        colorbar_label="Custom Metric",
+        output_filename=f"{image_base_name}_3var.png",
+        trainer_markers=trainer_markers,
+    )
+    plot_2var_graph(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var.png",
+        trainer_markers=trainer_markers,
+    )
+
+    plot_2var_graph_dict_size(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var_dict_size.png",
+    )
+
+
+def get_custom_metric_key_and_name(eval_path: str, k: Optional[int] = None) -> tuple[str, str]:
+    if "tpp" in eval_path:
+        custom_metric = f"tpp_threshold_{k}_total_metric"
+        custom_metric_name = f"TPP Top {k} Metric"
+    elif "scr" in eval_path:
+        custom_metric = f"scr_metric_threshold_{k}"
+        custom_metric_name = f"SCR Top {k} Metric"
+    elif "sparse_probing" in eval_path:
+        custom_metric = f"sae_top_{k}_test_accuracy"
+        custom_metric_name = f"Sparse Probing Top {k} Test Accuracy"
+    elif "absorption" in eval_path:
+        custom_metric = "mean_absorption_score"
+        custom_metric_name = "Mean Absorption Score"
+    elif "autointerp" in eval_path:
+        custom_metric = "autointerp_score"
+        custom_metric_name = "Autointerp Score"
+    elif "unlearning" in eval_path:
+        custom_metric = "unlearning_score"
+        custom_metric_name = "Unlearning Score"
     else:
-        raise ValueError(f"Trainer type not recognized for {sae_name}")
+        raise ValueError("Please add the correct key for the custom metric")
 
-    # set d_sae
-    if "gemma-scope" in sae_name:
-        if "16k" in sae_name:
-            sae_config["d_sae"] = "16k"
-        elif "65k" in sae_name:
-            sae_config["d_sae"] = "65k"
-        elif "1M" in sae_name:
-            sae_config["d_sae"] = "1M"
+    return custom_metric, custom_metric_name
+
+
+def get_sae_class(sae_cfg: dict, sae_release) -> str:
+    if "sae_bench" in sae_release and "panneal" in sae_release:
+        return "p_anneal"
+
+    if sae_cfg["activation_fn_str"] == "topk":
+        return "topk"
+
+    return sae_cfg["architecture"]
+
+
+def get_sae_bench_train_tokens(sae_release: str, sae_id: str) -> int:
+    """This is for SAE Bench internal use. The SAE cfg does not contain the number of training tokens, so we need to hardcode it."""
+
+    if "sae_bench" not in sae_release:
+        raise ValueError("This function is only for SAE Bench releases")
+
+    if "pythia" in sae_release:
+        batch_size = 4096
+    else:
+        batch_size = 2048
+
+    if "step" not in sae_id:
+        if "pythia" in sae_release:
+            steps = 48828
+        elif "2pow14" in sae_release:
+            steps = 146484
+        elif "2pow12" or "2pow16" in sae_release:
+            steps = 97656
         else:
-            raise ValueError(f"d_sae not recognized for {sae_name}")
-    elif "sae_bench_gemma" in sae_name:
-        if "ef2" in sae_name:
-            sae_config["d_sae"] = "4k"
-        elif "ef8" in sae_name:
-            sae_config["d_sae"] = "16k"
-        else:
-            raise ValueError(f"d_sae not recognized for {sae_name}")
-    elif "sae_bench_pythia70m" in sae_name:
-        # yes, this is very janky
-        match = re.search(r"trainer_(\d+)", sae_name)
+            raise ValueError(f"sae release {sae_release} not recognized")
+
+        return steps * batch_size
+    else:
+        match = re.search(r"step_(\d+)", sae_id)
         if match:
-            trainer_num = int(match.group(1))
-            if (trainer_num // 2) % 2 == 0:
-                sae_config["d_sae"] = "4k"
-            else:
-                sae_config["d_sae"] = "16k"
+            step = int(match.group(1))
+            return step * batch_size
         else:
-            raise ValueError("No trainer match found")
+            raise ValueError("No step match found")
 
-    # set num training steps
-    if "gemma-scope" in sae_name:
-        sae_config["steps"] = -1e6
-    elif "sae_bench" in sae_name:
-        if "step" not in sae_name:
-            sae_config["steps"] = 48828  # TODO: Adjust for 65k width (400M tokens, so 48828 * 2)
+
+def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) -> dict[str, dict]:
+    eval_results = {}
+    for sae_release, sae_id in selected_saes:
+        filename = f"{sae_release}_{sae_id}_eval_results.json".replace("/", "_")
+        filepath = os.path.join(results_path, filename)
+
+        if not os.path.exists(filepath):
+            print(f"File not found: {filepath}")
+            continue
+
+        with open(filepath, "r") as f:
+            single_sae_results = json.load(f)
+
+        if "tpp" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "tpp_metrics"
+            ]
+        elif "scr" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "scr_metrics"
+            ]
+        elif "absorption" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "mean"
+            ]
+        elif "autointerp" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "autointerp"
+            ]
+        elif "sparse_probing" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "sae"
+            ]
+        elif "unlearning" in results_path:
+            eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
+                "unlearning"
+            ]
         else:
-            match = re.search(r"step_(\d+)", sae_name)
-            if match:
-                step = int(match.group(1))
-                sae_config["steps"] = step
-            else:
-                raise ValueError("No step match found")
-    else:
-        raise ValueError(f"Trainer type not recognized for {sae_name}")
+            raise ValueError("Please add the correct key for the eval results")
 
-    return sae_config
+        eval_results[f"{sae_release}_{sae_id}"]["eval_config"] = single_sae_results["eval_config"]
+
+        sae_config = single_sae_results["sae_cfg_dict"]
+
+        eval_results[f"{sae_release}_{sae_id}"]["sae_class"] = get_sae_class(
+            sae_config, sae_release
+        )
+        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = sae_config["d_sae"]
+
+        if "sae_bench" in sae_release:
+            eval_results[f"{sae_release}_{sae_id}"]["train_tokens"] = get_sae_bench_train_tokens(
+                sae_release, sae_id
+            )
+        else:
+            eval_results[f"{sae_release}_{sae_id}"]["train_tokens"] = 1e-6
+
+    return eval_results
+
+
+def get_core_results(selected_saes: list[tuple[str, str]], core_path: str) -> dict:
+    core_results = {}
+    for sae_release, sae_id in selected_saes:
+        filename = f"{sae_release}_{sae_id}_128_Skylion007_openwebtext.json".replace("/", "_")
+        filepath = os.path.join(core_path, filename)
+
+        with open(filepath, "r") as f:
+            single_sae_results = json.load(f)
+
+        l0 = single_sae_results["eval_result_metrics"]["sparsity"]["l0"]
+        ce_score = single_sae_results["eval_result_metrics"]["model_performance_preservation"][
+            "ce_loss_score"
+        ]
+
+        core_results[f"{sae_release}_{sae_id}"] = {"l0": l0, "frac_recovered": ce_score}
+    return core_results
 
 
 def plot_3var_graph(
@@ -113,7 +248,11 @@ def plot_3var_graph(
     legend_location: str = "lower right",
     x_axis_key: str = "l0",
     y_axis_key: str = "frac_recovered",
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
+    if not trainer_markers:
+        trainer_markers = TRAINER_MARKERS
+
     # Extract data from results
     l0_values = [data[x_axis_key] for data in results.values()]
     frac_recovered_values = [data[y_axis_key] for data in results.values()]
@@ -159,7 +298,13 @@ def plot_3var_graph(
         if marker == "d":
             _handle[0].set_markersize(13)
         handles += _handle
-        labels.append(trainer)
+
+        if trainer in TRAINER_LABELS:
+            trainer_label = TRAINER_LABELS[trainer]
+        else:
+            trainer_label = trainer.capitalize()
+
+        labels.append(trainer_label)
 
     # Add colorbar
     cbar = fig.colorbar(scatter, ax=ax, label=colorbar_label)
@@ -265,7 +410,10 @@ def plot_2var_graph(
     legend_location: str = "lower right",
     original_acc: Optional[float] = None,
     x_axis_key: str = "l0",
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
+    if not trainer_markers:
+        trainer_markers = TRAINER_MARKERS
     # Extract data from results
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
@@ -303,7 +451,12 @@ def plot_2var_graph(
         if marker == "d":
             _handle[0].set_markersize(13)
         handles += _handle
-        labels.append(trainer)
+
+        if trainer in TRAINER_LABELS:
+            trainer_label = TRAINER_LABELS[trainer]
+        else:
+            trainer_label = trainer.capitalize()
+        labels.append(trainer_label)
 
     # Set labels and title
     ax.set_xlabel("L0 (Sparsity)")
@@ -418,14 +571,14 @@ def plot_2var_graph_dict_size(
 
 def plot_steps_vs_average_diff(
     results_dict: dict,
-    steps_key: str = "steps",
+    steps_key: str = "train_tokens",
     avg_diff_key: str = "average_diff",
     title: Optional[str] = None,
     y_label: Optional[str] = None,
     output_filename: Optional[str] = None,
 ):
     # Initialize a defaultdict to store data for each trainer
-    trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
+    trainer_data = defaultdict(lambda: {"train_tokens": [], "metric_scores": []})
 
     all_steps = set()
 
@@ -447,20 +600,20 @@ def plot_steps_vs_average_diff(
 
         trainer_key = f"{trainer_type} Layer {layer} Trainer {trainer}"
 
-        trainer_data[trainer_key]["steps"].append(step)
+        trainer_data[trainer_key]["train_tokens"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(avg_diff)
         all_steps.add(step)
 
     # Calculate average across all trainers
-    average_trainer_data = {"steps": [], "metric_scores": []}
+    average_trainer_data = {"train_tokens": [], "metric_scores": []}
     for step in sorted(all_steps):
         step_diffs = []
         for data in trainer_data.values():
-            if step in data["steps"]:
-                idx = data["steps"].index(step)
+            if step in data["train_tokens"]:
+                idx = data["train_tokens"].index(step)
                 step_diffs.append(data["metric_scores"][idx])
         if step_diffs:
-            average_trainer_data["steps"].append(step)
+            average_trainer_data["train_tokens"].append(step)
             average_trainer_data["metric_scores"].append(np.mean(step_diffs))
 
     # Add average_trainer_data to trainer_data
@@ -471,7 +624,7 @@ def plot_steps_vs_average_diff(
 
     # Plot data for each trainer
     for trainer_key, data in trainer_data.items():
-        steps = data["steps"]
+        steps = data["train_tokens"]
         metric_scores = data["metric_scores"]
 
         # Sort the data by steps to ensure proper ordering
@@ -650,14 +803,14 @@ def plot_correlation_scatter(
 def plot_training_steps(
     results_dict: dict,
     metric_key: str,
-    steps_key: str = "steps",
+    steps_key: str = "train_tokens",
     title: Optional[str] = None,
     y_label: Optional[str] = None,
     output_filename: Optional[str] = None,
     break_fraction: float = 0.15,  # Parameter to control break position
 ):
     # Initialize a defaultdict to store data for each trainer
-    trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
+    trainer_data = defaultdict(lambda: {"train_tokens": [], "metric_scores": []})
     all_steps = set()
     all_trainers = set()
 
@@ -669,23 +822,23 @@ def plot_training_steps(
         metric_scores = value[metric_key]
         trainer_key = f"{trainer_class} Trainer {trainer}"
 
-        trainer_data[trainer_key]["steps"].append(step)
+        trainer_data[trainer_key]["train_tokens"].append(step)
         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
-        trainer_data[trainer_key]["l0"] = value["l0"]
+        # trainer_data[trainer_key]["l0"] = value["l0"] # currently not shown in plot
         trainer_data[trainer_key]["sae_class"] = trainer_class
         all_steps.add(step)
         all_trainers.add(trainer_class)
 
     # Calculate average across all trainers
-    average_trainer_data = {"steps": [], "metric_scores": []}
+    average_trainer_data = {"train_tokens": [], "metric_scores": []}
     for step in sorted(all_steps):
         step_diffs = [
-            data["metric_scores"][data["steps"].index(step)]
+            data["metric_scores"][data["train_tokens"].index(step)]
             for data in trainer_data.values()
-            if step in data["steps"]
+            if step in data["train_tokens"]
         ]
         if step_diffs:
-            average_trainer_data["steps"].append(step)
+            average_trainer_data["train_tokens"].append(step)
             average_trainer_data["metric_scores"].append(np.mean(step_diffs))
     trainer_data["Average"] = average_trainer_data
 
@@ -704,15 +857,17 @@ def plot_training_steps(
     break_point = steps_break_point  # / max(all_steps) * 100  # Convert to percentage
 
     for trainer_key, data in trainer_data.items():
-        steps = data["steps"]
+        steps = data["train_tokens"]
         metric_scores = data["metric_scores"]
 
         if trainer_key == "Average":
             color, trainer_class = "black", "Average"
-        elif data["sae_class"] == "StandardTrainer":
+        elif data["sae_class"] == "standard" or data["sae_class"] == "Vanilla":
             color, trainer_class = "red", data["sae_class"]
-        else:
+        elif data["sae_class"] == "topk":
             color, trainer_class = "blue", data["sae_class"]
+        else:
+            raise ValueError(f"Trainer type not recognized for {trainer_key}")
 
         sorted_data = sorted(zip(steps, metric_scores))
         steps, metric_scores = zip(*sorted_data)
@@ -764,7 +919,7 @@ def plot_training_steps(
     if not y_label:
         y_label = metric_key.replace("_", " ").capitalize()
     ax1.set_ylabel(y_label)
-    fig.text(0.5, 0.01, "Training Tokens", ha="center", va="center")
+    fig.text(0.5, 0.01, "Training Steps", ha="center", va="center")
     fig.suptitle(title)
 
     # Adjust x-axis ticks
@@ -780,9 +935,9 @@ def plot_training_steps(
     # Add custom legend
     legend_elements = []
     legend_elements.append(Line2D([0], [0], color="black", lw=3, label="Average"))
-    if "StandardTrainer" in all_trainers:
+    if "standard" in all_trainers or "Vanilla" in all_trainers:
         legend_elements.append(Line2D([0], [0], color="red", lw=3, label="Standard"))
-    if "TrainerTopK" in all_trainers:
+    if "topk" in all_trainers:
         legend_elements.append(Line2D([0], [0], color="blue", lw=3, label="TopK"))
     ax2.legend(handles=legend_elements, loc="lower right")
 
@@ -797,13 +952,13 @@ def plot_training_steps(
 # def plot_training_steps(
 #     results_dict: dict,
 #     metric_key: str,
-#     steps_key: str = "steps",
+#     steps_key: str = "train_tokens",
 #     title: Optional[str] = None,
 #     y_label: Optional[str] = None,
 #     output_filename: Optional[str] = None,
 # ):
 #     # Initialize a defaultdict to store data for each trainer
-#     trainer_data = defaultdict(lambda: {"steps": [], "metric_scores": []})
+#     trainer_data = defaultdict(lambda: {"train_tokens": [], "metric_scores": []})
 #     all_steps = set()
 #     all_trainers = set()
 
@@ -818,7 +973,7 @@ def plot_training_steps(
 #         metric_scores = value[metric_key]
 #         trainer_key = f"{trainer_label} Layer {layer} Trainer {trainer}"
 
-#         trainer_data[trainer_key]["steps"].append(step)
+#         trainer_data[trainer_key]["train_tokens"].append(step)
 #         trainer_data[trainer_key]["metric_scores"].append(metric_scores)
 #         trainer_data[trainer_key]["l0"] = value["l0"]
 #         trainer_data[trainer_key]["sae_class"] = trainer_class
@@ -826,15 +981,15 @@ def plot_training_steps(
 #         all_trainers.add(trainer_class)
 
 #     # Calculate average across all trainers
-#     average_trainer_data = {"steps": [], "metric_scores": []}
+#     average_trainer_data = {"train_tokens": [], "metric_scores": []}
 #     for step in sorted(all_steps):
 #         step_scores = [
-#             data["metric_scores"][data["steps"].index(step)]
+#             data["metric_scores"][data["train_tokens"].index(step)]
 #             for data in trainer_data.values()
-#             if step in data["steps"]
+#             if step in data["train_tokens"]
 #         ]
 #         if step_scores:
-#             average_trainer_data["steps"].append(step)
+#             average_trainer_data["train_tokens"].append(step)
 #             average_trainer_data["metric_scores"].append(np.mean(step_scores))
 #     trainer_data["Average"] = average_trainer_data
 
@@ -842,7 +997,7 @@ def plot_training_steps(
 #     fig, ax = plt.subplots(figsize=(12, 6))
 
 #     for trainer_key, data in trainer_data.items():
-#         steps = data["steps"]
+#         steps = data["train_tokens"]
 #         print("Training tokens:", sorted(steps))
 #         metric_scores = data["metric_scores"]
 

@@ -1,0 +1,283 @@
+{
+  "$defs": {
+    "AutoInterpEvalConfig": {
+      "description": "Controls all parameters for how autointerp will work.\n\nArguments:\n    model_name:                     The name of the model to use\n    device:                         The device to use\n    n_latents:                      The number of latents to use\n    override_latents:               The latents to use (overrides n_latents if supplied)\n    dead_latent_threshold:          The log sparsity value below which we consider a latent to be dead\n    seed:                           The seed to use for all randomness\n\n    buffer:                         The size of the buffer to use for scoring\n    no_overlap:                     Whether to allow overlapping sequences for scoring\n    act_threshold_frac:             The fraction of the maximum activation to use as the activation threshold\n    total_tokens:                   The total number of tokens we'll gather data for.\n    batch_size:                     The batch size to use for the scoring phase\n    scoring:                        Whether to perform the scoring phase, or just return explanation\n    max_tokens_in_explanation:      The maximum number of tokens to allow in an explanation\n    use_demos_in_explanation:       Whether to use demonstrations in the explanation prompt\n\n    n_top_ex_for_generation:        The number of top activating sequences to use for the generation phase\n    n_iw_sampled_ex_for_generation: The number of importance-sampled sequences to use for the generation phase (this\n                                    is a replacement for quantile sampling)\n\n    n_top_ex_for_scoring:           The number of top sequences to use for scoring\n    n_random_ex_for_scoring:        The number of random sequences to use for scoring\n    n_iw_sampled_ex_for_scoring:    The number of importance-sampled sequences to use for scoring",
+      "properties": {
+        "model_name": {
+          "default": "",
+          "description": "Model name. Must be set with a command line argument.",
+          "title": "Model Name",
+          "type": "string"
+        },
+        "n_latents": {
+          "default": 1000,
+          "description": "The number of latents for the LLM judge to interpret",
+          "title": "Number of Latents",
+          "type": "integer"
+        },
+        "override_latents": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latents to use (overrides n_latents if supplied)",
+          "title": "Override Latents"
+        },
+        "dead_latent_threshold": {
+          "default": 15,
+          "description": "Minimum number of required activations",
+          "title": "Dead Latent Threshold",
+          "type": "number"
+        },
+        "random_seed": {
+          "default": 42,
+          "description": "The seed to use for all randomness",
+          "title": "Random Seed",
+          "type": "integer"
+        },
+        "dataset_name": {
+          "default": "monology/pile-uncopyrighted",
+          "description": "The name of the dataset to use",
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "llm_context_size": {
+          "default": 128,
+          "description": "The context size to use for the LLM",
+          "title": "LLM Context Size",
+          "type": "integer"
+        },
+        "llm_batch_size": {
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Batch Size",
+          "type": "integer"
+        },
+        "llm_dtype": {
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Data Type",
+          "type": "string"
+        },
+        "buffer": {
+          "default": 10,
+          "description": "The size of the buffer to use for scoring",
+          "title": "Buffer Size",
+          "type": "integer"
+        },
+        "no_overlap": {
+          "default": true,
+          "description": "Whether to allow overlapping sequences for scoring",
+          "title": "No Overlap",
+          "type": "boolean"
+        },
+        "act_threshold_frac": {
+          "default": 0.01,
+          "description": "The fraction of the maximum activation to use as the activation threshold",
+          "title": "Activation Threshold Fraction",
+          "type": "number"
+        },
+        "total_tokens": {
+          "default": 2000000,
+          "description": "The total number of tokens we'll gather data for",
+          "title": "Total Tokens",
+          "type": "integer"
+        },
+        "scoring": {
+          "default": true,
+          "description": "Whether to perform the scoring phase, or just return explanation",
+          "title": "Scoring",
+          "type": "boolean"
+        },
+        "max_tokens_in_explanation": {
+          "default": 30,
+          "description": "The maximum number of tokens to allow in an explanation",
+          "title": "Max Tokens in Explanation",
+          "type": "integer"
+        },
+        "use_demos_in_explanation": {
+          "default": true,
+          "description": "Whether to use demonstrations in the explanation prompt",
+          "title": "Use Demos in Explanation",
+          "type": "boolean"
+        },
+        "n_top_ex_for_generation": {
+          "default": 10,
+          "description": "The number of top activating sequences to use for the generation phase",
+          "title": "Number of Top Examples for Generation",
+          "type": "integer"
+        },
+        "n_iw_sampled_ex_for_generation": {
+          "default": 5,
+          "description": "The number of importance-sampled sequences to use for the generation phase",
+          "title": "Number of IW Sampled Examples for Generation",
+          "type": "integer"
+        },
+        "n_top_ex_for_scoring": {
+          "default": 2,
+          "description": "The number of top sequences to use for scoring",
+          "title": "Number of Top Examples for Scoring",
+          "type": "integer"
+        },
+        "n_random_ex_for_scoring": {
+          "default": 10,
+          "description": "The number of random sequences to use for scoring",
+          "title": "Number of Random Examples for Scoring",
+          "type": "integer"
+        },
+        "n_iw_sampled_ex_for_scoring": {
+          "default": 2,
+          "description": "The number of importance-sampled sequences to use for scoring",
+          "title": "Number of IW Sampled Examples for Scoring",
+          "type": "integer"
+        }
+      },
+      "title": "AutoInterpEvalConfig",
+      "type": "object"
+    },
+    "AutoInterpMetricCategories": {
+      "properties": {
+        "autointerp": {
+          "$ref": "#/$defs/AutoInterpMetrics",
+          "description": "Metrics related to autointerp",
+          "title": "AutoInterp"
+        }
+      },
+      "required": [
+        "autointerp"
+      ],
+      "title": "AutoInterpMetricCategories",
+      "type": "object"
+    },
+    "AutoInterpMetrics": {
+      "properties": {
+        "autointerp_score": {
+          "description": "AutoInterp detection score, using methodology similar to Eleuther's 'Open Source Automated Interpretability for Sparse Autoencoder Features'",
+          "title": "AutoInterp Score",
+          "type": "number",
+          "ui_default_display": true
+        }
+      },
+      "required": [
+        "autointerp_score"
+      ],
+      "title": "AutoInterpMetrics",
+      "type": "object"
+    },
+    "BaseResultDetail": {
+      "properties": {},
+      "title": "BaseResultDetail",
+      "type": "object"
+    }
+  },
+  "description": "An evaluation of the interpretability of SAE latents. This evaluation is based on Eleuther's 'Open Source Automated Interpretability for Sparse Autoencoder Features'",
+  "properties": {
+    "eval_type_id": {
+      "default": "autointerp",
+      "description": "The type of the evaluation",
+      "title": "Eval Type ID",
+      "type": "string"
+    },
+    "eval_config": {
+      "$ref": "#/$defs/AutoInterpEvalConfig",
+      "description": "The configuration of the evaluation.",
+      "title": "Eval Config Type"
+    },
+    "eval_id": {
+      "description": "A unique UUID identifying this specific eval run",
+      "title": "ID",
+      "type": "string"
+    },
+    "datetime_epoch_millis": {
+      "description": "The datetime of the evaluation in epoch milliseconds",
+      "title": "DateTime (epoch ms)",
+      "type": "integer"
+    },
+    "eval_result_metrics": {
+      "$ref": "#/$defs/AutoInterpMetricCategories",
+      "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
+      "title": "Result Metrics Categorized"
+    },
+    "eval_result_details": {
+      "default": null,
+      "description": "Optional. The details of the evaluation. A list of objects that stores nested or more detailed data, such as details about the absorption of each letter.",
+      "items": {
+        "$ref": "#/$defs/BaseResultDetail"
+      },
+      "title": "Result Details",
+      "type": "array"
+    },
+    "sae_bench_commit_hash": {
+      "description": "The commit hash of the SAE Bench that ran the evaluation.",
+      "title": "SAE Bench Commit Hash",
+      "type": "string"
+    },
+    "sae_lens_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The ID of the SAE in SAE Lens.",
+      "title": "SAE Lens ID"
+    },
+    "sae_lens_release_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The release ID of the SAE in SAE Lens.",
+      "title": "SAE Lens Release ID"
+    },
+    "sae_lens_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The version of SAE Lens that ran the evaluation.",
+      "title": "SAE Lens Version"
+    },
+    "eval_result_unstructured": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional. Any additional outputs that don't fit into the structured eval_result_metrics or eval_result_details fields. Since these are unstructured, don't expect this to be easily renderable in UIs, or contain any titles or descriptions.",
+      "title": "Unstructured Results"
+    }
+  },
+  "required": [
+    "eval_config",
+    "eval_id",
+    "datetime_epoch_millis",
+    "eval_result_metrics",
+    "sae_bench_commit_hash",
+    "sae_lens_id",
+    "sae_lens_release_id",
+    "sae_lens_version"
+  ],
+  "title": "AutoInterp",
+  "type": "object"
+}

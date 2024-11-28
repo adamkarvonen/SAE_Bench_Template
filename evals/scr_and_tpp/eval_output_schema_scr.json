@@ -1,15 +1,15 @@
 {
   "$defs": {
-    "ShiftAndTppEvalConfig": {
+    "ScrAndTppEvalConfig": {
       "properties": {
         "random_seed": {
           "default": 42,
-          "description": "NOTE: This will be overwritten by argparse",
+          "description": "random seed",
           "title": "Random Seed",
           "type": "integer"
         },
         "dataset_names": {
-          "description": "List of dataset names for both the SHIFT and TPP metrics",
+          "description": "List of dataset names for both the SCR and TPP metrics",
           "items": {
             "type": "string"
           },
@@ -18,7 +18,7 @@
         },
         "perform_scr": {
           "default": true,
-          "description": "If True, the eval will be Spurious Correlation Removal (SCR) using SHIFT. If False, the eval will be TPP.",
+          "description": "If True, the eval will be Spurious Correlation Removal (SCR). If False, the eval will be TPP.",
           "title": "Perform Spurious Correlation Removal",
           "type": "boolean"
         },
@@ -83,20 +83,26 @@
           "type": "integer"
         },
         "llm_batch_size": {
-          "default": 32,
-          "description": "LLM batch size, inference only",
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Batch Size",
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "bfloat16",
-          "description": "",
-          "title": "LLM Dtype",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Data Type",
           "type": "string"
         },
+        "lower_vram_usage": {
+          "default": false,
+          "description": "Lower GPU memory usage by moving model to CPU when not required. Will be slower and require more system memory.",
+          "title": "Lower Memory Usage",
+          "type": "boolean"
+        },
         "model_name": {
-          "default": "pythia-70m-deduped",
-          "description": "",
+          "default": "",
+          "description": "Model name. Must be set with a command line argument.",
           "title": "Model Name",
           "type": "string"
         },
@@ -125,30 +131,30 @@
             },
             "type": "array"
           },
-          "description": "Column1 Values apply only to the SHIFT metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
+          "description": "Column1 Values apply only to the SCR metric. Column1 values represents the class pairs we train the linear probes on. In each case, we will create a perfectly biased dataset, such as all professors are males and all nurses are females.",
           "title": "Column 1 Values Lookup",
           "type": "object"
         }
       },
-      "title": "ShiftAndTppEvalConfig",
+      "title": "ScrAndTppEvalConfig",
       "type": "object"
     },
-    "ShiftMetricCategories": {
+    "ScrMetricCategories": {
       "properties": {
-        "shift_metrics": {
-          "$ref": "#/$defs/ShiftMetrics",
-          "description": "SHIFT SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
-          "title": "Shift Metrics",
+        "scr_metrics": {
+          "$ref": "#/$defs/ScrMetrics",
+          "description": "SCR metrics, calculated for different numbers of ablated features. Also includes the results for both correlation removal directions.",
+          "title": "SCR Metrics",
           "ui_default_display": true
         }
       },
       "required": [
-        "shift_metrics"
+        "scr_metrics"
       ],
-      "title": "ShiftMetricCategories",
+      "title": "ScrMetricCategories",
       "type": "object"
     },
-    "ShiftMetrics": {
+    "ScrMetrics": {
       "properties": {
         "scr_dir1_threshold_2": {
           "anyOf": [
@@ -425,10 +431,10 @@
           "title": "SCR Dir 2, Top 500 SAE latents"
         }
       },
-      "title": "ShiftMetrics",
+      "title": "ScrMetrics",
       "type": "object"
     },
-    "ShiftResultDetail": {
+    "ScrResultDetail": {
       "properties": {
         "dataset_name": {
           "description": "",
@@ -713,11 +719,11 @@
       "required": [
         "dataset_name"
       ],
-      "title": "ShiftResultDetail",
+      "title": "ScrResultDetail",
       "type": "object"
     }
   },
-  "description": "The SHIFT Spurious Correlation Removal (SCR) evaluation ablates SAE latents to shift the bias of a biased linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.",
+  "description": "The Spurious Correlation Removal (SCR) evaluation ablates SAE latents to shift the bias of a biased linear probe. The methodology is from `Evaluating Sparse Autoencoders on Targeted Concept Removal Tasks`.",
   "properties": {
     "eval_type_id": {
       "default": "scr",
@@ -726,7 +732,7 @@
       "type": "string"
     },
     "eval_config": {
-      "$ref": "#/$defs/ShiftAndTppEvalConfig",
+      "$ref": "#/$defs/ScrAndTppEvalConfig",
       "description": "The configuration of the evaluation.",
       "title": "Eval Config Type"
     },
@@ -741,16 +747,16 @@
       "type": "integer"
     },
     "eval_result_metrics": {
-      "$ref": "#/$defs/ShiftMetricCategories",
+      "$ref": "#/$defs/ScrMetricCategories",
       "description": "The metrics of the evaluation, organized by category. Define your own categories and the metrics that go inside them.",
       "title": "Result Metrics Categorized"
     },
     "eval_result_details": {
-      "description": "Each object is a stat on the SHIFT SCR results for a single dataset.",
+      "description": "Each object is a stat on the SCR results for a single dataset.",
       "items": {
-        "$ref": "#/$defs/ShiftResultDetail"
+        "$ref": "#/$defs/ScrResultDetail"
       },
-      "title": "Per-Dataset SHIFT Spurious Correlation Removal (SCR) Results",
+      "title": "Per-Dataset Spurious Correlation Removal (SCR) Results",
       "type": "array"
     },
     "sae_bench_commit_hash": {
@@ -816,6 +822,6 @@
     "sae_lens_release_id",
     "sae_lens_version"
   ],
-  "title": "SHIFT",
+  "title": "SCR",
   "type": "object"
 }

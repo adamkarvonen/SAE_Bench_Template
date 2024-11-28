@@ -1,12 +1,14 @@
 # AutoInterp
 
+This eval requires the creation of `openai_api_key.txt`, which should be located at `SAEBench/`.
+
 ## File structure
 
 There are 4 Python files in this folder:
 
 - `eval_config.py` - this contains the config class for AutoInterp.
 - `main.py` - this contains the main `AutoInterp` class, as well as the functions which are the interface to the rest of the SAEBench codebase.
-- `demo.py` - you can run this via `python demo.py --api_key YOUR_API_KEY` to see an example output & how the function works. It creates & saves a log file (I've left the output of those files in the repo, so you can see what they look like).
+- `demo.py` - you can run this via `python demo.py` to see an example output & how the function works. It creates & saves a log file (I've left the output of those files in the repo, so you can see what they look like).
 - `sae_encode.py` - this contains a temporary replacement for the `encode` method in SAELens, until [my PR](https://github.com/jbloomAus/SAELens/pull/334) is merged. For memory efficiency, this could be used instead of encoding all SAE latents. We are currently using `encode()` to support compatibility with other SAE objects.
 
 ## Summary of how it works

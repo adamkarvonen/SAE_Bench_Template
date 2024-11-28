@@ -14,7 +14,7 @@
           "type": "integer"
         },
         "dataset_names": {
-          "description": "List of dataset names",
+          "description": "List of dataset names. We want to unlearn wmdp-bio while retaining knowledge in other datasets",
           "items": {
             "type": "string"
           },
@@ -23,12 +23,12 @@
         },
         "intervention_method": {
           "default": "clamp_feature_activation",
-          "description": "Intervention method",
+          "description": "Intervention method. We only support 'clamp_feature_activation' for now",
           "title": "Intervention Method",
           "type": "string"
         },
         "retain_thresholds": {
-          "description": "Retain thresholds",
+          "description": "We ignore features that activate more than this threshold on the retain dataset",
           "items": {
             "type": "number"
           },
@@ -36,7 +36,7 @@
           "type": "array"
         },
         "n_features_list": {
-          "description": "N features list",
+          "description": "Each N is the number of features we select and clamp to a negative value",
           "items": {
             "type": "integer"
           },
@@ -44,64 +44,58 @@
           "type": "array"
         },
         "multipliers": {
-          "description": "Multipliers",
+          "description": "A list of negative values. We iterate over this list, clamping the selected features to each value",
           "items": {
             "type": "integer"
           },
           "title": "Multipliers",
           "type": "array"
         },
-        "llm_batch_size": {
-          "default": 4,
-          "description": "LLM batch size",
-          "title": "LLM Batch Size",
-          "type": "integer"
-        },
-        "mcq_batch_size": {
-          "default": 8,
-          "description": "MCQ batch size. Multiple choice questions are shorter, so we can afford a larger batch size",
-          "title": "MCQ Batch Size",
-          "type": "integer"
-        },
         "dataset_size": {
           "default": 1024,
-          "description": "Dataset size",
+          "description": "Dataset size we use when calculating feature sparsity",
           "title": "Dataset Size",
           "type": "integer"
         },
         "seq_len": {
           "default": 1024,
-          "description": "Sequence length",
+          "description": "Sequence length when calculating feature sparsity",
           "title": "Sequence Length",
           "type": "integer"
         },
         "n_batch_loss_added": {
           "default": 50,
-          "description": "N batch loss added",
+          "description": "Number of batches to use when calculating the loss added by an intervention (currently not supported).",
           "title": "N Batch Loss Added",
           "type": "integer"
         },
         "target_metric": {
           "default": "correct",
-          "description": "Target metric",
+          "description": "Controls the type of `question_ids` we load. We support 'correct', `correct-iff-question`, and `correct-no-tricks",
           "title": "Target Metric",
           "type": "string"
         },
         "save_metrics": {
           "default": true,
-          "description": "Save metrics",
-          "title": "Save Metrics",
+          "description": "If true, we save the metrics for each set of intervention hyperparameters. This is required to be true currently, as the unlearning score is calculated over all results.",
+          "title": "Save Metrics Flag",
           "type": "boolean"
         },
         "model_name": {
-          "default": "gemma-2-2b-it",
-          "description": "Model name",
+          "default": "",
+          "description": "Model name. Must be set with a command line argument. We recommend instruct tuned models >= 2B parameters.",
           "title": "Model Name",
           "type": "string"
         },
+        "llm_batch_size": {
+          "default": null,
+          "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
+          "title": "LLM Batch Size",
+          "type": "integer"
+        },
         "llm_dtype": {
-          "default": "bfloat16",
-          "description": "LLM data type",
+          "default": "",
+          "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
         }
@@ -126,7 +120,7 @@
     "UnlearningMetrics": {
       "properties": {
         "unlearning_score": {
-          "description": "Unlearning score",
+          "description": "Unlearning score, using methodology from APPLYING SPARSE AUTOENCODERS TO UNLEARN KNOWLEDGE IN LANGUAGE MODELS",
           "title": "Unlearning Score",
           "type": "number",
           "ui_default_display": true
@@ -139,7 +133,7 @@
       "type": "object"
     }
   },
-  "description": "Unlearning evaluation description goes here.",
+  "description": "An evaluation of the ability of SAEs to unlearn biology knowledge from LLMs, using methodology from `Applying Sparse Autoencoders to Unlearn Knowledge in Language Models`",
   "properties": {
     "eval_type_id": {
       "default": "unlearning",
