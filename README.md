@@ -8,6 +8,8 @@
 - [Training Your Own SAEs](#training-your-own-saes)
 - [Graphing Results](#graphing-results)
 
+CURRENT REPO STATUS: This repo is still under development as we clean up some of the rough edges left over from the research process. However, it is usable in the current state for both SAE Lens SAEs and custom SAEs.
+
 ### Installation
 Set up a virtual environment with python >= 3.10.
 
@@ -18,6 +20,8 @@ pip install -e .
 ```
 
 All evals can be ran with current batch sizes on Gemma-2-2B on a 24GB VRAM GPU (e.g. a RTX 3090). By default, some evals cache LLM activations, which can require up to 100 GB of disk space. However, this can be disabled.
+
+Autointerp requires the creation of `openai_api_key.txt`. Unlearning requires requesting access to the WMDP bio dataset (refer to `unlearning/README.md`).
 
 ## Overview
 
