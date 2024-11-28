@@ -51,10 +51,6 @@ class RAVELResultDetail(BaseResultDetail):
         title="Attribute Classes",
         description="Attribute Classes",
     )
-    latent_selection_thresholds: list[float] = Field(
-        title="Latent Selection Threshold",
-        description="Latent Selection Threshold",
-    )
     cause_scores: dict[float, list[float]] = Field(
         title="Cause Scores",
         description="1D row of cause scores, ordered by attribute_classes. Cause score: Patching attribute-related SAE latents. High cause accuracy indicates that the SAE latents are related to the attribute.",

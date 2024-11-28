@@ -93,10 +93,12 @@ def prepare_attribute_probe_data(
 
 
 # from ravel code
-def select_features_with_classifier(sae, inputs, labels, coeff=None):
-    if coeff is None:
-        coeff = [0.01, 0.1, 10, 100, 1000]
+def select_features_with_classifier(sae, inputs, labels, coeff):
     coeff_to_select_features = {}
+    if coeff[0] == 0.0:
+        coeff = coeff[1:]
+        coeff_to_select_features[0.0] = []
+
     for c in tqdm(coeff):
         with torch.no_grad():
             X_transformed = sae.encode(inputs).to(dtype=torch.float32).cpu().numpy()
@@ -105,7 +107,8 @@ def select_features_with_classifier(sae, inputs, labels, coeff=None):
             )
             selector = SelectFromModel(lsvc, prefit=True)
             kept_dim = np.where(selector.get_support())[0]
-            coeff_to_select_features[c] = kept_dim
+            coeff_to_select_features[float(c)] = kept_dim
+    
     return coeff_to_select_features
 
 

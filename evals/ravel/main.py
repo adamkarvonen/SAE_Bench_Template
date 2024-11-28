@@ -231,6 +231,7 @@ def run_eval(
             sae_lens_release_id=sae_release,
             sae_lens_version=sae_lens_version,
             sae_bench_commit_hash=sae_bench_commit_hash,
+            sae_cfg_dict=sae.cfg.to_dict(),
         )
 
         with open(sae_result_path, "w") as f:

@@ -65,8 +65,8 @@ class RAVELEvalConfig(BaseEvalConfig):
     )
 
     # Probe
-    probe_coefficients: List[int] = Field(
-        default=[0.01, 0.1, 10, 100, 1000],
+    probe_coefficients: List[float] = Field(
+        default=[0.0, 0.01, 0.1, 10, 100, 1000],
         title="Probe Coefficients",
         description="Probe coefficients determining the number of patched features.",
     )

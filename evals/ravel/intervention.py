@@ -115,7 +115,7 @@ def generate_with_intervention(
     inv_batch_size: int = 5,
     tracer_kwargs={"scan": False, "validate": False},
 ):
-    sae_idxs = torch.tensor(sae_latent_idxs, device=sae.device)
+    sae_idxs = torch.tensor(sae_latent_idxs, dtype=torch.int, device=sae.device)
     inverted_latent_mask = create_inverted_latent_mask(sae_idxs, sae_dict_size=sae.cfg.d_sae)
 
     ## Iterate over batches
@@ -265,7 +265,6 @@ def compute_disentanglement(
     eval_results_detail = RAVELResultDetail(
         entity_class=entity_class,
         attribute_classes=attributes,
-        latent_selection_thresholds=config.probe_coefficients,
         cause_scores=cause_scores,
         isolation_scores=isolation_scores,
         mean_disentanglement=mean_disentanglement,
