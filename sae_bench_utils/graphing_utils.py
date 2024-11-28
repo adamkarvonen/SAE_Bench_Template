@@ -37,12 +37,25 @@ TRAINER_LABELS = {
 plt.rcParams.update({"font.size": 20})
 
 
+def get_results_dict(
+    selected_saes: list[tuple[str, str]], results_path: str, core_results_path: str
+) -> dict:
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
+
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
+
+    return eval_results
+
+
 def plot_results(
     selected_saes: list[tuple[str, str]],
     results_path: str,
     core_results_path: str,
     image_base_name: str,
     k: Optional[int] = None,
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -61,6 +74,7 @@ def plot_results(
         custom_metric,
         colorbar_label="Custom Metric",
         output_filename=f"{image_base_name}_3var.png",
+        trainer_markers=trainer_markers,
     )
     plot_2var_graph(
         eval_results,
@@ -68,6 +82,7 @@ def plot_results(
         y_label=custom_metric_name,
         title=title_2var,
         output_filename=f"{image_base_name}_2var.png",
+        trainer_markers=trainer_markers,
     )
 
     plot_2var_graph_dict_size(
@@ -75,7 +90,7 @@ def plot_results(
         custom_metric,
         y_label=custom_metric_name,
         title=title_2var,
-        output_filename=f"{image_base_name}_2var.png",
+        output_filename=f"{image_base_name}_2var_dict_size.png",
     )
 
 
