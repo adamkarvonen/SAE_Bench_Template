@@ -1025,7 +1025,7 @@ def multiple_evals(
             activation_store.shuffle_input_dataset(seed=42)
 
             eval_metrics = nested_dict()
-            eval_metrics["unique_id"] = f"{sae_release_name}_{sae_id}".replace(".", "_")
+            eval_metrics["unique_id"] = f"{sae_release_name}_{sae_id}"
             eval_metrics["sae_set"] = f"{sae_release_name}"
             eval_metrics["sae_id"] = f"{sae_id}"
             eval_metrics["eval_cfg"] = core_eval_config
