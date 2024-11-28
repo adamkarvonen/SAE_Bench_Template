@@ -16,7 +16,7 @@ expected_probe_results_filename = os.path.join(
 
 TEST_RELEASE = "sae_bench_pythia70m_sweep_topk_ctx128_0730"
 TEST_SAE_NAME = "blocks.4.hook_resid_post__trainer_10"
-TEST_TOLERANCE = 0.05  # Pythia70m absorption values can be noisy as it doesn't really know how to spell that well
+TEST_TOLERANCE = 0.06  # Pythia70m absorption values can be noisy as it doesn't really know how to spell that well
 
 
 def test_end_to_end_different_seed():

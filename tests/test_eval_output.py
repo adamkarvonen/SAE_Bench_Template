@@ -2,8 +2,10 @@ from datetime import datetime
 import json
 import os
 from pydantic import TypeAdapter
-from evals.generate_json_schemas import main as generate_json_schemas_main
+import sae_lens
+from dataclasses import asdict
 
+from evals.generate_json_schemas import main as generate_json_schemas_main
 from evals.absorption.eval_config import (
     AbsorptionEvalConfig,
 )
@@ -55,7 +57,6 @@ def test_generate_json_schemas():
 
 
 def test_absorption_eval_output_schema():
-
     main_model_schema = TypeAdapter(AbsorptionEvalOutput).json_schema()
 
     print(json.dumps(main_model_schema, indent=2))
@@ -63,18 +64,17 @@ def test_absorption_eval_output_schema():
     # test a few things to see that we got a sane schema
     assert main_model_schema["properties"]["eval_result_details"]["type"] == "array"
     assert (
-        main_model_schema["$defs"]["AbsorptionEvalConfig"]["properties"]["random_seed"][
-            "default"
-        ]
+        main_model_schema["$defs"]["AbsorptionEvalConfig"]["properties"]["random_seed"]["default"]
         == 42
     )
-    assert (
-        main_model_schema["properties"]["eval_type_id"]["default"]
-        == "absorption_first_letter"
-    )
+    assert main_model_schema["properties"]["eval_type_id"]["default"] == "absorption_first_letter"
 
 
 def test_absorption_eval_output():
+    sae_release = "sae_bench_pythia70m_sweep_standard_ctx128_0712"
+    sae_lens_id = "blocks.4.hook_resid_post__trainer_10"
+
+    sae = sae_lens.SAE.from_pretrained(sae_release, sae_lens_id)[0]
 
     eval_output = AbsorptionEvalOutput(
         eval_config=EXAMPLE_ABSORPTION_EVAL_CONFIG,
@@ -83,9 +83,10 @@ def test_absorption_eval_output():
         eval_result_metrics=EXAMPLE_ABSORPTION_METRIC_CATEGORIES,
         eval_result_details=EXAMPLE_ABSORPTION_RESULT_DETAILS,
         sae_bench_commit_hash=get_sae_bench_version(),
-        sae_lens_id="some_sae_lens_id",
-        sae_lens_release_id="some_sae_lens_release_id",
+        sae_lens_id=sae_lens_id,
+        sae_lens_release_id=sae_release,
         sae_lens_version=get_sae_lens_version(),
+        sae_cfg_dict=asdict(sae.cfg),
     )
     eval_output.to_json_file("test_absorption_eval_output.json", indent=2)
 
@@ -136,7 +137,8 @@ def test_absorption_eval_output_json():
         "sae_bench_commit_hash": "57e9be0ac9199dba6b9f87fe92f80532e9aefced",
         "sae_lens_id": "blocks.3.hook_resid_post__trainer_10",
         "sae_lens_release_id": "sae_bench_pythia70m_sweep_standard_ctx128_0712",
-        "sae_lens_version": "4.0.0"
+        "sae_lens_version": "4.0.0",
+        "sae_cfg_dict": {}
     }
     """
 
