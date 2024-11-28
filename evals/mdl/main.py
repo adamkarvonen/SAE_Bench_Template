@@ -480,6 +480,7 @@ def run_eval(
             "eval_config": asdict(config),
             "eval_results": eval_output,
             "eval_artifacts": {"artifacts": "None"},
+            "sae_cfg_dict": asdict(sae.cfg),
         }
 
         with open(sae_result_path, "w") as f:

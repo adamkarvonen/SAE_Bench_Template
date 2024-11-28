@@ -6,6 +6,7 @@ import time
 import functools
 import random
 from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optional
+from dataclasses import asdict
 import logging
 import math
 import re
@@ -24,6 +25,8 @@ from transformer_lens.hook_points import HookedRootModule
 from sae_lens.sae import SAE
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens.training.activations_store import ActivationsStore
+
+
 from evals.core.eval_config import CoreEvalConfig
 from evals.core.eval_output import (
     CoreEvalOutput,
@@ -835,6 +838,7 @@ def save_single_eval_result(
     sae_lens_version: str,
     sae_bench_commit_hash: str,
     output_path: Path,
+    sae: SAE,
 ) -> Path:
     """Save a single evaluation result to a JSON file."""
     # Get the eval_config directly - it's already a CoreEvalConfig object
@@ -874,6 +878,7 @@ def save_single_eval_result(
         sae_lens_id=result["sae_id"],
         sae_lens_release_id=result["sae_set"],
         sae_lens_version=sae_lens_version,
+        sae_cfg_dict=asdict(sae.cfg),
     )
 
     # Save individual JSON file
@@ -1054,6 +1059,7 @@ def multiple_evals(
                 sae_lens_version,
                 sae_bench_commit_hash,
                 output_path,
+                sae,
             )
 
             if verbose:

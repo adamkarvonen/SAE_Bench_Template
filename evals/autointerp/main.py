@@ -615,6 +615,7 @@ def run_eval(
                 sae_lens_id=sae_id,
                 sae_lens_release_id=sae_release,
                 sae_lens_version=sae_lens_version,
+                sae_cfg_dict=asdict(sae.cfg),
             )
 
             results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
