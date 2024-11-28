@@ -7,7 +7,7 @@ from tqdm import tqdm
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import SelectFromModel
 from transformers import BatchEncoding
-from typing import Dict
+from typing import List, Dict
 
 
 def get_attribute_activations_nnsight(
@@ -118,7 +118,7 @@ def run_feature_selection_probe(
     max_samples_per_attribute=1024,
     layer=11,
     llm_batch_size=512,
-) -> Dict[float, Dict[str, list[int]]]:
+) -> Dict[str, Dict[float, List[int]]]:
 
     # Cache activations
     all_attribute_activations_BD = get_attribute_activations_nnsight(
@@ -139,11 +139,5 @@ def run_feature_selection_probe(
         selected_features[attr] = select_features_with_classifier(
             sae, balanced_attribute_acts, labels, coeff=coeffs
         )
-
-    # Reverse dict due to for use in intervention
-    selected_features = {
-        c: {attr: dims for attr, dims in attr_dict.items()}
-        for c, attr_dict in selected_features.items()
-    }
 
     return selected_features

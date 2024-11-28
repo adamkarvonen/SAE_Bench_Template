@@ -42,6 +42,7 @@ def run_eval_single_dataset(
     model_id: str,
     sae: SAE,
     entity_class: str,
+    artifact_dir: str,
 ):
 
 
@@ -55,35 +56,35 @@ def run_eval_single_dataset(
         n_samples_per_attribute_class=config.n_samples_per_attribute_class,
         top_n_entities=config.top_n_entities,
         top_n_templates=config.top_n_templates,
+        artifact_dir=artifact_dir,
     )
 
-    # TODO save results
-    all_attributes = dataset.get_attributes()
-    print(f"All attributes: {all_attributes}")
+    chosen_attributes = config.entity_attribute_selection[entity_class]
+    available_attributes = dataset.get_attributes()
+    for c in chosen_attributes:
+        assert c in available_attributes, f"Attribute {c} not found in dataset"
 
+    # TODO save results
     attribute_feature_dict = run_feature_selection_probe(
         model,
         sae,
         dataset,
-        all_attributes=all_attributes,
+        all_attributes=chosen_attributes,
         coeffs=config.probe_coefficients,
         max_samples_per_attribute=config.max_samples_per_attribute,
         layer=sae.cfg.hook_layer,
         llm_batch_size=config.llm_batch_size,
     )
 
-
     results_detail = compute_disentanglement(
+        config,
         model,
         sae,
         sae.cfg.hook_layer,
         dataset,
         entity_class,
-        all_attributes,
+        chosen_attributes,
         attribute_feature_dict,
-        n_interventions=config.n_interventions,
-        n_generated_tokens=config.n_generated_tokens,
-        inv_batch_size=config.inv_batch_size,
     )
 
     return results_detail
@@ -94,6 +95,7 @@ def run_eval_single_sae(
     model: LanguageModel,
     model_id: str,
     sae: SAE,
+    artifact_dir: str,
 ):
     results_detail_per_entity = []
     for entity_class in config.entity_attribute_selection:
@@ -103,6 +105,7 @@ def run_eval_single_sae(
             model_id=model_id,
             sae=sae,
             entity_class=entity_class,
+            artifact_dir=artifact_dir,
         )
         results_detail_per_entity.append(results_detail)
     return results_detail_per_entity
@@ -153,7 +156,6 @@ def run_eval(
     artifacts_base_folder = 'artifacts/ravel'
     os.makedirs(artifacts_base_folder, exist_ok=True)
     os.makedirs(output_path, exist_ok=True)
-    results_dict = {}
 
     # Iteratively evaluate each SAE
     for sae_release, sae_id in tqdm(
@@ -176,9 +178,6 @@ def run_eval(
         sae = sae.to(device=device, dtype=llm_dtype)
 
         # Initialize SAE specific directories
-        artifacts_folder = os.path.join(
-            artifacts_base_folder, eval_config.model_name, sae.cfg.hook_name
-        )
         sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
         sae_result_file = sae_result_file.replace("/", "_")
         sae_result_path = os.path.join(output_path, sae_result_file)
@@ -189,32 +188,37 @@ def run_eval(
             model=model,
             model_id=model_id,
             sae=sae,
+            artifact_dir=artifacts_base_folder,
         )
 
         # Aggregate results
-        # Find cause, isolation, and disentanglement scores for max disentanglement
-        max_disentanglement_scores, max_cause_scores, max_isolation_scores = [], [], []
+        # Find cause, isolation, and disentanglement scores for the feature selection threshold that maximizes disentanglement
+        # Dimensionality annotations:
+        # D: Evaluated datasets
+        # A: Selected attributes
+
+        max_disentanglement_scores_D, max_cause_scores_DA, max_isolation_scores_DAA = [], [], []
         for result_detail in result_details:
             max_disentanglement = 0
             best_threshold = 0
-            for t, score in result_detail["mean_disentanglement"].items():
+            for t, score in result_detail.mean_disentanglement.items():
                 if score > max_disentanglement:
                     max_disentanglement = score
                     best_threshold = t
-            max_disentanglement_scores.append(max_disentanglement)
-            max_cause_scores.append(result_detail["cause_scores"][best_threshold])
-            max_isolation_scores.append(result_detail["isolation_scores"][best_threshold])
+            max_disentanglement_scores_D.append(max_disentanglement)
+            max_cause_scores_DA.append(result_detail.cause_scores[best_threshold])
+            max_isolation_scores_DAA.append(result_detail.isolation_scores[best_threshold])
 
-        mean_max_disentanglement = sum(max_disentanglement_scores) / len(max_disentanglement_scores)
-        mean_max_cause = sum(max_cause_scores) / len(max_cause_scores)
-        mean_max_isolation = sum(max_isolation_scores) / len(max_isolation_scores)
+        def nested_mean(lst: list) -> float | list:
+            if not isinstance(lst[0], list):
+                return sum(lst) / len(lst)
+            return nested_mean([nested_mean(x) for x in lst])
             
         aggregated_results = RAVELMetricResults(
-            disentanglement_score=mean_max_disentanglement,
-            cause_score=mean_max_cause,
-            isolation_score=mean_max_isolation,
+            disentanglement_score=nested_mean(max_disentanglement_scores_D),
+            cause_score=nested_mean(max_cause_scores_DA),
+            isolation_score=nested_mean(max_isolation_scores_DAA),
         )
-
 
         # Save results
         results = RAVELEvalOutput(
@@ -228,6 +232,9 @@ def run_eval(
             sae_lens_version=sae_lens_version,
             sae_bench_commit_hash=sae_bench_commit_hash,
         )
+
+        with open(sae_result_path, "w") as f:
+            f.write(results.to_json())
 
 
 

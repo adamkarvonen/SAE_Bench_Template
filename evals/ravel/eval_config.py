@@ -11,13 +11,13 @@ class RAVELEvalConfig(BaseEvalConfig):
     # Dataset
     entity_attribute_selection: dict[str, list[str]] = Field(
         default={
-            "nobel_prize_winner": ["Field of Work", "Birth Year"],
+            "nobel_prize_winner": ["Field", "Birth Year"],
         },
         title="Selection of entity and attribute classes",
         description="Subset of the RAVEL datset to be evaluated. Each key is an entity class, and the value is a list of at least two attribute classes.",
     )
     n_samples_per_attribute_class: int = Field(
-        default=None,
+        default=1024,
         title="Number of Samples per Attribute Class",
         description="Number of samples per attribute class. If None, all samples are used.",
     )

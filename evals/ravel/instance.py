@@ -303,6 +303,7 @@ def create_filtered_dataset(
     max_prompt_length: int = 64,
     n_samples_per_attribute_class: Optional[int] = None,
     full_dataset_downsample: int = 8192,
+    artifact_dir: str = "evals/ravel/data/",
 ):
     """
     Creates and saves filtered dataset of correct model completions.
@@ -322,17 +323,16 @@ def create_filtered_dataset(
         filtered_data: Dataset containing correct completions
         accuracy: Average accuracy of model completions
     """
-    DATA_DIR =  "evals/ravel/data/"
-    os.makedirs(os.path.join(DATA_DIR, model_id), exist_ok=True)
-    filename = os.path.join(DATA_DIR, f"{model_id}/{chosen_entity}_instance.pkl")
+    os.makedirs(os.path.join(artifact_dir, model_id), exist_ok=True)
+    filename = os.path.join(artifact_dir, f"{model_id}/{chosen_entity}_instance.pkl")
 
     if force_recompute or not os.path.exists(filename):
         # Load and sample data
         print("Tokenizing full dataset")
         full_dataset = RAVELInstance.from_files(
-            chosen_entity,
-            DATA_DIR,
-            model.tokenizer,
+            entity_type=chosen_entity,
+            tokenizer=model.tokenizer,
+            data_dir='evals/ravel/data/',
             max_prompt_length=max_prompt_length,
             n_samples_per_attribute_class=n_samples_per_attribute_class,
         )

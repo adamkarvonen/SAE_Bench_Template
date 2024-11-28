@@ -21,6 +21,15 @@ def recursively_match_prompts(base_prompt, source_prompts):
         return source_prompt
     else:
         return recursively_match_prompts(base_prompt, source_prompts)
+    
+def sample_prompts_by_attribute(dataset, attribute, n_samples):
+    all_prompts = dataset.get_prompts_by_attribute(attribute)
+    if len(all_prompts) < n_samples:
+        print(f"Warning: Not enough prompts for attribute {attribute} for intervention. Returning {len(all_prompts)} instead of {n_samples} prompts.")
+        return all_prompts, all_prompts
+    
+    selected_prompts = rng.sample(all_prompts, n_samples)
+    return all_prompts, selected_prompts
 
 
 def get_prompt_pairs(dataset, base_attribute, source_attribute, n_interventions):
@@ -30,19 +39,18 @@ def get_prompt_pairs(dataset, base_attribute, source_attribute, n_interventions)
     The cause evaluation requires source_prompts from attribute A templates, attribute values in base and source should differ.
     The isolation evaluation requires source_prompts from attribute B templates.
     """
-    all_base_prompts = dataset.get_prompts_by_attribute(base_attribute)
-    base_prompts = rng.sample(all_base_prompts, n_interventions)
+    all_base_prompts, base_prompts = sample_prompts_by_attribute(dataset, base_attribute, n_interventions)
 
     if base_attribute != source_attribute:
-        all_source_prompts = dataset.get_prompts_by_attribute(source_attribute)
-        source_prompts = rng.sample(all_source_prompts, n_interventions)
-        return base_prompts, source_prompts
+        _, source_prompts = sample_prompts_by_attribute(dataset, source_attribute, n_interventions)
     else:
         all_source_prompts = all_base_prompts
         source_prompts = []
         for p in base_prompts:
             source_prompts.append(recursively_match_prompts(p, all_source_prompts))
-        return base_prompts, source_prompts
+
+    min_length = min(len(base_prompts), len(source_prompts))
+    return base_prompts[:min_length], source_prompts[:min_length]
 
 
 # def get_prompt_pairs_AB(dataset, base_attribute_A, attribute_B, n_interventions):
@@ -172,31 +180,28 @@ def evaluate_intervention(prompts, generations):
 
 
 def compute_disentanglement(
+    config: RAVELEvalConfig,
     model,
     sae,
     layer,
     dataset,
     entity_class,
     attributes: List[str],
-    attribute_feature_dict: Dict[float, Dict[str, list[int]]],
-    n_interventions=10,
-    n_generated_tokens=4,
-    inv_batch_size=5,
+    attribute_feature_dict: Dict[str, Dict[float, List[int]]],
     tracer_kwargs={"scan": False, "validate": False},
 ):
-    feature_thresholds = list(attribute_feature_dict.keys())
 
     # Cause evaluation: High accuracy if intervening with A_features is successful on base_A_template, ie. source_A_attribute_value is generated.
     cause_accuracies = {}
     for attribute in tqdm(attributes, desc="Cause evaluation across attributes"):
         base_prompts, source_prompts = get_prompt_pairs(
-            dataset, attribute, attribute, n_interventions
+            dataset, attribute, attribute, config.n_interventions
         )
         cause_accuracies[attribute] = {}
         for threshold in tqdm(
-            feature_thresholds, desc="Cause evaluation across feature thresholds"
+            config.probe_coefficients, desc="Cause evaluation across feature thresholds"
         ):
-            sae_latent_idxs = attribute_feature_dict[threshold][attribute]
+            sae_latent_idxs = attribute_feature_dict[attribute][threshold]
             generated_output_strings = generate_with_intervention(
                 model,
                 layer,
@@ -204,8 +209,8 @@ def compute_disentanglement(
                 base_prompts,
                 source_prompts,
                 sae_latent_idxs,
-                n_generated_tokens=n_generated_tokens,
-                inv_batch_size=inv_batch_size,
+                n_generated_tokens=config.n_generated_tokens,
+                inv_batch_size=config.inv_batch_size,
                 tracer_kwargs=tracer_kwargs,
             )
             cause_accuracies[attribute][threshold] = evaluate_intervention(
@@ -220,13 +225,13 @@ def compute_disentanglement(
                 continue
             
             base_prompts, source_prompts = get_prompt_pairs(
-                dataset, base_attribute, source_attribute, n_interventions
+                dataset, base_attribute, source_attribute, config.n_interventions
             )
             isolation_accuracies[(base_attribute, source_attribute)] = {}
             for threshold in tqdm(
-                feature_thresholds, desc="Isolation evaluation across feature thresholds"
+                config.probe_coefficients, desc="Isolation evaluation across feature thresholds"
             ):
-                sae_latent_idxs = attribute_feature_dict[threshold][source_attribute]
+                sae_latent_idxs = attribute_feature_dict[source_attribute][threshold]
                 generated_output_strings = generate_with_intervention(
                     model,
                     layer,
@@ -234,8 +239,8 @@ def compute_disentanglement(
                     base_prompts,
                     source_prompts,
                     sae_latent_idxs,
-                    n_generated_tokens=n_generated_tokens,
-                    inv_batch_size=inv_batch_size,
+                    n_generated_tokens=config.n_generated_tokens,
+                    inv_batch_size=config.inv_batch_size,
                     tracer_kwargs=tracer_kwargs,
                 )
                 isolation_accuracies[(base_attribute, source_attribute)][threshold] = (
@@ -246,11 +251,11 @@ def compute_disentanglement(
     cause_scores = {}
     isolation_scores = {}
     mean_disentanglement = {}
-    for t in feature_thresholds:
+    for t in config.probe_coefficients:
         cause_scores[t] = [cause_accuracies[a][t] for a in attributes]
         isolation_scores[t] = []
         for base in attributes:
-            i = [isolation_accuracies[(base, source)][t] for source in attributes]
+            i = [isolation_accuracies[(base, source)][t] for source in attributes if base != source]
             isolation_scores[t].append(i)
 
         cause_mean = np.mean(cause_scores[t])
@@ -260,7 +265,7 @@ def compute_disentanglement(
     eval_results_detail = RAVELResultDetail(
         entity_class=entity_class,
         attribute_classes=attributes,
-        latent_selection_thresholds=feature_thresholds,
+        latent_selection_thresholds=config.probe_coefficients,
         cause_scores=cause_scores,
         isolation_scores=isolation_scores,
         mean_disentanglement=mean_disentanglement,
