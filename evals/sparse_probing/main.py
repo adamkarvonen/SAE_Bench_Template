@@ -269,6 +269,7 @@ def run_eval(
     sae_bench_commit_hash = get_sae_bench_version()
 
     artifacts_base_folder = "artifacts"
+    artifacts_folder = None
     os.makedirs(output_path, exist_ok=True)
 
     results_dict = {}
@@ -279,21 +280,19 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release, sae_id in tqdm(
+    for sae_release, sae_object_or_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-        if isinstance(sae_id, str):
-            sae = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )[0]
-        else:
-            sae = sae_id
-            sae_id = "custom_sae"
-
+        sae_id, sae, sparsity = general_utils.load_and_format_sae(
+            sae_release, sae_object_or_id, device
+        )
         sae = sae.to(device=device, dtype=llm_dtype)
+
+        sae_result_path = general_utils.get_results_filepath(output_path, sae_release, sae_id)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Skipping {sae_release}_{sae_id} as results already exist")
+            continue
 
         artifacts_folder = os.path.join(
             artifacts_base_folder,
@@ -302,57 +301,48 @@ def run_eval(
             sae.cfg.hook_name,
         )
 
-        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-        sae_result_file = sae_result_file.replace("/", "_")
-        sae_result_path = os.path.join(output_path, sae_result_file)
-
-        if os.path.exists(sae_result_path) and not force_rerun:
-            print(f"Loading existing results from {sae_result_path}")
-            with open(sae_result_path, "r") as f:
-                eval_output = TypeAdapter(SparseProbingEvalOutput).validate_json(f.read())
-        else:
-            sparse_probing_results = run_eval_single_sae(
-                config,
-                sae,
-                model,
-                device,
-                artifacts_folder,
-                save_activations=save_activations,
-            )
-            eval_output = SparseProbingEvalOutput(
-                eval_config=config,
-                eval_id=eval_instance_id,
-                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                eval_result_metrics=SparseProbingMetricCategories(
-                    llm=SparseProbingLlmMetrics(
-                        **{
-                            k: v
-                            for k, v in sparse_probing_results.items()
-                            if k.startswith("llm_") and not isinstance(v, dict)
-                        }
-                    ),
-                    sae=SparseProbingSaeMetrics(
-                        **{
-                            k: v
-                            for k, v in sparse_probing_results.items()
-                            if k.startswith("sae_") and not isinstance(v, dict)
-                        }
-                    ),
+        sparse_probing_results = run_eval_single_sae(
+            config,
+            sae,
+            model,
+            device,
+            artifacts_folder,
+            save_activations=save_activations,
+        )
+        eval_output = SparseProbingEvalOutput(
+            eval_config=config,
+            eval_id=eval_instance_id,
+            datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+            eval_result_metrics=SparseProbingMetricCategories(
+                llm=SparseProbingLlmMetrics(
+                    **{
+                        k: v
+                        for k, v in sparse_probing_results.items()
+                        if k.startswith("llm_") and not isinstance(v, dict)
+                    }
                 ),
-                eval_result_details=[
-                    SparseProbingResultDetail(
-                        dataset_name=dataset_name,
-                        **result,
-                    )
-                    for dataset_name, result in sparse_probing_results.items()
-                    if isinstance(result, dict)
-                ],
-                sae_bench_commit_hash=sae_bench_commit_hash,
-                sae_lens_id=sae_id,
-                sae_lens_release_id=sae_release,
-                sae_lens_version=sae_lens_version,
-                sae_cfg_dict=asdict(sae.cfg),
-            )
+                sae=SparseProbingSaeMetrics(
+                    **{
+                        k: v
+                        for k, v in sparse_probing_results.items()
+                        if k.startswith("sae_") and not isinstance(v, dict)
+                    }
+                ),
+            ),
+            eval_result_details=[
+                SparseProbingResultDetail(
+                    dataset_name=dataset_name,
+                    **result,
+                )
+                for dataset_name, result in sparse_probing_results.items()
+                if isinstance(result, dict)
+            ],
+            sae_bench_commit_hash=sae_bench_commit_hash,
+            sae_lens_id=sae_id,
+            sae_lens_release_id=sae_release,
+            sae_lens_version=sae_lens_version,
+            sae_cfg_dict=asdict(sae.cfg),
+        )
 
         results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
@@ -362,7 +352,7 @@ def run_eval(
         torch.cuda.empty_cache()
 
     if clean_up_activations:
-        if os.path.exists(artifacts_folder):
+        if artifacts_folder is not None and os.path.exists(artifacts_folder):
             shutil.rmtree(artifacts_folder)
 
     return results_dict

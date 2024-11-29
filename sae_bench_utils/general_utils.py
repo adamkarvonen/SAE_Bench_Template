@@ -2,7 +2,9 @@ import pandas as pd
 import re
 import os
 import torch
+from typing import Optional
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from sae_lens import SAE
 
 
 def str_to_dtype(dtype_str: str) -> torch.dtype:
@@ -30,6 +32,33 @@ def setup_environment():
 
     print(f"Using device: {device}")
     return device
+
+
+def load_and_format_sae(
+    sae_release_or_unique_id: str, sae_object_or_sae_lens_id: str | SAE, device: str
+) -> tuple[str, SAE, Optional[torch.Tensor]]:
+    """Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)"""
+    if isinstance(sae_object_or_sae_lens_id, str):
+        sae, _, sparsity = SAE.from_pretrained(
+            release=sae_release_or_unique_id,
+            sae_id=sae_object_or_sae_lens_id,
+            device=device,
+        )
+        sae_id = sae_object_or_sae_lens_id
+    else:
+        sae = sae_object_or_sae_lens_id
+        sae_id = "custom_sae"
+        sparsity = None
+
+    return sae_id, sae, sparsity
+
+
+def get_results_filepath(output_path: str, sae_release: str, sae_id: str) -> str:
+    sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+    sae_result_file = sae_result_file.replace("/", "_")
+    sae_result_path = os.path.join(output_path, sae_result_file)
+
+    return sae_result_path
 
 
 def find_gemmascope_average_l0_sae_names(

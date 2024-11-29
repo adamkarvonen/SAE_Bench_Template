@@ -720,6 +720,7 @@ def run_eval(
     os.makedirs(output_path, exist_ok=True)
 
     artifacts_base_folder = "artifacts"
+    artifacts_folder = None
 
     results_dict = {}
 
@@ -729,108 +730,84 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release, sae_id in tqdm(
+    for sae_release, sae_object_or_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-        if isinstance(sae_id, str):
-            sae = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )[0]
-        else:
-            sae = sae_id
-            sae_id = "custom_sae"
-
+        sae_id, sae, sparsity = general_utils.load_and_format_sae(
+            sae_release, sae_object_or_id, device
+        )
         sae = sae.to(device=device, dtype=llm_dtype)
+
+        sae_result_path = general_utils.get_results_filepath(output_path, sae_release, sae_id)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Skipping {sae_release}_{sae_id} as results already exist")
+            continue
 
         artifacts_folder = os.path.join(
             artifacts_base_folder, eval_type, config.model_name, sae.cfg.hook_name
         )
 
-        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-        sae_result_file = sae_result_file.replace("/", "_")
-        sae_result_path = os.path.join(output_path, sae_result_file)
-
-        if os.path.exists(sae_result_path) and not force_rerun:
-            print(f"Loading existing results from {sae_result_path}")
-            with open(sae_result_path, "r") as f:
-                if eval_type == EVAL_TYPE_ID_SCR:
-                    eval_output = TypeAdapter(ScrEvalOutput).validate_json(f.read())
-                elif eval_type == EVAL_TYPE_ID_TPP:
-                    eval_output = TypeAdapter(TppEvalOutput).validate_json(f.read())
-                else:
-                    raise ValueError(f"Invalid eval type: {eval_type}")
-        else:
-            scr_or_tpp_results = run_eval_single_sae(
-                config,
-                sae,
-                model,
-                device,
-                artifacts_folder,
-                save_activations,
+        scr_or_tpp_results = run_eval_single_sae(
+            config,
+            sae,
+            model,
+            device,
+            artifacts_folder,
+            save_activations,
+        )
+        if eval_type == EVAL_TYPE_ID_SCR:
+            eval_output = ScrEvalOutput(
+                eval_type_id=eval_type,
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=ScrMetricCategories(
+                    scr_metrics=ScrMetrics(
+                        **{k: v for k, v in scr_or_tpp_results.items() if not isinstance(v, dict)}
+                    )
+                ),
+                eval_result_details=[
+                    ScrResultDetail(
+                        dataset_name=dataset_name,
+                        **result,
+                    )
+                    for dataset_name, result in scr_or_tpp_results.items()
+                    if isinstance(result, dict)
+                ],
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
+                sae_cfg_dict=asdict(sae.cfg),
             )
-            if eval_type == EVAL_TYPE_ID_SCR:
-                eval_output = ScrEvalOutput(
-                    eval_type_id=eval_type,
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=ScrMetricCategories(
-                        scr_metrics=ScrMetrics(
-                            **{
-                                k: v
-                                for k, v in scr_or_tpp_results.items()
-                                if not isinstance(v, dict)
-                            }
-                        )
-                    ),
-                    eval_result_details=[
-                        ScrResultDetail(
-                            dataset_name=dataset_name,
-                            **result,
-                        )
-                        for dataset_name, result in scr_or_tpp_results.items()
-                        if isinstance(result, dict)
-                    ],
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                    sae_cfg_dict=asdict(sae.cfg),
-                )
-            elif eval_type == EVAL_TYPE_ID_TPP:
-                eval_output = TppEvalOutput(
-                    eval_type_id=eval_type,
-                    eval_config=config,
-                    eval_id=eval_instance_id,
-                    datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                    eval_result_metrics=TppMetricCategories(
-                        tpp_metrics=TppMetrics(
-                            **{
-                                k: v
-                                for k, v in scr_or_tpp_results.items()
-                                if not isinstance(v, dict)
-                            }
-                        )
-                    ),
-                    eval_result_details=[
-                        TppResultDetail(
-                            dataset_name=dataset_name,
-                            **result,
-                        )
-                        for dataset_name, result in scr_or_tpp_results.items()
-                        if isinstance(result, dict)
-                    ],
-                    sae_bench_commit_hash=sae_bench_commit_hash,
-                    sae_lens_id=sae_id,
-                    sae_lens_release_id=sae_release,
-                    sae_lens_version=sae_lens_version,
-                    sae_cfg_dict=asdict(sae.cfg),
-                )
-            else:
-                raise ValueError(f"Invalid eval type: {eval_type}")
+        elif eval_type == EVAL_TYPE_ID_TPP:
+            eval_output = TppEvalOutput(
+                eval_type_id=eval_type,
+                eval_config=config,
+                eval_id=eval_instance_id,
+                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+                eval_result_metrics=TppMetricCategories(
+                    tpp_metrics=TppMetrics(
+                        **{k: v for k, v in scr_or_tpp_results.items() if not isinstance(v, dict)}
+                    )
+                ),
+                eval_result_details=[
+                    TppResultDetail(
+                        dataset_name=dataset_name,
+                        **result,
+                    )
+                    for dataset_name, result in scr_or_tpp_results.items()
+                    if isinstance(result, dict)
+                ],
+                sae_bench_commit_hash=sae_bench_commit_hash,
+                sae_lens_id=sae_id,
+                sae_lens_release_id=sae_release,
+                sae_lens_version=sae_lens_version,
+                sae_cfg_dict=asdict(sae.cfg),
+            )
+        else:
+            raise ValueError(f"Invalid eval type: {eval_type}")
 
         results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
@@ -840,7 +817,7 @@ def run_eval(
         torch.cuda.empty_cache()
 
     if clean_up_activations:
-        if os.path.exists(artifacts_folder):
+        if artifacts_folder is not None and os.path.exists(artifacts_folder):
             shutil.rmtree(artifacts_folder)
 
     return results_dict
