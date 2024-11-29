@@ -3,13 +3,12 @@
 # fmt: on
 import argparse
 import time
-import functools
-import random
 from typing import Type, Tuple, Callable, Any, Union, Dict, List, Mapping, Optional
 from dataclasses import asdict
 import logging
 import math
 import re
+import os
 import gc
 import subprocess
 from collections import defaultdict
@@ -54,61 +53,6 @@ logger = logging.getLogger(__name__)
 # likely screw up the feature density metrics among others. 10 is a good
 # compromise.
 DEFAULT_FLOAT_PRECISION = 10
-
-
-def retry_with_exponential_backoff(
-    retries: int = 5,
-    initial_delay: float = 1.0,
-    max_delay: float = 60.0,
-    exponential_base: float = 2.0,
-    jitter: bool = True,
-    exceptions: Union[Type[Exception], Tuple[Type[Exception], ...]] = Exception,
-) -> Callable:
-    """
-    Decorator for retrying a function with exponential backoff.
-
-    Args:
-        retries: Maximum number of retries
-        initial_delay: Initial delay between retries in seconds
-        max_delay: Maximum delay between retries in seconds
-        exponential_base: Base for exponential backoff
-        jitter: Whether to add random jitter to delay
-        exceptions: Exception(s) to catch and retry on
-    """
-
-    def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            delay = initial_delay
-            last_exception = None
-
-            for retry_count in range(retries + 1):
-                try:
-                    return func(*args, **kwargs)
-                except exceptions as e:
-                    last_exception = e
-                    if retry_count == retries:
-                        logger.error(f"Failed after {retries} retries: {str(e)}")
-                        raise
-
-                    # Calculate delay with optional jitter
-                    current_delay = min(delay * (exponential_base**retry_count), max_delay)
-                    if jitter:
-                        current_delay *= 1 + random.random() * 0.1  # 10% jitter
-
-                    logger.warning(
-                        f"Attempt {retry_count + 1}/{retries} failed: {str(e)}. "
-                        f"Retrying in {current_delay:.2f} seconds..."
-                    )
-                    time.sleep(current_delay)
-
-            if last_exception:
-                raise last_exception
-            return None
-
-        return wrapper
-
-    return decorator
 
 
 def get_library_version() -> str:
@@ -837,9 +781,9 @@ def save_single_eval_result(
     eval_instance_id: str,
     sae_lens_version: str,
     sae_bench_commit_hash: str,
-    output_path: Path,
+    json_path: str,
     sae: SAE,
-) -> Path:
+) -> str:
     """Save a single evaluation result to a JSON file."""
     # Get the eval_config directly - it's already a CoreEvalConfig object
     eval_config = result["eval_cfg"]
@@ -881,20 +825,13 @@ def save_single_eval_result(
         sae_cfg_dict=asdict(sae.cfg),
     )
 
-    # Save individual JSON file
-    json_filename = (
-        f"{result['unique_id']}_{eval_config.context_size}_{eval_config.dataset}.json".replace(
-            "/", "_"
-        )
-    )
-    json_path = output_path / json_filename
     eval_output.to_json_file(json_path)
 
     return json_path
 
 
 def multiple_evals(
-    filtered_saes: list[tuple[str, str]] | list[tuple[str, SAE]],
+    selected_saes: list[tuple[str, str]] | list[tuple[str, SAE]],
     n_eval_reconstruction_batches: int,
     n_eval_sparsity_variance_batches: int,
     eval_batch_size_prompts: int = 8,
@@ -906,9 +843,10 @@ def multiple_evals(
     output_folder: str = "eval_results",
     verbose: bool = False,
     dtype: str = "float32",
+    force_rerun: bool = False,
 ) -> List[Dict[str, Any]]:
     device = general_utils.setup_environment()
-    assert len(filtered_saes) > 0, "No SAEs to evaluate"
+    assert len(selected_saes) > 0, "No SAEs to evaluate"
 
     eval_results = []
     output_path = Path(output_folder)
@@ -928,42 +866,25 @@ def multiple_evals(
     current_model = None
     current_model_str = None
 
-    for sae_release_name, sae_id in tqdm(filtered_saes):
-        # Wrap SAE loading with retry
-        @retry_with_exponential_backoff(
-            retries=5,
-            exceptions=(
-                Exception,
-            ),  # You might want to be more specific about which exceptions to catch
-            initial_delay=1.0,
-            max_delay=60.0,
+    llm_dtype = general_utils.str_to_dtype(dtype)
+
+    for sae_release, sae_object_or_id in tqdm(
+        selected_saes, desc="Running SAE evaluation on all selected SAEs"
+    ):
+        sae_id, sae, sparsity = general_utils.load_and_format_sae(
+            sae_release, sae_object_or_id, device
         )
-        def load_sae():
-            return SAE.from_pretrained(
-                release=sae_release_name,
-                sae_id=sae_id,
-                device=device,
-            )[0]
+        sae = sae.to(device=device, dtype=llm_dtype)
 
-        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-        if isinstance(sae_id, str):
-            try:
-                sae = load_sae()
-            except Exception as e:
-                logger.error(f"Failed to load SAE {sae_id} from {sae_release_name}: {str(e)}")
-                continue  # Skip this SAE and continue with the next one
-        else:
-            sae = sae_id
-            sae_id = "custom_sae"
+        sae_result_path = general_utils.get_results_filepath(output_folder, sae_release, sae_id)
 
-        sae.to(device)
-        sae = sae.to(general_utils.str_to_dtype(dtype))
-
-        # TODO: Check if results already exist and skip if so, add force_rerun flag
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Skipping {sae_release}_{sae_id} as results already exist")
+            continue
 
         if current_model_str != sae.cfg.model_name:
             # Wrap model loading with retry
-            @retry_with_exponential_backoff(
+            @general_utils.retry_with_exponential_backoff(
                 retries=5,
                 exceptions=(
                     Exception,
@@ -1010,7 +931,7 @@ def multiple_evals(
             )
 
             # Wrap activation store creation with retry
-            @retry_with_exponential_backoff(
+            @general_utils.retry_with_exponential_backoff(
                 retries=3,
                 exceptions=(Exception,),
                 initial_delay=1.0,
@@ -1025,8 +946,8 @@ def multiple_evals(
             activation_store.shuffle_input_dataset(seed=42)
 
             eval_metrics = nested_dict()
-            eval_metrics["unique_id"] = f"{sae_release_name}_{sae_id}"
-            eval_metrics["sae_set"] = f"{sae_release_name}"
+            eval_metrics["unique_id"] = f"{sae_release}_{sae_id}"
+            eval_metrics["sae_set"] = f"{sae_release}"
             eval_metrics["sae_id"] = f"{sae_id}"
             eval_metrics["eval_cfg"] = core_eval_config
 
@@ -1056,7 +977,7 @@ def multiple_evals(
                 eval_instance_id,
                 sae_lens_version,
                 sae_bench_commit_hash,
-                output_path,
+                sae_result_path,
                 sae,
             )
 
@@ -1066,7 +987,7 @@ def multiple_evals(
             eval_results.append(eval_metrics)
         except Exception as e:
             logger.error(
-                f"Failed to evaluate SAE {sae_id} from {sae_release_name} "
+                f"Failed to evaluate SAE {sae_id} from {sae_release} "
                 f"with context length {context_size} on dataset {dataset}: {str(e)}"
             )
             continue  # Skip this combination and continue with the next one
@@ -1096,7 +1017,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
     print(f"Total number of SAE IDs: {num_all_sae_ids}")
 
     eval_results = multiple_evals(
-        filtered_saes=filtered_saes,
+        selected_saes=filtered_saes,
         n_eval_reconstruction_batches=args.n_eval_reconstruction_batches,
         n_eval_sparsity_variance_batches=args.n_eval_sparsity_variance_batches,
         eval_batch_size_prompts=args.batch_size_prompts,
@@ -1108,6 +1029,7 @@ def run_evaluations(args: argparse.Namespace) -> List[Dict[str, Any]]:
         output_folder=args.output_folder,
         verbose=args.verbose,
         dtype=args.llm_dtype,
+        force_rerun=args.force_rerun,
     )
 
     return eval_results

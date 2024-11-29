@@ -2,7 +2,10 @@ import pandas as pd
 import re
 import os
 import torch
-from typing import Optional
+from typing import Optional, Callable, Any, Union, Type
+import time
+import functools
+import random
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
 from sae_lens import SAE
 
@@ -110,3 +113,58 @@ def average_results_dictionaries(
         averaged_results[metric_name] = average_value
 
     return averaged_results
+
+
+def retry_with_exponential_backoff(
+    retries: int = 5,
+    initial_delay: float = 1.0,
+    max_delay: float = 60.0,
+    exponential_base: float = 2.0,
+    jitter: bool = True,
+    exceptions: Union[Type[Exception], tuple[Type[Exception], ...]] = Exception,
+) -> Callable:
+    """
+    Decorator for retrying a function with exponential backoff.
+
+    Args:
+        retries: Maximum number of retries
+        initial_delay: Initial delay between retries in seconds
+        max_delay: Maximum delay between retries in seconds
+        exponential_base: Base for exponential backoff
+        jitter: Whether to add random jitter to delay
+        exceptions: Exception(s) to catch and retry on
+    """
+
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            delay = initial_delay
+            last_exception = None
+
+            for retry_count in range(retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    last_exception = e
+                    if retry_count == retries:
+                        print(f"Failed after {retries} retries: {str(e)}")
+                        raise
+
+                    # Calculate delay with optional jitter
+                    current_delay = min(delay * (exponential_base**retry_count), max_delay)
+                    if jitter:
+                        current_delay *= 1 + random.random() * 0.1  # 10% jitter
+
+                    print(
+                        f"Attempt {retry_count + 1}/{retries} failed: {str(e)}. "
+                        f"Retrying in {current_delay:.2f} seconds..."
+                    )
+                    time.sleep(current_delay)
+
+            if last_exception:
+                raise last_exception
+            return None
+
+        return wrapper
+
+    return decorator
