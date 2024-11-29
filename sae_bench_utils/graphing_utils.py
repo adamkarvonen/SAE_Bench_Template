@@ -56,6 +56,7 @@ def plot_results(
     image_base_name: str,
     k: Optional[int] = None,
     trainer_markers: Optional[dict[str, str]] = None,
+    title_prefix: str = "",
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -65,8 +66,8 @@ def plot_results(
 
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
 
-    title_3var = f"L0 vs Loss Recovered vs {custom_metric_name}"
-    title_2var = f"L0 vs {custom_metric_name}"
+    title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
+    title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
 
     plot_3var_graph(
         eval_results,
@@ -81,7 +82,7 @@ def plot_results(
         custom_metric,
         y_label=custom_metric_name,
         title=title_2var,
-        output_filename=f"{image_base_name}_2var.png",
+        output_filename=f"{image_base_name}_2var_sae_type.png",
         trainer_markers=trainer_markers,
     )
 
@@ -207,7 +208,14 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
         eval_results[f"{sae_release}_{sae_id}"]["sae_class"] = get_sae_class(
             sae_config, sae_release
         )
-        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = sae_config["d_sae"]
+
+        rounded_d_sae = round(sae_config["d_sae"] / 1000) * 1000
+
+        # TODO: Temp SAE Bench fix
+        if rounded_d_sae == 66000:
+            rounded_d_sae = 65000
+
+        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = rounded_d_sae
 
         if "sae_bench" in sae_release:
             eval_results[f"{sae_release}_{sae_id}"]["train_tokens"] = get_sae_bench_train_tokens(
@@ -224,6 +232,10 @@ def get_core_results(selected_saes: list[tuple[str, str]], core_path: str) -> di
     for sae_release, sae_id in selected_saes:
         filename = f"{sae_release}_{sae_id}_128_Skylion007_openwebtext.json".replace("/", "_")
         filepath = os.path.join(core_path, filename)
+
+        if not os.path.exists(filepath):
+            print(f"File not found: {filepath}")
+            continue
 
         with open(filepath, "r") as f:
             single_sae_results = json.load(f)
@@ -500,6 +512,7 @@ def plot_2var_graph_dict_size(
     # Extract data
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
+
     dict_sizes = [data["d_sae"] for data in results.values()]
 
     # Identify unique dictionary sizes and assign markers
@@ -543,7 +556,7 @@ def plot_2var_graph_dict_size(
         _handle[0].set_markerfacecolor("white")
         _handle[0].set_markersize(10)
         handles += _handle
-        labels.append(f"Dict Size: {dict_size}")
+        labels.append(f"SAE Width: {dict_size}")
 
     # Set labels and title
     ax.set_xlabel("L0 (Sparsity)")
