@@ -11,7 +11,8 @@ class RAVELEvalConfig(BaseEvalConfig):
     # Dataset
     entity_attribute_selection: dict[str, list[str]] = Field(
         default={
-            "nobel_prize_winner": ["Field", "Birth Year"],
+            "city": ['Country', 'Continent', 'Language'],
+            "nobel_prize_winner": ["Country of Birth", "Field", "Gender"],
         },
         title="Selection of entity and attribute classes",
         description="Subset of the RAVEL datset to be evaluated. Each key is an entity class, and the value is a list of at least two attribute classes.",
@@ -30,6 +31,11 @@ class RAVELEvalConfig(BaseEvalConfig):
         default=12,
         title="Number of distinct templates in the dataset",
         description="Number of templates in the dataset, filtered by prediction accuracy over entities."
+    )
+    full_dataset_downsample: int = Field(
+        default=100000,
+        title="Full Dataset Downsample",
+        description="Downsample the full dataset to this size.",
     )
     force_dataset_recompute: bool = Field(
         default=False,

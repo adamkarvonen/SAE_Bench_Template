@@ -57,6 +57,7 @@ def run_eval_single_dataset(
         top_n_entities=config.top_n_entities,
         top_n_templates=config.top_n_templates,
         artifact_dir=artifact_dir,
+        full_dataset_downsample=config.full_dataset_downsample,
     )
 
     chosen_attributes = config.entity_attribute_selection[entity_class]
@@ -112,7 +113,6 @@ def run_eval_single_sae(
 
 
 
-# TODO test for MODEL_ID = 'pythia-70m'
 def run_eval(
     eval_config: RAVELEvalConfig,
     selected_saes: list[tuple[str, str]],
@@ -125,10 +125,7 @@ def run_eval(
     sae_bench_commit_hash = get_sae_bench_version()
 
     # Load model
-    if eval_config.model_name == "pythia-70m":
-        model_id = "eleutherAI/pythia-70m-deduped"
-        model_kwargs = {}
-    elif eval_config.model_name == "gemma-2-2b":
+    if eval_config.model_name == "gemma-2-2b":
         model_id = "google/gemma-2-2b"
         model_kwargs = {'low_cpu_mem_usage': True,'attn_implementation': 'eager'}
     else:
