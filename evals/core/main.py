@@ -493,7 +493,7 @@ def get_sparsity_and_variance_metrics(
             metric_dict["relative_reconstruction_bias"].append(relative_reconstruction_bias)
 
         if compute_sparsity_metrics:
-            l0 = (flattened_sae_feature_acts > 0).sum(dim=-1).float()
+            l0 = (flattened_sae_feature_acts != 0).sum(dim=-1).float()
             l1 = flattened_sae_feature_acts.sum(dim=-1)
             metric_dict["l0"].append(l0)
             metric_dict["l1"].append(l1)
