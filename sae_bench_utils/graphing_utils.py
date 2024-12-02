@@ -230,7 +230,7 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
 def get_core_results(selected_saes: list[tuple[str, str]], core_path: str) -> dict:
     core_results = {}
     for sae_release, sae_id in selected_saes:
-        filename = f"{sae_release}_{sae_id}_128_Skylion007_openwebtext.json".replace("/", "_")
+        filename = f"{sae_release}_{sae_id}_eval_results.json".replace("/", "_")
         filepath = os.path.join(core_path, filename)
 
         if not os.path.exists(filepath):
