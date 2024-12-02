@@ -9,12 +9,13 @@ import evals.scr_and_tpp.main as scr_and_tpp
 import evals.sparse_probing.main as sparse_probing
 import evals.unlearning.main as unlearning
 import sae_bench_utils.general_utils as general_utils
+from custom_saes.topk_sae import load_topk_sae
 
 
 RANDOM_SEED = 42
 
 MODEL_CONFIGS = {
-    "pythia-70m-deduped": {"batch_size": 512, "dtype": "float32", "layers": [3, 4], "d_model": 512},
+    "pythia-70m-deduped": {"batch_size": 512, "dtype": "float32", "layers": [4], "d_model": 512},
     "gemma-2-2b": {"batch_size": 32, "dtype": "bfloat16", "layers": [5, 12, 19], "d_model": 2304},
 }
 
@@ -185,20 +186,20 @@ if __name__ == "__main__":
     device = general_utils.setup_environment()
 
     model_name = "pythia-70m-deduped"
-    model_name = "gemma-2-2b"
+    # model_name = "gemma-2-2b"
     d_model = MODEL_CONFIGS[model_name]["d_model"]
     llm_batch_size = MODEL_CONFIGS[model_name]["batch_size"]
     llm_dtype = MODEL_CONFIGS[model_name]["dtype"]
 
     # Note: unlearning not relevant to Pythia-70M
     eval_types = [
-        "absorption",
+        # "absorption",
         "autointerp",
         "core",
         "scr",
         "tpp",
         "sparse_probing",
-        "unlearning",
+        # "unlearning",
     ]
 
     if "autointerp" in eval_types:
@@ -215,27 +216,32 @@ if __name__ == "__main__":
     save_activations = False
 
     for hook_layer in MODEL_CONFIGS[model_name]["layers"]:
-        sae = identity_sae.IdentitySAE(model_name, d_model, hook_layer, context_size=128)
-        selected_saes = [(f"{model_name}_layer_{hook_layer}_identity_sae", sae)]
+        for trainer_id in range(12):
+            repo_id = "canrager/additivity"
+            filename = f"pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_{trainer_id}/ae.pt"
+            config_filename = f"pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_{trainer_id}/config.json"
+            sae = load_topk_sae(repo_id, filename, config_filename, hook_layer)
+            # sae = identity_sae.IdentitySAE(model_name, d_model, hook_layer, context_size=128)
+            selected_saes = [(f"{model_name}_layer_{hook_layer}_additivity_trainer_{trainer_id}", sae)]
 
-        # This will evaluate PCA SAEs
-        # sae = pca_sae.PCASAE(model_name, d_model, hook_layer, context_size=128)
-        # filename = f"gemma-2-2b-pca-sae/pca_gemma-2-2b_blocks.{hook_layer}.hook_resid_post.pt"
-        # sae.load_from_file(filename)
-        # selected_saes = [(f"{model_name}_layer_{hook_layer}_pca_sae", sae)]
+            # This will evaluate PCA SAEs
+            # sae = pca_sae.PCASAE(model_name, d_model, hook_layer, context_size=128)
+            # filename = f"gemma-2-2b-pca-sae/pca_gemma-2-2b_blocks.{hook_layer}.hook_resid_post.pt"
+            # sae.load_from_file(filename)
+            # selected_saes = [(f"{model_name}_layer_{hook_layer}_pca_sae", sae)]
 
-        for sae_name, sae in selected_saes:
-            sae = sae.to(dtype=general_utils.str_to_dtype(llm_dtype))
-            sae.cfg.dtype = llm_dtype
+            for sae_name, sae in selected_saes:
+                sae = sae.to(dtype=general_utils.str_to_dtype(llm_dtype))
+                sae.cfg.dtype = llm_dtype
 
-        run_evals(
-            model_name,
-            selected_saes,
-            llm_batch_size,
-            llm_dtype,
-            device,
-            eval_types=eval_types,
-            api_key=api_key,
-            force_rerun=False,
-            save_activations=False,
-        )
+            run_evals(
+                model_name,
+                selected_saes,
+                llm_batch_size,
+                llm_dtype,
+                device,
+                eval_types=eval_types,
+                api_key=api_key,
+                force_rerun=False,
+                save_activations=False,
+            )
