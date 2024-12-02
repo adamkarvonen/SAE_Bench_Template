@@ -26,14 +26,14 @@ Autointerp requires the creation of `openai_api_key.txt`. Unlearning requires re
 ## Overview
 
 SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE) models:
-- **Feature Absorption**
-- **AutoInterp**
+- **[Feature Absorption](https://arxiv.org/abs/2409.14507)**
+- **[AutoInterp](https://blog.eleuther.ai/autointerp/)**
 - **L0 / Loss Recovered**
-- **RAVEL**
-- **Spurious Correlation Removal (SCR)**
-- **Targeted Probe Pertubation (TPP)**
+- **[RAVEL](https://arxiv.org/abs/2402.17700) (under development)**
+- **[Spurious Correlation Removal (SCR)](https://arxiv.org/abs/2411.18895)**
+- **[Targeted Probe Pertubation (TPP)](https://arxiv.org/abs/2411.18895)**
 - **Sparse Probing**
-- **Unlearning** (requires access to the WMDP dataset, see README)
+- **[Unlearning](https://arxiv.org/abs/2410.19278)** (requires access to the WMDP dataset, see README)
 
 ### Supported Models and SAEs
 - **SAE Lens Pretrained Models**: Supports evaluations on any SAE Lens pretrained model.
