@@ -33,6 +33,7 @@ class CustomSAEConfig:
     dataset_path: str = ""
     dataset_trust_remote_code: bool = True
     seqpos_slice: tuple = (None,)
+    training_tokens: int = -100_000
 
     # Metadata
     sae_lens_training_version: Optional[str] = None

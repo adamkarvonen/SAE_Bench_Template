@@ -39,6 +39,10 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **SAE Lens Pretrained Models**: Supports evaluations on any SAE Lens pretrained model.
 - **Custom SAEs**: Supports any general SAE object with `encode()` and `decode()` methods (see [Custom SAE Usage](#custom-sae-usage)).
 
+## Getting Started
+
+We recommend to get starting by going through the `sae_bench_demo.ipynb` notebook. In this notebook, we load both a custom SAE and an SAE Lens SAE, run both of them on multiple evaluations, and plot graphs of the results.
+
 ## Running Evaluations
 Each evaluation has an example command located in its respective `main.py` file. To run all evaluations on a selection of SAE Lens SAEs, refer to `shell_scripts/`. Here's how to run a sparse probing evaluation on a single SAE Bench Pythia-70M SAE:
 
@@ -73,7 +77,7 @@ There are two ways to evaluate custom SAEs:
    - Simpler interface requiring only model, SAE, and config values
    - Graphing will require manual formatting
 
-TWe currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens with checkpoints at various points. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
+We currently have a suite of SAE Bench SAEs on layers 3 and 4 of Pythia-70M and layers 5, 12, and 19 of Gemma-2-2B, each trained on 200M tokens with checkpoints at various points. These SAEs can serve as baselines for any new custom SAEs. We also have baseline eval results, saved at TODO.
 
 ## Training Your Own SAEs
 

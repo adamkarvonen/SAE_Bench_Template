@@ -49,6 +49,25 @@ def get_results_dict(
     return eval_results
 
 
+def get_best_results(
+    results_dict: dict[str, dict[str, float]], results_path: str, ks: list[int]
+) -> dict[str, dict[str, float]]:
+    best_results = {}
+    for sae, data in results_dict.items():
+        best_results[sae] = 0
+        for k in ks:
+            custom_metric, _ = get_custom_metric_key_and_name(results_path, k)
+            if custom_metric in data:
+                best_results[sae] = max(best_results[sae], data[custom_metric])
+            else:
+                print(f"Custom metric {custom_metric} not found for {sae}")
+
+    for sae in best_results.keys():
+        results_dict[sae]["best_custom_metric"] = best_results[sae]
+
+    return results_dict
+
+
 def plot_results(
     selected_saes: list[tuple[str, str]],
     results_path: str,
@@ -65,6 +84,58 @@ def plot_results(
         eval_results[sae].update(core_results[sae])
 
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
+
+    title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
+    title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
+
+    plot_3var_graph(
+        eval_results,
+        title_3var,
+        custom_metric,
+        colorbar_label="Custom Metric",
+        output_filename=f"{image_base_name}_3var.png",
+        trainer_markers=trainer_markers,
+    )
+    plot_2var_graph(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var_sae_type.png",
+        trainer_markers=trainer_markers,
+    )
+
+    plot_2var_graph_dict_size(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var_dict_size.png",
+    )
+
+
+def plot_best_of_ks_results(
+    selected_saes: list[tuple[str, str]],
+    results_path: str,
+    core_results_path: str,
+    image_base_name: str,
+    ks: list[int],
+    trainer_markers: Optional[dict[str, str]] = None,
+    title_prefix: str = "",
+):
+    dummy_k = 0
+
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
+
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
+
+    custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, dummy_k)
+
+    custom_metric = "best_custom_metric"
+    custom_metric_name = custom_metric_name.replace(f"Top {dummy_k}", f"Best of {ks}")
+    eval_results = get_best_results(eval_results, results_path, ks)
 
     title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
     title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
@@ -114,6 +185,9 @@ def get_custom_metric_key_and_name(eval_path: str, k: Optional[int] = None) -> t
     elif "unlearning" in eval_path:
         custom_metric = "unlearning_score"
         custom_metric_name = "Unlearning Score"
+    elif "core" in eval_path:
+        custom_metric = "frac_recovered"
+        custom_metric_name = "Loss Recovered"
     else:
         raise ValueError("Please add the correct key for the custom metric")
 
@@ -198,6 +272,9 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
             eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
                 "unlearning"
             ]
+        elif "core" in results_path:
+            # We already load the core results in the get_core_results function
+            eval_results[f"{sae_release}_{sae_id}"] = {}
         else:
             raise ValueError("Please add the correct key for the eval results")
 
