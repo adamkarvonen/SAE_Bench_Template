@@ -2,7 +2,12 @@ import pandas as pd
 import re
 import os
 import torch
+from typing import Optional, Callable, Any, Union, Type
+import time
+import functools
+import random
 from sae_lens.toolkit.pretrained_saes_directory import get_pretrained_saes_directory
+from sae_lens import SAE
 
 
 def str_to_dtype(dtype_str: str) -> torch.dtype:
@@ -30,6 +35,33 @@ def setup_environment():
 
     print(f"Using device: {device}")
     return device
+
+
+def load_and_format_sae(
+    sae_release_or_unique_id: str, sae_object_or_sae_lens_id: str | SAE, device: str
+) -> tuple[str, SAE, Optional[torch.Tensor]]:
+    """Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)"""
+    if isinstance(sae_object_or_sae_lens_id, str):
+        sae, _, sparsity = SAE.from_pretrained(
+            release=sae_release_or_unique_id,
+            sae_id=sae_object_or_sae_lens_id,
+            device=device,
+        )
+        sae_id = sae_object_or_sae_lens_id
+    else:
+        sae = sae_object_or_sae_lens_id
+        sae_id = "custom_sae"
+        sparsity = None
+
+    return sae_id, sae, sparsity
+
+
+def get_results_filepath(output_path: str, sae_release: str, sae_id: str) -> str:
+    sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
+    sae_result_file = sae_result_file.replace("/", "_")
+    sae_result_path = os.path.join(output_path, sae_result_file)
+
+    return sae_result_path
 
 
 def find_gemmascope_average_l0_sae_names(
@@ -81,3 +113,58 @@ def average_results_dictionaries(
         averaged_results[metric_name] = average_value
 
     return averaged_results
+
+
+def retry_with_exponential_backoff(
+    retries: int = 5,
+    initial_delay: float = 1.0,
+    max_delay: float = 60.0,
+    exponential_base: float = 2.0,
+    jitter: bool = True,
+    exceptions: Union[Type[Exception], tuple[Type[Exception], ...]] = Exception,
+) -> Callable:
+    """
+    Decorator for retrying a function with exponential backoff.
+
+    Args:
+        retries: Maximum number of retries
+        initial_delay: Initial delay between retries in seconds
+        max_delay: Maximum delay between retries in seconds
+        exponential_base: Base for exponential backoff
+        jitter: Whether to add random jitter to delay
+        exceptions: Exception(s) to catch and retry on
+    """
+
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            delay = initial_delay
+            last_exception = None
+
+            for retry_count in range(retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    last_exception = e
+                    if retry_count == retries:
+                        print(f"Failed after {retries} retries: {str(e)}")
+                        raise
+
+                    # Calculate delay with optional jitter
+                    current_delay = min(delay * (exponential_base**retry_count), max_delay)
+                    if jitter:
+                        current_delay *= 1 + random.random() * 0.1  # 10% jitter
+
+                    print(
+                        f"Attempt {retry_count + 1}/{retries} failed: {str(e)}. "
+                        f"Retrying in {current_delay:.2f} seconds..."
+                    )
+                    time.sleep(current_delay)
+
+            if last_exception:
+                raise last_exception
+            return None
+
+        return wrapper
+
+    return decorator

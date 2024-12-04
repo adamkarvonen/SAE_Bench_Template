@@ -41,7 +41,7 @@ evals/ravel/dev/
 **/results/
 **/artifacts/
 **/test_results/
-**/eval_results/
+**/eval_results/**
+*eval_results*
 **/dev/
-
 openai_api_key.txt

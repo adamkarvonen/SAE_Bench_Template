@@ -49,6 +49,25 @@ def get_results_dict(
     return eval_results
 
 
+def get_best_results(
+    results_dict: dict[str, dict[str, float]], results_path: str, ks: list[int]
+) -> dict[str, dict[str, float]]:
+    best_results = {}
+    for sae, data in results_dict.items():
+        best_results[sae] = 0
+        for k in ks:
+            custom_metric, _ = get_custom_metric_key_and_name(results_path, k)
+            if custom_metric in data:
+                best_results[sae] = max(best_results[sae], data[custom_metric])
+            else:
+                print(f"Custom metric {custom_metric} not found for {sae}")
+
+    for sae in best_results.keys():
+        results_dict[sae]["best_custom_metric"] = best_results[sae]
+
+    return results_dict
+
+
 def plot_results(
     selected_saes: list[tuple[str, str]],
     results_path: str,
@@ -56,6 +75,7 @@ def plot_results(
     image_base_name: str,
     k: Optional[int] = None,
     trainer_markers: Optional[dict[str, str]] = None,
+    title_prefix: str = "",
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -65,8 +85,8 @@ def plot_results(
 
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
 
-    title_3var = f"L0 vs Loss Recovered vs {custom_metric_name}"
-    title_2var = f"L0 vs {custom_metric_name}"
+    title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
+    title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
 
     plot_3var_graph(
         eval_results,
@@ -81,7 +101,59 @@ def plot_results(
         custom_metric,
         y_label=custom_metric_name,
         title=title_2var,
-        output_filename=f"{image_base_name}_2var.png",
+        output_filename=f"{image_base_name}_2var_sae_type.png",
+        trainer_markers=trainer_markers,
+    )
+
+    plot_2var_graph_dict_size(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var_dict_size.png",
+    )
+
+
+def plot_best_of_ks_results(
+    selected_saes: list[tuple[str, str]],
+    results_path: str,
+    core_results_path: str,
+    image_base_name: str,
+    ks: list[int],
+    trainer_markers: Optional[dict[str, str]] = None,
+    title_prefix: str = "",
+):
+    dummy_k = 0
+
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
+
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
+
+    custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, dummy_k)
+
+    custom_metric = "best_custom_metric"
+    custom_metric_name = custom_metric_name.replace(f"Top {dummy_k}", f"Best of {ks}")
+    eval_results = get_best_results(eval_results, results_path, ks)
+
+    title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
+    title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
+
+    plot_3var_graph(
+        eval_results,
+        title_3var,
+        custom_metric,
+        colorbar_label="Custom Metric",
+        output_filename=f"{image_base_name}_3var.png",
+        trainer_markers=trainer_markers,
+    )
+    plot_2var_graph(
+        eval_results,
+        custom_metric,
+        y_label=custom_metric_name,
+        title=title_2var,
+        output_filename=f"{image_base_name}_2var_sae_type.png",
         trainer_markers=trainer_markers,
     )
 
@@ -113,6 +185,9 @@ def get_custom_metric_key_and_name(eval_path: str, k: Optional[int] = None) -> t
     elif "unlearning" in eval_path:
         custom_metric = "unlearning_score"
         custom_metric_name = "Unlearning Score"
+    elif "core" in eval_path:
+        custom_metric = "frac_recovered"
+        custom_metric_name = "Loss Recovered"
     else:
         raise ValueError("Please add the correct key for the custom metric")
 
@@ -197,6 +272,9 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
             eval_results[f"{sae_release}_{sae_id}"] = single_sae_results["eval_result_metrics"][
                 "unlearning"
             ]
+        elif "core" in results_path:
+            # We already load the core results in the get_core_results function
+            eval_results[f"{sae_release}_{sae_id}"] = {}
         else:
             raise ValueError("Please add the correct key for the eval results")
 
@@ -207,7 +285,14 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
         eval_results[f"{sae_release}_{sae_id}"]["sae_class"] = get_sae_class(
             sae_config, sae_release
         )
-        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = sae_config["d_sae"]
+
+        rounded_d_sae = round(sae_config["d_sae"] / 1000) * 1000
+
+        # TODO: Temp SAE Bench fix
+        if rounded_d_sae == 66000:
+            rounded_d_sae = 65000
+
+        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = rounded_d_sae
 
         if "sae_bench" in sae_release:
             eval_results[f"{sae_release}_{sae_id}"]["train_tokens"] = get_sae_bench_train_tokens(
@@ -222,8 +307,12 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
 def get_core_results(selected_saes: list[tuple[str, str]], core_path: str) -> dict:
     core_results = {}
     for sae_release, sae_id in selected_saes:
-        filename = f"{sae_release}_{sae_id}_128_Skylion007_openwebtext.json".replace("/", "_")
+        filename = f"{sae_release}_{sae_id}_eval_results.json".replace("/", "_")
         filepath = os.path.join(core_path, filename)
+
+        if not os.path.exists(filepath):
+            print(f"File not found: {filepath}")
+            continue
 
         with open(filepath, "r") as f:
             single_sae_results = json.load(f)
@@ -500,6 +589,7 @@ def plot_2var_graph_dict_size(
     # Extract data
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
+
     dict_sizes = [data["d_sae"] for data in results.values()]
 
     # Identify unique dictionary sizes and assign markers
@@ -543,7 +633,7 @@ def plot_2var_graph_dict_size(
         _handle[0].set_markerfacecolor("white")
         _handle[0].set_markersize(10)
         handles += _handle
-        labels.append(f"Dict Size: {dict_size}")
+        labels.append(f"SAE Width: {dict_size}")
 
     # Set labels and title
     ax.set_xlabel("L0 (Sparsity)")

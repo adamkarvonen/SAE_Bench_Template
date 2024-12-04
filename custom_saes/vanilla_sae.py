@@ -55,7 +55,7 @@ def load_vanilla_sae(repo_id: str, filename: str, layer: int) -> VanillaSAE:
         force_download=False,
     )
 
-    pt_params = torch.load(path_to_params)
+    pt_params = torch.load(path_to_params, map_location=torch.device("cpu"))
 
     # Print original keys for debugging
     print("Original keys in state_dict:", pt_params.keys())

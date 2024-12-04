@@ -440,23 +440,19 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release, sae_id in tqdm(
+    for sae_release, sae_object_or_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-        if isinstance(sae_id, str):
-            sae = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )[0]
-        else:
-            sae = sae_id
-            sae_id = "custom_sae"
+        sae_id, sae, sparsity = general_utils.load_and_format_sae(
+            sae_release, sae_object_or_id, device
+        )
+        sae = sae.to(device=device, dtype=llm_dtype)
 
-        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-        sae_result_file = sae_result_file.replace("/", "_")
-        sae_result_path = os.path.join(output_path, sae_result_file)
+        sae_result_path = general_utils.get_results_filepath(output_path, sae_release, sae_id)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Skipping {sae_release}_{sae_id} as results already exist")
+            continue
 
         eval_output = run_eval_single_sae(
             config=config,
@@ -483,7 +479,7 @@ def run_eval(
         with open(sae_result_path, "w") as f:
             json.dump(sae_eval_result, f, indent=4)
 
-        results_dict[sae_result_file] = eval_output
+        results_dict[f"{sae_release}_{sae_id}"] = eval_output
 
     results_dict["custom_eval_config"] = asdict(config)
 

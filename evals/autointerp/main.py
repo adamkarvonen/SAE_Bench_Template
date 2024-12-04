@@ -540,83 +540,71 @@ def run_eval(
         config.model_name, device=device, dtype=llm_dtype
     )
 
-    for sae_release, sae_id in tqdm(
+    for sae_release, sae_object_or_id in tqdm(
         selected_saes, desc="Running SAE evaluation on all selected SAEs"
     ):
-        # Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)
-        if isinstance(sae_id, str):
-            sae, _, sparsity = SAE.from_pretrained(
-                release=sae_release,
-                sae_id=sae_id,
-                device=device,
-            )
-        else:
-            sae = sae_id
-            sae_id = "custom_sae"
-            sparsity = None
-
+        sae_id, sae, sparsity = general_utils.load_and_format_sae(
+            sae_release, sae_object_or_id, device
+        )
         sae = sae.to(device=device, dtype=llm_dtype)
+
+        sae_result_path = general_utils.get_results_filepath(output_path, sae_release, sae_id)
+
+        if os.path.exists(sae_result_path) and not force_rerun:
+            print(f"Skipping {sae_release}_{sae_id} as results already exist")
+            continue
 
         artifacts_folder = os.path.join(artifacts_base_folder, EVAL_TYPE_ID_AUTOINTERP)
 
-        sae_result_file = f"{sae_release}_{sae_id}_eval_results.json"
-        sae_result_file = sae_result_file.replace("/", "_")
-        sae_result_path = os.path.join(output_path, sae_result_file)
+        sae_eval_result = run_eval_single_sae(
+            config, sae, model, device, artifacts_folder, api_key, sparsity
+        )
 
-        if os.path.exists(sae_result_path) and not force_rerun:
-            print(f"Loading existing results from {sae_result_path}")
-            with open(sae_result_path, "r") as f:
-                eval_output = json.load(f)
-        else:
-            sae_eval_result = run_eval_single_sae(
-                config, sae, model, device, artifacts_folder, api_key, sparsity
+        # Save nicely formatted logs to a text file, helpful for debugging.
+        if save_logs_path is not None:
+            # Get summary results for all latents, as well logs for the best and worst-scoring latents
+            headers = [
+                "latent",
+                "explanation",
+                "predictions",
+                "correct seqs",
+                "score",
+            ]
+            logs = "Summary table:\n" + tabulate(
+                [[sae_eval_result[latent][h] for h in headers] for latent in sae_eval_result],
+                headers=headers,
+                tablefmt="simple_outline",
             )
+            worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
+            best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
+            logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
+            logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
+            # Save the results to a file
+            with open(save_logs_path, "a") as f:
+                f.write(logs)
 
-            # Save nicely formatted logs to a text file, helpful for debugging.
-            if save_logs_path is not None:
-                # Get summary results for all latents, as well logs for the best and worst-scoring latents
-                headers = [
-                    "latent",
-                    "explanation",
-                    "predictions",
-                    "correct seqs",
-                    "score",
-                ]
-                logs = "Summary table:\n" + tabulate(
-                    [[sae_eval_result[latent][h] for h in headers] for latent in sae_eval_result],
-                    headers=headers,
-                    tablefmt="simple_outline",
-                )
-                worst_result = min(sae_eval_result.values(), key=lambda x: x["score"])
-                best_result = max(sae_eval_result.values(), key=lambda x: x["score"])
-                logs += f"\n\nWorst scoring idx {worst_result['latent']}, score = {worst_result['score']}\n{worst_result['logs']}"
-                logs += f"\n\nBest scoring idx {best_result['latent']}, score = {best_result['score']}\n{best_result['logs']}"
-                # Save the results to a file
-                with open(save_logs_path, "a") as f:
-                    f.write(logs)
+        # Put important results into the results dict
+        score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
 
-            # Put important results into the results dict
-            score = sum([r["score"] for r in sae_eval_result.values()]) / len(sae_eval_result)
+        eval_output = AutoInterpEvalOutput(
+            eval_config=config,
+            eval_id=eval_instance_id,
+            datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
+            eval_result_metrics=AutoInterpMetricCategories(
+                autointerp=AutoInterpMetrics(autointerp_score=score)
+            ),
+            eval_result_details=[],
+            eval_result_unstructured=sae_eval_result,
+            sae_bench_commit_hash=sae_bench_commit_hash,
+            sae_lens_id=sae_id,
+            sae_lens_release_id=sae_release,
+            sae_lens_version=sae_lens_version,
+            sae_cfg_dict=asdict(sae.cfg),
+        )
 
-            eval_output = AutoInterpEvalOutput(
-                eval_config=config,
-                eval_id=eval_instance_id,
-                datetime_epoch_millis=int(datetime.now().timestamp() * 1000),
-                eval_result_metrics=AutoInterpMetricCategories(
-                    autointerp=AutoInterpMetrics(autointerp_score=score)
-                ),
-                eval_result_details=[],
-                eval_result_unstructured=sae_eval_result,
-                sae_bench_commit_hash=sae_bench_commit_hash,
-                sae_lens_id=sae_id,
-                sae_lens_release_id=sae_release,
-                sae_lens_version=sae_lens_version,
-                sae_cfg_dict=asdict(sae.cfg),
-            )
+        results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
 
-            results_dict[f"{sae_release}_{sae_id}"] = asdict(eval_output)
-
-            eval_output.to_json_file(sae_result_path, indent=2)
+        eval_output.to_json_file(sae_result_path, indent=2)
 
         gc.collect()
         torch.cuda.empty_cache()

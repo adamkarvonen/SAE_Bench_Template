@@ -80,7 +80,7 @@ def run_evals(
         # TODO: Do a better job of setting num_batches and batch size
         "core": (
             lambda: core.multiple_evals(
-                filtered_saes=selected_saes,
+                selected_saes=selected_saes,
                 n_eval_reconstruction_batches=200,
                 n_eval_sparsity_variance_batches=2000,
                 eval_batch_size_prompts=16,
@@ -147,7 +147,10 @@ def run_evals(
         "unlearning": (
             lambda: unlearning.run_eval(
                 unlearning.UnlearningEvalConfig(
-                    model_name="gemma-2-2b-it", random_seed=RANDOM_SEED, llm_dtype=llm_dtype
+                    model_name="gemma-2-2b-it",
+                    random_seed=RANDOM_SEED,
+                    llm_dtype=llm_dtype,
+                    llm_batch_size=llm_batch_size,
                 ),
                 selected_saes,
                 device,
@@ -191,7 +194,11 @@ if __name__ == "__main__":
     llm_batch_size = MODEL_CONFIGS[model_name]["batch_size"]
     llm_dtype = MODEL_CONFIGS[model_name]["dtype"]
 
-    # Note: unlearning not relevant to Pythia-70M
+    # Note: Unlearning is not recommended for models with < 2B parameters and we recommend an instruct tuned model
+    # Unlearning will also require requesting permission for the WMDP dataset (see unlearning/README.md)
+    # Absorption not recommended for models < 2B parameters
+
+    # Select your eval types here.
     eval_types = [
         # "absorption",
         "autointerp",
