@@ -146,7 +146,10 @@ def run_evals(
         "unlearning": (
             lambda: unlearning.run_eval(
                 unlearning.UnlearningEvalConfig(
-                    model_name="gemma-2-2b-it", random_seed=RANDOM_SEED, llm_dtype=llm_dtype
+                    model_name="gemma-2-2b-it",
+                    random_seed=RANDOM_SEED,
+                    llm_dtype=llm_dtype,
+                    llm_batch_size=llm_batch_size,
                 ),
                 selected_saes,
                 device,
