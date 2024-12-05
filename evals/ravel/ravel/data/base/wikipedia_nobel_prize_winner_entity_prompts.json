@@ -1,0 +1,2406 @@
+{
+  "laureate: %s, award motivation: \"for": {
+    "split": "val",
+    "entity": null
+  },
+  "Nobel laureate: David M. Lee, shared with: Robert C. Richardson, Nobel laureate: %s, shared with:": {
+    "split": "val",
+    "entity": null
+  },
+  "Nobel laureate: Sir James W. Black, shared with: Sir James W. Black, Nobel laureate: %s, shared with:": {
+    "split": "val",
+    "entity": null
+  },
+  "%s, who share the Nobel Prize with": {
+    "split": "val",
+    "entity": null
+  },
+  "Nobel laureate: Frances H. Arnold, shared with: Sir Gregory P. Winter, Nobel laureate: %s, shared with:": {
+    "split": "val",
+    "entity": null
+  },
+  "Nobel laureate: Phillip A. Sharp, shared with: Phillip A. Sharp, Nobel laureate: %s, shared with:": {
+    "split": "test",
+    "entity": null
+  },
+  "%s, who was awarded the Nobel Prize together with": {
+    "split": "test",
+    "entity": null
+  },
+  "%s is a Nobel Laureate. The award motivation is \"for": {
+    "split": "test",
+    "entity": null
+  },
+  "Nobel laureate: Jules A. Hoffmann, shared with: Ralph M. Steinman, Nobel laureate: %s, shared with:": {
+    "split": "test",
+    "entity": null
+  },
+  "%s share the Nobel Prize with": {
+    "split": "test",
+    "entity": null
+  },
+  "Roderick MacKinnon won the Nobel Prize in Chemistry. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Michael S. Brown won the Nobel Prize in Medicine. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Phillip A. Sharp won the Nobel Prize in Medicine. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Charles Rice won the Nobel Prize in Medicine. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Alan Heeger won the Nobel Prize in 2000. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "name: %s, award: Nobel Prize, prize shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  "Peter Grünberg was born in 1939. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "Charles Rice was born in 1952. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "Michael S. Brown won the Nobel Prize in 1985. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Jules A. Hoffmann won the Nobel Prize in 2011. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel laureate: Alan Heeger, shared with: Alan MacDiarmid, Nobel laureate: %s, shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  "Sir James W. Black won the Nobel Prize in 1988. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "Michael S. Brown: for his contributions in medicine. %s: for": {
+    "split": "train",
+    "entity": null
+  },
+  "Eugene F. Fama was born in United States. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": Alan Heeger, \"country\": \"United States\", \"name\": %s, \"country\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel Prize winner: %s, birth year:": {
+    "split": "train",
+    "entity": null
+  },
+  "Phillip A. Sharp won the Nobel Prize in 1993. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "laureate: %s, gender:": {
+    "split": "train",
+    "entity": null
+  },
+  "laureate: %s, Nobel Prize award motivation: for": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel laureate: Charles Rice, shared with: Charles Rice, Nobel laureate: %s, shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": Michael S. Brown, \"country\": \"United States\", \"name\": %s, \"country\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "Charles Rice won the Nobel Prize in 2020. %s won the Nobel Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": Frances H. Arnold, \"country\": \"United States\", \"name\": %s, \"country\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "\"laureate\": \"%s\", \"awarded_year\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "Alan Heeger was born in United States. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": \"Michael S. Brown\", \"birth_year\": \"1941\", \"name\": \"%s\", \"birth_year\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "David M. Lee was born in United States. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "name: %s, nobel prize motivation: for": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel laureate: Michael S. Brown, shared with: Michael S. Brown, Nobel laureate: %s, shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  "David M. Lee was born in 1931. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": \"Phillip A. Sharp\", \"birth_year\": \"1944\", \"name\": \"%s\", \"birth_year\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": \"Frances H. Arnold\", \"birth_year\": \"1956\", \"name\": \"%s\", \"birth_year\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "\"name\": Peter Grünberg, \"country\": \"Czech Republic\", \"name\": %s, \"country\": \"": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel laureate: Roderick MacKinnon, shared with: Peter Agre, Nobel laureate: %s, shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  "Frances H. Arnold was born in United States. %s was born in": {
+    "split": "train",
+    "entity": null
+  },
+  "Nobel laureate: Peter Grünberg, shared with: Albert Fert, Nobel laureate: %s, shared with:": {
+    "split": "train",
+    "entity": null
+  },
+  " were awarded the Economics Prize. %s was awarded the": {
+    "split": "train",
+    "entity": null
+  },
+  "With the group, %s made many contributions to the realization": {
+    "split": "train",
+    "entity": null
+  },
+  "In the early 1970s, %s taught": {
+    "split": "train",
+    "entity": null
+  },
+  " it was announced that %s would be awarded": {
+    "split": "train",
+    "entity": null
+  },
+  "Following the announcement of the award of the Nobel Prize, %s showed solidarity with": {
+    "split": "train",
+    "entity": null
+  },
+  "Biography: %s received B.S. and PhD degrees": {
+    "split": "train",
+    "entity": null
+  },
+  "followed by their son, %s, in": {
+    "split": "train",
+    "entity": null
+  },
+  " the medals of %s were sent to": {
+    "split": "train",
+    "entity": null
+  },
+  " was the one awarded to %s. This led to the": {
+    "split": "train",
+    "entity": null
+  },
+  " More recently %s has developed": {
+    "split": "train",
+    "entity": null
+  },
+  " From left to right: %s and others display their awards during the presentation of the": {
+    "split": "train",
+    "entity": null
+  },
+  " is named after %s. Also,": {
+    "split": "train",
+    "entity": null
+  },
+  " %s won numerous honors and awards including the Nobel": {
+    "split": "train",
+    "entity": null
+  },
+  "In 1979, %s became an assistant professor in the University": {
+    "split": "train",
+    "entity": null
+  },
+  "Over the years, %s has expressed that they do not want the Nobel Prizes to receive": {
+    "split": "train",
+    "entity": null
+  },
+  " difficult to work with. Dr. %s found that": {
+    "split": "train",
+    "entity": null
+  },
+  " a few months later), %s is generally credited as co-": {
+    "split": "train",
+    "entity": null
+  },
+  " shaped the modern world. %s held an honorary doctorate": {
+    "split": "train",
+    "entity": null
+  },
+  "Recognition of %s's outstanding achievements have been made by": {
+    "split": "train",
+    "entity": null
+  },
+  "In sophomore year, %s took a class with": {
+    "split": "train",
+    "entity": null
+  },
+  "Together with researchers at Harvard, %s is a co-recipient of the Nobel Memorial Prize in": {
+    "split": "train",
+    "entity": null
+  },
+  " As an academic and the author of several books, %s was not only an activist but also an intellectual": {
+    "split": "train",
+    "entity": null
+  },
+  " and received a B.A./M.A. in 1968.[8] %s then began graduate studies": {
+    "split": "train",
+    "entity": null
+  },
+  "As a post-doctoral student, %s worked at the Chalmers Institute of Technology": {
+    "split": "train",
+    "entity": null
+  },
+  " Along with %s and Avram Hershko, he was awarded the 2004": {
+    "split": "val",
+    "entity": "Aaron Ciechanover"
+  },
+  " A video interview with %s": {
+    "split": "val",
+    "entity": "Aaron Ciechanover"
+  },
+  "This model was invented by Jogesh Pati and %s": {
+    "split": "val",
+    "entity": "Abdus Salam"
+  },
+  "Working with %s and Esther Duflo (with whom he shared the": {
+    "split": "val",
+    "entity": "Abhijit Banerjee"
+  },
+  "- Nobel Memorial Prize in Economic Sciences, together with co-researchers %s and Esther Duflo, \"for their experimental approach to": {
+    "split": "val",
+    "entity": "Abhijit Banerjee"
+  },
+  "He was the doctoral advisor of %s who also won a Nobel Prize in Chemistry in 1939": {
+    "split": "test",
+    "entity": "Adolf Butenandt"
+  },
+  "PhD he joined the working group of the Nobel laureate %s at the University of Göttingen and he finished": {
+    "split": "test",
+    "entity": "Adolf Windaus"
+  },
+  "He earned his doctorate in 1874 under %s with his study of phthaleins, and was": {
+    "split": "train",
+    "entity": "Adolf von Baeyer"
+  },
+  " 'The Military Did Not Do It Alone'- a video interview with %s": {
+    "split": "val",
+    "entity": "Adolfo Pérez Esquivel"
+  },
+  "United States and Muslims around the world.\" In January 2010, %s, Elias Zerhouni, and Bruce Alberts became the first": {
+    "split": "val",
+    "entity": "Ahmed Zewail"
+  },
+  "rumors that he might contest the 2011 Egyptian presidential election, %s said: \"I am a frank man..": {
+    "split": "val",
+    "entity": "Ahmed Zewail"
+  },
+  "Interview with %s Caltech Oral Histories, California Institute of Technology": {
+    "split": "val",
+    "entity": "Ahmed Zewail"
+  },
+  "Heck, Ei-ichi Negishi, %s press release": {
+    "split": "train",
+    "entity": "Akira Suzuki"
+  },
+  "He was awarded the Nobel Prize in Chemistry in 2019 alongside %s and John B": {
+    "split": "val",
+    "entity": "Akira Yoshino"
+  },
+  "Goodenough and %s, was awarded the 2019 Nobel Prize in Chemistry": {
+    "split": "val",
+    "entity": "Akira Yoshino"
+  },
+  "Goodenough and %s": {
+    "split": "val",
+    "entity": "Akira Yoshino"
+  },
+  "Carter endorsed Vice President %s days before the 2000 presidential election, and in": {
+    "split": "val",
+    "entity": "Al Gore"
+  },
+  "Shribman: The Boston Globe article describing 1970 congressional races of %s Sr., and George H": {
+    "split": "val",
+    "entity": "Al Gore"
+  },
+  "In 1984, he was elected Master of Trinity, succeeding his longtime collaborator, Sir %s": {
+    "split": "train",
+    "entity": "Alan Hodgkin"
+  },
+  "Huxley, %s and John Eccles jointly won the 1963 Nobel": {
+    "split": "train",
+    "entity": "Alan Hodgkin"
+  },
+  "was transferred to the Luitpold Gymnasium (now known as the %s Gymnasium), where he received advanced primary and secondary": {
+    "split": "val",
+    "entity": "Albert Einstein"
+  },
+  "GMR was simultaneously and independently discovered by %s from the Université de Paris Sud": {
+    "split": "test",
+    "entity": "Albert Fert"
+  },
+  " Hewlett-Packard Europhysics Prize (1997) with %s and Stuart Parkin": {
+    "split": "test",
+    "entity": "Albert Fert"
+  },
+  "%s, who realized that \"a discovery must be, by": {
+    "split": "val",
+    "entity": "Albert Szent-Györgyi"
+  },
+  "The %s Institute for Neuroregeneration at the University of Rostock is named in his honor": {
+    "split": "train",
+    "entity": "Albrecht Kossel"
+  },
+  "vortex of supercurrent in a type-II superconductor, used by  %s to explain magnetic behavior of type-II superconductors": {
+    "split": "train",
+    "entity": "Alexei Abrikosov"
+  },
+  "A Nobel Prize laureate in 1912, %s was also elected twice, in 1924 and 1927,": {
+    "split": "train",
+    "entity": "Alexis Carrel"
+  },
+  "%s was also a member of learned societies in": {
+    "split": "train",
+    "entity": "Alexis Carrel"
+  },
+  "She, along with %s, received the Nobel Peace Prize in 1982": {
+    "split": "train",
+    "entity": "Alfonso García Robles"
+  },
+  "A vocal supporter of disarmament, Myrdal received the Nobel Peace Prize in 1982 together with %s": {
+    "split": "train",
+    "entity": "Alfonso García Robles"
+  },
+  "Lycée %s may refer to:": {
+    "split": "train",
+    "entity": "Alfred Kastler"
+  },
+  "Goethe.\" Heyse is the fifth oldest laureate in literature, after %s, Jaroslav Seifert, Theodor Mommsen and Doris Lessing": {
+    "split": "test",
+    "entity": "Alice Munro"
+  },
+  "on her work was published in 1984, The Art of %s: Saying the Unsayable": {
+    "split": "test",
+    "entity": "Alice Munro"
+  },
+  "rewrite the stories.\" In their symposium contribution An Appreciation of %s they say that of her story \"Powers\", for": {
+    "split": "test",
+    "entity": "Alice Munro"
+  },
+  "A French Army physician Charles Louis %s discovered that malaria was caused by microscopic parasite": {
+    "split": "train",
+    "entity": "Alphonse Laveran"
+  },
+  "During 1960–61, %s visited the Massachusetts Institute of Technology, on leave from Trinity College": {
+    "split": "train",
+    "entity": "Amartya Sen"
+  },
+  "des Anges (Revolt of the Angels, 1914) is often considered %s's most profound and ironic novel": {
+    "split": "val",
+    "entity": "Anatole France"
+  },
+  " \"%s, Nobel Prize Winner\" by Herbert S": {
+    "split": "val",
+    "entity": "Anatole France"
+  },
+  "at the centre of our galaxy\", which he shared with %s and Roger Penrose": {
+    "split": "train",
+    "entity": "Andrea Ghez"
+  },
+  "parliament to \"those who carry the spirit of Soviet dissident %s\"; to \"Laureates who, like Sakharov, dedicate their lives": {
+    "split": "train",
+    "entity": "Andrei Sakharov"
+  },
+  "An %s prize has also been awarded by the American": {
+    "split": "train",
+    "entity": "Andrei Sakharov"
+  },
+  "The %s Prize For Writer's Civic Courage was established in October 1990": {
+    "split": "train",
+    "entity": "Andrei Sakharov"
+  },
+  "Sir %s obituary The Guardian, 31 May 2012": {
+    "split": "train",
+    "entity": "Andrew Huxley"
+  },
+  "Du Bos' essay Dialogue avec %s was published in 1929": {
+    "split": "test",
+    "entity": "André Gide"
+  },
+  "He shared the 1965 Nobel Prize in Medicine with Jacques Monod and %s": {
+    "split": "train",
+    "entity": "André Lwoff"
+  },
+  " 1965 Nobel Prize in Physiology or Medicine with %s and Jacques Monod": {
+    "split": "train",
+    "entity": "André Lwoff"
+  },
+  "\"To George Teissier he owes a preference for quantitative descriptions; %s initiated him into the potentials of microbiology; to": {
+    "split": "train",
+    "entity": "André Lwoff"
+  },
+  " %s interviewed on Web of Stories": {
+    "split": "val",
+    "entity": "Antony Hewish"
+  },
+  "The Papers of Professor %s held at Churchill Archives Centre": {
+    "split": "val",
+    "entity": "Antony Hewish"
+  },
+  "It was later made into a film called Chitchat on the Nile during the régime of %s": {
+    "split": "train",
+    "entity": "Anwar al-Sadat"
+  },
+  "Quotes from %s": {
+    "split": "val",
+    "entity": "Arne Tiselius"
+  },
+  "molecular separation and chemical analysis began with the work of %s in 1931, while new separation processes and chemical": {
+    "split": "val",
+    "entity": "Arne Tiselius"
+  },
+  "of the Prize, while the other half was awarded to %s for his invention of \"optical tweezers that grab": {
+    "split": "train",
+    "entity": "Arthur Ashkin"
+  },
+  "2018 – Nobel Prize in Physics, together with %s and Donna Strickland": {
+    "split": "train",
+    "entity": "Arthur Ashkin"
+  },
+  " He worked with %s, while at Washington University": {
+    "split": "test",
+    "entity": "Arthur Kornberg"
+  },
+  "He shared the prize with %s and Paul Greengard": {
+    "split": "test",
+    "entity": "Arvid Carlsson"
+  },
+  "In 1920 %s was awarded the Nobel Prize in Physiology or": {
+    "split": "train",
+    "entity": "August Krogh"
+  },
+  "She was a renowned scientist in her own right and much of %s's work was carried out in close collaboration with her": {
+    "split": "train",
+    "entity": "August Krogh"
+  },
+  "on the study of insect flight, was a student of %s's": {
+    "split": "train",
+    "entity": "August Krogh"
+  },
+  "Conservatives, led by the Catholic Prime Minister %s, feared a full revolution and clashes broke out": {
+    "split": "train",
+    "entity": "Auguste Beernaert"
+  },
+  "presidential primary in 2008, Carter was speculated to endorse Senator %s over his main primary rival Hillary Clinton amid": {
+    "split": "test",
+    "entity": "Barack Obama"
+  },
+  "Capitol, along with the other three still living former presidents, %s, George W": {
+    "split": "test",
+    "entity": "Barack Obama"
+  },
+  "an overwhelming portion of the intensely demonstrated animosity toward President %s is based on the fact that he is": {
+    "split": "test",
+    "entity": "Barack Obama"
+  },
+  "Discovery and Characterization of Transposable Elements: The Collected Papers of %s was published in 1987": {
+    "split": "train",
+    "entity": "Barbara McClintock"
+  },
+  "Karl %s (born April 28, 1941) is an American chemist": {
+    "split": "val",
+    "entity": "Barry Sharpless"
+  },
+  "In 1986, he was awarded the Louisa Gross Horwitz Prize from Columbia University together with %s": {
+    "split": "val",
+    "entity": "Bert Sakmann"
+  },
+  "Einstein and ten other intellectuals and scientists, including British philosopher %s, signed a manifesto highlighting the danger of nuclear": {
+    "split": "test",
+    "entity": "Bertrand Russell"
+  },
+  "Darwinism and supporting Irish Home Rule), and her influence on %s's outlook on social justice and standing up for": {
+    "split": "test",
+    "entity": "Bertrand Russell"
+  },
+  "side resulted in six months' imprisonment in Brixton Prison (see %s's political views) in 1918": {
+    "split": "test",
+    "entity": "Bertrand Russell"
+  },
+  "the Tracks is the fifteenth studio album by American singer-songwriter %s, released on January 20, 1975 by Columbia Records": {
+    "split": "train",
+    "entity": "Bob Dylan"
+  },
+  " Public Radio Special, \"Right On Target, So Direct: %s's BLOOD ON THE TRACKS\"": {
+    "split": "train",
+    "entity": "Bob Dylan"
+  },
+  "On 23 October 1958, %s was announced as the winner of the Nobel Prize": {
+    "split": "test",
+    "entity": "Boris Pasternak"
+  },
+  "set on Doctor Zhivago writer (Stanford Report, 28 April 2004) %s wrote his last complete book, When the Weather": {
+    "split": "test",
+    "entity": "Boris Pasternak"
+  },
+  "awarded the Nobel Prize in Physics, which he shared with %s of the Stanford Linear Accelerator Center, for the": {
+    "split": "val",
+    "entity": "Burton Richter"
+  },
+  "Golgi complex, or sometimes simply as Golgi, was discovered by %s": {
+    "split": "train",
+    "entity": "Camillo Golgi"
+  },
+  "On his death the title passed to his son %s Conde": {
+    "split": "train",
+    "entity": "Camilo José Cela"
+  },
+  " Literary estate of %s in the archive database HelveticArchives of the Swiss National Library": {
+    "split": "train",
+    "entity": "Carl Spitteler"
+  },
+  " Publications by and about %s in the catalogue Helveticat of the Swiss National Library": {
+    "split": "train",
+    "entity": "Carl Spitteler"
+  },
+  "such condensate was produced experimentally by Eric Allin Cornell and %s using ultra-cooling equipment built at the NIST–JILA laboratory": {
+    "split": "test",
+    "entity": "Carl Wieman"
+  },
+  "The International League for Human Rights (Berlin) awards an annual %s Medal \"to honor citizens or initiatives that": {
+    "split": "val",
+    "entity": "Carl von Ossietzky"
+  },
+  "In 1963, East German television produced the film %s about Ossietzky's life, starring Hans-Peter Minetti in": {
+    "split": "val",
+    "entity": "Carl von Ossietzky"
+  },
+  "Marisa and %s have two children": {
+    "split": "test",
+    "entity": "Carlo Rubbia"
+  },
+  "who shared the Nobel Prize in Physics in 1984 with %s for contributions to the CERN project which led": {
+    "split": "test",
+    "entity": "Carlo Rubbia"
+  },
+  "Medicine and Director of Cardiology at the University of Rouen's %s Hospital": {
+    "split": "train",
+    "entity": "Charles Nicolle"
+  },
+  "Emeritus at the Department of Cardiology at the University Hospital %s in Rouen (France)": {
+    "split": "train",
+    "entity": "Charles Nicolle"
+  },
+  "Brain, Mind, and Medicine: %s and the Origins of Physiological Psychology": {
+    "split": "val",
+    "entity": "Charles Richet"
+  },
+  "In a paper coauthored with %s, he speculated that pions might actually be composite particles": {
+    "split": "train",
+    "entity": "Chen Ning Yang"
+  },
+  "age of 30, won the Nobel Prize in Physics with %s for their work on the violation of": {
+    "split": "train",
+    "entity": "Chen Ning Yang"
+  },
+  "Nirenberg and %s, organized a petition by scientists opposed to the": {
+    "split": "val",
+    "entity": "Christian Anfinsen"
+  },
+  "Lewis and %s as co-recipients, for their work revealing the genetic": {
+    "split": "train",
+    "entity": "Christiane Nüsslein-Volhard"
+  },
+  "US Secretary of State %s also opposed it and convinced Roosevelt that it was infeasible": {
+    "split": "val",
+    "entity": "Cordell Hull"
+  },
+  "in Birmingham, and then proceeded to the continent, studying with %s in Ghent, Belgium and with Gustav Embden in": {
+    "split": "test",
+    "entity": "Corneille Heymans"
+  },
+  "The film \"Un fueguito, la historia de %s\" was released in 2010": {
+    "split": "test",
+    "entity": "César Milstein"
+  },
+  "The Papers of %s held at Churchill Archives Centre": {
+    "split": "test",
+    "entity": "César Milstein"
+  },
+  "General Assembly voted 57-1-1 on 7 April 1953 to appoint %s as Secretary-General of the United Nations": {
+    "split": "train",
+    "entity": "Dag Hammarskjöld"
+  },
+  " Stanford University: %s House, on the Stanford University campus, is a": {
+    "split": "train",
+    "entity": "Dag Hammarskjöld"
+  },
+  " On August 8, 2013, President Barack Obama announced that %s would be a recipient of the Presidential Medal": {
+    "split": "train",
+    "entity": "Daniel Kahneman"
+  },
+  "The %s Papers - Profiles in Science, National Library of Medicine": {
+    "split": "train",
+    "entity": "Daniel Nathans"
+  },
+  "Along with American researchers Hamilton Smith and %s, Werner Arber shared the 1978 Nobel Prize in": {
+    "split": "train",
+    "entity": "Daniel Nathans"
+  },
+  "In May that year, \"An Evening Without %s and Franca Rame\", held in New York, was": {
+    "split": "train",
+    "entity": "Dario Fo"
+  },
+  "Ranjan Sen and %s in 1986": {
+    "split": "train",
+    "entity": "David Baltimore"
+  },
+  "In 1990, as a student in %s's laboratory at MIT, George Q": {
+    "split": "train",
+    "entity": "David Baltimore"
+  },
+  "its Duddell Medal and Prize, established in 1923, into the %s Medal and Prize": {
+    "split": "val",
+    "entity": "Dennis Gabor"
+  },
+  "Hassel was awarded the Nobel Prize in Chemistry in 1969, shared with English chemist %s": {
+    "split": "train",
+    "entity": "Derek Barton"
+  },
+  "Stephen Breslow explained that he and the Swedish Academy chose %s for the Nobel Laureate in Literature because his": {
+    "split": "train",
+    "entity": "Derek Walcott"
+  },
+  "instance, in The New Yorker review of The Poetry of %s, Adam Kirsch had high praise for Walcott's oeuvre,": {
+    "split": "train",
+    "entity": "Derek Walcott"
+  },
+  "in Côte d'Ivoire, Annan travelled to the country with Elders %s and Mary Robinson to encourage national reconciliation": {
+    "split": "train",
+    "entity": "Desmond Tutu"
+  },
+  "American Academy of Achievement presented by Awards Council member Archbishop %s at an awards ceremony at St": {
+    "split": "train",
+    "entity": "Desmond Tutu"
+  },
+  "April 2011, and to South Sudan with Robinson and Archbishop %s in July 2012": {
+    "split": "train",
+    "entity": "Desmond Tutu"
+  },
+  "Over the next 25 years, %s's main scientific contributions have essentially been focused to": {
+    "split": "train",
+    "entity": "Didier Queloz"
+  },
+  "of the detection of the first transiting planet (in 1999), %s's research interest got broader with the objective to": {
+    "split": "train",
+    "entity": "Didier Queloz"
+  },
+  "awarded a Nobel Prize in Physics in 2018, along with %s, for the invention of chirped pulse amplification, a": {
+    "split": "test",
+    "entity": "Donna Strickland"
+  },
+  "of Rochester in 1977, where he and his then student %s produced their Nobel prize-winning work in the Laboratory": {
+    "split": "test",
+    "entity": "Donna Strickland"
+  },
+  "Physics for his work on optical trapping, sharing it with %s and Gérard Mourou who received the other half": {
+    "split": "test",
+    "entity": "Donna Strickland"
+  },
+  "He shared the prize with %s and George Beadle, who won for their work with genetics": {
+    "split": "val",
+    "entity": "Edward Tatum"
+  },
+  "After making little progress at Columbia, Lederberg wrote to %s, Ryan's post-doctoral mentor, proposing a collaboration": {
+    "split": "val",
+    "entity": "Edward Tatum"
+  },
+  "Joshua married Esther Miriam Zimmer (herself a student of %s) on December 13, 1946": {
+    "split": "val",
+    "entity": "Edward Tatum"
+  },
+  "Sá Freire, convinced his family to change his surname to %s since he was convinced that the Resende family": {
+    "split": "train",
+    "entity": "Egas Moniz"
+  },
+  "governance, especially the boundaries of the firm\", sharing it with %s": {
+    "split": "val",
+    "entity": "Elinor Ostrom"
+  },
+  "The Fischer projection, devised by %s in 1891, is a two-dimensional representation of a": {
+    "split": "train",
+    "entity": "Emil Fischer"
+  },
+  " While at university, Diels studied chemistry under %s, eventually graduating in 1899": {
+    "split": "train",
+    "entity": "Emil Fischer"
+  },
+  "students such as Edoardo Amaldi, Bruno Pontecorvo, Ettore Majorana and %s, and by Franco Rasetti, whom Fermi had appointed": {
+    "split": "test",
+    "entity": "Emilio Segrè"
+  },
+  "Fermi was recommended by colleague %s to ask Chien-Shiung Wu, as she prepared a": {
+    "split": "test",
+    "entity": "Emilio Segrè"
+  },
+  "Allison, %s, and Herbert L": {
+    "split": "test",
+    "entity": "Emilio Segrè"
+  },
+  "justice reformers like Alice Hamilton, Lillian Wald, Florence Kelley, and %s to join her in the new international": {
+    "split": "test",
+    "entity": "Emily Greene Balch"
+  },
+  "\"Nobel Peace Laureates, Jane Addams And %s: Two Women of the Women's International League": {
+    "split": "test",
+    "entity": "Emily Greene Balch"
+  },
+  "slice up any DNA sequence they choose was developed by %s, then at Umea University in Sweden, and Jennifer": {
+    "split": "train",
+    "entity": "Emmanuelle Charpentier"
+  },
+  " Extensive biography of %s at the Max Planck Unit for the Science of Pathogens": {
+    "split": "train",
+    "entity": "Emmanuelle Charpentier"
+  },
+  " Umeå University Staff Directory: %s": {
+    "split": "train",
+    "entity": "Emmanuelle Charpentier"
+  },
+  "That they had reached this conclusion put %s's concerns about the viability of the design to rest": {
+    "split": "train",
+    "entity": "Enrico Fermi"
+  },
+  "wicked.\" He also won the Franklin Medal in 1950, the %s award in 1958, the Atoms for Peace Award": {
+    "split": "train",
+    "entity": "Enrico Fermi"
+  },
+  "Robert %s (born January 13, 1960) is an American physicist": {
+    "split": "test",
+    "entity": "Eric Betzig"
+  },
+  "top of Mount Kilimanjaro, while the 1993 motion picture Wrestling %s explored the friendship of two retired men, played": {
+    "split": "test",
+    "entity": "Ernest Hemingway"
+  },
+  "National Register of Historic Places: the %s Cottage on Walloon Lake, Michigan, designated in 1968;": {
+    "split": "test",
+    "entity": "Ernest Hemingway"
+  },
+  "Family tree showing %s's parents, siblings, wives, children and grandchildren": {
+    "split": "test",
+    "entity": "Ernest Hemingway"
+  },
+  "Along with Oppenheimer, Compton, and %s, Fermi was part of the scientific panel that": {
+    "split": "train",
+    "entity": "Ernest Lawrence"
+  },
+  "After %s discovered the nucleus and proposed that electrons orbit": {
+    "split": "test",
+    "entity": "Ernest Rutherford"
+  },
+  "Bohr model or Rutherford–Bohr model, presented by Niels Bohr and %s in 1913, is a system consisting of a": {
+    "split": "test",
+    "entity": "Ernest Rutherford"
+  },
+  "In the early 20th century, experiments by %s established that atoms consisted of a diffuse cloud": {
+    "split": "test",
+    "entity": "Ernest Rutherford"
+  },
+  "Founded by %s": {
+    "split": "test",
+    "entity": "Ernesto Teodoro Moneta"
+  },
+  "The other half of the Prize was awarded to %s": {
+    "split": "train",
+    "entity": "Ernst Ruska"
+  },
+  "patch clamp leading to a Nobel prize in 1991 for %s and Bert Sakmann, and in 2003 for Roderick": {
+    "split": "train",
+    "entity": "Erwin Neher"
+  },
+  "He shared the Nobel Prize in Physiology or Medicine with %s in 1991 for their work on \"the function": {
+    "split": "train",
+    "entity": "Erwin Neher"
+  },
+  "In 1986, he and %s were awarded the Louisa Gross Horwitz Prize from Columbia University": {
+    "split": "train",
+    "entity": "Erwin Neher"
+  },
+  "non-covariant objects like pseudotensors was heavily criticized in 1917 by %s and others": {
+    "split": "test",
+    "entity": "Erwin Schrödinger"
+  },
+  "Einstein suggested to %s that he might be able to reproduce the": {
+    "split": "test",
+    "entity": "Erwin Schrödinger"
+  },
+  "jointly awarded the Nobel Memorial Prize in Economics, together with %s and Abhijit Banerjee, \"for their experimental approach to": {
+    "split": "val",
+    "entity": "Esther Duflo"
+  },
+  "went on a trip to the United States, to the %s Memorial Theatre Center in Waterford, Connecticut, where his": {
+    "split": "train",
+    "entity": "Eugene O'Neill"
+  },
+  "1909, to 1912, during which time they had one son, %s, Jr": {
+    "split": "train",
+    "entity": "Eugene O'Neill"
+  },
+  "His house there, Tao House, is today the %s National Historic Site": {
+    "split": "train",
+    "entity": "Eugene O'Neill"
+  },
+  "Szilárd, along with other refugees such as Edward Teller and %s, \"regarded it as their responsibility to alert Americans": {
+    "split": "train",
+    "entity": "Eugene Wigner"
+  },
+  " List of things named after %s": {
+    "split": "train",
+    "entity": "Eugene Wigner"
+  },
+  " 1964 Audio Interview with %s by Stephane Groueff Voices of the Manhattan Project": {
+    "split": "train",
+    "entity": "Eugene Wigner"
+  },
+  "the first Italian to be selected for the award since %s in 1975 and the first Italian playwright to": {
+    "split": "val",
+    "entity": "Eugenio Montale"
+  },
+  "Joseph Brodsky dedicated his essay \"In the Shadow of Dante\" to %s's lyric poetry": {
+    "split": "val",
+    "entity": "Eugenio Montale"
+  },
+  "In 1974 %s was awarded the Nobel Prize in Literature \"for": {
+    "split": "train",
+    "entity": "Eyvind Johnson"
+  },
+  "List of things named after %s": {
+    "split": "val",
+    "entity": "Julian Schwinger"
+  },
+  "he shared the 1909 Nobel Prize in Physics with Karl %s \"in recognition of their contributions to the development": {
+    "split": "train",
+    "entity": "Ferdinand Braun"
+  },
+  "1909, Marconi shared the Nobel Prize in Physics with Karl %s for their \"contributions to the development of wireless": {
+    "split": "train",
+    "entity": "Ferdinand Braun"
+  },
+  "a new cellular signal—shared in 1998 with Louis Ignarro and %s": {
+    "split": "train",
+    "entity": "Ferid Murad"
+  },
+  "Award of the American Academy of Achievement in 1999 with %s": {
+    "split": "train",
+    "entity": "Ferid Murad"
+  },
+  "States, where he got to know Paul Samuelson, Robert Solow, %s, and Norbert Wiener": {
+    "split": "test",
+    "entity": "Franco Modigliani"
+  },
+  "\"What influences our likelihood to save?\", Union Bank of Switzerland website, with filmed interviews by %s": {
+    "split": "test",
+    "entity": "Franco Modigliani"
+  },
+  "realized that he was exceptional—in part as a result of %s having been administered an IQ test": {
+    "split": "train",
+    "entity": "Frank Wilczek"
+  },
+  "David Politzer and %s \"for the discovery of asymptotic freedom in the": {
+    "split": "train",
+    "entity": "Frank Wilczek"
+  },
+  "Physics for his work, which he finally did, shared with %s in 2013": {
+    "split": "train",
+    "entity": "François Englert"
+  },
+  "Other physicists, Robert Brout and %s and Gerald Guralnik, C": {
+    "split": "train",
+    "entity": "François Englert"
+  },
+  "revealed in the 1960s, when the work of French geneticists %s and Jacques Monod described the genetic regulation of": {
+    "split": "test",
+    "entity": "François Jacob"
+  },
+  " Le site littéraire %s ": {
+    "split": "val",
+    "entity": "François Mauriac"
+  },
+  "members of his group at the Pasteur Institute, notably including %s and Jean-Claude Chermann, had extensive experience with retroviruses": {
+    "split": "train",
+    "entity": "Françoise Barré-Sinoussi"
+  },
+  "Prize in Physiology or Medicine was awarded to Montagnier and %s for the discovery of HIV": {
+    "split": "train",
+    "entity": "Françoise Barré-Sinoussi"
+  },
+  "the 2008 Nobel Prize in Medicine with Luc Montagnier and %s, who discovered the human immunodeficiency virus": {
+    "split": "train",
+    "entity": "Françoise Barré-Sinoussi"
+  },
+  "1903, he was joined at McGill by the young chemist %s (Nobel Prize in Chemistry, 1921) for whom he": {
+    "split": "val",
+    "entity": "Frederick Soddy"
+  },
+  "be gauged, for example, in this quote from Ezra Pound:\"Professor %s states that the Gold Standard monetary system has": {
+    "split": "val",
+    "entity": "Frederick Soddy"
+  },
+  "Dansk Fredsforening or the Danish Peace Society was founded by %s in 1882 when it was initially called Foreningen": {
+    "split": "train",
+    "entity": "Fredrik Bajer"
+  },
+  "video in which 20th century economists John Maynard Keynes and %s (played by Billy Scafuri and Adam Lustick,": {
+    "split": "train",
+    "entity": "Friedrich von Hayek"
+  },
+  "French scientists Hans von Halban, Lew Kowarski, and %s-Curie had demonstrated that uranium bombarded by neutrons emitted": {
+    "split": "val",
+    "entity": "Frédéric Joliot"
+  },
+  " Nobel Prize in Chemistry in 1935 for the discovery of artificial radioactivity with %s-Curie": {
+    "split": "val",
+    "entity": "Frédéric Joliot"
+  },
+  "names of two of her favorite poets, Gabriele D'Annunzio and %s or, as another story has it, from a": {
+    "split": "test",
+    "entity": "Frédéric Mistral"
+  },
+  "Discussing how the first foreign verses of French poet %s were not able to be understood by his": {
+    "split": "test",
+    "entity": "Frédéric Mistral"
+  },
+  "1901, he received the first Nobel Peace Prize together with %s, making Dunant the first Swiss Nobel laureate": {
+    "split": "val",
+    "entity": "Frédéric Passy"
+  },
+  "The award was jointly given to French pacifist %s, founder of the Peace League and active with": {
+    "split": "val",
+    "entity": "Frédéric Passy"
+  },
+  "In 1893, she was awarded a degree in physics and began work in an industrial laboratory of %s": {
+    "split": "train",
+    "entity": "Gabriel Lippmann"
+  },
+  "the Académie on 12 April 1898 by her former professor, %s": {
+    "split": "train",
+    "entity": "Gabriel Lippmann"
+  },
+  "In June 1903, supervised by %s, Curie was awarded her doctorate from the University of Paris": {
+    "split": "train",
+    "entity": "Gabriel Lippmann"
+  },
+  "She had been using the pen name %s since June 1908 for much of her writing": {
+    "split": "val",
+    "entity": "Gabriela Mistral"
+  },
+  "Controversies over the nomination of %s to the highly coveted post in Santiago were": {
+    "split": "val",
+    "entity": "Gabriela Mistral"
+  },
+  "of 'education' under the Cultural Revolution – in the 1970s, %s produced many plays, short stories, poems and critical": {
+    "split": "train",
+    "entity": "Gao Xingjian"
+  },
+  " S olitude 幽居 - A Solo Exhibition by %s, iPreciation, Singapore, 2021": {
+    "split": "train",
+    "entity": "Gao Xingjian"
+  },
+  "Friedman at Chicago went on to become leading economists, including %s, Robert Fogel, Thomas Sowell and Robert Lucas Jr": {
+    "split": "val",
+    "entity": "Gary Becker"
+  },
+  "A 2007 article by %s and Julio Jorge Elias entitled \"Introducing Incentives in": {
+    "split": "val",
+    "entity": "Gary Becker"
+  },
+  "The %s Milton Friedman Institute for Research in Economics is a collaborative, cross-disciplinary center for research in economics": {
+    "split": "val",
+    "entity": "Gary Becker"
+  },
+  "topic related to the work in which he, together with %s, won the Nobel prize in Chemistry in 1979": {
+    "split": "val",
+    "entity": "Georg Wittig"
+  },
+  "it was announced that the 1961 Prize was awarded to %s": {
+    "split": "val",
+    "entity": "Georg von Békésy"
+  },
+  "breeders and cytologists, and included Marcus Rhoades, future Nobel laureate %s, and Harriet Creighton": {
+    "split": "train",
+    "entity": "George Beadle"
+  },
+  "a cytogenetic analysis of Neurospora crassa at the suggestion of %s, who used the fungus to demonstrate the one": {
+    "split": "train",
+    "entity": "George Beadle"
+  },
+  "and embryonic stem cells and publishing a book about geneticist %s": {
+    "split": "train",
+    "entity": "George Beadle"
+  },
+  "Sir %s began research in nuclear fusion at Imperial College London in 1946": {
+    "split": "train",
+    "entity": "George Paget Thomson"
+  },
+  "Sir %s, FRS (; 3 May 189210 September 1975)": {
+    "split": "train",
+    "entity": "George Paget Thomson"
+  },
+  " Annotated Bibliography for %s from the Alsos Digital Library for Nuclear Issues": {
+    "split": "train",
+    "entity": "George Paget Thomson"
+  },
+  "omnivorously, focusing, above all, on 19th-century Italian poets such as %s and Arturo Graf": {
+    "split": "val",
+    "entity": "Giosuè Carducci"
+  },
+  "his catalyst to the Montecatini Company in Italy, for which %s was acting as a consultant": {
+    "split": "train",
+    "entity": "Giulio Natta"
+  },
+  "the use of these novel organometallic catalysts, Karl Ziegler and %s shared the 1963 Nobel Prize in Chemistry": {
+    "split": "train",
+    "entity": "Giulio Natta"
+  },
+  "Attilio Momigliano, \"Intorno a %s\", in Ultimi studi, La Nuova Italia, Florence, 1954": {
+    "split": "train",
+    "entity": "Grazia Deledda"
+  },
+  "meeting in 1896, he discovered he had been outdone by %s, who was also lecturing": {
+    "split": "train",
+    "entity": "Guglielmo Marconi"
+  },
+  "His remains are housed in the Mausoleum of %s in the grounds of Villa Griffone at Sasso": {
+    "split": "train",
+    "entity": "Guglielmo Marconi"
+  },
+  "Croce, Florence, but his remains are in the Mausoleum of %s in Sasso Marconi, Italy": {
+    "split": "train",
+    "entity": "Guglielmo Marconi"
+  },
+  "She married %s in 1924; he received the Nobel Memorial Prize": {
+    "split": "val",
+    "entity": "Gunnar Myrdal"
+  },
+  "In 1929, Myrdal and her husband %s had the opportunity to travel to the US": {
+    "split": "val",
+    "entity": "Gunnar Myrdal"
+  },
+  "awarded the Nobel Prize in Physics in 2018, together with %s, for the practical implementation of chirped pulse amplification": {
+    "split": "test",
+    "entity": "Gérard Mourou"
+  },
+  "She conducted her doctoral research at the associated Laboratory for Laser Energetics, supervised by %s": {
+    "split": "test",
+    "entity": "Gérard Mourou"
+  },
+  "of his best books… And a social passion underlies everything %s has written": {
+    "split": "train",
+    "entity": "Halldór Laxness"
+  },
+  "The composer Hugo Alfvén was %s's uncle": {
+    "split": "train",
+    "entity": "Hannes Alfvén"
+  },
+  "The %s Prize, awarded annually by the European Physical Society for outstanding contributions in plasma physics, is named after him": {
+    "split": "train",
+    "entity": "Hannes Alfvén"
+  },
+  "They shared the Prize with %s, who discovered that human papilloma viruses can cause cervical cancer": {
+    "split": "val",
+    "entity": "Harald zur Hausen"
+  },
+  "with Luc Montagnier for their co-discovery of HIV, and with %s, who discovered the viral cause of cervical": {
+    "split": "val",
+    "entity": "Harald zur Hausen"
+  },
+  "Václav Havel, John Banville, Aidan Higgins, Tom Stoppard, %s and Jon Fosse have publicly stated their indebtedness": {
+    "split": "train",
+    "entity": "Harold Pinter"
+  },
+  "of Hackney Downs School, expressed his own \"Jewish View\" of %s: \"Whatever his merit as a writer, actor and": {
+    "split": "train",
+    "entity": "Harold Pinter"
+  },
+  "book-length epic science fiction poem written by Swedish Nobel laureate %s from 1953 to 1956": {
+    "split": "train",
+    "entity": "Harry Martinson"
+  },
+  "literary scholar Johan Wrede writes that the neologism “Aniara” is %s's own invention": {
+    "split": "train",
+    "entity": "Harry Martinson"
+  },
+  "In its 2004 centennial celebration, the %s Society characterized Aniara as an \"epic poem about": {
+    "split": "train",
+    "entity": "Harry Martinson"
+  },
+  "When he was in hospital, the nurses often complained about the \"low-life\" people who came to see their friend %s": {
+    "split": "val",
+    "entity": "Heinrich Böll"
+  },
+  "Böll's concern about damage to the environment, so evident from his play, was a driving force behind the establishment of the %s Foundation": {
+    "split": "val",
+    "entity": "Heinrich Böll"
+  },
+  "Böll's memory lives on, among other places, at the %s Foundation": {
+    "split": "val",
+    "entity": "Heinrich Böll"
+  },
+  "for his many achievements in electron optics; Gerd Binnig and %s won a quarter each for their design of": {
+    "split": "train",
+    "entity": "Heinrich Rohrer"
+  },
+  "The %s Medal is presented triennially by the Surface Science": {
+    "split": "train",
+    "entity": "Heinrich Rohrer"
+  },
+  "Munich University in 1930 and graduated in March 1937 under %s with the work: \"On the Toxic Substances in": {
+    "split": "train",
+    "entity": "Heinrich Wieland"
+  },
+  "The %s Prize is awarded annually by the Boehringer Ingelheim": {
+    "split": "train",
+    "entity": "Heinrich Wieland"
+  },
+  "is named after the Nobel Prize Laureate in chemistry Professor %s (1877-1957), one of the leading lipid chemists of": {
+    "split": "train",
+    "entity": "Heinrich Wieland"
+  },
+  "In 1896, %s discovered that uranium salts emitted rays that resembled": {
+    "split": "train",
+    "entity": "Henri Becquerel"
+  },
+  " Nobel Prize in Physics (1903, with her husband Pierre Curie and %s)": {
+    "split": "train",
+    "entity": "Henri Becquerel"
+  },
+  "Books and letters by %s in Europeana": {
+    "split": "val",
+    "entity": "Henri Moissan"
+  },
+  "In a famous quote, %s mocked the historic latinisation of his own surname": {
+    "split": "train",
+    "entity": "Henrik Pontoppidan"
+  },
+  "The former nursing home in Heiden now houses the %s Museum": {
+    "split": "train",
+    "entity": "Henry Dunant"
+  },
+  "The %s Medal, awarded every two years by the standing": {
+    "split": "train",
+    "entity": "Henry Dunant"
+  },
+  "dedicated its 30th volume to Taube, entitled \"An Appreciation of %s.\"  Luther College in Regina, Saskatchewan offers an": {
+    "split": "train",
+    "entity": "Henry Taube"
+  },
+  "In 1874 %s was briefly engaged to Maria Keller, and traveled": {
+    "split": "test",
+    "entity": "Henryk Sienkiewicz"
+  },
+  "second, founded in 1966, is in his birthplace:  the %s Museum in Wola Okrzejska": {
+    "split": "test",
+    "entity": "Henryk Sienkiewicz"
+  },
+  "Freeview video Interview with %s by the Vega Science Trust": {
+    "split": "train",
+    "entity": "Herbert Kroemer"
+  },
+  "Patent 5067828 Transferred electron effective mass modulator (%s)": {
+    "split": "train",
+    "entity": "Herbert Kroemer"
+  },
+  "The %s Award was established in 2004 by the Rajk László College for Advanced Studies": {
+    "split": "test",
+    "entity": "Herbert Simon"
+  },
+  "After the forced retirement of Fries, in 1937 %s offered Wittig a position at the University of": {
+    "split": "train",
+    "entity": "Hermann Staudinger"
+  },
+  " Biographical snapshots: %s, Journal of Chemical Education web site": {
+    "split": "train",
+    "entity": "Hideki Shirakawa"
+  },
+  "In 2013, Maskawa and chemistry Nobel laureate %s issued a statement against the Japanese State Secrecy": {
+    "split": "train",
+    "entity": "Hideki Shirakawa"
+  },
+  "Solo violinist Diana Yukawa (ダイアナ湯川) is a relative of %s": {
+    "split": "val",
+    "entity": "Hideki Yukawa"
+  },
+  "He formed a coalition with the Social Democrats, led by %s who became minister for finance": {
+    "split": "test",
+    "entity": "Hjalmar Branting"
+  },
+  "1955, he received a Guggenheim Fellowship and worked with Professor %s on the mechanism of alcohol dehydrogenase": {
+    "split": "train",
+    "entity": "Hugo Theorell"
+  },
+  "In his 1919 paper, %s postulated the existence of \"cells\" which could each": {
+    "split": "train",
+    "entity": "Irving Langmuir"
+  },
+  "Prize in Chemistry for his discovery with Avram Hershko and %s, of ubiquitin-mediated protein degradation": {
+    "split": "test",
+    "entity": "Irwin Rose"
+  },
+  " Interview with Professor %s, from the Official Nobel Prize Website": {
+    "split": "val",
+    "entity": "Ivar Giaever"
+  },
+  " University of Oslo website about %s": {
+    "split": "val",
+    "entity": "Ivar Giaever"
+  },
+  " Works by %s": {
+    "split": "val",
+    "entity": "Jacinto Benavente"
+  },
+  "he shared the Nobel Prize in Chemistry in 2017 with %s and Richard Henderson": {
+    "split": "train",
+    "entity": "Jacques Dubochet"
+  },
+  "From 1978 to 1987, %s was group leader at the European Molecular Biology": {
+    "split": "train",
+    "entity": "Jacques Dubochet"
+  },
+  "Under his leadership the neutron was discovered by %s in 1932 and in the same year the": {
+    "split": "test",
+    "entity": "James Chadwick"
+  },
+  "Under him, Nobel Prizes were awarded to %s for discovering the neutron (in 1932), John Cockcroft": {
+    "split": "test",
+    "entity": "James Chadwick"
+  },
+  "theory of neutrons was proved in 1932 by his associate %s, who recognized neutrons immediately when they were produced": {
+    "split": "test",
+    "entity": "James Chadwick"
+  },
+  "at the Georg-August University of Göttingen with Max Born and %s and mathematics with David Hilbert": {
+    "split": "val",
+    "entity": "James Franck"
+  },
+  "For this discovery, he shared the 2019 Nobel Prize in Physics with %s and Michel Mayor": {
+    "split": "train",
+    "entity": "James Peebles"
+  },
+  "In a 1950 paper, %s of Columbia University suggested a variant of the": {
+    "split": "train",
+    "entity": "James Rainwater"
+  },
+  "Leo %s was born on December 9, 1917, in Council,": {
+    "split": "train",
+    "entity": "James Rainwater"
+  },
+  "Lord Turner's suggestion that a \"Tobin tax\" – named after %s – should be considered for financial transactions made": {
+    "split": "test",
+    "entity": "James Tobin"
+  },
+  "In 2007, %s became the second person to publish his fully": {
+    "split": "test",
+    "entity": "James Watson"
+  },
+  "1970) and Duncan %s (b": {
+    "split": "test",
+    "entity": "James Watson"
+  },
+  "Laura %s (September 6, 1860 May 21, 1935) was an": {
+    "split": "test",
+    "entity": "Jane Addams"
+  },
+  "Born in Cedarville, Illinois, %s was the youngest of eight children born into": {
+    "split": "test",
+    "entity": "Jane Addams"
+  },
+  "%s adored her father, John H": {
+    "split": "test",
+    "entity": "Jane Addams"
+  },
+  " The Poetry of %s Translated by Edward[sic] Osers": {
+    "split": "test",
+    "entity": "Jaroslav Seifert"
+  },
+  "Interview with %s, in Label France No": {
+    "split": "val",
+    "entity": "Jean-Marie Gustave Le Clézio"
+  },
+  "In the 1920s, Gide became an inspiration for writers such as Albert Camus and %s": {
+    "split": "train",
+    "entity": "Jean-Paul Sartre"
+  },
+  "In 1966–1967, Russell worked with %s and many other intellectual figures to form the": {
+    "split": "train",
+    "entity": "Jean-Paul Sartre"
+  },
+  "name and what he stood for, stating \"My name is %s, and I'm running for president.\" This strategy proved": {
+    "split": "train",
+    "entity": "Jimmy Carter"
+  },
+  "Security Advisor Zbigniew Brzezinski played a major role in organizing %s's policies on the Soviet Union as a grand": {
+    "split": "train",
+    "entity": "Jimmy Carter"
+  },
+  "Bush, Bill Clinton, %s denounced the storming of the Capitol, releasing a": {
+    "split": "train",
+    "entity": "Jimmy Carter"
+  },
+  "2017, he received the Nobel Prize in Chemistry together with %s and Richard Henderson \"for developing cryo-electron microscopy for": {
+    "split": "train",
+    "entity": "Joachim Frank"
+  },
+  "the Royal Photographic Society Progress Medal, alongside his colleagues Professor %s and Dr Richard Henderson, in 2018 for 'an": {
+    "split": "train",
+    "entity": "Joachim Frank"
+  },
+  "the Nobel Women's Initiative along with sister Nobel Peace Laureates %s, Shirin Ebadi, Wangari Maathai, Betty Williams and Mairead": {
+    "split": "test",
+    "entity": "Jody Williams"
+  },
+  " In March 2013, her memoir, My Name Is %s: A Vermont Girl's Winding Path to the Nobel": {
+    "split": "test",
+    "entity": "Jody Williams"
+  },
+  "He received the Nobel Prize jointly with %s and Robert Huber in 1988": {
+    "split": "train",
+    "entity": "Johann Deisenhofer"
+  },
+  "therefore be just if the prize would be divided between %s, the discoverer of the experimental spiroptera carcinoma, and": {
+    "split": "train",
+    "entity": "Johannes Fibiger"
+  },
+  "supporters were the Nobel Laureates in Physics Philipp Lenard and %s": {
+    "split": "test",
+    "entity": "Johannes Stark"
+  },
+  "Rutherford's speech touched on the 1932 work of his students %s and Ernest Walton in \"splitting\" lithium into alpha": {
+    "split": "test",
+    "entity": "John Cockcroft"
+  },
+  "In April 1932, %s and Ernest Walton at the Cavendish Laboratory in": {
+    "split": "test",
+    "entity": "John Cockcroft"
+  },
+  "As the book's dust-wrapper states: \"%s's hope was that this publication would revitalise the study": {
+    "split": "val",
+    "entity": "John Cornforth"
+  },
+  "February 2016, the Paul Mellon Centre held an exhibition entitled %s: A Passion for Houses: Material on the Georgian": {
+    "split": "val",
+    "entity": "John Cornforth"
+  },
+  " Sir %s, Gaussian Code, and Complex Chemical Reactions, from the": {
+    "split": "train",
+    "entity": "John Pople"
+  },
+  "He was awarded, with %s, the Nobel Prize in Chemistry in 1998": {
+    "split": "train",
+    "entity": "John Pople"
+  },
+  "purpose computational chemistry software package initially released in 1970 by %s and his research group at Carnegie Mellon University": {
+    "split": "train",
+    "entity": "John Pople"
+  },
+  "In 1952, %s appeared as the on-screen narrator of 20th Century Fox's film, O": {
+    "split": "test",
+    "entity": "John Steinbeck"
+  },
+  "He became friends with other poets, including the Russian expatriate %s, who lived and worked in the U.S": {
+    "split": "train",
+    "entity": "Joseph Brodsky"
+  },
+  "magic than most, if not any, of his contemporaries\", and %s, who praised Walcott's work, writing: \"For almost forty": {
+    "split": "train",
+    "entity": "Joseph Brodsky"
+  },
+  "In addition, geneticist Lotte Auerbach recounted that %s returned from a visit to McClintock's lab with": {
+    "split": "test",
+    "entity": "Joshua Lederberg"
+  },
+  "special tolerance-inducing period defined by the age of the animal, %s proposed in 1959, that it is the age": {
+    "split": "test",
+    "entity": "Joshua Lederberg"
+  },
+  "Theater had always been the love of %s's life": {
+    "split": "train",
+    "entity": "José Echegaray"
+  },
+  "In 1994 %s founded the Good Government Foundation, whose stated": {
+    "split": "train",
+    "entity": "Juan Manuel Santos"
+  },
+  "During the 1920s, he discovered Gerardo Diego, %s, and Antonio Machado": {
+    "split": "train",
+    "entity": "Juan Ramón Jiménez"
+  },
+  "The cancer hospital Institut %s is also named after him": {
+    "split": "val",
+    "entity": "Jules Bordet"
+  },
+  "  a longer Biography page at %s Institute": {
+    "split": "val",
+    "entity": "Jules Bordet"
+  },
+  " The %s Papers – Profiles in Science, National Library of Medicine": {
+    "split": "test",
+    "entity": "Julius Axelrod"
+  },
+  "Instead there were two other nominees, Otto Heinrich Warburg and %s": {
+    "split": "test",
+    "entity": "Julius Wagner-Jauregg"
+  },
+  " The %s Children's Foundation (SCF) was established in 2004 by Satyarthi": {
+    "split": "val",
+    "entity": "Kailash Satyarthi"
+  },
+  "1987 %s Memorial Award, Annual Meeting of the American Association of Blood Banks,": {
+    "split": "test",
+    "entity": "Karl Landsteiner"
+  },
+  "In his later life he wrote biographies of Simon Flexner and %s": {
+    "split": "test",
+    "entity": "Karl Landsteiner"
+  },
+  "The 1963 Nobel Prize in Chemistry was awarded to German %s, for his discovery of first titanium-based catalysts, and": {
+    "split": "val",
+    "entity": "Karl Ziegler"
+  },
+  "He became a close friend of %s, who was also doing his habilitation with Auwers during that time": {
+    "split": "val",
+    "entity": "Karl Ziegler"
+  },
+  "He shared the 1973 Nobel Prize in Physiology or Medicine with Nikolaas Tinbergen and %s": {
+    "split": "train",
+    "entity": "Karl von Frisch"
+  },
+  "patterns\" with two other important early ethologists, Nikolaas Tinbergen and %s": {
+    "split": "train",
+    "entity": "Karl von Frisch"
+  },
+  "On August 4, 2009, the %s Centre was opened in Hamarøy": {
+    "split": "val",
+    "entity": "Knut Hamsun"
+  },
+  "He was the founder and chairman of the %s Foundation, as well as chairman of The Elders,": {
+    "split": "train",
+    "entity": "Kofi Annan"
+  },
+  "end of his term as UN Secretary-General, he founded the %s Foundation in 2007 to work on international development": {
+    "split": "train",
+    "entity": "Kofi Annan"
+  },
+  "Green Party and in 1984 became the figurehead of the %s Volksbegehren, a grass-roots movement that was formed to": {
+    "split": "train",
+    "entity": "Konrad Lorenz"
+  },
+  " studying contexts with %s in which decision makers do not trust their probability model": {
+    "split": "train",
+    "entity": "Lars Peter Hansen"
+  },
+  " American Statistical Association 2002 interview with %s": {
+    "split": "train",
+    "entity": "Lars Peter Hansen"
+  },
+  "three Nobel laureates' contributions, the bronze statues of Shin'ichirō Tomonaga, %s, and Makoto Kobayashi were set up in the": {
+    "split": "test",
+    "entity": "Leo Esaki"
+  },
+  " %s at Women, War & Peace at PBS": {
+    "split": "test",
+    "entity": "Leymah Gbowee"
+  },
+  "The %s Medal, awarded annually by the European Geophysical Society, is named in Néel's honour": {
+    "split": "test",
+    "entity": "Louis Néel"
+  },
+  "Néel relaxation theory is a theory developed by %s in 1949 to explain time-dependent magnetic phenomena known": {
+    "split": "test",
+    "entity": "Louis Néel"
+  },
+  "Einstein discovered %s's work and supported his ideas, which were received skeptically at first": {
+    "split": "train",
+    "entity": "Louis de Broglie"
+  },
+  "In contrast to Albert Einstein and %s, who were realists who believed that particles": {
+    "split": "train",
+    "entity": "Louis de Broglie"
+  },
+  "%s was the sixteenth member elected to occupy": {
+    "split": "train",
+    "entity": "Louis de Broglie"
+  },
+  "poet and scholar James Longenbach to declare that \"change is %s's highest value\" and \"if change is what she": {
+    "split": "val",
+    "entity": "Louise Glück"
+  },
+  "Guess who the chairman of the editorial board is: %s.\"": {
+    "split": "val",
+    "entity": "Luc Montagnier"
+  },
+  " PROFILE: %s, Francoise Barre-Sinoussi – AIDS pioneers": {
+    "split": "val",
+    "entity": "Luc Montagnier"
+  },
+  "He defused tensions in the congress by crossing the floor and shaking hands with German pacifist %s": {
+    "split": "val",
+    "entity": "Ludwig Quidde"
+  },
+  "William Weaver is a noted translator of %s": {
+    "split": "test",
+    "entity": "Luigi Pirandello"
+  },
+  "On his passing in 1954, %s was interred in Le Père Lachaise Cemetery in": {
+    "split": "train",
+    "entity": "Léon Jouhaux"
+  },
+  "The rue %s in Aix-en-Provence, Grenoble, Lyon, Genas, Villefranche-sur-Saône and Paris": {
+    "split": "train",
+    "entity": "Léon Jouhaux"
+  },
+  "was the co-recipient of the Nobel Peace Prize, along with %s, \"for their struggle against the suppression of children": {
+    "split": "test",
+    "entity": "Malala Yousafzai"
+  },
+  "In 2014, %s, age 17, displaced Karman as the youngest winner": {
+    "split": "test",
+    "entity": "Malala Yousafzai"
+  },
+  " %s tells his life story at Web of Stories (video)": {
+    "split": "train",
+    "entity": "Manfred Eigen"
+  },
+  "Interview with %s by Harry Kroto, NL Freeview video provided by the Vega Science Trust": {
+    "split": "train",
+    "entity": "Manfred Eigen"
+  },
+  "Einstein's former physics professor Hendrik Lorentz and the Polish chemist %s were also members of the committee": {
+    "split": "train",
+    "entity": "Marie Curie"
+  },
+  "They also worked with samples of \"Uranium X\" from William Crookes and radium from %s": {
+    "split": "train",
+    "entity": "Marie Curie"
+  },
+  "in Paris' Panthéon, and Poland declared 2011 the Year of %s during the International Year of Chemistry": {
+    "split": "train",
+    "entity": "Marie Curie"
+  },
+  "Faulkner also had great influence on %s, particularly on the early novels The Time": {
+    "split": "val",
+    "entity": "Mario Vargas Llosa"
+  },
+  " %s's Nobel Peace Prize, Civil Rights Digital Library": {
+    "split": "train",
+    "entity": "Martin Luther King Jr."
+  },
+  "Mecham proclaimed the third Sunday in January to be \"%s/Civil Rights Day\" in Arizona, albeit as an": {
+    "split": "train",
+    "entity": "Martin Luther King Jr."
+  },
+  "In Arizona: \"%s/Civil Rights Day\"": {
+    "split": "train",
+    "entity": "Martin Luther King Jr."
+  },
+  "The %s Papers  - Profiles in Science, National Library of Medicine": {
+    "split": "train",
+    "entity": "Martin Rodbell"
+  },
+  "and at the Telecommunications Research Establishment where he worked with %s": {
+    "split": "train",
+    "entity": "Martin Ryle"
+  },
+  "12 eminent individuals from around the world, including Ernesto Zedillo, %s, Madeleine Albright and Amartya Sen, and aimed to": {
+    "split": "train",
+    "entity": "Martti Ahtisaari"
+  },
+  "Since the death of Mauno Koivisto in May 2017, %s is currently the oldest living President of Finland": {
+    "split": "train",
+    "entity": "Martti Ahtisaari"
+  },
+  " The 100th anniversary of %s's greatest contemporary success, his play The Blue Bird,": {
+    "split": "val",
+    "entity": "Maurice Maeterlinck"
+  },
+  "Thomas, %s, (New York, 1911)": {
+    "split": "val",
+    "entity": "Maurice Maeterlinck"
+  },
+  "He and %s were among the leaders of this new \"Phage": {
+    "split": "train",
+    "entity": "Max Delbrück"
+  },
+  "or DNA was the genetic material, but upon consultation with %s, they determined that their results were inconclusive and": {
+    "split": "train",
+    "entity": "Max Delbrück"
+  },
+  "The %s Center, in Berlin, Germany, national research center for": {
+    "split": "train",
+    "entity": "Max Delbrück"
+  },
+  "living in Bern, Zürich, and Berlin, where he played with %s and his son, among others": {
+    "split": "train",
+    "entity": "Max Planck"
+  },
+  "many years, but was accepted by leading physicists, starting with %s": {
+    "split": "train",
+    "entity": "Max Planck"
+  },
+  "In 1937, %s discovered a filterable agent that was a known cause for paralysis in mice": {
+    "split": "train",
+    "entity": "Max Theiler"
+  },
+  "These colloquia featured leading researchers including Max Planck, %s, Rudolf Ladenburg, Werner Heisenberg, Walther Nernst, Wolfgang": {
+    "split": "test",
+    "entity": "Max von Laue"
+  },
+  "Hahn was at his laboratory in Tailfingen, while Heisenberg and %s were at Heisenberg's laboratory in Hechingen, and": {
+    "split": "test",
+    "entity": "Max von Laue"
+  },
+  " Later that year, %s obtained a doctorate in neurophysiology for her work": {
+    "split": "test",
+    "entity": "May-Britt Moser"
+  },
+  "Patent 4427511 %s – Photo-induced electron transfer method": {
+    "split": "val",
+    "entity": "Melvin Calvin"
+  },
+  "USPS News Release: Celebrating American Scientists Press release for the new Forever Stamp designs featuring %s": {
+    "split": "val",
+    "entity": "Melvin Calvin"
+  },
+  "1988, Lederman received the Nobel Prize for Physics along with %s and Jack Steinberger \"for the neutrino beam method": {
+    "split": "val",
+    "entity": "Melvin Schwartz"
+  },
+  "development is a model of economic development put forward by %s in 1993, which proposes that tasks of production": {
+    "split": "train",
+    "entity": "Michael Kremer"
+  },
+  "Howard %s (born February 3, 1971), also known by his": {
+    "split": "train",
+    "entity": "Michael Kremer"
+  },
+  "Young and %s, he was awarded the 2017 Nobel Prize in": {
+    "split": "train",
+    "entity": "Michael Rosbash"
+  },
+  "In 1990, while in collaboration with %s and Paul Hardin, Hall discovered that the Period": {
+    "split": "train",
+    "entity": "Michael Rosbash"
+  },
+  "On 19 December 1986, %s, who had initiated the policies of perestroika and": {
+    "split": "val",
+    "entity": "Mikhail Gorbachev"
+  },
+  "glasnost, he declined the return of his awards and, consequently, %s did not sign the necessary decree": {
+    "split": "val",
+    "entity": "Mikhail Gorbachev"
+  },
+  " List of international trips made by %s": {
+    "split": "val",
+    "entity": "Mikhail Gorbachev"
+  },
+  "other colleagues, provided statistical analyses of sentence lengths showing that %s was likely the true author of And Quiet": {
+    "split": "test",
+    "entity": "Mikhail Sholokhov"
+  },
+  "One of %s's most popular works, A Theory of the Consumption": {
+    "split": "train",
+    "entity": "Milton Friedman"
+  },
+  "representing the permanent component, and t representing the transitory component.%s's research changed how economists interpreted the consumption function, and": {
+    "split": "train",
+    "entity": "Milton Friedman"
+  },
+  "Ting in 1976 and %s in 2012)": {
+    "split": "train",
+    "entity": "Mo Yan"
+  },
+  "as the April 6 Youth Movement and young supporters of %s": {
+    "split": "val",
+    "entity": "Mohamed ElBaradei"
+  },
+  "\"The people have not appointed %s to become a spokesman of them": {
+    "split": "val",
+    "entity": "Mohamed ElBaradei"
+  },
+  "The Muslim Brotherhood is much stronger than %s as a person": {
+    "split": "val",
+    "entity": "Mohamed ElBaradei"
+  },
+  "The third of nine children, %s was born on 28 June 1940 to a": {
+    "split": "val",
+    "entity": "Muhammad Yunus"
+  },
+  "In January 2008, Houston, Texas declared 14 January as \"%s Day\"": {
+    "split": "val",
+    "entity": "Muhammad Yunus"
+  },
+  "\"Throughout %s's fiction there is a pervasive sense of metaphor,": {
+    "split": "train",
+    "entity": "Naguib Mahfouz"
+  },
+  "  9 Works by %s at The Documentation of Chinese Christianity program, Hong Kong Baptist University Library": {
+    "split": "train",
+    "entity": "Nathan Söderblom"
+  },
+  "In July 2007, Carter joined %s in Johannesburg, South Africa, to announce his participation": {
+    "split": "test",
+    "entity": "Nelson Mandela"
+  },
+  "Must Address Its Present\", was devoted to South African freedom-fighter %s": {
+    "split": "test",
+    "entity": "Nelson Mandela"
+  },
+  "series of public disputes about quantum mechanics between Einstein and %s, who were two of its founders": {
+    "split": "train",
+    "entity": "Niels Bohr"
+  },
+  "Since his father, %s, had won the prize in 1922, he and": {
+    "split": "train",
+    "entity": "Niels Bohr"
+  },
+  "the school building, built in 1865, is owned by the %s Heritage Foundation as part of \"Project Borlaug Legacy\"": {
+    "split": "test",
+    "entity": "Norman Borlaug"
+  },
+  "Colwell; maize breeder Edward Wellhausen; potato breeder John Niederhauser; and %s, all from the United States": {
+    "split": "test",
+    "entity": "Norman Borlaug"
+  },
+  "in Mexico,\" he wrote in the epilogue to his book, %s on World Hunger": {
+    "split": "test",
+    "entity": "Norman Borlaug"
+  },
+  "based upon results accumulated by chemical physicists, in particular by %s": {
+    "split": "train",
+    "entity": "Odd Hassel"
+  },
+  "In 1969, Barton shared the Nobel Prize in Chemistry with %s for \"contributions to the development of the concept": {
+    "split": "train",
+    "entity": "Odd Hassel"
+  },
+  "Zone electrophoresis found widespread application in biochemistry after %s introduced starch gel as an electrophoretic substrate in": {
+    "split": "test",
+    "entity": "Oliver Smithies"
+  },
+  "Defense of Culture in Lisbon in 1992, and co-founder with %s, of the European Writers' Parliament (EWP)": {
+    "split": "test",
+    "entity": "Orhan Pamuk"
+  },
+  "of a joint proposal by Saramago and fellow Nobel laureate %s": {
+    "split": "test",
+    "entity": "Orhan Pamuk"
+  },
+  "Ferit %s (born 7 June 1952) is a Turkish novelist,": {
+    "split": "test",
+    "entity": "Orhan Pamuk"
+  },
+  "received the news that in December 1938, the German chemists %s and Fritz Strassmann had detected the element barium": {
+    "split": "train",
+    "entity": "Otto Hahn"
+  },
+  "Recipients of the award have included %s, Robert Oppenheimer, Edward Teller and Hans Bethe": {
+    "split": "train",
+    "entity": "Otto Hahn"
+  },
+  "slightly post-dated its discovery by the Germans Lise Meitner and %s; however, it is said their discovery was actually": {
+    "split": "train",
+    "entity": "Otto Hahn"
+  },
+  " A street, \"%s Gasse\" was named after him in the parish of St": {
+    "split": "test",
+    "entity": "Otto Loewi"
+  },
+  " 1992: %s Medal of the German Society for Biochemistry and Molecular Biology": {
+    "split": "test",
+    "entity": "Otto Warburg"
+  },
+  "His PhD students in the postwar period included %s, Geoffrey Chew, Jerome Friedman, Marvin Goldberger, Tsung-Dao Lee,": {
+    "split": "val",
+    "entity": "Owen Chamberlain"
+  },
+  "Guide to the %s Papers at The Bancroft Library": {
+    "split": "val",
+    "entity": "Owen Chamberlain"
+  },
+  "attended by many writers including André Malraux, Stephen Spender and %s": {
+    "split": "train",
+    "entity": "Pablo Neruda"
+  },
+  "During this time, he became familiar with leftist poets, such as %s": {
+    "split": "train",
+    "entity": "Pablo Neruda"
+  },
+  "many writers including André Malraux, Ernest Hemingway, Stephen Spender and %s": {
+    "split": "train",
+    "entity": "Pablo Neruda"
+  },
+  "Jean %s (; born 30 July 1945), generally known as": {
+    "split": "val",
+    "entity": "Patrick Modiano"
+  },
+  "Jean %s was born in Boulogne-Billancourt, a commune in the": {
+    "split": "val",
+    "entity": "Patrick Modiano"
+  },
+  "Baltimore also helped %s and Maxine Singer to organize the Asilomar Conference": {
+    "split": "train",
+    "entity": "Paul Berg"
+  },
+  "By 1980, collaboration with %s resulted in demonstration that cAMP-dependent protein kinase, also": {
+    "split": "val",
+    "entity": "Paul Greengard"
+  },
+  "One of Hartline's graduate students at Johns Hopkins School of Medicine, %s, who also won the Nobel Prize": {
+    "split": "val",
+    "entity": "Paul Greengard"
+  },
+  "Physiology or Medicine in 2000, together with Eric Kandel and %s": {
+    "split": "val",
+    "entity": "Paul Greengard"
+  },
+  " In Paradise, by %s": {
+    "split": "test",
+    "entity": "Paul Heyse"
+  },
+  "Nobel-prize winning economist %s argued that the 2008 recession proved that, during": {
+    "split": "train",
+    "entity": "Paul Krugman"
+  },
+  "having integrated economies of scale into explicit general equilibrium models, %s has deepened our understanding of the determinants of": {
+    "split": "train",
+    "entity": "Paul Krugman"
+  },
+  "China Sky (aka %s's China Sky) is a 1945 RKO Pictures film": {
+    "split": "val",
+    "entity": "Pearl Buck"
+  },
+  "Although %s's novel had been optioned for film production in": {
+    "split": "val",
+    "entity": "Pearl Buck"
+  },
+  "University who won the Nobel Prize in Chemistry together with %s in 2003 for his work on the structure": {
+    "split": "test",
+    "entity": "Peter Agre"
+  },
+  "Nobel Prize in Chemistry would go to two medical doctors, %s and Roderick MacKinnon, \"for discoveries concerning channels in": {
+    "split": "test",
+    "entity": "Peter Agre"
+  },
+  "\"unfussy and unique … We have a lot to thank %s for": {
+    "split": "train",
+    "entity": "Peter Handke"
+  },
+  "The university has also established a chair of theoretical physics in the name of %s": {
+    "split": "val",
+    "entity": "Peter Higgs"
+  },
+  "On 8 October 2013, it was announced that %s and François Englert would share the 2013 Nobel": {
+    "split": "val",
+    "entity": "Peter Higgs"
+  },
+  " BBC profile of %s": {
+    "split": "val",
+    "entity": "Peter Higgs"
+  },
+  "in 1937, Hodgkin got to know the American pathologist Francis %s who was later awarded the 1966 Nobel Prize": {
+    "split": "val",
+    "entity": "Peyton Rous"
+  },
+  "a cancer-causing virus first isolated from a chicken sarcoma by %s in 1910": {
+    "split": "val",
+    "entity": "Peyton Rous"
+  },
+  "A memorial garden, the %s Peace Garden, exists within Elthorne Park, a small": {
+    "split": "val",
+    "entity": "Philip Noel-Baker"
+  },
+  "By %s with other authors": {
+    "split": "val",
+    "entity": "Philip Noel-Baker"
+  },
+  " Lloyd, Lorna: %s and the Peace Through Law in": {
+    "split": "val",
+    "entity": "Philip Noel-Baker"
+  },
+  "Her husband, %s, was a co-winner on her first Nobel Prize,": {
+    "split": "test",
+    "entity": "Pierre Curie"
+  },
+  "In 1895 she married the French physicist %s, and she shared the 1903 Nobel Prize in": {
+    "split": "test",
+    "entity": "Pierre Curie"
+  },
+  "In 1906 %s died in a Paris street accident": {
+    "split": "test",
+    "entity": "Pierre Curie"
+  },
+  "The University of Texas at Dallas has a %s Auditorium with a plaque": {
+    "split": "train",
+    "entity": "Polykarp Kusch"
+  },
+  "modernist poetry developed in the 1910s with authors such as %s and was established the 1930s and 1940s": {
+    "split": "test",
+    "entity": "Pär Lagerkvist"
+  },
+  "present in China at the time included John Dewey and %s, the Indian Nobel-laureate poet": {
+    "split": "test",
+    "entity": "Rabindranath Tagore"
+  },
+  "even went as far to state that after conversations with %s about Indian philosophy \"some of the ideas that": {
+    "split": "test",
+    "entity": "Rabindranath Tagore"
+  },
+  "From 1936 to 1938, %s studied anthropology and conducted postdoctoral research at Northwestern": {
+    "split": "test",
+    "entity": "Ralph Bunche"
+  },
+  "According to the United Nations document, \"%s: Visionary for Peace,\" during his 25 years of service": {
+    "split": "test",
+    "entity": "Ralph Bunche"
+  },
+  "In 2002, scholar Molefi Kete Asante included %s on his list of 100 Greatest African Americans": {
+    "split": "test",
+    "entity": "Ralph Bunche"
+  },
+  "the general theory of relativity, a half-share also going to %s and Andrea Ghez for the discovery of a": {
+    "split": "train",
+    "entity": "Reinhard Genzel"
+  },
+  "of the most important experimental physicists of the last century,\" %s, a professor of physics at Berkeley, said of": {
+    "split": "train",
+    "entity": "Reinhard Genzel"
+  },
+  "In February 1965, Baltimore was recruited by %s to the newly established Salk Institute for Biological": {
+    "split": "train",
+    "entity": "Renato Dulbecco"
+  },
+  "Nobel Prize for Physiology or Medicine with Howard Temin and %s": {
+    "split": "train",
+    "entity": "Renato Dulbecco"
+  },
+  "everything changes, even literature has changed.\" Fo's fellow Italian laureate %s expressed bewilderment when asked for her thoughts and": {
+    "split": "train",
+    "entity": "Rita Levi-Montalcini"
+  },
+  "The vision of %s came true with the issuing of the Trieste": {
+    "split": "train",
+    "entity": "Rita Levi-Montalcini"
+  },
+  "with the Nobel Prize in Physics in 1961 together with %s's research of electron scattering in atomic nuclei": {
+    "split": "val",
+    "entity": "Robert Hofstadter"
+  },
+  "of the Royal Prussian Institute for Infectious Diseases (now the %s Institute) which consisted of a clinical division and": {
+    "split": "val",
+    "entity": "Robert Koch"
+  },
+  "In his 2012 article \"%s, evil genius of the euro\", Greg Palast affirms that": {
+    "split": "train",
+    "entity": "Robert Mundell"
+  },
+  " Redundancy problem - suggested by %s": {
+    "split": "train",
+    "entity": "Robert Mundell"
+  },
+  " Interview with %s by Harry Kroto Freeview video provided by the Vega Science Trust": {
+    "split": "train",
+    "entity": "Roderick MacKinnon"
+  },
+  " Nobel Lecture by %s, 2003": {
+    "split": "train",
+    "entity": "Roderick MacKinnon"
+  },
+  "Yalow was honored for her role in devising the radioimmunoassay technique, along with %s and Andrew V": {
+    "split": "val",
+    "entity": "Roger Guillemin"
+  },
+  "American endocrinologist of Polish ancestry, who was a corecipient, with %s and Rosalyn Sussman Yalow, of the Nobel Prize": {
+    "split": "val",
+    "entity": "Roger Guillemin"
+  },
+  "Sir %s  (born 8 August 1931) is a British": {
+    "split": "val",
+    "entity": "Roger Penrose"
+  },
+  "Born in Colchester, Essex, %s is a son of Margaret (Leathes) and psychiatrist": {
+    "split": "val",
+    "entity": "Roger Penrose"
+  },
+  "Cambridge) in the words of Kip Thorne of Caltech, \"%s revolutionised the mathematical tools that we use to analyse": {
+    "split": "val",
+    "entity": "Roger Penrose"
+  },
+  "%s called Bunin an \"artistic genius\"; he was spoken": {
+    "split": "test",
+    "entity": "Romain Rolland"
+  },
+  "A fitting title for %s may well be \"the Mother of Endocrinology.\"": {
+    "split": "val",
+    "entity": "Rosalyn Yalow"
+  },
+  "recoilless nuclear resonance fluorescence, is a physical phenomenon discovered by %s in 1958": {
+    "split": "train",
+    "entity": "Rudolf Mössbauer"
+  },
+  "The %s Prize was established by the Society of Synthetic": {
+    "split": "train",
+    "entity": "Ryoji Noyori"
+  },
+  "the most important new writer on the international scene since %s.\" John Updike reviewed the same novel in The": {
+    "split": "test",
+    "entity": "Samuel Beckett"
+  },
+  "the show off-Broadway as Jack MacGowran in the Works of %s": {
+    "split": "test",
+    "entity": "Samuel Beckett"
+  },
+  "Spain for two weeks in 1923, where he briefly met %s and also received a diploma from": {
+    "split": "test",
+    "entity": "Santiago Ramón y Cajal"
+  },
+  "Golgi and the Spanish biologist %s were jointly given the Nobel Prize": {
+    "split": "test",
+    "entity": "Santiago Ramón y Cajal"
+  },
+  "Golgi, together with %s, received the Nobel Prize in Physiology": {
+    "split": "test",
+    "entity": "Santiago Ramón y Cajal"
+  },
+  "the prize, and only the second woman in general after %s was awarded hers in 1909": {
+    "split": "val",
+    "entity": "Selma Lagerlöf"
+  },
+  "years, she considered becoming a writer and admired Swedish writer %s, but after seeing a close family friend die": {
+    "split": "val",
+    "entity": "Selma Lagerlöf"
+  },
+  "He was in the same graduating class as %s, whose research, independent of Weinberg's, resulted in their": {
+    "split": "test",
+    "entity": "Sheldon Glashow"
+  },
+  "Gurdon and %s \"for the discovery that mature cells can be reprogrammed to become pluripotent.\"": {
+    "split": "train",
+    "entity": "Shinya Yamanaka"
+  },
+  "%s (born May 7, 1939) is a Canadian-American molecular": {
+    "split": "train",
+    "entity": "Sidney Altman"
+  },
+  ", usually cited as %s in English, was a Japanese physicist, influential in": {
+    "split": "val",
+    "entity": "Sin-Itiro Tomonaga"
+  },
+  "Like Mark Twain, Stephen Crane, Theodore Dreiser, and %s, Hemingway was a journalist before becoming a novelist": {
+    "split": "train",
+    "entity": "Sinclair Lewis"
+  },
+  "In January 2020 the %s Community College in St": {
+    "split": "train",
+    "entity": "Sir Arthur Lewis"
+  },
+  "The college was established in 1985 and is named after Saint Lucian economist and Nobel laureate %s": {
+    "split": "train",
+    "entity": "Sir Arthur Lewis"
+  },
+  "This is a list of books and monographs by %s, arranged thematically, with original titles, publishers": {
+    "split": "val",
+    "entity": "Sir Frank Macfarlane Burnet"
+  },
+  "Burnet: A Life is the official biography of %s, the Australian Nobel Prize-winning scientist, written": {
+    "split": "val",
+    "entity": "Sir Frank Macfarlane Burnet"
+  },
+  "Steve Acquah and %s directing": {
+    "split": "val",
+    "entity": "Sir Harold Kroto"
+  },
+  "The National Institute's Director %s gained permission from Kellaway for the two-year": {
+    "split": "train",
+    "entity": "Sir Henry Dale"
+  },
+  "in Physiology or Medicine in 1936, which he shared with %s, who was a lifelong friend that helped": {
+    "split": "train",
+    "entity": "Sir Henry Dale"
+  },
+  "He studied in England with %s in London and with I": {
+    "split": "train",
+    "entity": "Sir Henry Dale"
+  },
+  "Stan or %s may refer to:": {
+    "split": "train",
+    "entity": "Stanley Cohen"
+  },
+  "Ashkin's work formed the basis for %s's work on cooling and trapping atoms, which earned": {
+    "split": "train",
+    "entity": "Steven Chu"
+  },
+  "theory, which gained the 1979 Nobel Prize for Physics to %s, Sheldon Glashow and Abdus Salam": {
+    "split": "train",
+    "entity": "Steven Weinberg"
+  },
+  " Poesies.net: %s": {
+    "split": "train",
+    "entity": "Sully Prudhomme"
+  },
+  " List of publications by %s": {
+    "split": "test",
+    "entity": "Susumu Tonegawa"
+  },
+  "her affair with Langevin, the chair of the Nobel committee, %s, attempted to prevent her attendance at the official": {
+    "split": "train",
+    "entity": "Svante Arrhenius"
+  },
+  "Gordon Stein wrote that %s was an atheist": {
+    "split": "train",
+    "entity": "Svante Arrhenius"
+  },
+  " Friedberg, E.C.; \"%s: A Biography\", CSHL Press October 2010, ": {
+    "split": "train",
+    "entity": "Sydney Brenner"
+  },
+  " Interview with %s, on Editage Insights: In my days, nobody felt": {
+    "split": "train",
+    "entity": "Takaaki Kajita"
+  },
+  "he shared the Nobel Prize in Physiology or Medicine with %s": {
+    "split": "test",
+    "entity": "Tasuku Honjo"
+  },
+  "he shared the first Tang Prize in Biopharmaceutical Science with %s, won the 9th Annual Szent-Györgyi Prize for Progress": {
+    "split": "test",
+    "entity": "Tasuku Honjo"
+  },
+  "He, along with %s, was jointly awarded the Nobel Prize in Physiology": {
+    "split": "test",
+    "entity": "Tasuku Honjo"
+  },
+  "Towards the end of the 1930s %s and his colleagues built their first accelerator, a": {
+    "split": "test",
+    "entity": "The Svedberg"
+  },
+  "raised a family of five sons and one daughter (%s was the second son)": {
+    "split": "test",
+    "entity": "Theodor Kocher"
+  },
+  " Statue of %s, Humboldt University of Berlin": {
+    "split": "train",
+    "entity": "Theodor Mommsen"
+  },
+  "\"%s,\" The Atlantic Monthly, Vol": {
+    "split": "train",
+    "entity": "Theodor Mommsen"
+  },
+  "of consciousness and interior monologue, and influenced authors such as %s, Franz Kafka, Maxim Gorky, Stefan Zweig, Henry Miller,": {
+    "split": "val",
+    "entity": "Thomas Mann"
+  },
+  "for him to continue living after the stroke.Poetry Foundation \"%s Plays Piano in New Short Doc on New Official": {
+    "split": "train",
+    "entity": "Tomas Tranströmer"
+  },
+  " Selected Poems, %s, tr": {
+    "split": "train",
+    "entity": "Tomas Tranströmer"
+  },
+  "\"Despite the international stature of %s, she has yet to receive the national recognition": {
+    "split": "train",
+    "entity": "Toni Morrison"
+  },
+  "Shirakawa and physics Nobel laureate %s issued a statement saying that the law:": {
+    "split": "val",
+    "entity": "Toshihide Maskawa"
+  },
+  "The other half was split equally between Makoto Kobayashi and %s \"for the discovery of the origin of the": {
+    "split": "val",
+    "entity": "Toshihide Maskawa"
+  },
+  "A native of Aichi Prefecture, %s graduated from Nagoya University in 1962 and received": {
+    "split": "val",
+    "entity": "Toshihide Maskawa"
+  },
+  " Model Discovery and %s’s Legacy by David F": {
+    "split": "train",
+    "entity": "Trygve Haavelmo"
+  },
+  "parity by Chien-Shiung Wu, as suggested by Chen-Ning Yang and %s, theoretically": {
+    "split": "test",
+    "entity": "Tsung-Dao Lee"
+  },
+  "Although there had been Chinese Nobel Prize recipients before (%s and Chen Ning Yang), none had previously delivered the": {
+    "split": "test",
+    "entity": "Tsung-Dao Lee"
+  },
+  "Before 2011, %s had been obscure for decades, and is described as \"almost completely forgotten by people\"": {
+    "split": "val",
+    "entity": "Tu Youyou"
+  },
+  "Physiology or Medicine in 1970 along with Bernard Katz and %s": {
+    "split": "train",
+    "entity": "Ulf von Euler"
+  },
+  "Together with %s, he established the release of acetylcholine in autonomic ganglia": {
+    "split": "train",
+    "entity": "Ulf von Euler"
+  },
+  "He worked with his student %s on studies of muonic atoms, atoms where an electron is replaced by a muon": {
+    "split": "val",
+    "entity": "Val Fitch"
+  },
+  "Steitz and %s, spent some time in Lipscomb's lab where both": {
+    "split": "val",
+    "entity": "Venkatraman Ramakrishnan"
+  },
+  "was awarded the 2009 Nobel Prize in Chemistry along with %s and Ada Yonath \"for studies of the structure": {
+    "split": "val",
+    "entity": "Venkatraman Ramakrishnan"
+  },
+  "with sister Nobel Peace laureates Betty Williams, Mairead Corrigan Maguire, %s, Jody Williams and Rigoberta Menchú Tum": {
+    "split": "test",
+    "entity": "Wangari Maathai"
+  },
+  "Through her significant efforts, %s became the first African woman, and the first environmentalist, to win the Peace Prize": {
+    "split": "test",
+    "entity": "Wangari Maathai"
+  },
+  "She is buried at the %s Institute for Peace and Environmental Studies in Nairobi": {
+    "split": "test",
+    "entity": "Wangari Maathai"
+  },
+  "On 27 occasions since 1981, %s has shared his expertise and passion for science": {
+    "split": "test",
+    "entity": "Werner Arber"
+  },
+  "Heart pioneers and the curious case of %s - British Heart Foundation Blog Article": {
+    "split": "train",
+    "entity": "Werner Forssmann"
+  },
+  "in Physiology or Medicine in 1956 with André Cournand and %s for the development of cardiac catheterization and the": {
+    "split": "train",
+    "entity": "Werner Forssmann"
+  },
+  "For this work, Richards, Cournand, and %s were awarded the Nobel Prize for Physiology or": {
+    "split": "train",
+    "entity": "Werner Forssmann"
+  },
+  "The new theory was proposed by %s": {
+    "split": "train",
+    "entity": "Werner Heisenberg"
+  },
+  "Max Born at the University of Göttingen, where he met %s and Pascual Jordan": {
+    "split": "train",
+    "entity": "Werner Heisenberg"
+  },
+  "Bloch graduated in 1927, and was encouraged by Debye to go to Leipzig to study with %s": {
+    "split": "train",
+    "entity": "Werner Heisenberg"
+  },
+  "In early 1896, there was a wave of excitement following %s's discovery of X-rays on 5 January": {
+    "split": "test",
+    "entity": "Wilhelm Conrad Röntgen"
+  },
+  "depression as his literary friends began to die: in 1939 %s and Ford Madox Ford; in 1940 F": {
+    "split": "train",
+    "entity": "William Butler Yeats"
+  },
+  "The Yoknapatawpha Country and Michael Millgate writing The Achievement of %s": {
+    "split": "train",
+    "entity": "William Faulkner"
+  },
+  "The works of %s are a clear influence on the French novelist": {
+    "split": "train",
+    "entity": "William Faulkner"
+  },
+  "at Rowan Oak in Oxford, Mississippi honoring the contributions of %s to the American literary landscape": {
+    "split": "train",
+    "entity": "William Faulkner"
+  },
+  "that a biography could be written about him, Carey published %s: The Man Who Wrote Lord of the Flies": {
+    "split": "val",
+    "entity": "William Golding"
+  },
+  "a few months after his unexpected death, the First International %s Conference was held in France, where Golding's presence": {
+    "split": "val",
+    "entity": "William Golding"
+  },
+  "work is summarized in a book by Gareth Eaton and %s, NMR Studies of Boron Hydrides and Related Compounds,": {
+    "split": "val",
+    "entity": "William Lipscomb"
+  },
+  "and working as a left-wing journalist, he took the name %s as a pseudonym to avoid detection by Nazi": {
+    "split": "val",
+    "entity": "Willy Brandt"
+  },
+  "Locker-Lampson took Einstein to meet %s at his home, and later, Austen Chamberlain and": {
+    "split": "train",
+    "entity": "Winston Churchill"
+  },
+  "Curtain\" speech; Churchill Square in central Edmonton, Alberta; and the %s Range, a mountain range northwest of Lake Louise,": {
+    "split": "train",
+    "entity": "Winston Churchill"
+  },
+  "The %s Annual Lecture Series was founded in 1994 and": {
+    "split": "train",
+    "entity": "Wole Soyinka"
+  },
+  "treatment of the hydrogen atom, which was first given by %s in 1925, using Heisenberg's matrix mechanics": {
+    "split": "train",
+    "entity": "Wolfgang Pauli"
+  },
+  "After %s formulated his exclusion principle in 1925, Fermi followed": {
+    "split": "train",
+    "entity": "Wolfgang Pauli"
+  },
+  "After %s announced his exclusion principle in 1925, Fermi responded": {
+    "split": "train",
+    "entity": "Wolfgang Pauli"
+  },
+  "— %s, 1994 Nobel Peace Prize lecture": {
+    "split": "val",
+    "entity": "Yitzhak Rabin"
+  },
+  "After the death of %s in 2015, Esaki is the eldest Japanese Nobel laureate": {
+    "split": "train",
+    "entity": "Yoichiro Nambu"
+  },
+  "work came from the Japanese-born theorist and Nobel Prize laureate %s from the University of Chicago": {
+    "split": "train",
+    "entity": "Yoichiro Nambu"
+  },
+  "Gobat jointly received the Nobel Peace Prize in 1902 with %s for their leadership of the Permanent International Peace": {
+    "split": "train",
+    "entity": "Élie Ducommun"
+  }
+}

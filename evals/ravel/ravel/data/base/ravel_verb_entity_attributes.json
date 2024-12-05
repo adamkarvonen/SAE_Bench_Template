@@ -1,0 +1,5918 @@
+{
+  "abandon": {
+    "Definition": "to leave someone or something and not return",
+    "Past Tense": "abandoned",
+    "Pronunciation": "/əˈbændən/",
+    "Singular": "abandons"
+  },
+  "abolish": {
+    "Definition": "to get rid of something, to do away with something, to remove something",
+    "Past Tense": "abolished",
+    "Pronunciation": "/əˈbɑɫɪʃ/",
+    "Singular": "abolishes"
+  },
+  "absorb": {
+    "Definition": "to take in or soak up, to take in or take on",
+    "Past Tense": "absorbed",
+    "Pronunciation": "/əbˈzɔɹb/",
+    "Singular": "absorbs"
+  },
+  "accelerate": {
+    "Definition": "to make something happen more quickly, to make something happen more quickly",
+    "Past Tense": "accelerated",
+    "Pronunciation": "/ækˈsɛɫɝˌeɪt/",
+    "Singular": "accelerates"
+  },
+  "accept": {
+    "Definition": "to receive (someone) as a guest or visitor",
+    "Past Tense": "accepted",
+    "Pronunciation": "/ækˈsɛpt/, /əkˈsɛpt/",
+    "Singular": "accepts"
+  },
+  "access": {
+    "Definition": "to get to know someone or something, to get to know someone or something",
+    "Past Tense": "accessed",
+    "Pronunciation": "/ˈækˌsɛs/",
+    "Singular": "accesses"
+  },
+  "accommodate": {
+    "Definition": "to make suitable or acceptable, to adjust to, to adapt to",
+    "Past Tense": "accommodated",
+    "Pronunciation": "/əˈkɑməˌdeɪt/",
+    "Singular": "accommodates"
+  },
+  "accompany": {
+    "Definition": "to go with someone or something",
+    "Past Tense": "accompanied",
+    "Pronunciation": "/əˈkəmpəni/",
+    "Singular": "accompanies"
+  },
+  "account": {
+    "Definition": "to give an account of, to tell about, to report, to describe",
+    "Past Tense": "accounted",
+    "Pronunciation": "/əˈkaʊnt/",
+    "Singular": "accounts"
+  },
+  "accumulate": {
+    "Definition": "to collect or gather together",
+    "Past Tense": "accumulated",
+    "Pronunciation": "/əkˈjumjəˌɫeɪt/",
+    "Singular": "accumulates"
+  },
+  "accuse": {
+    "Definition": "to say that someone has done something wrong or illegal",
+    "Past Tense": "accused",
+    "Pronunciation": "/əkˈjuz/",
+    "Singular": "accuses"
+  },
+  "achieve": {
+    "Definition": "to reach a goal, to succeed, to accomplish, to attain",
+    "Past Tense": "achieved",
+    "Pronunciation": "/əˈtʃiv/",
+    "Singular": "achieves"
+  },
+  "acknowledge": {
+    "Definition": "to recognize the existence, validity",
+    "Past Tense": "acknowledged",
+    "Pronunciation": "/ækˈnɑɫɪdʒ/",
+    "Singular": "acknowledges"
+  },
+  "acquire": {
+    "Definition": "to get or obtain",
+    "Past Tense": "acquired",
+    "Pronunciation": "/əˈkwaɪɝ/",
+    "Singular": "acquires"
+  },
+  "act": {
+    "Definition": "to do something, to perform an action, to behave in a certain way",
+    "Past Tense": "acted",
+    "Pronunciation": "/ˈækt/",
+    "Singular": "acts"
+  },
+  "adapt": {
+    "Definition": "to change (one's behavior) to suit a new situation",
+    "Past Tense": "adapted",
+    "Pronunciation": "/əˈdæpt/",
+    "Singular": "adapts"
+  },
+  "add": {
+    "Definition": "to increase in size or amount",
+    "Past Tense": "added",
+    "Pronunciation": "/ˈæd/",
+    "Singular": "adds"
+  },
+  "address": {
+    "Definition": "to speak to someone in a formal way, especially in a public place",
+    "Past Tense": "addressed",
+    "Pronunciation": "/ˈæˌdɹɛs/, /əˈdɹɛs/",
+    "Singular": "addresses"
+  },
+  "adhere": {
+    "Definition": "to stick to something, to be attached to something",
+    "Past Tense": "adhered",
+    "Pronunciation": "/ədˈhɪɹ/",
+    "Singular": "adheres"
+  },
+  "adjust": {
+    "Definition": "to make (something) more suitable for a particular purpose",
+    "Past Tense": "adjusted",
+    "Pronunciation": "/əˈdʒəst/",
+    "Singular": "adjusts"
+  },
+  "administer": {
+    "Definition": "to give medicine to, to give a drug to",
+    "Past Tense": "administered",
+    "Pronunciation": "/ədˈmɪnəstɝ/",
+    "Singular": "administers"
+  },
+  "admire": {
+    "Definition": "to feel respect and approval for someone or something",
+    "Past Tense": "admired",
+    "Pronunciation": "/ædˈmaɪɹ/",
+    "Singular": "admires"
+  },
+  "admit": {
+    "Definition": "to allow to enter; to give access to, to grant admission to",
+    "Past Tense": "admitted",
+    "Pronunciation": "/ədˈmɪt/",
+    "Singular": "admits"
+  },
+  "adopt": {
+    "Definition": "to take on the characteristics of, to become like",
+    "Past Tense": "adopted",
+    "Pronunciation": "/əˈdɑpt/",
+    "Singular": "adopts"
+  },
+  "advance": {
+    "Definition": "to move forward, to go on, to progress, to develop",
+    "Past Tense": "advanced",
+    "Pronunciation": "/ədˈvæns/",
+    "Singular": "advances"
+  },
+  "advertise": {
+    "Definition": "to publicize (a product or service) in order to attract customers",
+    "Past Tense": "advertised",
+    "Pronunciation": "/ˈædvɝˌtaɪz/",
+    "Singular": "advertises"
+  },
+  "advise": {
+    "Definition": "to give advice to (someone)",
+    "Past Tense": "advised",
+    "Pronunciation": "/ædˈvaɪz/, /ədˈvaɪz/",
+    "Singular": "advises"
+  },
+  "affect": {
+    "Definition": "to have an effect on, to influence, to change, to alter",
+    "Past Tense": "affected",
+    "Pronunciation": "/əˈfɛkt/",
+    "Singular": "affects"
+  },
+  "afford": {
+    "Definition": "to be able to provide (something)",
+    "Past Tense": "afforded",
+    "Pronunciation": "/əˈfɔɹd/",
+    "Singular": "affords"
+  },
+  "agree": {
+    "Definition": "to be in accordance with, to be in agreement with",
+    "Past Tense": "agreed",
+    "Pronunciation": "/əˈɡɹi/",
+    "Singular": "agrees"
+  },
+  "aid": {
+    "Definition": "to help, to make easier, to make possible, to facilitate",
+    "Past Tense": "aided",
+    "Pronunciation": "/ˈeɪd/",
+    "Singular": "aids"
+  },
+  "aim": {
+    "Definition": "to point a weapon at someone or something",
+    "Past Tense": "aimed",
+    "Pronunciation": "/ˈeɪm/",
+    "Singular": "aims"
+  },
+  "alert": {
+    "Definition": "to warn (someone) of danger",
+    "Past Tense": "alerted",
+    "Pronunciation": "/əˈɫɝt/",
+    "Singular": "alerts"
+  },
+  "alleviate": {
+    "Definition": "to make less severe or painful, to make easier",
+    "Past Tense": "alleviated",
+    "Pronunciation": "/əˈɫiviˌeɪt/",
+    "Singular": "alleviates"
+  },
+  "allocate": {
+    "Definition": "to give out or assign to a particular person or cause, to distribute",
+    "Past Tense": "allocated",
+    "Pronunciation": "/ˈæɫəˌkeɪt/",
+    "Singular": "allocates"
+  },
+  "allow": {
+    "Definition": "to permit or enable",
+    "Past Tense": "allowed",
+    "Pronunciation": "/əˈɫaʊ/",
+    "Singular": "allows"
+  },
+  "alter": {
+    "Definition": "to change the form of (a word or phrase) by adding prefixes or suffix",
+    "Past Tense": "altered",
+    "Pronunciation": "/ˈɔɫtɝ/",
+    "Singular": "alters"
+  },
+  "amend": {
+    "Definition": "to make changes to (a text, etc.) in order to improve it",
+    "Past Tense": "amended",
+    "Pronunciation": "/əˈmɛnd/",
+    "Singular": "amends"
+  },
+  "amount": {
+    "Definition": "to be the same as, to be equal to",
+    "Past Tense": "amounted",
+    "Pronunciation": "/əˈmaʊnt/",
+    "Singular": "amounts"
+  },
+  "analyze": {
+    "Definition": "to examine something in detail, to study it carefully",
+    "Past Tense": "analyzed",
+    "Pronunciation": "/ˈænəˌɫaɪz/",
+    "Singular": "analyses"
+  },
+  "anger": {
+    "Definition": "to feel or show anger",
+    "Past Tense": "angered",
+    "Pronunciation": "/ˈæŋɡɝ/",
+    "Singular": "angers"
+  },
+  "announce": {
+    "Definition": "to make known, to declare, to proclaim, to publish",
+    "Past Tense": "announced",
+    "Pronunciation": "/əˈnaʊns/",
+    "Singular": "announces"
+  },
+  "answer": {
+    "Definition": "to respond to a question or request, to reply, to respond",
+    "Past Tense": "answered",
+    "Pronunciation": "/ˈænsɝ/",
+    "Singular": "answers"
+  },
+  "anticipate": {
+    "Definition": "to expect something to happen in the future",
+    "Past Tense": "anticipated",
+    "Pronunciation": "/ænˈtɪsəˌpeɪt/",
+    "Singular": "anticipates"
+  },
+  "apologize": {
+    "Definition": "to say that you are sorry for something that you have done or said",
+    "Past Tense": "apologized",
+    "Pronunciation": "/əˈpɑɫəˌdʒaɪz/",
+    "Singular": "apologizes"
+  },
+  "appeal": {
+    "Definition": "to ask for something, to ask for help",
+    "Past Tense": "appealed",
+    "Pronunciation": "/əˈpiɫ/",
+    "Singular": "appeals"
+  },
+  "appear": {
+    "Definition": "to be seen or noticed, to be present, to be visible",
+    "Past Tense": "appeared",
+    "Pronunciation": "/əˈpɪɹ/",
+    "Singular": "appears"
+  },
+  "apply": {
+    "Definition": "to use or make use of, to put to use, to use",
+    "Past Tense": "applied",
+    "Pronunciation": "/əˈpɫaɪ/",
+    "Singular": "applies"
+  },
+  "appoint": {
+    "Definition": "to give a job to someone, to give someone a position",
+    "Past Tense": "appointed",
+    "Pronunciation": "/əˈpɔɪnt/",
+    "Singular": "appoints"
+  },
+  "appreciate": {
+    "Definition": "to understand the worth of something, to understand the value of something",
+    "Past Tense": "appreciated",
+    "Pronunciation": "/əˈpɹiʃiˌeɪt/",
+    "Singular": "appreciates"
+  },
+  "approach": {
+    "Definition": "to come near to, to draw near to, to get near to",
+    "Past Tense": "approached",
+    "Pronunciation": "/əˈpɹoʊtʃ/",
+    "Singular": "approaches"
+  },
+  "approve": {
+    "Definition": "to give formal approval to, to give permission for",
+    "Past Tense": "approved",
+    "Pronunciation": "/əˈpɹuv/",
+    "Singular": "approves"
+  },
+  "argue": {
+    "Definition": "to state reasons in support of an idea or proposal",
+    "Past Tense": "argued",
+    "Pronunciation": "/ˈɑɹɡju/",
+    "Singular": "argues"
+  },
+  "arise": {
+    "Definition": "to come into being, to come into existence, to come into view",
+    "Past Tense": "arose",
+    "Pronunciation": "/ɝˈaɪz/",
+    "Singular": "arises"
+  },
+  "arrange": {
+    "Definition": "to put in a particular order, to make a particular order",
+    "Past Tense": "arranged",
+    "Pronunciation": "/ɝˈeɪndʒ/",
+    "Singular": "arranges"
+  },
+  "arrest": {
+    "Definition": "to stop someone from doing something, to prevent someone from doing something",
+    "Past Tense": "arrested",
+    "Pronunciation": "/ɝˈɛst/",
+    "Singular": "arrests"
+  },
+  "arrive": {
+    "Definition": "to come to a place",
+    "Past Tense": "arrived",
+    "Pronunciation": "/ɝˈaɪv/",
+    "Singular": "arrives"
+  },
+  "ascertain": {
+    "Definition": "to find out or learn about something, especially information about a person or place",
+    "Past Tense": "ascertained",
+    "Pronunciation": "/ˌæsɝˈteɪn/",
+    "Singular": "ascertains"
+  },
+  "ask": {
+    "Definition": "to request or demand",
+    "Past Tense": "asked",
+    "Pronunciation": "/ˈæsk/",
+    "Singular": "asks"
+  },
+  "assemble": {
+    "Definition": "to come together, to be collected in one place, to be gathered together",
+    "Past Tense": "assembled",
+    "Pronunciation": "/əˈsɛmbəɫ/",
+    "Singular": "assembles"
+  },
+  "assert": {
+    "Definition": "to state or affirm positively and forcefully",
+    "Past Tense": "asserted",
+    "Pronunciation": "/əˈsɝt/",
+    "Singular": "asserts"
+  },
+  "assess": {
+    "Definition": "to estimate the value of something, to judge the worth of something",
+    "Past Tense": "assessed",
+    "Pronunciation": "/əˈsɛs/",
+    "Singular": "assesses"
+  },
+  "assign": {
+    "Definition": "to give (something) to someone by official decree or lottery",
+    "Past Tense": "assigned",
+    "Pronunciation": "/əˈsaɪn/",
+    "Singular": "assigns"
+  },
+  "assist": {
+    "Definition": "to help someone, to give support to someone",
+    "Past Tense": "assisted",
+    "Pronunciation": "/əˈsɪst/",
+    "Singular": "assists"
+  },
+  "associate": {
+    "Definition": "to be connected or related",
+    "Past Tense": "associated",
+    "Pronunciation": "/əˈsoʊsiˌeɪt/, /əˈsoʊsiət/, /əˈsoʊʃiˌeɪt/, /əˈsoʊʃiət/",
+    "Singular": "associates"
+  },
+  "assume": {
+    "Definition": "to take on a new form or shape, to become, to transform",
+    "Past Tense": "assumed",
+    "Pronunciation": "/əˈsum/",
+    "Singular": "assumes"
+  },
+  "assure": {
+    "Definition": "to make certain that something will happen or be the case",
+    "Past Tense": "assured",
+    "Pronunciation": "/əˈʃʊɹ/",
+    "Singular": "assures"
+  },
+  "attach": {
+    "Definition": "to fasten or secure with or as if with hooks",
+    "Past Tense": "attached",
+    "Pronunciation": "/əˈtætʃ/",
+    "Singular": "attaches"
+  },
+  "attack": {
+    "Definition": "to attack someone or something, to make an attack on someone or something",
+    "Past Tense": "attacked",
+    "Pronunciation": "/əˈtæk/",
+    "Singular": "attacks"
+  },
+  "attain": {
+    "Definition": "to reach a goal, to achieve something, to succeed",
+    "Past Tense": "attained",
+    "Pronunciation": "/əˈteɪn/",
+    "Singular": "attains"
+  },
+  "attempt": {
+    "Definition": "to try to do something, to try to achieve something",
+    "Past Tense": "attempted",
+    "Pronunciation": "/əˈtɛmpt/",
+    "Singular": "attempts"
+  },
+  "attend": {
+    "Definition": "to be present at an event or ceremony, to be in the company of",
+    "Past Tense": "attended",
+    "Pronunciation": "/əˈtɛnd/",
+    "Singular": "attends"
+  },
+  "attract": {
+    "Definition": "to draw or pull towards oneself",
+    "Past Tense": "attracted",
+    "Pronunciation": "/əˈtɹækt/",
+    "Singular": "attracts"
+  },
+  "attribute": {
+    "Definition": "to give credit to, to attribute to, to ascribe to",
+    "Past Tense": "attributed",
+    "Pronunciation": "/ˈætɹəbˌjut/, /əˈtɹɪbˌjut/",
+    "Singular": "attributes"
+  },
+  "avoid": {
+    "Definition": "to keep away from, to keep away from, to keep away from",
+    "Past Tense": "avoided",
+    "Pronunciation": "/əˈvɔɪd/",
+    "Singular": "avoids"
+  },
+  "await": {
+    "Definition": "to wait for, to expect, to look forward to",
+    "Past Tense": "awaited",
+    "Pronunciation": "/əˈweɪt/",
+    "Singular": "awaits"
+  },
+  "award": {
+    "Definition": "to give (a prize) to someone",
+    "Past Tense": "awarded",
+    "Pronunciation": "/əˈwɔɹd/",
+    "Singular": "awards"
+  },
+  "back": {
+    "Definition": "to move backwards, to move away from something, to move away from someone",
+    "Past Tense": "backed",
+    "Pronunciation": "/ˈbæk/",
+    "Singular": "backs"
+  },
+  "bake": {
+    "Definition": "to cook (food) in an oven",
+    "Past Tense": "baked",
+    "Pronunciation": "/ˈbeɪk/",
+    "Singular": "bakes"
+  },
+  "balance": {
+    "Definition": "to be in a state of equilibrium, to be in a state of equilibrium",
+    "Past Tense": "balanced",
+    "Pronunciation": "/ˈbæɫəns/",
+    "Singular": "balances"
+  },
+  "ban": {
+    "Definition": "to forbid or prohibit",
+    "Past Tense": "banned",
+    "Pronunciation": "/ˈbæn/",
+    "Singular": "bans"
+  },
+  "bang": {
+    "Definition": "to hit hard, to strike with force, to beat, to hit repeatedly",
+    "Past Tense": "banged",
+    "Pronunciation": "/ˈbæŋ/",
+    "Singular": "bangs"
+  },
+  "base": {
+    "Definition": "to be the foundation of something",
+    "Past Tense": "based",
+    "Pronunciation": "/ˈbeɪs/",
+    "Singular": "bases"
+  },
+  "be": {
+    "Definition": "to be, to exist, to happen, to occur, to take place",
+    "Past Tense": "was",
+    "Pronunciation": "/ˈbi/, /bi/",
+    "Singular": "is"
+  },
+  "bear": {
+    "Definition": "to carry or hold up",
+    "Past Tense": "beared",
+    "Pronunciation": "/ˈbɛɹ/",
+    "Singular": "bears"
+  },
+  "beat": {
+    "Definition": "to hit repeatedly",
+    "Past Tense": "beat",
+    "Pronunciation": "/ˈbit/",
+    "Singular": "beats"
+  },
+  "become": {
+    "Definition": "to become, to make something become, to cause something to become",
+    "Past Tense": "became",
+    "Pronunciation": "/bɪˈkəm/",
+    "Singular": "becomes"
+  },
+  "beg": {
+    "Definition": "to ask for something, to request, to plead, to entreat",
+    "Past Tense": "begged",
+    "Pronunciation": "/ˈbɛɡ/",
+    "Singular": "begs"
+  },
+  "begin": {
+    "Definition": "to start, to start to do something, to start to happen",
+    "Past Tense": "began",
+    "Pronunciation": "/bɪˈɡɪn/",
+    "Singular": "begins"
+  },
+  "behave": {
+    "Definition": "to behave in a particular way, to act in a particular way",
+    "Past Tense": "behaved",
+    "Pronunciation": "/bɪˈheɪv/",
+    "Singular": "behaves"
+  },
+  "believe": {
+    "Definition": "to have confidence or trust in someone or something",
+    "Past Tense": "believed",
+    "Pronunciation": "/bɪˈɫiv/",
+    "Singular": "believes"
+  },
+  "belong": {
+    "Definition": "to be a member of a group or organization",
+    "Past Tense": "belonged",
+    "Pronunciation": "/bɪˈɫɔŋ/",
+    "Singular": "belongs"
+  },
+  "bend": {
+    "Definition": "to change the shape of (something) by applying force",
+    "Past Tense": "bent",
+    "Pronunciation": "/ˈbɛnd/",
+    "Singular": "bends"
+  },
+  "benefit": {
+    "Definition": "to be of use or advantage to someone or something",
+    "Past Tense": "benefited",
+    "Pronunciation": "/ˈbɛnəfɪt/",
+    "Singular": "benefits"
+  },
+  "bet": {
+    "Definition": "to wager money on the outcome of a game or event",
+    "Past Tense": "bet",
+    "Pronunciation": "/ˈbɛt/",
+    "Singular": "bets"
+  },
+  "bid": {
+    "Definition": "to make an offer to buy something",
+    "Past Tense": "bid",
+    "Pronunciation": "/ˈbɪd/",
+    "Singular": "bids"
+  },
+  "bind": {
+    "Definition": "to tie or fasten with a rope or string",
+    "Past Tense": "bound",
+    "Pronunciation": "/ˈbaɪnd/",
+    "Singular": "binds"
+  },
+  "bite": {
+    "Definition": "to take a bite of something, to eat a small amount of something",
+    "Past Tense": "bit",
+    "Pronunciation": "/ˈbaɪt/",
+    "Singular": "bites"
+  },
+  "blame": {
+    "Definition": "to hold someone responsible for something bad that has happened",
+    "Past Tense": "blamed",
+    "Pronunciation": "/ˈbɫeɪm/",
+    "Singular": "blames"
+  },
+  "blend": {
+    "Definition": "to mix together, to combine, to mix, to unite",
+    "Past Tense": "blended",
+    "Pronunciation": "/ˈbɫɛnd/",
+    "Singular": "blends"
+  },
+  "bless": {
+    "Definition": "to say a prayer asking for God's blessing",
+    "Past Tense": "blessed",
+    "Pronunciation": "/ˈbɫɛs/",
+    "Singular": "blesses"
+  },
+  "block": {
+    "Definition": "to prevent passage through or along",
+    "Past Tense": "blocked",
+    "Pronunciation": "/ˈbɫɑk/",
+    "Singular": "blocks"
+  },
+  "blow": {
+    "Definition": "to make a loud noise",
+    "Past Tense": "blew",
+    "Pronunciation": "/ˈbɫoʊ/",
+    "Singular": "blows"
+  },
+  "board": {
+    "Definition": "to put on a board, to put on a board",
+    "Past Tense": "boarded",
+    "Pronunciation": "/ˈbɔɹd/",
+    "Singular": "boards"
+  },
+  "boil": {
+    "Definition": "to cook in boiling water or other hot liquid",
+    "Past Tense": "boiled",
+    "Pronunciation": "/ˈbɔɪɫ/",
+    "Singular": "boils"
+  },
+  "book": {
+    "Definition": "to write a book",
+    "Past Tense": "booked",
+    "Pronunciation": "/ˈbʊk/",
+    "Singular": "books"
+  },
+  "boost": {
+    "Definition": "to increase the strength or power of, to increase the strength or power of",
+    "Past Tense": "boosted",
+    "Pronunciation": "/ˈbust/",
+    "Singular": "boosts"
+  },
+  "borrow": {
+    "Definition": "to take (something) from someone else without permission",
+    "Past Tense": "borrowed",
+    "Pronunciation": "/ˈbɑˌɹoʊ/",
+    "Singular": "borrows"
+  },
+  "bother": {
+    "Definition": "to annoy or irritate someone",
+    "Past Tense": "bothered",
+    "Pronunciation": "/ˈbɑðɝ/",
+    "Singular": "bothers"
+  },
+  "bounce": {
+    "Definition": "to move up and down, to jump, to rebound",
+    "Past Tense": "bounced",
+    "Pronunciation": "/ˈbaʊns/",
+    "Singular": "bounces"
+  },
+  "break": {
+    "Definition": "to separate into pieces or fragments, to cause to separate into pieces or fragments",
+    "Past Tense": "broke",
+    "Pronunciation": "/ˈbɹeɪk/",
+    "Singular": "breaks"
+  },
+  "breathe": {
+    "Definition": "to take in air, to inhale, to draw in",
+    "Past Tense": "breathed",
+    "Pronunciation": "/ˈbɹið/",
+    "Singular": "breathes"
+  },
+  "breed": {
+    "Definition": "to cause to be born, to cause to come into existence",
+    "Past Tense": "bred",
+    "Pronunciation": "/ˈbɹid/",
+    "Singular": "breeds"
+  },
+  "bring": {
+    "Definition": "to cause to come to the place where you are",
+    "Past Tense": "brought",
+    "Pronunciation": "/ˈbɹɪŋ/",
+    "Singular": "brings"
+  },
+  "broadcast": {
+    "Definition": "to send out over a wide area",
+    "Past Tense": "broadcast",
+    "Pronunciation": "/ˈbɹɔdˌkæst/",
+    "Singular": "broadcasts"
+  },
+  "brush": {
+    "Definition": "to move or rub with a brush",
+    "Past Tense": "brushed",
+    "Pronunciation": "/ˈbɹəʃ/",
+    "Singular": "brushes"
+  },
+  "build": {
+    "Definition": "to construct something, to make something, to create something, to form something",
+    "Past Tense": "built",
+    "Pronunciation": "/ˈbɪɫd/",
+    "Singular": "builds"
+  },
+  "burn": {
+    "Definition": "to cause to undergo combustion",
+    "Past Tense": "burned",
+    "Pronunciation": "/ˈbɝn/",
+    "Singular": "burns"
+  },
+  "burst": {
+    "Definition": "to break open suddenly",
+    "Past Tense": "burst",
+    "Pronunciation": "/ˈbɝst/",
+    "Singular": "bursts"
+  },
+  "bury": {
+    "Definition": "to put something in the ground, to put something in a grave",
+    "Past Tense": "buried",
+    "Pronunciation": "/ˈbɛɹi/",
+    "Singular": "buries"
+  },
+  "buy": {
+    "Definition": "to pay for something, to give money for something, to purchase something",
+    "Past Tense": "bought",
+    "Pronunciation": "/ˈbaɪ/",
+    "Singular": "buys"
+  },
+  "calculate": {
+    "Definition": "to work out the value of (a number or amount) by performing mathematical operations",
+    "Past Tense": "calculated",
+    "Pronunciation": "/ˈkæɫkjəˌɫeɪt/",
+    "Singular": "calculates"
+  },
+  "call": {
+    "Definition": "to say something to someone, to speak to someone, to talk to someone",
+    "Past Tense": "called",
+    "Pronunciation": "/ˈkɔɫ/",
+    "Singular": "calls"
+  },
+  "calm": {
+    "Definition": "to become calm, to become quiet, to become peaceful",
+    "Past Tense": "calmed",
+    "Pronunciation": "/ˈkɑɫm/, /ˈkɑm/",
+    "Singular": "calms"
+  },
+  "campaign": {
+    "Definition": "to try to get people to vote for you in an election",
+    "Past Tense": "campaigned",
+    "Pronunciation": "/kæmˈpeɪn/",
+    "Singular": "campaigns"
+  },
+  "can": {
+    "Definition": "to be able to do something, to be able to do something",
+    "Past Tense": "could",
+    "Pronunciation": "/ˈkæn/, /kən/",
+    "Singular": "can"
+  },
+  "cancel": {
+    "Definition": "to stop something from happening, to stop something from happening",
+    "Past Tense": "cancelled",
+    "Pronunciation": "/ˈkænsəɫ/",
+    "Singular": "cancels"
+  },
+  "capture": {
+    "Definition": "to take possession of, to seize, to take into custody",
+    "Past Tense": "captured",
+    "Pronunciation": "/ˈkæptʃɝ/",
+    "Singular": "captures"
+  },
+  "care": {
+    "Definition": "to be concerned about someone or something",
+    "Past Tense": "cared",
+    "Pronunciation": "/ˈkɛɹ/",
+    "Singular": "cares"
+  },
+  "carry": {
+    "Definition": "to take something with you, to take something from one place to another",
+    "Past Tense": "carried",
+    "Pronunciation": "/ˈkæɹi/, /ˈkɛɹi/",
+    "Singular": "carries"
+  },
+  "cash": {
+    "Definition": "to pay for something, to give money for something, to pay for something",
+    "Past Tense": "cashed",
+    "Pronunciation": "/ˈkæʃ/",
+    "Singular": "cashes"
+  },
+  "cast": {
+    "Definition": "to throw or propel with force",
+    "Past Tense": "cast",
+    "Pronunciation": "/ˈkæst/",
+    "Singular": "casts"
+  },
+  "catch": {
+    "Definition": "to get or receive (something)",
+    "Past Tense": "caught",
+    "Pronunciation": "/ˈkætʃ/",
+    "Singular": "catches"
+  },
+  "cater": {
+    "Definition": "to provide food and drink for (a group of people)",
+    "Past Tense": "catered",
+    "Pronunciation": "/ˈkeɪtɝ/",
+    "Singular": "caters"
+  },
+  "cause": {
+    "Definition": "to cause to be, to cause to happen, to cause to exist",
+    "Past Tense": "caused",
+    "Pronunciation": "/ˈkɑz/, /ˈkɔz/",
+    "Singular": "causes"
+  },
+  "cease": {
+    "Definition": "to stop doing something, to stop being something, to stop existing",
+    "Past Tense": "ceased",
+    "Pronunciation": "/ˈsis/",
+    "Singular": "ceases"
+  },
+  "celebrate": {
+    "Definition": "to hold a party to celebrate something",
+    "Past Tense": "celebrated",
+    "Pronunciation": "/ˈsɛɫəˌbɹeɪt/",
+    "Singular": "celebrates"
+  },
+  "challenge": {
+    "Definition": "to ask someone to fight",
+    "Past Tense": "challenged",
+    "Pronunciation": "/ˈtʃæɫəndʒ/",
+    "Singular": "challenges"
+  },
+  "change": {
+    "Definition": "to change from one form to another, to become different",
+    "Past Tense": "changed",
+    "Pronunciation": "/ˈtʃeɪndʒ/",
+    "Singular": "changes"
+  },
+  "charge": {
+    "Definition": "to make a charge against someone",
+    "Past Tense": "charged",
+    "Pronunciation": "/ˈtʃɑɹdʒ/",
+    "Singular": "charges"
+  },
+  "chase": {
+    "Definition": "to follow or pursue (someone or something) in order to catch or capture",
+    "Past Tense": "chased",
+    "Pronunciation": "/ˈtʃeɪs/",
+    "Singular": "chases"
+  },
+  "chat": {
+    "Definition": "to talk in a friendly way, especially in a casual way",
+    "Past Tense": "chatted",
+    "Pronunciation": "/ˈtʃæt/",
+    "Singular": "chats"
+  },
+  "check": {
+    "Definition": "to examine something carefully, to make sure that it is correct or safe",
+    "Past Tense": "checked",
+    "Pronunciation": "/ˈtʃɛk/",
+    "Singular": "checks"
+  },
+  "cheer": {
+    "Definition": "to express approval or support",
+    "Past Tense": "cheered",
+    "Pronunciation": "/ˈtʃɪɹ/",
+    "Singular": "cheers"
+  },
+  "choose": {
+    "Definition": "to select from a number of possibilities, to pick out, to choose from",
+    "Past Tense": "chose",
+    "Pronunciation": "/ˈtʃuz/",
+    "Singular": "chooses"
+  },
+  "chuck": {
+    "Definition": "to throw or cast with force",
+    "Past Tense": "chucked",
+    "Pronunciation": "/ˈtʃək/",
+    "Singular": "chucks"
+  },
+  "claim": {
+    "Definition": "to say that something is yours",
+    "Past Tense": "claimed",
+    "Pronunciation": "/ˈkɫeɪm/",
+    "Singular": "claims"
+  },
+  "clarify": {
+    "Definition": "to make something clear or easier to understand",
+    "Past Tense": "clarified",
+    "Pronunciation": "/ˈkɫɛɹəˌfaɪ/",
+    "Singular": "clarifies"
+  },
+  "classify": {
+    "Definition": "to arrange in groups according to shared characteristics",
+    "Past Tense": "classified",
+    "Pronunciation": "/ˈkɫæsəˌfaɪ/",
+    "Singular": "classifies"
+  },
+  "clean": {
+    "Definition": "to make clean, to remove dirt from, to wash",
+    "Past Tense": "cleaned",
+    "Pronunciation": "/ˈkɫin/",
+    "Singular": "cleans"
+  },
+  "clear": {
+    "Definition": "to clear the throat",
+    "Past Tense": "cleared",
+    "Pronunciation": "/ˈkɫɪɹ/",
+    "Singular": "clears"
+  },
+  "climb": {
+    "Definition": "to move upward by using your hands and feet, to ascend",
+    "Past Tense": "climbed",
+    "Pronunciation": "/ˈkɫaɪm/",
+    "Singular": "climbs"
+  },
+  "cling": {
+    "Definition": "to stick to something, to be attached to something",
+    "Past Tense": "clung",
+    "Pronunciation": "/ˈkɫɪŋ/",
+    "Singular": "clings"
+  },
+  "close": {
+    "Definition": "to stop being open, to stop being available, to stop being accessible",
+    "Past Tense": "closed",
+    "Pronunciation": "/ˈkɫoʊs/, /ˈkɫoʊz/",
+    "Singular": "closes"
+  },
+  "coach": {
+    "Definition": "to give someone advice or instructions on how to do something",
+    "Past Tense": "coached",
+    "Pronunciation": "/ˈkoʊtʃ/",
+    "Singular": "coaches"
+  },
+  "coincide": {
+    "Definition": "to be in agreement, to be in harmony, to be in accord",
+    "Past Tense": "coincided",
+    "Pronunciation": "/ˌkoʊɪnˈsaɪd/",
+    "Singular": "coincides"
+  },
+  "collapse": {
+    "Definition": "to fall down or to fall over",
+    "Past Tense": "collapsed",
+    "Pronunciation": "/kəˈɫæps/",
+    "Singular": "collapses"
+  },
+  "collect": {
+    "Definition": "to gather or bring together",
+    "Past Tense": "collected",
+    "Pronunciation": "/kəˈɫɛkt/",
+    "Singular": "collects"
+  },
+  "color": {
+    "Definition": "to make (something) more intense or vivid",
+    "Past Tense": "colored",
+    "Pronunciation": "/ˈkəɫɝ/, /ˈkɔɫɝ/",
+    "Singular": "colors"
+  },
+  "combat": {
+    "Definition": "to fight against (an enemy or opponent)",
+    "Past Tense": "combated",
+    "Pronunciation": "/ˈkɑmbæt/, /kəmˈbæt/",
+    "Singular": "combats"
+  },
+  "combine": {
+    "Definition": "to join together, to unite, to bring together, to put together",
+    "Past Tense": "combined",
+    "Pronunciation": "/ˈkɑmbaɪn/, /kəmˈbaɪn/",
+    "Singular": "combines"
+  },
+  "come": {
+    "Definition": "to arrive at a place",
+    "Past Tense": "came",
+    "Pronunciation": "/ˈkəm/",
+    "Singular": "comes"
+  },
+  "comfort": {
+    "Definition": "to make someone feel better, to make someone feel better",
+    "Past Tense": "comforted",
+    "Pronunciation": "/ˈkəmfɝt/",
+    "Singular": "comforts"
+  },
+  "command": {
+    "Definition": "to give a command to, to order, to direct, to instruct",
+    "Past Tense": "commanded",
+    "Pronunciation": "/kəˈmænd/",
+    "Singular": "commands"
+  },
+  "commence": {
+    "Definition": "to begin to do something, to start doing something",
+    "Past Tense": "commenced",
+    "Pronunciation": "/kəˈmɛns/",
+    "Singular": "commences"
+  },
+  "comment": {
+    "Definition": "to say something about something",
+    "Past Tense": "commented",
+    "Pronunciation": "/ˈkɑmɛnt/",
+    "Singular": "comments"
+  },
+  "commit": {
+    "Definition": "to do something wrong or illegal, especially knowingly",
+    "Past Tense": "committed",
+    "Pronunciation": "/kəˈmɪt/",
+    "Singular": "commits"
+  },
+  "communicate": {
+    "Definition": "to exchange information or messages, to convey, to transmit, to impart",
+    "Past Tense": "communicated",
+    "Pronunciation": "/kəmˈjunəˌkeɪt/",
+    "Singular": "communicates"
+  },
+  "compare": {
+    "Definition": "to examine or consider in detail",
+    "Past Tense": "compared",
+    "Pronunciation": "/kəmˈpɛɹ/",
+    "Singular": "compares"
+  },
+  "compensate": {
+    "Definition": "to make up for something",
+    "Past Tense": "compensated",
+    "Pronunciation": "/ˈkɑmpənˌseɪt/",
+    "Singular": "compensates"
+  },
+  "compete": {
+    "Definition": "to try to be better than someone else, to try to be the best",
+    "Past Tense": "competed",
+    "Pronunciation": "/kəmˈpit/",
+    "Singular": "competes"
+  },
+  "complain": {
+    "Definition": "to express dissatisfaction or annoyance about something",
+    "Past Tense": "complained",
+    "Pronunciation": "/kəmˈpɫeɪn/",
+    "Singular": "complains"
+  },
+  "complement": {
+    "Definition": "to complete, to make whole, to make perfect, to make complete",
+    "Past Tense": "complemented",
+    "Pronunciation": "/ˈkɑmpɫəmənt/",
+    "Singular": "complements"
+  },
+  "complete": {
+    "Definition": "to finish, to complete, to finish off, to finish up",
+    "Past Tense": "completed",
+    "Pronunciation": "/kəmˈpɫit/",
+    "Singular": "completes"
+  },
+  "comply": {
+    "Definition": "to do what is required or expected",
+    "Past Tense": "complied",
+    "Pronunciation": "/kəmˈpɫaɪ/",
+    "Singular": "complies"
+  },
+  "comprehend": {
+    "Definition": "to understand something",
+    "Past Tense": "comprehended",
+    "Pronunciation": "/ˌkɑmpɹiˈhɛnd/",
+    "Singular": "comprehends"
+  },
+  "comprise": {
+    "Definition": "to include or contain within itself, to consist of",
+    "Past Tense": "comprised",
+    "Pronunciation": "/kəmˈpɹaɪz/",
+    "Singular": "comprises"
+  },
+  "compromise": {
+    "Definition": "to give in to the demands of the other side",
+    "Past Tense": "compromised",
+    "Pronunciation": "/ˈkɑmpɹəˌmaɪz/",
+    "Singular": "compromises"
+  },
+  "conceal": {
+    "Definition": "to hide something, to keep it secret, to keep it from being seen",
+    "Past Tense": "concealed",
+    "Pronunciation": "/kənˈsiɫ/",
+    "Singular": "conceals"
+  },
+  "concede": {
+    "Definition": "to give up (a claim or right)",
+    "Past Tense": "conceded",
+    "Pronunciation": "/kənˈsid/",
+    "Singular": "concedes"
+  },
+  "conceive": {
+    "Definition": "to have an idea of something, to think of something",
+    "Past Tense": "conceived",
+    "Pronunciation": "/kənˈsiv/",
+    "Singular": "conceives"
+  },
+  "concentrate": {
+    "Definition": "to gather together or focus one's attention",
+    "Past Tense": "concentrated",
+    "Pronunciation": "/ˈkɑnsənˌtɹeɪt/",
+    "Singular": "concentrates"
+  },
+  "concern": {
+    "Definition": "to be worried about something",
+    "Past Tense": "concerned",
+    "Pronunciation": "/kənˈsɝn/",
+    "Singular": "concerns"
+  },
+  "conclude": {
+    "Definition": "to come to a decision about something, to make a decision about something",
+    "Past Tense": "concluded",
+    "Pronunciation": "/kənˈkɫud/",
+    "Singular": "concludes"
+  },
+  "condemn": {
+    "Definition": "to express strong disapproval of",
+    "Past Tense": "condemned",
+    "Pronunciation": "/kənˈdɛm/",
+    "Singular": "condemns"
+  },
+  "conduct": {
+    "Definition": "to lead or guide through a place or situation or course of action",
+    "Past Tense": "conducted",
+    "Pronunciation": "/ˈkɑndəkt/, /kɑnˈdəkt/",
+    "Singular": "conducts"
+  },
+  "confer": {
+    "Definition": "to talk to someone in order to reach an agreement or to exchange information",
+    "Past Tense": "conferred",
+    "Pronunciation": "/kənˈfɝ/",
+    "Singular": "confers"
+  },
+  "confess": {
+    "Definition": "to admit that you have done something wrong or illegal",
+    "Past Tense": "confessed",
+    "Pronunciation": "/kənˈfɛs/",
+    "Singular": "confesses"
+  },
+  "confirm": {
+    "Definition": "to make certain of the truth or existence of something",
+    "Past Tense": "confirmed",
+    "Pronunciation": "/kənˈfɝm/",
+    "Singular": "confirms"
+  },
+  "conform": {
+    "Definition": "to act in accordance with the rules or wishes of others",
+    "Past Tense": "conformed",
+    "Pronunciation": "/kənˈfɔɹm/",
+    "Singular": "conforms"
+  },
+  "confront": {
+    "Definition": "to face someone or something, to deal with someone or something",
+    "Past Tense": "confronted",
+    "Pronunciation": "/kənˈfɹənt/",
+    "Singular": "confronts"
+  },
+  "confuse": {
+    "Definition": "to make (someone) believe that something is true when it is not",
+    "Past Tense": "confused",
+    "Pronunciation": "/kənˈfjuz/",
+    "Singular": "confuses"
+  },
+  "congratulate": {
+    "Definition": "to express approval or admiration",
+    "Past Tense": "congratulated",
+    "Pronunciation": "/kənˈɡɹætʃəˌɫeɪt/",
+    "Singular": "congratulates"
+  },
+  "connect": {
+    "Definition": "to join or link together, to be connected",
+    "Past Tense": "connected",
+    "Pronunciation": "/kəˈnɛkt/",
+    "Singular": "connects"
+  },
+  "consider": {
+    "Definition": "to think about carefully, to weigh up",
+    "Past Tense": "considered",
+    "Pronunciation": "/kənˈsɪdɝ/",
+    "Singular": "considers"
+  },
+  "consist": {
+    "Definition": "to be made up of, to be composed of, to be composed of",
+    "Past Tense": "consisted",
+    "Pronunciation": "/kənˈsɪst/",
+    "Singular": "consists"
+  },
+  "consolidate": {
+    "Definition": "to make (something) more solid or stronger",
+    "Past Tense": "consolidated",
+    "Pronunciation": "/kənˈsɑɫɪˌdeɪt/",
+    "Singular": "consolidates"
+  },
+  "constitute": {
+    "Definition": "to be made up of, to be composed of",
+    "Past Tense": "constituted",
+    "Pronunciation": "/ˈkɑnstəˌtut/",
+    "Singular": "constitutes"
+  },
+  "construct": {
+    "Definition": "to make or build something, to create something, to make something",
+    "Past Tense": "constructed",
+    "Pronunciation": "/ˈkɑnstɹəkt/, /kənˈstɹəkt/",
+    "Singular": "constructs"
+  },
+  "consult": {
+    "Definition": "to seek advice or information from (someone)",
+    "Past Tense": "consulted",
+    "Pronunciation": "/kənˈsəɫt/",
+    "Singular": "consults"
+  },
+  "consume": {
+    "Definition": "to use up, to eat up, to use up all of",
+    "Past Tense": "consumed",
+    "Pronunciation": "/kənˈsum/",
+    "Singular": "consumes"
+  },
+  "contact": {
+    "Definition": "to make contact with, to touch, to come into contact with",
+    "Past Tense": "contacted",
+    "Pronunciation": "/ˈkɑnˌtækt/",
+    "Singular": "contacts"
+  },
+  "contain": {
+    "Definition": "to have (something) as a component or ingredient",
+    "Past Tense": "contained",
+    "Pronunciation": "/kənˈteɪn/",
+    "Singular": "contains"
+  },
+  "contemplate": {
+    "Definition": "to think about something seriously",
+    "Past Tense": "contemplated",
+    "Pronunciation": "/ˈkɑntəmˌpɫeɪt/",
+    "Singular": "contemplates"
+  },
+  "contend": {
+    "Definition": "to argue or fight over something, to compete for something",
+    "Past Tense": "contended",
+    "Pronunciation": "/kənˈtɛnd/",
+    "Singular": "contends"
+  },
+  "continue": {
+    "Definition": "to go on, to last, to remain, to persist, to continue",
+    "Past Tense": "continued",
+    "Pronunciation": "/kənˈtɪnju/",
+    "Singular": "continues"
+  },
+  "contract": {
+    "Definition": "to make a contract, to agree to do something, to make a deal",
+    "Past Tense": "contracted",
+    "Pronunciation": "/ˈkɑnˌtɹækt/, /kənˈtɹækt/",
+    "Singular": "contracts"
+  },
+  "contrast": {
+    "Definition": "to be different from something else",
+    "Past Tense": "contrasted",
+    "Pronunciation": "/ˈkɑntɹæst/, /kənˈtɹæst/",
+    "Singular": "contrasts"
+  },
+  "contribute": {
+    "Definition": "to give something to a group or cause",
+    "Past Tense": "contributed",
+    "Pronunciation": "/kənˈtɹɪbjut/",
+    "Singular": "contributes"
+  },
+  "control": {
+    "Definition": "to have power over, to dominate, to be in charge of",
+    "Past Tense": "controlled",
+    "Pronunciation": "/kənˈtɹoʊɫ/",
+    "Singular": "controls"
+  },
+  "convert": {
+    "Definition": "to change (something) into (something) else",
+    "Past Tense": "converted",
+    "Pronunciation": "/ˈkɑnvɝt/, /kənˈvɝt/",
+    "Singular": "converts"
+  },
+  "convey": {
+    "Definition": "to pass on, to transmit, to impart, to communicate",
+    "Past Tense": "conveyed",
+    "Pronunciation": "/kənˈveɪ/",
+    "Singular": "conveys"
+  },
+  "convince": {
+    "Definition": "to make (someone) believe that (something) is true or right",
+    "Past Tense": "convinced",
+    "Pronunciation": "/kənˈvɪns/",
+    "Singular": "convinces"
+  },
+  "cook": {
+    "Definition": "to prepare food by applying heat",
+    "Past Tense": "cooked",
+    "Pronunciation": "/ˈkʊk/",
+    "Singular": "cooks"
+  },
+  "cool": {
+    "Definition": "to be cool, to be calm, to be relaxed",
+    "Past Tense": "cooled",
+    "Pronunciation": "/ˈkuɫ/",
+    "Singular": "cools"
+  },
+  "cooperate": {
+    "Definition": "to work together with someone to achieve or do something",
+    "Past Tense": "cooperated",
+    "Pronunciation": "/ˈkwɑpɝˌeɪt/, /koʊˈɑpɝˌeɪt/",
+    "Singular": "cooperates"
+  },
+  "coordinate": {
+    "Definition": "to bring into agreement, to make consistent, to make compatible",
+    "Past Tense": "coordinated",
+    "Pronunciation": "/koʊˈɔɹdəˌneɪt/, /koʊˈɔɹdənət/",
+    "Singular": "coordinates"
+  },
+  "cope": {
+    "Definition": "to deal with a difficult situation, especially one that causes you to suffer",
+    "Past Tense": "coped",
+    "Pronunciation": "/ˈkoʊp/",
+    "Singular": "copes"
+  },
+  "copy": {
+    "Definition": "to make a copy of something, to make a copy of something",
+    "Past Tense": "copied",
+    "Pronunciation": "/ˈkɑpi/",
+    "Singular": "copies"
+  },
+  "correct": {
+    "Definition": "to make something correct, to make something right, to make something better",
+    "Past Tense": "corrected",
+    "Pronunciation": "/kɝˈɛkt/",
+    "Singular": "corrects"
+  },
+  "correspond": {
+    "Definition": "to be in agreement, to be similar, to be in accordance",
+    "Past Tense": "corresponded",
+    "Pronunciation": "/ˌkɔɹəˈspɑnd/",
+    "Singular": "corresponds"
+  },
+  "cost": {
+    "Definition": "to pay for something, to give money for something, to pay for something",
+    "Past Tense": "cost",
+    "Pronunciation": "/ˈkɑst/, /ˈkɔst/",
+    "Singular": "costs"
+  },
+  "count": {
+    "Definition": "to be the number of, to be the amount of",
+    "Past Tense": "counted",
+    "Pronunciation": "/ˈkaʊnt/",
+    "Singular": "counts"
+  },
+  "counter": {
+    "Definition": "to be in opposition to, to be against, to be opposed to",
+    "Past Tense": "countered",
+    "Pronunciation": "/ˈkaʊntɝ/",
+    "Singular": "counters"
+  },
+  "cover": {
+    "Definition": "to protect from the weather, to protect from damage, to conceal",
+    "Past Tense": "covered",
+    "Pronunciation": "/ˈkəvɝ/",
+    "Singular": "covers"
+  },
+  "crack": {
+    "Definition": "to make a sharp noise",
+    "Past Tense": "cracked",
+    "Pronunciation": "/ˈkɹæk/",
+    "Singular": "cracks"
+  },
+  "crash": {
+    "Definition": "to hit something with great force",
+    "Past Tense": "crashed",
+    "Pronunciation": "/ˈkɹæʃ/",
+    "Singular": "crashes"
+  },
+  "create": {
+    "Definition": "to make something, to bring something into existence, to cause something to happen",
+    "Past Tense": "created",
+    "Pronunciation": "/kɹiˈeɪt/",
+    "Singular": "creates"
+  },
+  "creep": {
+    "Definition": "to move slowly and quietly",
+    "Past Tense": "crept",
+    "Pronunciation": "/ˈkɹip/",
+    "Singular": "creeps"
+  },
+  "criticize": {
+    "Definition": "to say that something is wrong or not good enough",
+    "Past Tense": "criticized",
+    "Pronunciation": "/ˈkɹɪtɪˌsaɪz/",
+    "Singular": "criticizes"
+  },
+  "cross": {
+    "Definition": "to go across, to pass from one side to the other",
+    "Past Tense": "crossed",
+    "Pronunciation": "/ˈkɹɔs/",
+    "Singular": "crosses"
+  },
+  "cry": {
+    "Definition": "to make a loud noise",
+    "Past Tense": "cried",
+    "Pronunciation": "/ˈkɹaɪ/",
+    "Singular": "cries"
+  },
+  "curb": {
+    "Definition": "to restrain or control",
+    "Past Tense": "curbed",
+    "Pronunciation": "/ˈkɝb/",
+    "Singular": "curbs"
+  },
+  "cure": {
+    "Definition": "to make healthy again, to restore to health, to make sound",
+    "Past Tense": "cured",
+    "Pronunciation": "/ˈkjʊɹ/",
+    "Singular": "cures"
+  },
+  "cut": {
+    "Definition": "to cut something into pieces, to cut something into smaller pieces",
+    "Past Tense": "cut",
+    "Pronunciation": "/ˈkət/",
+    "Singular": "cuts"
+  },
+  "damage": {
+    "Definition": "to cause harm to, to cause damage to, to cause injury to",
+    "Past Tense": "damaged",
+    "Pronunciation": "/ˈdæmədʒ/, /ˈdæmɪdʒ/",
+    "Singular": "damages"
+  },
+  "damn": {
+    "Definition": "to express strong disapproval of",
+    "Past Tense": "damned",
+    "Pronunciation": "/ˈdæm/",
+    "Singular": "damns"
+  },
+  "dance": {
+    "Definition": "to move rhythmically to music",
+    "Past Tense": "danced",
+    "Pronunciation": "/ˈdæns/",
+    "Singular": "dances"
+  },
+  "dare": {
+    "Definition": "to be brave enough to do something",
+    "Past Tense": "dared",
+    "Pronunciation": "/ˈdɛɹ/",
+    "Singular": "dare"
+  },
+  "date": {
+    "Definition": "to go out with someone, to be romantically involved with someone",
+    "Past Tense": "dated",
+    "Pronunciation": "/ˈdeɪt/",
+    "Singular": "dates"
+  },
+  "deal": {
+    "Definition": "to be in charge of, to be responsible for",
+    "Past Tense": "dealt",
+    "Pronunciation": "/ˈdiɫ/",
+    "Singular": "deals"
+  },
+  "debate": {
+    "Definition": "to discuss something in a formal meeting",
+    "Past Tense": "debated",
+    "Pronunciation": "/dəˈbeɪt/",
+    "Singular": "debates"
+  },
+  "decide": {
+    "Definition": "to make a decision, to choose, to select, to pick",
+    "Past Tense": "decided",
+    "Pronunciation": "/ˌdɪˈsaɪd/",
+    "Singular": "decides"
+  },
+  "declare": {
+    "Definition": "to say that something is true or real",
+    "Past Tense": "declared",
+    "Pronunciation": "/dɪˈkɫɛɹ/",
+    "Singular": "declares"
+  },
+  "decline": {
+    "Definition": "to become less in amount, value, or strength",
+    "Past Tense": "declined",
+    "Pronunciation": "/dɪˈkɫaɪn/",
+    "Singular": "declines"
+  },
+  "decorate": {
+    "Definition": "to make something more attractive by adding things to it",
+    "Past Tense": "decorated",
+    "Pronunciation": "/ˈdɛkɝˌeɪt/",
+    "Singular": "decorates"
+  },
+  "decrease": {
+    "Definition": "to become smaller or less",
+    "Past Tense": "decreased",
+    "Pronunciation": "/ˈdiˌkɹis/, /dɪˈkɹis/",
+    "Singular": "decreases"
+  },
+  "defeat": {
+    "Definition": "to be defeated, to lose a battle or war",
+    "Past Tense": "defeated",
+    "Pronunciation": "/dɪˈfit/",
+    "Singular": "defeats"
+  },
+  "defend": {
+    "Definition": "to protect someone or something from attack or harm",
+    "Past Tense": "defended",
+    "Pronunciation": "/dɪˈfɛnd/",
+    "Singular": "defends"
+  },
+  "define": {
+    "Definition": "to make clear the meaning of (a word, phrase",
+    "Past Tense": "defined",
+    "Pronunciation": "/dɪˈfaɪn/",
+    "Singular": "defines"
+  },
+  "delay": {
+    "Definition": "to put off, to postpone, to defer",
+    "Past Tense": "delayed",
+    "Pronunciation": "/dɪˈɫeɪ/",
+    "Singular": "delays"
+  },
+  "delete": {
+    "Definition": "to remove or erase something, to get rid of something",
+    "Past Tense": "deleted",
+    "Pronunciation": "/dɪˈɫit/",
+    "Singular": "deletes"
+  },
+  "deliver": {
+    "Definition": "to give birth to, to bring forth, to produce, to make",
+    "Past Tense": "delivered",
+    "Pronunciation": "/dɪˈɫɪvɝ/",
+    "Singular": "delivers"
+  },
+  "demand": {
+    "Definition": "to ask for something, to request, to require, to insist on",
+    "Past Tense": "demanded",
+    "Pronunciation": "/dɪˈmænd/",
+    "Singular": "demands"
+  },
+  "demonstrate": {
+    "Definition": "to show that something is true or real",
+    "Past Tense": "demonstrated",
+    "Pronunciation": "/ˈdɛmənˌstɹeɪt/",
+    "Singular": "demonstrates"
+  },
+  "deny": {
+    "Definition": "to refuse to accept or believe, to deny the truth of",
+    "Past Tense": "denied",
+    "Pronunciation": "/dɪˈnaɪ/",
+    "Singular": "denies"
+  },
+  "depart": {
+    "Definition": "to leave, to go away, to depart, to leave",
+    "Past Tense": "departed",
+    "Pronunciation": "/dɪˈpɑɹt/",
+    "Singular": "departs"
+  },
+  "depend": {
+    "Definition": "to be dependent on something, to be reliant on something",
+    "Past Tense": "depended",
+    "Pronunciation": "/dɪˈpɛnd/",
+    "Singular": "depends"
+  },
+  "derive": {
+    "Definition": "to get or obtain something",
+    "Past Tense": "derived",
+    "Pronunciation": "/dɝˈaɪv/",
+    "Singular": "derives"
+  },
+  "descend": {
+    "Definition": "to move downward, to go down, to come down, to fall",
+    "Past Tense": "descended",
+    "Pronunciation": "/dɪˈsɛnd/",
+    "Singular": "descends"
+  },
+  "describe": {
+    "Definition": "to give a description of",
+    "Past Tense": "described",
+    "Pronunciation": "/dɪsˈkɹaɪb/",
+    "Singular": "describes"
+  },
+  "deserve": {
+    "Definition": "to be worthy of, to be deserving of, to be qualified for",
+    "Past Tense": "deserved",
+    "Pronunciation": "/dɪˈzɝv/",
+    "Singular": "deserves"
+  },
+  "design": {
+    "Definition": "to make a plan for something",
+    "Past Tense": "designed",
+    "Pronunciation": "/dɪˈzaɪn/",
+    "Singular": "designs"
+  },
+  "desire": {
+    "Definition": "to want something or someone very much, to long for, to crave",
+    "Past Tense": "desired",
+    "Pronunciation": "/dɪˈzaɪɝ/",
+    "Singular": "desires"
+  },
+  "destroy": {
+    "Definition": "to kill or destroy someone or something",
+    "Past Tense": "destroyed",
+    "Pronunciation": "/dɪˈstɹɔɪ/",
+    "Singular": "destroys"
+  },
+  "detect": {
+    "Definition": "to find out or learn about something, especially by searching or looking carefully",
+    "Past Tense": "detected",
+    "Pronunciation": "/dɪˈtɛkt/",
+    "Singular": "detects"
+  },
+  "deter": {
+    "Definition": "to discourage or prevent (someone) from doing something",
+    "Past Tense": "deterred",
+    "Pronunciation": "/dɪˈtɝ/",
+    "Singular": "deters"
+  },
+  "determine": {
+    "Definition": "to find out or learn about something, to find out or learn about something",
+    "Past Tense": "determined",
+    "Pronunciation": "/dəˈtɝmən/, /dɪˈtɝmən/",
+    "Singular": "determines"
+  },
+  "develop": {
+    "Definition": "to become more advanced, to grow, to increase in size",
+    "Past Tense": "developed",
+    "Pronunciation": "/dɪˈvɛɫəp/",
+    "Singular": "develops"
+  },
+  "devise": {
+    "Definition": "to plan or contrive something",
+    "Past Tense": "devised",
+    "Pronunciation": "/dɪˈvaɪs/, /dɪˈvaɪz/",
+    "Singular": "devises"
+  },
+  "devote": {
+    "Definition": "to give or apply to a particular person or purpose",
+    "Past Tense": "devoted",
+    "Pronunciation": "/dɪˈvoʊt/",
+    "Singular": "devotes"
+  },
+  "dictate": {
+    "Definition": "to give orders or instructions, to make decisions, to control",
+    "Past Tense": "dictated",
+    "Pronunciation": "/ˈdɪkˌteɪt/, /dɪkˈteɪt/",
+    "Singular": "dictates"
+  },
+  "die": {
+    "Definition": "to stop living",
+    "Past Tense": "died",
+    "Pronunciation": "/ˈdaɪ/",
+    "Singular": "dies"
+  },
+  "differ": {
+    "Definition": "to be different, to be different from something else",
+    "Past Tense": "differed",
+    "Pronunciation": "/ˈdɪfɝ/",
+    "Singular": "differs"
+  },
+  "differentiate": {
+    "Definition": "to make or become different, to distinguish, to separate, to distinguish between",
+    "Past Tense": "differentiated",
+    "Pronunciation": "/ˌdɪfɝˈɛnʃiˌeɪt/, /ˌdɪfɝˈɛntʃiˌeɪt/",
+    "Singular": "differentiates"
+  },
+  "dig": {
+    "Definition": "to make a hole in the ground with a tool",
+    "Past Tense": "dug",
+    "Pronunciation": "/ˈdɪɡ/",
+    "Singular": "digs"
+  },
+  "diminish": {
+    "Definition": "to make something smaller or less",
+    "Past Tense": "diminished",
+    "Pronunciation": "/dɪˈmɪnɪʃ/",
+    "Singular": "diminishes"
+  },
+  "dip": {
+    "Definition": "to lower something into a liquid",
+    "Past Tense": "dipped",
+    "Pronunciation": "/ˈdɪp/",
+    "Singular": "dips"
+  },
+  "direct": {
+    "Definition": "to direct the course of; \"The river takes a sharp turn here\"",
+    "Past Tense": "directed",
+    "Pronunciation": "/daɪˈɹɛkt/, /dɝˈɛkt/, /dɪˈɹɛkt/",
+    "Singular": "directs"
+  },
+  "disagree": {
+    "Definition": "to express opposition to something, to be against something, to be against something",
+    "Past Tense": "disagreed",
+    "Pronunciation": "/dɪsəˈɡɹi/",
+    "Singular": "disagrees"
+  },
+  "disappear": {
+    "Definition": "to go away, to leave, to go out of sight",
+    "Past Tense": "disappeared",
+    "Pronunciation": "/ˌdɪsəˈpiɹ/, /ˌdɪsəˈpɪɹ/",
+    "Singular": "disappears"
+  },
+  "discharge": {
+    "Definition": "to release (a person from a duty or obligation)",
+    "Past Tense": "discharged",
+    "Pronunciation": "/ˈdɪsˌtʃɑɹdʒ/, /dɪsˈtʃɑɹdʒ/",
+    "Singular": "discharges"
+  },
+  "disclose": {
+    "Definition": "to make known, to reveal, to divulge",
+    "Past Tense": "disclosed",
+    "Pronunciation": "/dɪˈskɫoʊz/",
+    "Singular": "discloses"
+  },
+  "discourage": {
+    "Definition": "to make someone feel less confident or enthusiastic about something",
+    "Past Tense": "discouraged",
+    "Pronunciation": "/dɪˈskɝɪdʒ/",
+    "Singular": "discourages"
+  },
+  "discover": {
+    "Definition": "to find out or learn about something, to find out or learn about something",
+    "Past Tense": "discovered",
+    "Pronunciation": "/dɪˈskəvɝ/",
+    "Singular": "discovers"
+  },
+  "discriminate": {
+    "Definition": "to distinguish between people or things, to make a distinction between people or things",
+    "Past Tense": "discriminated",
+    "Pronunciation": "/dɪsˈkɹɪməˌneɪt/",
+    "Singular": "discriminates"
+  },
+  "discuss": {
+    "Definition": "to talk about something in a formal way, especially in a meeting",
+    "Past Tense": "discussed",
+    "Pronunciation": "/dɪˈskəs/",
+    "Singular": "discusses"
+  },
+  "disguise": {
+    "Definition": "to make someone or something look different from what it really is",
+    "Past Tense": "disguised",
+    "Pronunciation": "/dɪsˈɡaɪz/",
+    "Singular": "disguises"
+  },
+  "dislike": {
+    "Definition": "to dislike or not like something",
+    "Past Tense": "disliked",
+    "Pronunciation": "/dɪˈsɫaɪk/",
+    "Singular": "dislikes"
+  },
+  "dismiss": {
+    "Definition": "to send away, to get rid of, to reject, to discharge",
+    "Past Tense": "dismissed",
+    "Pronunciation": "/dɪsˈmɪs/",
+    "Singular": "dismisses"
+  },
+  "display": {
+    "Definition": "to show or exhibit, to make visible or noticeable",
+    "Past Tense": "displayed",
+    "Pronunciation": "/dɪsˈpɫeɪ/",
+    "Singular": "displays"
+  },
+  "dispose": {
+    "Definition": "to arrange or place in a particular position or location",
+    "Past Tense": "disposed",
+    "Pronunciation": "/dɪˈspoʊz/",
+    "Singular": "disposes"
+  },
+  "disrupt": {
+    "Definition": "to cause to be unable to function properly",
+    "Past Tense": "disrupted",
+    "Pronunciation": "/dɪsˈɹəpt/",
+    "Singular": "disrupts"
+  },
+  "dissolve": {
+    "Definition": "to cause to become liquid, to make liquid, to make something liquid",
+    "Past Tense": "dissolved",
+    "Pronunciation": "/dɪˈzɑɫv/",
+    "Singular": "dissolves"
+  },
+  "distinguish": {
+    "Definition": "to be able to tell the difference between two things",
+    "Past Tense": "distinguished",
+    "Pronunciation": "/dɪˈstɪŋɡwɪʃ/",
+    "Singular": "distinguishes"
+  },
+  "distribute": {
+    "Definition": "to give out, to spread out, to disperse, to scatter",
+    "Past Tense": "distributed",
+    "Pronunciation": "/dɪˈstɹɪbjut/",
+    "Singular": "distributes"
+  },
+  "disturb": {
+    "Definition": "to make a disturbance, to cause trouble, to cause a disturbance",
+    "Past Tense": "disturbed",
+    "Pronunciation": "/dɪˈstɝb/",
+    "Singular": "disturbs"
+  },
+  "divert": {
+    "Definition": "to cause to go in another direction, to cause to change direction",
+    "Past Tense": "diverted",
+    "Pronunciation": "/daɪˈvɝt/, /dɪˈvɝt/",
+    "Singular": "diverts"
+  },
+  "divide": {
+    "Definition": "to separate into two or more parts, to make into two or more parts",
+    "Past Tense": "divided",
+    "Pronunciation": "/dɪˈvaɪd/",
+    "Singular": "divides"
+  },
+  "divorce": {
+    "Definition": "to end a marriage by legal action",
+    "Past Tense": "divorced",
+    "Pronunciation": "/dɪˈvɔɹs/",
+    "Singular": "divorces"
+  },
+  "do": {
+    "Definition": "to perform an action, to carry out a task, to do something",
+    "Past Tense": "did",
+    "Pronunciation": "/ˈdu/",
+    "Singular": "does"
+  },
+  "dominate": {
+    "Definition": "to be in control of, to be the boss of",
+    "Past Tense": "dominated",
+    "Pronunciation": "/ˈdɑməˌneɪt/",
+    "Singular": "dominates"
+  },
+  "double": {
+    "Definition": "to increase in size or amount",
+    "Past Tense": "doubled",
+    "Pronunciation": "/ˈdəbəɫ/",
+    "Singular": "doubles"
+  },
+  "doubt": {
+    "Definition": "to have doubts about something",
+    "Past Tense": "doubted",
+    "Pronunciation": "/ˈdaʊt/",
+    "Singular": "doubts"
+  },
+  "draft": {
+    "Definition": "to write a document",
+    "Past Tense": "drafted",
+    "Pronunciation": "/ˈdɹæft/",
+    "Singular": "drafts"
+  },
+  "drag": {
+    "Definition": "to pull or draw with force",
+    "Past Tense": "dragged",
+    "Pronunciation": "/ˈdɹæɡ/",
+    "Singular": "drags"
+  },
+  "drain": {
+    "Definition": "to remove liquid from (something) by suction",
+    "Past Tense": "drained",
+    "Pronunciation": "/ˈdɹeɪn/",
+    "Singular": "drains"
+  },
+  "draw": {
+    "Definition": "to pull or drag, to move or take (something) along",
+    "Past Tense": "drew",
+    "Pronunciation": "/ˈdɹɔ/",
+    "Singular": "draws"
+  },
+  "dream": {
+    "Definition": "to imagine things that are not real",
+    "Past Tense": "dreamed",
+    "Pronunciation": "/ˈdɹim/",
+    "Singular": "dreams"
+  },
+  "dress": {
+    "Definition": "to put on clothes, to wear clothes, to clothe",
+    "Past Tense": "dressed",
+    "Pronunciation": "/ˈdɹɛs/",
+    "Singular": "dresses"
+  },
+  "drift": {
+    "Definition": "to move or cause to move slowly and gently",
+    "Past Tense": "drifted",
+    "Pronunciation": "/ˈdɹɪft/",
+    "Singular": "drifts"
+  },
+  "drink": {
+    "Definition": "to take in liquids",
+    "Past Tense": "drank",
+    "Pronunciation": "/ˈdɹɪŋk/",
+    "Singular": "drinks"
+  },
+  "drive": {
+    "Definition": "to force someone to do something, to make someone do something",
+    "Past Tense": "drove",
+    "Pronunciation": "/ˈdɹaɪv/",
+    "Singular": "drives"
+  },
+  "drop": {
+    "Definition": "to fall or be dropped",
+    "Past Tense": "dropped",
+    "Pronunciation": "/ˈdɹɑp/, /ˈdɹɔp/",
+    "Singular": "drops"
+  },
+  "drown": {
+    "Definition": "to kill by submersion in water or other liquid",
+    "Past Tense": "drowned",
+    "Pronunciation": "/ˈdɹaʊn/",
+    "Singular": "drowns"
+  },
+  "dwell": {
+    "Definition": "to live in a place for a long time",
+    "Past Tense": "dwelt",
+    "Pronunciation": "/ˈdwɛɫ/",
+    "Singular": "dwells"
+  },
+  "earn": {
+    "Definition": "to gain or win by one's efforts",
+    "Past Tense": "earned",
+    "Pronunciation": "/ˈɝn/",
+    "Singular": "earns"
+  },
+  "ease": {
+    "Definition": "to make easier, to make less difficult, to make easier to do",
+    "Past Tense": "eased",
+    "Pronunciation": "/ˈiz/",
+    "Singular": "eases"
+  },
+  "eat": {
+    "Definition": "to take food into the body by the mouth",
+    "Past Tense": "ate",
+    "Pronunciation": "/ˈit/",
+    "Singular": "eats"
+  },
+  "echo": {
+    "Definition": "to repeat or imitate",
+    "Past Tense": "echoed",
+    "Pronunciation": "/ˈɛkoʊ/",
+    "Singular": "echoes"
+  },
+  "edit": {
+    "Definition": "to make changes to a text or other piece of writing",
+    "Past Tense": "edited",
+    "Pronunciation": "/ˈɛdət/",
+    "Singular": "edits"
+  },
+  "educate": {
+    "Definition": "to teach someone about a particular subject",
+    "Past Tense": "educated",
+    "Pronunciation": "/ˈɛdʒəˌkeɪt/, /ˈɛdʒjuˌkeɪt/",
+    "Singular": "educates"
+  },
+  "effect": {
+    "Definition": "to cause to happen or to become",
+    "Past Tense": "effected",
+    "Pronunciation": "/ˈifɛkt/, /əˈfɛkt/, /ɪˈfɛkt/",
+    "Singular": "effects"
+  },
+  "elect": {
+    "Definition": "to choose or select, to make a decision, to choose, to pick",
+    "Past Tense": "elected",
+    "Pronunciation": "/ɪˈɫɛkt/",
+    "Singular": "elects"
+  },
+  "eliminate": {
+    "Definition": "to get rid of, to remove, to do away with",
+    "Past Tense": "eliminated",
+    "Pronunciation": "/ɪˈɫɪməˌneɪt/",
+    "Singular": "eliminates"
+  },
+  "embark": {
+    "Definition": "to begin to do something, to start, to begin, to start on",
+    "Past Tense": "embarked",
+    "Pronunciation": "/ɛmˈbɑɹk/, /ɪmˈbɑɹk/",
+    "Singular": "embarks"
+  },
+  "embrace": {
+    "Definition": "to accept or include (someone or something) as part of a group or set",
+    "Past Tense": "embraced",
+    "Pronunciation": "/ɛmˈbɹeɪs/, /ɪmˈbɹeɪs/",
+    "Singular": "embraces"
+  },
+  "emerge": {
+    "Definition": "to come out of something, to come out of a place",
+    "Past Tense": "emerged",
+    "Pronunciation": "/ˈimɝdʒ/, /ɪˈmɝdʒ/",
+    "Singular": "emerges"
+  },
+  "emphasize": {
+    "Definition": "to make something more important or noticeable",
+    "Past Tense": "emphasized",
+    "Pronunciation": "/ˈɛmfəˌsaɪz/",
+    "Singular": "emphasizes"
+  },
+  "employ": {
+    "Definition": "to use (a person or thing) for a particular purpose or for one's",
+    "Past Tense": "employed",
+    "Pronunciation": "/ɛmˈpɫɔɪ/, /ɪmˈpɫɔɪ/",
+    "Singular": "employs"
+  },
+  "empty": {
+    "Definition": "to remove all the contents of (a container)",
+    "Past Tense": "emptied",
+    "Pronunciation": "/ˈɛmpti/, /ˈɛmti/",
+    "Singular": "empties"
+  },
+  "enable": {
+    "Definition": "to make (something) possible, to make (something) possible or easier",
+    "Past Tense": "enabled",
+    "Pronunciation": "/ɛˈneɪbəɫ/, /ɪˈneɪbəɫ/",
+    "Singular": "enables"
+  },
+  "enclose": {
+    "Definition": "to put or keep (someone or something) in a place or container",
+    "Past Tense": "enclosed",
+    "Pronunciation": "/ɪnˈkɫoʊz/",
+    "Singular": "encloses"
+  },
+  "encounter": {
+    "Definition": "to meet someone or something, to come into contact with someone or something",
+    "Past Tense": "encountered",
+    "Pronunciation": "/ɪnˈkaʊnɝ/, /ɪnˈkaʊntɝ/",
+    "Singular": "encounters"
+  },
+  "encourage": {
+    "Definition": "to give someone hope or confidence",
+    "Past Tense": "encouraged",
+    "Pronunciation": "/ɛnˈkɝɪdʒ/, /ɪnˈkɝədʒ/",
+    "Singular": "encourages"
+  },
+  "end": {
+    "Definition": "to come to an end, to stop, to finish, to conclude",
+    "Past Tense": "ended",
+    "Pronunciation": "/ˈɛnd/",
+    "Singular": "ends"
+  },
+  "endorse": {
+    "Definition": "to approve of something, to support something, to recommend something",
+    "Past Tense": "endorsed",
+    "Pronunciation": "/ɛnˈdɔɹs/",
+    "Singular": "endorses"
+  },
+  "endure": {
+    "Definition": "to be able to tolerate something unpleasant or difficult",
+    "Past Tense": "endured",
+    "Pronunciation": "/ɛnˈdjʊɹ/, /ɪnˈdʊɹ/",
+    "Singular": "endures"
+  },
+  "enforce": {
+    "Definition": "to make (someone) obey a rule or a law",
+    "Past Tense": "enforced",
+    "Pronunciation": "/ɛnˈfɔɹs/",
+    "Singular": "enforces"
+  },
+  "engage": {
+    "Definition": "to get involved in a fight or argument",
+    "Past Tense": "engaged",
+    "Pronunciation": "/ɛnˈɡeɪdʒ/",
+    "Singular": "engages"
+  },
+  "enhance": {
+    "Definition": "to make something better",
+    "Past Tense": "enhanced",
+    "Pronunciation": "/ɛnˈhæns/",
+    "Singular": "enhances"
+  },
+  "enjoy": {
+    "Definition": "to take pleasure in something, to feel happy about something, to like something",
+    "Past Tense": "enjoyed",
+    "Pronunciation": "/ˌɛnˈdʒɔɪ/, /ɪnˈdʒɔɪ/",
+    "Singular": "enjoys"
+  },
+  "ensure": {
+    "Definition": "to make certain that something will happen or be the case",
+    "Past Tense": "ensured",
+    "Pronunciation": "/ɛnˈʃʊɹ/, /ɪnˈʃʊɹ/",
+    "Singular": "ensures"
+  },
+  "entail": {
+    "Definition": "to involve or be involved in",
+    "Past Tense": "entailed",
+    "Pronunciation": "/ɛnˈteɪɫ/",
+    "Singular": "entails"
+  },
+  "enter": {
+    "Definition": "to go into a place",
+    "Past Tense": "entered",
+    "Pronunciation": "/ˈɛnɝ/, /ˈɛntɝ/",
+    "Singular": "enters"
+  },
+  "entertain": {
+    "Definition": "to amuse or entertain, to make happy",
+    "Past Tense": "entertained",
+    "Pronunciation": "/ˌɛnɝˈteɪn/, /ˌɛntɝˈteɪn/",
+    "Singular": "entertains"
+  },
+  "envisage": {
+    "Definition": "to imagine or visualize something",
+    "Past Tense": "envisaged",
+    "Pronunciation": "/ɛnˈvɪzɪdʒ/",
+    "Singular": "envisages"
+  },
+  "escape": {
+    "Definition": "to get away from a place or situation, to leave",
+    "Past Tense": "escaped",
+    "Pronunciation": "/ɪˈskeɪp/",
+    "Singular": "escapes"
+  },
+  "establish": {
+    "Definition": "to make something official, to make something official, to make something official",
+    "Past Tense": "established",
+    "Pronunciation": "/ɪˈstæbɫɪʃ/",
+    "Singular": "establishes"
+  },
+  "estimate": {
+    "Definition": "to judge the value of something, to estimate the value of something",
+    "Past Tense": "estimated",
+    "Pronunciation": "/ˈɛstəˌmeɪt/, /ˈɛstəmət/",
+    "Singular": "estimates"
+  },
+  "evaluate": {
+    "Definition": "to form an opinion about something or someone, based on the facts and circumstances",
+    "Past Tense": "evaluated",
+    "Pronunciation": "/iˈvæɫjuˌeɪt/, /ɪˈvæɫjuˌeɪt/",
+    "Singular": "evaluates"
+  },
+  "evolve": {
+    "Definition": "to develop or change gradually over time",
+    "Past Tense": "evolved",
+    "Pronunciation": "/iˈvɑɫv/, /ɪˈvɑɫv/",
+    "Singular": "evolves"
+  },
+  "examine": {
+    "Definition": "to look at something carefully, to study it",
+    "Past Tense": "examined",
+    "Pronunciation": "/ɪɡˈzæmɪn/",
+    "Singular": "examines"
+  },
+  "exceed": {
+    "Definition": "to be more than, to be greater than, to be superior to",
+    "Past Tense": "exceeded",
+    "Pronunciation": "/ɪkˈsid/",
+    "Singular": "exceeds"
+  },
+  "exchange": {
+    "Definition": "to give or receive something in return",
+    "Past Tense": "exchanged",
+    "Pronunciation": "/ɪksˈtʃeɪndʒ/",
+    "Singular": "exchanges"
+  },
+  "exclude": {
+    "Definition": "to keep out, to keep away from, to keep from",
+    "Past Tense": "excluded",
+    "Pronunciation": "/ɪkˈskɫud/",
+    "Singular": "excludes"
+  },
+  "excuse": {
+    "Definition": "to make an excuse for (someone or something)",
+    "Past Tense": "excused",
+    "Pronunciation": "/ɪkˈskjus/, /ɪkˈskjuz/",
+    "Singular": "excuses"
+  },
+  "execute": {
+    "Definition": "to carry out, to do, to perform, to accomplish, to achieve",
+    "Past Tense": "executed",
+    "Pronunciation": "/ˈɛksəkˌjut/",
+    "Singular": "executes"
+  },
+  "exercise": {
+    "Definition": "to do something in order to keep fit or healthy",
+    "Past Tense": "exercised",
+    "Pronunciation": "/ˈɛksɝˌsaɪz/",
+    "Singular": "exercises"
+  },
+  "exert": {
+    "Definition": "to use physical or mental energy to do something or to make something happen",
+    "Past Tense": "exerted",
+    "Pronunciation": "/ɪɡˈzɝt/",
+    "Singular": "exerts"
+  },
+  "exhibit": {
+    "Definition": "to show or demonstrate, to make known, to display, to manifest",
+    "Past Tense": "exhibited",
+    "Pronunciation": "/ɪɡˈzɪbɪt/",
+    "Singular": "exhibits"
+  },
+  "exist": {
+    "Definition": "to be present, to be in existence, to be real",
+    "Past Tense": "existed",
+    "Pronunciation": "/ɪɡˈzɪst/",
+    "Singular": "exists"
+  },
+  "expand": {
+    "Definition": "to increase in size or volume, to become larger, to grow",
+    "Past Tense": "expanded",
+    "Pronunciation": "/ɪkˈspænd/",
+    "Singular": "expands"
+  },
+  "expect": {
+    "Definition": "to think that something will happen or be the case",
+    "Past Tense": "expected",
+    "Pronunciation": "/ɪkˈspɛkt/",
+    "Singular": "expects"
+  },
+  "experience": {
+    "Definition": "to have a feeling or impression of something",
+    "Past Tense": "experienced",
+    "Pronunciation": "/ɪkˈspɪɹiəns/",
+    "Singular": "experiences"
+  },
+  "experiment": {
+    "Definition": "to try something new, to try something for the first time",
+    "Past Tense": "experimented",
+    "Pronunciation": "/ɪkˈspɛɹəmənt/",
+    "Singular": "experiments"
+  },
+  "explain": {
+    "Definition": "to make clear, to make known, to make understandable",
+    "Past Tense": "explained",
+    "Pronunciation": "/ɪksˈpɫeɪn/",
+    "Singular": "explains"
+  },
+  "explode": {
+    "Definition": "to suddenly burst open, to break open with a loud noise",
+    "Past Tense": "exploded",
+    "Pronunciation": "/ɪksˈpɫoʊd/",
+    "Singular": "explodes"
+  },
+  "exploit": {
+    "Definition": "to use (something) to one's advantage",
+    "Past Tense": "exploited",
+    "Pronunciation": "/ˈɛksˌpɫɔɪt/, /ˌɛksˈpɫɔɪt/",
+    "Singular": "exploits"
+  },
+  "explore": {
+    "Definition": "to go to a place to find out about it",
+    "Past Tense": "explored",
+    "Pronunciation": "/ɪksˈpɫɔɹ/",
+    "Singular": "explores"
+  },
+  "export": {
+    "Definition": "to send goods to another country, to sell goods in another country",
+    "Past Tense": "exported",
+    "Pronunciation": "/ˈɛkspɔɹt/",
+    "Singular": "exports"
+  },
+  "expose": {
+    "Definition": "to make (someone or something) visible to the public",
+    "Past Tense": "exposed",
+    "Pronunciation": "/ɪkˈspoʊz/",
+    "Singular": "exposes"
+  },
+  "express": {
+    "Definition": "to say or write something, to express something, to make something known",
+    "Past Tense": "expressed",
+    "Pronunciation": "/ɪksˈpɹɛs/",
+    "Singular": "expresses"
+  },
+  "extend": {
+    "Definition": "to make longer, to increase in length, to stretch out",
+    "Past Tense": "extended",
+    "Pronunciation": "/ɪkˈstɛnd/",
+    "Singular": "extends"
+  },
+  "extract": {
+    "Definition": "to remove (something) from a substance or place, to take out",
+    "Past Tense": "extracted",
+    "Pronunciation": "/ˈɛkˌstɹækt/, /ɪkˈstɹækt/",
+    "Singular": "extracts"
+  },
+  "face": {
+    "Definition": "to look at someone or something",
+    "Past Tense": "faced",
+    "Pronunciation": "/ˈfeɪs/",
+    "Singular": "faces"
+  },
+  "facilitate": {
+    "Definition": "to make something easier or more convenient",
+    "Past Tense": "facilitated",
+    "Pronunciation": "/fəˈsɪɫəˌteɪt/",
+    "Singular": "facilitates"
+  },
+  "fade": {
+    "Definition": "to become less bright or clear, to become less intense",
+    "Past Tense": "faded",
+    "Pronunciation": "/ˈfeɪd/",
+    "Singular": "fades"
+  },
+  "fail": {
+    "Definition": "to be unsuccessful, to be defeated",
+    "Past Tense": "failed",
+    "Pronunciation": "/ˈfeɪɫ/",
+    "Singular": "fails"
+  },
+  "fall": {
+    "Definition": "to fall down, to fall to the ground, to fall from a height",
+    "Past Tense": "fell",
+    "Pronunciation": "/ˈfɑɫ/, /ˈfɔɫ/",
+    "Singular": "falls"
+  },
+  "fancy": {
+    "Definition": "to think of something as being better than it really is",
+    "Past Tense": "fancied",
+    "Pronunciation": "/ˈfænsi/",
+    "Singular": "fancies"
+  },
+  "favor": {
+    "Definition": "to like or support",
+    "Past Tense": "favored",
+    "Pronunciation": "/ˈfeɪvɝ/",
+    "Singular": "favors"
+  },
+  "fear": {
+    "Definition": "to be afraid of something",
+    "Past Tense": "feared",
+    "Pronunciation": "/ˈfɪɹ/",
+    "Singular": "fears"
+  },
+  "feature": {
+    "Definition": "to have a particular quality or characteristic",
+    "Past Tense": "featured",
+    "Pronunciation": "/ˈfitʃɝ/",
+    "Singular": "features"
+  },
+  "feel": {
+    "Definition": "to have a feeling, to have a sensation",
+    "Past Tense": "felt",
+    "Pronunciation": "/ˈfiɫ/",
+    "Singular": "feels"
+  },
+  "fetch": {
+    "Definition": "to go and get something, to bring something back",
+    "Past Tense": "fetched",
+    "Pronunciation": "/ˈfɛtʃ/",
+    "Singular": "fetches"
+  },
+  "fight": {
+    "Definition": "to fight against someone or something, to fight against something",
+    "Past Tense": "fought",
+    "Pronunciation": "/ˈfaɪt/",
+    "Singular": "fights"
+  },
+  "figure": {
+    "Definition": "to calculate, to work out, to solve, to determine, to calculate",
+    "Past Tense": "figured",
+    "Pronunciation": "/ˈfɪɡjɝ/",
+    "Singular": "figures"
+  },
+  "file": {
+    "Definition": "to put in a file, to put in a computer file",
+    "Past Tense": "filed",
+    "Pronunciation": "/ˈfaɪɫ/",
+    "Singular": "files"
+  },
+  "fill": {
+    "Definition": "to be full of, to be completely filled with",
+    "Past Tense": "filled",
+    "Pronunciation": "/ˈfɪɫ/",
+    "Singular": "fills"
+  },
+  "finance": {
+    "Definition": "to provide with money or other resources, to provide with funds",
+    "Past Tense": "financed",
+    "Pronunciation": "/ˈfaɪˌnæns/, /fəˈnæns/, /fɪˈnæns/",
+    "Singular": "finances"
+  },
+  "find": {
+    "Definition": "to discover or learn about (something) by chance",
+    "Past Tense": "found",
+    "Pronunciation": "/ˈfaɪnd/",
+    "Singular": "finds"
+  },
+  "finish": {
+    "Definition": "to complete (a task or action)",
+    "Past Tense": "finished",
+    "Pronunciation": "/ˈfɪnɪʃ/",
+    "Singular": "finishes"
+  },
+  "fire": {
+    "Definition": "to set fire to something, to burn something",
+    "Past Tense": "fired",
+    "Pronunciation": "/ˈfaɪɝ/, /ˈfaɪɹ/",
+    "Singular": "fires"
+  },
+  "fish": {
+    "Definition": "to catch fish, to catch fish, to catch fish, to catch fish",
+    "Past Tense": "fished",
+    "Pronunciation": "/ˈfɪʃ/",
+    "Singular": "fishes"
+  },
+  "fit": {
+    "Definition": "to be suitable for a particular purpose or situation",
+    "Past Tense": "fitted",
+    "Pronunciation": "/ˈfɪt/",
+    "Singular": "fits"
+  },
+  "fix": {
+    "Definition": "to make something better, to improve, to repair, to mend",
+    "Past Tense": "fixed",
+    "Pronunciation": "/ˈfɪks/",
+    "Singular": "fixes"
+  },
+  "flee": {
+    "Definition": "to run away from a place or situation, to escape from, to avoid",
+    "Past Tense": "fled",
+    "Pronunciation": "/ˈfɫi/",
+    "Singular": "flees"
+  },
+  "float": {
+    "Definition": "to move through the air, to be suspended in the air",
+    "Past Tense": "floated",
+    "Pronunciation": "/ˈfɫoʊt/",
+    "Singular": "floats"
+  },
+  "flourish": {
+    "Definition": "to grow or develop vigorously, to thrive, to prosper",
+    "Past Tense": "flourished",
+    "Pronunciation": "/ˈfɫɝɪʃ/",
+    "Singular": "flourishes"
+  },
+  "flow": {
+    "Definition": "to move in a stream or river, to move in a continuous stream",
+    "Past Tense": "flowed",
+    "Pronunciation": "/ˈfɫoʊ/",
+    "Singular": "flows"
+  },
+  "focus": {
+    "Definition": "to concentrate on something, to concentrate on a particular thing",
+    "Past Tense": "focused",
+    "Pronunciation": "/ˈfoʊkəs/, /ˈfoʊkɪs/",
+    "Singular": "focuses"
+  },
+  "fold": {
+    "Definition": "to bend or crease (a piece of paper",
+    "Past Tense": "folded",
+    "Pronunciation": "/ˈfoʊɫd/",
+    "Singular": "folds"
+  },
+  "follow": {
+    "Definition": "to go after, to pursue, to chase, to track",
+    "Past Tense": "followed",
+    "Pronunciation": "/ˈfɑɫoʊ/",
+    "Singular": "follows"
+  },
+  "fool": {
+    "Definition": "to make a fool of (someone)",
+    "Past Tense": "fooled",
+    "Pronunciation": "/ˈfuɫ/",
+    "Singular": "fools"
+  },
+  "force": {
+    "Definition": "to make someone do something, to make someone do something",
+    "Past Tense": "forced",
+    "Pronunciation": "/ˈfɔɹs/",
+    "Singular": "forces"
+  },
+  "forecast": {
+    "Definition": "to predict the future",
+    "Past Tense": "forecast",
+    "Pronunciation": "/ˈfɔɹˌkæst/",
+    "Singular": "forecasts"
+  },
+  "forget": {
+    "Definition": "to stop remembering something",
+    "Past Tense": "forgot",
+    "Pronunciation": "/fɝˈɡɛt/, /fɔɹˈɡɛt/",
+    "Singular": "forgets"
+  },
+  "forgive": {
+    "Definition": "to stop feeling angry or resentful toward (someone) for an offense",
+    "Past Tense": "forgave",
+    "Pronunciation": "/fɝˈɡɪv/, /fɔɹˈɡɪv/",
+    "Singular": "forgives"
+  },
+  "form": {
+    "Definition": "to form, to make, to create, to produce, to manufacture",
+    "Past Tense": "formed",
+    "Pronunciation": "/ˈfɔɹm/",
+    "Singular": "forms"
+  },
+  "formulate": {
+    "Definition": "to express in words, to give a name to, to describe",
+    "Past Tense": "formulated",
+    "Pronunciation": "/ˈfɔɹmjəˌɫeɪt/",
+    "Singular": "formulates"
+  },
+  "foster": {
+    "Definition": "to encourage the growth of, to promote the development of",
+    "Past Tense": "fostered",
+    "Pronunciation": "/ˈfɑstɝ/",
+    "Singular": "fosters"
+  },
+  "free": {
+    "Definition": "to be free from something, to be free from a particular thing",
+    "Past Tense": "freed",
+    "Pronunciation": "/ˈfɹi/",
+    "Singular": "frees"
+  },
+  "freeze": {
+    "Definition": "to become very cold, to become very stiff or rigid",
+    "Past Tense": "froze",
+    "Pronunciation": "/ˈfɹiz/",
+    "Singular": "freezes"
+  },
+  "frighten": {
+    "Definition": "to make someone feel afraid",
+    "Past Tense": "frightened",
+    "Pronunciation": "/ˈfɹaɪtən/",
+    "Singular": "frightens"
+  },
+  "fry": {
+    "Definition": "to cook in hot fat or oil, to cook in hot fat or oil",
+    "Past Tense": "fried",
+    "Pronunciation": "/ˈfɹaɪ/",
+    "Singular": "fries"
+  },
+  "fuck": {
+    "Definition": "to have sex with",
+    "Past Tense": "fucked",
+    "Pronunciation": "/ˈfək/",
+    "Singular": "fucks"
+  },
+  "fulfill": {
+    "Definition": "to complete (an order, request, or need)",
+    "Past Tense": "fulfilled",
+    "Pronunciation": "/fʊɫˈfɪɫ/",
+    "Singular": "fulfills"
+  },
+  "function": {
+    "Definition": "to be a function of something",
+    "Past Tense": "functioned",
+    "Pronunciation": "/ˈfəŋkʃən/",
+    "Singular": "functions"
+  },
+  "fund": {
+    "Definition": "to provide money for (something)",
+    "Past Tense": "funded",
+    "Pronunciation": "/ˈfənd/",
+    "Singular": "funds"
+  },
+  "gain": {
+    "Definition": "to get or achieve something",
+    "Past Tense": "gained",
+    "Pronunciation": "/ˈɡeɪn/",
+    "Singular": "gains"
+  },
+  "gather": {
+    "Definition": "to collect (money)",
+    "Past Tense": "gathered",
+    "Pronunciation": "/ˈɡæðɝ/",
+    "Singular": "gathers"
+  },
+  "generate": {
+    "Definition": "to produce (something) by a process of manufacture or creation",
+    "Past Tense": "generated",
+    "Pronunciation": "/ˈdʒɛnɝˌeɪt/",
+    "Singular": "generates"
+  },
+  "get": {
+    "Definition": "to move closer to something, to move towards something, to move towards someone",
+    "Past Tense": "got",
+    "Pronunciation": "/ˈɡɛt/, /ˈɡɪt/",
+    "Singular": "gets"
+  },
+  "give": {
+    "Definition": "to cause to be in a certain state, position, or activity",
+    "Past Tense": "gave",
+    "Pronunciation": "/ˈɡɪv/",
+    "Singular": "gives"
+  },
+  "go": {
+    "Definition": "to move from one place to another, to travel, to move around",
+    "Past Tense": "went",
+    "Pronunciation": "/ˈɡoʊ/",
+    "Singular": "goes"
+  },
+  "govern": {
+    "Definition": "to control or direct, to be in charge of",
+    "Past Tense": "governed",
+    "Pronunciation": "/ˈɡəvɝn/",
+    "Singular": "governs"
+  },
+  "grab": {
+    "Definition": "to take hold of something, to seize, to take possession of",
+    "Past Tense": "grabbed",
+    "Pronunciation": "/ˈɡɹæb/",
+    "Singular": "grabs"
+  },
+  "grade": {
+    "Definition": "to give a grade to, to assess the quality of, to evaluate",
+    "Past Tense": "graded",
+    "Pronunciation": "/ˈɡɹeɪd/",
+    "Singular": "grades"
+  },
+  "grant": {
+    "Definition": "to give (something) to someone by official permission or as a favor",
+    "Past Tense": "granted",
+    "Pronunciation": "/ˈɡɹænt/",
+    "Singular": "grants"
+  },
+  "grasp": {
+    "Definition": "to understand something, to get a good idea of something",
+    "Past Tense": "grasped",
+    "Pronunciation": "/ˈɡɹæsp/",
+    "Singular": "grasps"
+  },
+  "greet": {
+    "Definition": "to say hello to someone, to welcome someone, to say hello to someone",
+    "Past Tense": "greeted",
+    "Pronunciation": "/ˈɡɹit/",
+    "Singular": "greets"
+  },
+  "grow": {
+    "Definition": "to become larger or more numerous",
+    "Past Tense": "grew",
+    "Pronunciation": "/ˈɡɹoʊ/",
+    "Singular": "grows"
+  },
+  "guarantee": {
+    "Definition": "to promise to do something, to make a promise, to assure",
+    "Past Tense": "guaranteed",
+    "Pronunciation": "/ˌɡɛɹənˈti/",
+    "Singular": "guarantees"
+  },
+  "guard": {
+    "Definition": "to protect, to keep safe, to watch over",
+    "Past Tense": "guarded",
+    "Pronunciation": "/ˈɡɑɹd/",
+    "Singular": "guards"
+  },
+  "guess": {
+    "Definition": "to think that something is true without knowing for sure",
+    "Past Tense": "guessed",
+    "Pronunciation": "/ˈɡɛs/",
+    "Singular": "guesses"
+  },
+  "guide": {
+    "Definition": "to lead someone or something to a particular place or direction",
+    "Past Tense": "guided",
+    "Pronunciation": "/ˈɡaɪd/",
+    "Singular": "guides"
+  },
+  "halt": {
+    "Definition": "to stop or slow down, to stop for a short time",
+    "Past Tense": "halted",
+    "Pronunciation": "/ˈhɔɫt/",
+    "Singular": "halts"
+  },
+  "hand": {
+    "Definition": "to give or pass to another person",
+    "Past Tense": "handed",
+    "Pronunciation": "/ˈhænd/",
+    "Singular": "hands"
+  },
+  "handle": {
+    "Definition": "to deal with, to manage, to cope with, to control",
+    "Past Tense": "handled",
+    "Pronunciation": "/ˈhændəɫ/",
+    "Singular": "handles"
+  },
+  "hang": {
+    "Definition": "to be suspended in the air, to be suspended in the air",
+    "Past Tense": "hung",
+    "Pronunciation": "/ˈhæŋ/",
+    "Singular": "hangs"
+  },
+  "happen": {
+    "Definition": "to occur, to take place, to come about, to come to pass",
+    "Past Tense": "happened",
+    "Pronunciation": "/ˈhæpən/",
+    "Singular": "happens"
+  },
+  "harm": {
+    "Definition": "to cause physical or mental harm to someone or something",
+    "Past Tense": "harmed",
+    "Pronunciation": "/ˈhɑɹm/",
+    "Singular": "harms"
+  },
+  "hate": {
+    "Definition": "to dislike intensely or passionately; feel extreme aversion for or extreme host",
+    "Past Tense": "hated",
+    "Pronunciation": "/ˈheɪt/",
+    "Singular": "hates"
+  },
+  "have": {
+    "Definition": "to have something, to possess something, to own something",
+    "Past Tense": "had",
+    "Pronunciation": "/ˈhæv/",
+    "Singular": "has"
+  },
+  "head": {
+    "Definition": "to be the leader of a group or organization",
+    "Past Tense": "headed",
+    "Pronunciation": "/ˈhɛd/",
+    "Singular": "heads"
+  },
+  "heal": {
+    "Definition": "to make healthy again, to restore to health, to cure",
+    "Past Tense": "healed",
+    "Pronunciation": "/ˈhiɫ/",
+    "Singular": "heals"
+  },
+  "hear": {
+    "Definition": "to listen to something, to pay attention to something, to understand something",
+    "Past Tense": "heard",
+    "Pronunciation": "/ˈhiɹ/",
+    "Singular": "hears"
+  },
+  "heat": {
+    "Definition": "to make hot, to cause to become hot, to make hotter",
+    "Past Tense": "heated",
+    "Pronunciation": "/ˈhit/",
+    "Singular": "heats"
+  },
+  "help": {
+    "Definition": "to help someone",
+    "Past Tense": "helped",
+    "Pronunciation": "/ˈhɛɫp/",
+    "Singular": "helps"
+  },
+  "hesitate": {
+    "Definition": "to be unwilling to make a decision or to act",
+    "Past Tense": "hesitated",
+    "Pronunciation": "/ˈhɛzəˌteɪt/",
+    "Singular": "hesitates"
+  },
+  "hide": {
+    "Definition": "to keep out of sight, to conceal, to cover up",
+    "Past Tense": "hid",
+    "Pronunciation": "/ˈhaɪd/",
+    "Singular": "hides"
+  },
+  "highlight": {
+    "Definition": "to make something more noticeable, to make something more important",
+    "Past Tense": "highlighted",
+    "Pronunciation": "/ˈhaɪˌɫaɪt/",
+    "Singular": "highlights"
+  },
+  "hire": {
+    "Definition": "to pay for the use of (something)",
+    "Past Tense": "hired",
+    "Pronunciation": "/ˈhaɪɝ/, /ˈhaɪɹ/",
+    "Singular": "hires"
+  },
+  "hit": {
+    "Definition": "to strike with force",
+    "Past Tense": "hit",
+    "Pronunciation": "/ˈhɪt/",
+    "Singular": "hits"
+  },
+  "hold": {
+    "Definition": "to have in one's possession, to have in one's control",
+    "Past Tense": "held",
+    "Pronunciation": "/ˈhoʊɫd/",
+    "Singular": "holds"
+  },
+  "honor": {
+    "Definition": "to respect and admire (someone or something) very much",
+    "Past Tense": "honored",
+    "Pronunciation": "/ˈɑnɝ/",
+    "Singular": "honors"
+  },
+  "hope": {
+    "Definition": "to want something to happen or be true",
+    "Past Tense": "hoped",
+    "Pronunciation": "/ˈhoʊp/",
+    "Singular": "hopes"
+  },
+  "host": {
+    "Definition": "to be the host of a television show",
+    "Past Tense": "hosted",
+    "Pronunciation": "/ˈhoʊst/",
+    "Singular": "hosts"
+  },
+  "house": {
+    "Definition": "to live in a house, to live in a house",
+    "Past Tense": "housed",
+    "Pronunciation": "/ˈhaʊs/",
+    "Singular": "houses"
+  },
+  "hunt": {
+    "Definition": "to search for and try to find something or someone",
+    "Past Tense": "hunted",
+    "Pronunciation": "/ˈhənt/",
+    "Singular": "hunts"
+  },
+  "hurry": {
+    "Definition": "to move quickly, to go fast, to rush, to run",
+    "Past Tense": "hurried",
+    "Pronunciation": "/ˈhɝi/",
+    "Singular": "hurries"
+  },
+  "hurt": {
+    "Definition": "to cause physical pain to, to cause physical pain to",
+    "Past Tense": "hurt",
+    "Pronunciation": "/ˈhɝt/",
+    "Singular": "hurts"
+  },
+  "identify": {
+    "Definition": "to recognize as being what is specified, to distinguish, to distinguish oneself",
+    "Past Tense": "identified",
+    "Pronunciation": "/aɪˈdɛntəˌfaɪ/",
+    "Singular": "identifies"
+  },
+  "ignore": {
+    "Definition": "to not notice or pay attention to something, to not take into account",
+    "Past Tense": "ignored",
+    "Pronunciation": "/ˌɪɡˈnɔɹ/",
+    "Singular": "ignores"
+  },
+  "illustrate": {
+    "Definition": "to make clear or more comprehensible by using examples or explanations",
+    "Past Tense": "illustrated",
+    "Pronunciation": "/ˈɪɫəˌstɹeɪt/",
+    "Singular": "illustrates"
+  },
+  "imagine": {
+    "Definition": "to form a mental image of something that is not present or that is not the case",
+    "Past Tense": "imagined",
+    "Pronunciation": "/ˌɪˈmædʒən/",
+    "Singular": "imagines"
+  },
+  "implement": {
+    "Definition": "to put into effect, to carry out, to execute, to enforce",
+    "Past Tense": "implemented",
+    "Pronunciation": "/ˈɪmpɫəmənt/",
+    "Singular": "implements"
+  },
+  "imply": {
+    "Definition": "to suggest or indicate",
+    "Past Tense": "implied",
+    "Pronunciation": "/ˌɪmˈpɫaɪ/",
+    "Singular": "implies"
+  },
+  "import": {
+    "Definition": "to bring (goods or commodities) into a country",
+    "Past Tense": "imported",
+    "Pronunciation": "/ˈɪmˌpɔɹt/, /ˌɪmˈpɔɹt/",
+    "Singular": "imports"
+  },
+  "impose": {
+    "Definition": "to force (someone) to do something",
+    "Past Tense": "imposed",
+    "Pronunciation": "/ˌɪmˈpoʊz/",
+    "Singular": "imposes"
+  },
+  "impress": {
+    "Definition": "to make a strong and lasting impression on (someone)",
+    "Past Tense": "impressed",
+    "Pronunciation": "/ˈɪmˌpɹɛs/, /ˌɪmˈpɹɛs/",
+    "Singular": "impresses"
+  },
+  "improve": {
+    "Definition": "to make better, to make more effective, to make more efficient",
+    "Past Tense": "improved",
+    "Pronunciation": "/ˌɪmˈpɹuv/",
+    "Singular": "improves"
+  },
+  "in": {
+    "Definition": "to be in a place, to be present in a place",
+    "Past Tense": "inned",
+    "Pronunciation": "/ˈɪn/, /ɪn/",
+    "Singular": "ins"
+  },
+  "include": {
+    "Definition": "to include or involve, to have as a part or constituent",
+    "Past Tense": "included",
+    "Pronunciation": "/ˌɪnˈkɫud/",
+    "Singular": "includes"
+  },
+  "incorporate": {
+    "Definition": "to make part of a larger whole, to make part of a larger whole",
+    "Past Tense": "incorporated",
+    "Pronunciation": "/ˌɪnˈkɔɹpɝˌeɪt/",
+    "Singular": "incorporates"
+  },
+  "increase": {
+    "Definition": "to make something bigger or greater",
+    "Past Tense": "increased",
+    "Pronunciation": "/ˈɪnˌkɹis/, /ˌɪnˈkɹis/",
+    "Singular": "increases"
+  },
+  "indicate": {
+    "Definition": "to show that something is true or likely",
+    "Past Tense": "indicated",
+    "Pronunciation": "/ˈɪndəˌkeɪt/",
+    "Singular": "indicates"
+  },
+  "induce": {
+    "Definition": "to cause to happen or to occur",
+    "Past Tense": "induced",
+    "Pronunciation": "/ˌɪnˈdus/",
+    "Singular": "induces"
+  },
+  "indulge": {
+    "Definition": "to give in to a desire or temptation, to give way to",
+    "Past Tense": "indulged",
+    "Pronunciation": "/ˌɪnˈdəɫdʒ/",
+    "Singular": "indulges"
+  },
+  "influence": {
+    "Definition": "to have an effect on",
+    "Past Tense": "influenced",
+    "Pronunciation": "/ˈɪnfɫuəns/",
+    "Singular": "influences"
+  },
+  "inform": {
+    "Definition": "to give information to someone, to tell someone something",
+    "Past Tense": "informed",
+    "Pronunciation": "/ˌɪnˈfɔɹm/",
+    "Singular": "informs"
+  },
+  "inherit": {
+    "Definition": "to receive (property, rights",
+    "Past Tense": "inherited",
+    "Pronunciation": "/ˌɪnˈhɛɹət/",
+    "Singular": "inherits"
+  },
+  "inhibit": {
+    "Definition": "to prevent something from happening or being done",
+    "Past Tense": "inhibited",
+    "Pronunciation": "/ˌɪnˈhɪbət/",
+    "Singular": "inhibits"
+  },
+  "initiate": {
+    "Definition": "to begin something, to start something, to start a process",
+    "Past Tense": "initiated",
+    "Pronunciation": "/ˌɪˈnɪʃiˌeɪt/",
+    "Singular": "initiates"
+  },
+  "inquire": {
+    "Definition": "to ask questions about something, to try to find out information about something",
+    "Past Tense": "inquired",
+    "Pronunciation": "/ˌɪnˈkwaɪɹ/",
+    "Singular": "inquires"
+  },
+  "insert": {
+    "Definition": "to put or introduce (something) into a place or position",
+    "Past Tense": "inserted",
+    "Pronunciation": "/ˈɪnˌsɝt/, /ˌɪnˈsɝt/",
+    "Singular": "inserts"
+  },
+  "insist": {
+    "Definition": "to persist in maintaining or demanding, to be adamant about",
+    "Past Tense": "insisted",
+    "Pronunciation": "/ˌɪnˈsɪst/",
+    "Singular": "insists"
+  },
+  "inspect": {
+    "Definition": "to look at something carefully in order to check its condition or quality",
+    "Past Tense": "inspected",
+    "Pronunciation": "/ˌɪnˈspɛkt/",
+    "Singular": "inspects"
+  },
+  "inspire": {
+    "Definition": "to fill with the urge to do something",
+    "Past Tense": "inspired",
+    "Pronunciation": "/ˌɪnˈspaɪɹ/",
+    "Singular": "inspires"
+  },
+  "install": {
+    "Definition": "to put (something) in a particular place or position",
+    "Past Tense": "installed",
+    "Pronunciation": "/ˌɪnˈstɔɫ/",
+    "Singular": "installs"
+  },
+  "instruct": {
+    "Definition": "to teach someone a skill or piece of information",
+    "Past Tense": "instructed",
+    "Pronunciation": "/ˌɪnˈstɹəkt/",
+    "Singular": "instructs"
+  },
+  "insure": {
+    "Definition": "to make certain that something will happen or be the case",
+    "Past Tense": "insured",
+    "Pronunciation": "/ˌɪnˈʃʊɹ/",
+    "Singular": "insures"
+  },
+  "integrate": {
+    "Definition": "to make (something) part of a whole, to combine into a whole",
+    "Past Tense": "integrated",
+    "Pronunciation": "/ˈɪnəˌɡɹeɪt/, /ˈɪntəˌɡɹeɪt/",
+    "Singular": "integrates"
+  },
+  "intend": {
+    "Definition": "to have a plan or purpose",
+    "Past Tense": "intended",
+    "Pronunciation": "/ˌɪnˈtɛnd/",
+    "Singular": "intends"
+  },
+  "interact": {
+    "Definition": "to communicate with someone, to talk to someone, to talk to someone",
+    "Past Tense": "interacted",
+    "Pronunciation": "/ˌɪnɝˈækt/, /ˌɪntɝˈækt/",
+    "Singular": "interacts"
+  },
+  "interest": {
+    "Definition": "to be concerned about something, to be interested in something",
+    "Past Tense": "interested",
+    "Pronunciation": "/ˈɪntɝəst/, /ˈɪntɝɪst/, /ˈɪntɹəst/, /ˈɪntɹɪst/",
+    "Singular": "interests"
+  },
+  "interfere": {
+    "Definition": "to get in the way of something, to cause problems",
+    "Past Tense": "interfered",
+    "Pronunciation": "/ˌɪnɝˈfɪɹ/, /ˌɪntɝˈfɪɹ/",
+    "Singular": "interferes"
+  },
+  "interpret": {
+    "Definition": "to understand the meaning of (a text, statement",
+    "Past Tense": "interpreted",
+    "Pronunciation": "/ˌɪnˈtɝpɹət/",
+    "Singular": "interprets"
+  },
+  "interrupt": {
+    "Definition": "to stop something from continuing, to stop something from happening",
+    "Past Tense": "interrupted",
+    "Pronunciation": "/ˌɪntɝˈəpt/",
+    "Singular": "interrupts"
+  },
+  "intervene": {
+    "Definition": "to get involved in a situation, to interfere",
+    "Past Tense": "intervened",
+    "Pronunciation": "/ˌɪntɝˈvin/",
+    "Singular": "intervenes"
+  },
+  "interview": {
+    "Definition": "to ask questions to someone in order to get information about them",
+    "Past Tense": "interviewed",
+    "Pronunciation": "/ˈɪntɝvˌju/",
+    "Singular": "interviews"
+  },
+  "introduce": {
+    "Definition": "to make known, to make public, to make known to the public",
+    "Past Tense": "introduced",
+    "Pronunciation": "/ˌɪntɹəˈdus/, /ˌɪntɹoʊˈdus/",
+    "Singular": "introduces"
+  },
+  "invent": {
+    "Definition": "to create something new, to make something that did not exist before",
+    "Past Tense": "invented",
+    "Pronunciation": "/ˌɪnˈvɛnt/",
+    "Singular": "invents"
+  },
+  "invest": {
+    "Definition": "to put money into a business or project in the hope of making a profit",
+    "Past Tense": "invested",
+    "Pronunciation": "/ˌɪnˈvɛst/",
+    "Singular": "invests"
+  },
+  "investigate": {
+    "Definition": "to examine something or someone carefully in order to find out more about it or them",
+    "Past Tense": "investigated",
+    "Pronunciation": "/ˌɪnˈvɛstəˌɡeɪt/",
+    "Singular": "investigates"
+  },
+  "invite": {
+    "Definition": "to ask someone to come to a place or event",
+    "Past Tense": "invited",
+    "Pronunciation": "/ˌɪnˈvaɪt/",
+    "Singular": "invites"
+  },
+  "involve": {
+    "Definition": "to be involved in something, to be involved in a situation",
+    "Past Tense": "involved",
+    "Pronunciation": "/ˌɪnˈvɑɫv/",
+    "Singular": "involves"
+  },
+  "isolate": {
+    "Definition": "to separate or set apart from others, to keep apart, to set apart",
+    "Past Tense": "isolated",
+    "Pronunciation": "/ˈaɪsəˌɫeɪt/",
+    "Singular": "isolates"
+  },
+  "issue": {
+    "Definition": "to give out, to distribute, to publish, to issue",
+    "Past Tense": "issued",
+    "Pronunciation": "/ˈɪʃu/",
+    "Singular": "issues"
+  },
+  "join": {
+    "Definition": "to become one with, to be united with, to be joined to",
+    "Past Tense": "joined",
+    "Pronunciation": "/ˈdʒɔɪn/",
+    "Singular": "joins"
+  },
+  "judge": {
+    "Definition": "to form an opinion about something or someone, based on the facts",
+    "Past Tense": "judged",
+    "Pronunciation": "/ˈdʒədʒ/",
+    "Singular": "judges"
+  },
+  "jump": {
+    "Definition": "to move suddenly and quickly, to move from one place to another",
+    "Past Tense": "jumped",
+    "Pronunciation": "/ˈdʒəmp/",
+    "Singular": "jumps"
+  },
+  "justify": {
+    "Definition": "to give a reason for something, to explain why something is the case",
+    "Past Tense": "justified",
+    "Pronunciation": "/ˈdʒəstəˌfaɪ/",
+    "Singular": "justifies"
+  },
+  "keep": {
+    "Definition": "to keep something in a safe place, to keep something in a safe place",
+    "Past Tense": "kept",
+    "Pronunciation": "/ˈkip/",
+    "Singular": "keeps"
+  },
+  "kick": {
+    "Definition": "to move (one's foot) quickly and repeatedly",
+    "Past Tense": "kicked",
+    "Pronunciation": "/ˈkɪk/",
+    "Singular": "kicks"
+  },
+  "kill": {
+    "Definition": "to cause to die, to cause to be dead, to cause to die",
+    "Past Tense": "killed",
+    "Pronunciation": "/ˈkɪɫ/",
+    "Singular": "kills"
+  },
+  "kiss": {
+    "Definition": "to touch with the lips",
+    "Past Tense": "kissed",
+    "Pronunciation": "/ˈkɪs/",
+    "Singular": "kisses"
+  },
+  "knit": {
+    "Definition": "to make a garment by interlocking loops of yarn",
+    "Past Tense": "knit",
+    "Pronunciation": "/ˈnɪt/",
+    "Singular": "knits"
+  },
+  "knock": {
+    "Definition": "to hit someone or something very hard",
+    "Past Tense": "knocked",
+    "Pronunciation": "/ˈnɑk/",
+    "Singular": "knocks"
+  },
+  "know": {
+    "Definition": "to be aware of a fact or a specific piece of information",
+    "Past Tense": "knew",
+    "Pronunciation": "/ˈnoʊ/",
+    "Singular": "knows"
+  },
+  "lack": {
+    "Definition": "to be without, to be deficient in, to be short of",
+    "Past Tense": "lacked",
+    "Pronunciation": "/ˈɫæk/",
+    "Singular": "lacks"
+  },
+  "land": {
+    "Definition": "to come to rest on the ground, to come to rest on the ground",
+    "Past Tense": "landed",
+    "Pronunciation": "/ˈɫænd/",
+    "Singular": "lands"
+  },
+  "last": {
+    "Definition": "to be the last of a series or group",
+    "Past Tense": "lasted",
+    "Pronunciation": "/ˈɫæs/, /ˈɫæst/",
+    "Singular": "lasts"
+  },
+  "laugh": {
+    "Definition": "to laugh, to make a sound like laughter",
+    "Past Tense": "laughed",
+    "Pronunciation": "/ˈɫæf/",
+    "Singular": "laughs"
+  },
+  "launch": {
+    "Definition": "to start a new activity or project, to begin to do something",
+    "Past Tense": "launched",
+    "Pronunciation": "/ˈɫɔntʃ/",
+    "Singular": "launches"
+  },
+  "lead": {
+    "Definition": "to guide or direct on a course, to be in charge of or control",
+    "Past Tense": "leaded",
+    "Pronunciation": "/ˈɫɛd/, /ˈɫid/",
+    "Singular": "leads"
+  },
+  "lean": {
+    "Definition": "to be in a position of being supported by something",
+    "Past Tense": "leaned",
+    "Pronunciation": "/ˈɫin/",
+    "Singular": "leans"
+  },
+  "leap": {
+    "Definition": "to jump or spring upward, to move suddenly and energetically",
+    "Past Tense": "leaped",
+    "Pronunciation": "/ˈɫip/",
+    "Singular": "leaps"
+  },
+  "learn": {
+    "Definition": "to acquire knowledge or skill, to gain knowledge or skill",
+    "Past Tense": "learned",
+    "Pronunciation": "/ˈɫɝn/",
+    "Singular": "learns"
+  },
+  "leave": {
+    "Definition": "to go away, to depart, to leave, to depart from",
+    "Past Tense": "left",
+    "Pronunciation": "/ˈɫiv/",
+    "Singular": "leaves"
+  },
+  "lend": {
+    "Definition": "to give (something) to be used by another for a limited time",
+    "Past Tense": "lent",
+    "Pronunciation": "/ˈɫɛnd/",
+    "Singular": "lends"
+  },
+  "let": {
+    "Definition": "to allow something to happen or exist",
+    "Past Tense": "let",
+    "Pronunciation": "/ˈɫɛt/",
+    "Singular": "lets"
+  },
+  "level": {
+    "Definition": "to make level, to make even, to make smooth, to make flat",
+    "Past Tense": "leveled",
+    "Pronunciation": "/ˈɫɛvəɫ/",
+    "Singular": "levels"
+  },
+  "lie": {
+    "Definition": "to be in a horizontal position, to be lying down, to be lying",
+    "Past Tense": "lay",
+    "Pronunciation": "/ˈɫaɪ/",
+    "Singular": "lies"
+  },
+  "lift": {
+    "Definition": "to raise (something) up",
+    "Past Tense": "lifted",
+    "Pronunciation": "/ˈɫɪft/",
+    "Singular": "lifts"
+  },
+  "light": {
+    "Definition": "to make something visible by shining light on it",
+    "Past Tense": "lit",
+    "Pronunciation": "/ˈɫaɪt/",
+    "Singular": "lights"
+  },
+  "like": {
+    "Definition": "to like, to enjoy, to be fond of, to be pleased with",
+    "Past Tense": "liked",
+    "Pronunciation": "/ˈɫaɪk/",
+    "Singular": "likes"
+  },
+  "limit": {
+    "Definition": "to restrict the size or amount of, to limit the size or amount of",
+    "Past Tense": "limited",
+    "Pronunciation": "/ˈɫɪmət/",
+    "Singular": "limits"
+  },
+  "line": {
+    "Definition": "to make a line of something, to form a line of something",
+    "Past Tense": "lined",
+    "Pronunciation": "/ˈɫaɪn/",
+    "Singular": "lines"
+  },
+  "link": {
+    "Definition": "to connect or join together",
+    "Past Tense": "linked",
+    "Pronunciation": "/ˈɫɪŋk/",
+    "Singular": "links"
+  },
+  "list": {
+    "Definition": "to make a list of, to write down, to record, to note",
+    "Past Tense": "listed",
+    "Pronunciation": "/ˈɫɪst/",
+    "Singular": "lists"
+  },
+  "listen": {
+    "Definition": "to hear with attention",
+    "Past Tense": "listened",
+    "Pronunciation": "/ˈɫɪsən/",
+    "Singular": "listens"
+  },
+  "live": {
+    "Definition": "to be alive, to be in existence, to be living",
+    "Past Tense": "lived",
+    "Pronunciation": "/ˈɫaɪv/, /ˈɫɪv/",
+    "Singular": "lives"
+  },
+  "load": {
+    "Definition": "to put something into a vehicle",
+    "Past Tense": "loaded",
+    "Pronunciation": "/ˈɫoʊd/",
+    "Singular": "loads"
+  },
+  "locate": {
+    "Definition": "to find the location of, to find the place where something is located",
+    "Past Tense": "located",
+    "Pronunciation": "/ˈɫoʊˌkeɪt/",
+    "Singular": "locates"
+  },
+  "lock": {
+    "Definition": "to fasten with a lock",
+    "Past Tense": "locked",
+    "Pronunciation": "/ˈɫɑk/",
+    "Singular": "locks"
+  },
+  "look": {
+    "Definition": "to see with the eyes, to perceive with the eyes, to observe",
+    "Past Tense": "looked",
+    "Pronunciation": "/ˈɫʊk/",
+    "Singular": "looks"
+  },
+  "lose": {
+    "Definition": "to be defeated or beaten",
+    "Past Tense": "lost",
+    "Pronunciation": "/ˈɫuz/",
+    "Singular": "loses"
+  },
+  "love": {
+    "Definition": "to have a strong feeling of affection for someone or something",
+    "Past Tense": "loved",
+    "Pronunciation": "/ˈɫəv/",
+    "Singular": "loves"
+  },
+  "machine": {
+    "Definition": "to make (something) by using a machine",
+    "Past Tense": "machined",
+    "Pronunciation": "/məˈʃin/",
+    "Singular": "machines"
+  },
+  "maintain": {
+    "Definition": "to keep in a certain state, to keep in a certain condition",
+    "Past Tense": "maintained",
+    "Pronunciation": "/meɪnˈteɪn/",
+    "Singular": "maintains"
+  },
+  "make": {
+    "Definition": "to make something, to cause something to exist, to bring something into being",
+    "Past Tense": "made",
+    "Pronunciation": "/ˈmeɪk/",
+    "Singular": "makes"
+  },
+  "manage": {
+    "Definition": "to take care of, to look after, to control, to organize",
+    "Past Tense": "managed",
+    "Pronunciation": "/ˈmænədʒ/, /ˈmænɪdʒ/",
+    "Singular": "manages"
+  },
+  "manipulate": {
+    "Definition": "to use your hands to do something",
+    "Past Tense": "manipulated",
+    "Pronunciation": "/məˈnɪpjəˌɫeɪt/",
+    "Singular": "manipulates"
+  },
+  "manufacture": {
+    "Definition": "to make something, to produce something, to create something",
+    "Past Tense": "manufactured",
+    "Pronunciation": "/ˌmænjəˈfæktʃɝ/",
+    "Singular": "manufactures"
+  },
+  "march": {
+    "Definition": "to walk with a firm step",
+    "Past Tense": "marched",
+    "Pronunciation": "/ˈmɑɹtʃ/",
+    "Singular": "marches"
+  },
+  "mark": {
+    "Definition": "to make a mark on, to write or draw on",
+    "Past Tense": "marked",
+    "Pronunciation": "/ˈmɑɹk/",
+    "Singular": "marks"
+  },
+  "market": {
+    "Definition": "to sell (goods or services) in large quantities",
+    "Past Tense": "marketed",
+    "Pronunciation": "/ˈmɑɹkət/, /ˈmɑɹkɪt/",
+    "Singular": "markets"
+  },
+  "marry": {
+    "Definition": "to get married, to become a married couple, to be joined in marriage",
+    "Past Tense": "married",
+    "Pronunciation": "/ˈmɛɹi/",
+    "Singular": "marries"
+  },
+  "master": {
+    "Definition": "to be in charge of, to be in control of",
+    "Past Tense": "mastered",
+    "Pronunciation": "/ˈmæstɝ/",
+    "Singular": "masters"
+  },
+  "match": {
+    "Definition": "to be suitable or appropriate for",
+    "Past Tense": "matched",
+    "Pronunciation": "/ˈmætʃ/",
+    "Singular": "matches"
+  },
+  "mature": {
+    "Definition": "to become fully developed, to grow up, to develop, to ripen",
+    "Past Tense": "matured",
+    "Pronunciation": "/məˈtʃʊɹ/, /mətˈjʊɹ/",
+    "Singular": "matures"
+  },
+  "maximize": {
+    "Definition": "to make as great as possible",
+    "Past Tense": "maximized",
+    "Pronunciation": "/ˈmæksəˌmaɪz/",
+    "Singular": "maximizes"
+  },
+  "may": {
+    "Definition": "to be able to, to have the ability to",
+    "Past Tense": "might",
+    "Pronunciation": "/ˈmeɪ/",
+    "Singular": "may"
+  },
+  "measure": {
+    "Definition": "to determine the size of something or how much there is of it",
+    "Past Tense": "measured",
+    "Pronunciation": "/ˈmɛʒɝ/",
+    "Singular": "measures"
+  },
+  "meet": {
+    "Definition": "to come together, to be in the same place at the same time",
+    "Past Tense": "met",
+    "Pronunciation": "/ˈmit/",
+    "Singular": "meets"
+  },
+  "melt": {
+    "Definition": "to change from a solid to a liquid, to become liquid",
+    "Past Tense": "melted",
+    "Pronunciation": "/ˈmɛɫt/",
+    "Singular": "melts"
+  },
+  "mention": {
+    "Definition": "to say something about something, to talk about something, to refer to something",
+    "Past Tense": "mentioned",
+    "Pronunciation": "/ˈmɛnʃən/",
+    "Singular": "mentions"
+  },
+  "merge": {
+    "Definition": "to combine into one",
+    "Past Tense": "merged",
+    "Pronunciation": "/ˈmɝdʒ/",
+    "Singular": "merges"
+  },
+  "mind": {
+    "Definition": "to be concerned about something, to be worried about something",
+    "Past Tense": "minded",
+    "Pronunciation": "/ˈmaɪnd/",
+    "Singular": "minds"
+  },
+  "minimize": {
+    "Definition": "to make something smaller, to reduce the size of something",
+    "Past Tense": "minimized",
+    "Pronunciation": "/ˈmɪnəˌmaɪz/",
+    "Singular": "minimizes"
+  },
+  "minister": {
+    "Definition": "to serve as a minister",
+    "Past Tense": "ministered",
+    "Pronunciation": "/ˈmɪnəstɝ/, /ˈmɪnɪstɝ/",
+    "Singular": "ministers"
+  },
+  "miss": {
+    "Definition": "to fail to hit or reach, to fail to catch or grasp",
+    "Past Tense": "missed",
+    "Pronunciation": "/ˈmɪs/",
+    "Singular": "misses"
+  },
+  "mix": {
+    "Definition": "to combine or blend together",
+    "Past Tense": "mixed",
+    "Pronunciation": "/ˈmɪks/",
+    "Singular": "mixes"
+  },
+  "modify": {
+    "Definition": "to make changes to (something)",
+    "Past Tense": "modified",
+    "Pronunciation": "/ˈmɑdəˌfaɪ/",
+    "Singular": "modifies"
+  },
+  "monitor": {
+    "Definition": "to watch over or keep an eye on, to keep track of",
+    "Past Tense": "monitored",
+    "Pronunciation": "/ˈmɑnətɝ/",
+    "Singular": "monitors"
+  },
+  "mount": {
+    "Definition": "to climb up, to ascend, to rise, to go up",
+    "Past Tense": "mounted",
+    "Pronunciation": "/ˈmaʊnt/",
+    "Singular": "mounts"
+  },
+  "move": {
+    "Definition": "to move from one place to another, to change position",
+    "Past Tense": "moved",
+    "Pronunciation": "/ˈmuv/",
+    "Singular": "moves"
+  },
+  "multiply": {
+    "Definition": "to increase in number or amount",
+    "Past Tense": "multiplied",
+    "Pronunciation": "/ˈməɫtəˌpɫaɪ/",
+    "Singular": "multiplies"
+  },
+  "murder": {
+    "Definition": "to kill someone, to kill someone, to kill someone, to kill someone",
+    "Past Tense": "murdered",
+    "Pronunciation": "/ˈmɝdɝ/",
+    "Singular": "murders"
+  },
+  "name": {
+    "Definition": "to name",
+    "Past Tense": "named",
+    "Pronunciation": "/ˈneɪm/",
+    "Singular": "names"
+  },
+  "need": {
+    "Definition": "to require or demand, to be necessary, to be essential",
+    "Past Tense": "needed",
+    "Pronunciation": "/ˈnid/",
+    "Singular": "needs"
+  },
+  "negotiate": {
+    "Definition": "to discuss and settle the terms of (a contract, agreement",
+    "Past Tense": "negotiated",
+    "Pronunciation": "/nəˈɡoʊʃiˌeɪt/, /nɪˈɡoʊʃiˌeɪt/",
+    "Singular": "negotiates"
+  },
+  "note": {
+    "Definition": "to write down, to record, to memorize, to remember",
+    "Past Tense": "noted",
+    "Pronunciation": "/ˈnoʊt/",
+    "Singular": "notes"
+  },
+  "notice": {
+    "Definition": "to be aware of something, to be conscious of something",
+    "Past Tense": "noticed",
+    "Pronunciation": "/ˈnoʊtəs/, /ˈnoʊtɪs/",
+    "Singular": "notices"
+  },
+  "notify": {
+    "Definition": "to give notice to (someone)",
+    "Past Tense": "notified",
+    "Pronunciation": "/ˈnoʊtəˌfaɪ/",
+    "Singular": "notifies"
+  },
+  "obey": {
+    "Definition": "to do what someone tells you to do",
+    "Past Tense": "obeyed",
+    "Pronunciation": "/oʊˈbeɪ/",
+    "Singular": "obeys"
+  },
+  "object": {
+    "Definition": "to be in opposition to something",
+    "Past Tense": "objected",
+    "Pronunciation": "/ˈɑbdʒɛkt/, /əbˈdʒɛkt/",
+    "Singular": "objects"
+  },
+  "obscure": {
+    "Definition": "to make something unclear or difficult to understand",
+    "Past Tense": "obscured",
+    "Pronunciation": "/əbˈskjʊɹ/",
+    "Singular": "obscures"
+  },
+  "observe": {
+    "Definition": "to watch or look at carefully, to watch or look at attentively",
+    "Past Tense": "observed",
+    "Pronunciation": "/əbˈzɝv/",
+    "Singular": "observes"
+  },
+  "obtain": {
+    "Definition": "to get something, to get something done, to get something out of someone",
+    "Past Tense": "obtained",
+    "Pronunciation": "/əbˈteɪn/",
+    "Singular": "obtains"
+  },
+  "occupy": {
+    "Definition": "to take up space or time, to be present in a place or situation",
+    "Past Tense": "occupied",
+    "Pronunciation": "/ˈɑkjəˌpaɪ/",
+    "Singular": "occupies"
+  },
+  "occur": {
+    "Definition": "to happen, to take place, to occur, to come about",
+    "Past Tense": "occurred",
+    "Pronunciation": "/əˈkɝ/",
+    "Singular": "occurs"
+  },
+  "offer": {
+    "Definition": "to give something to someone as a gift or as a sacrifice",
+    "Past Tense": "offered",
+    "Pronunciation": "/ˈɔfɝ/",
+    "Singular": "offers"
+  },
+  "offset": {
+    "Definition": "to make up for (a loss or deficiency)",
+    "Past Tense": "offset",
+    "Pronunciation": "/ˈɔfˌsɛt/, /ɔfˈsɛt/",
+    "Singular": "offsets"
+  },
+  "open": {
+    "Definition": "to open, to make open, to unlock, to unfasten",
+    "Past Tense": "opened",
+    "Pronunciation": "/ˈoʊpən/",
+    "Singular": "opens"
+  },
+  "operate": {
+    "Definition": "to be in charge of a business",
+    "Past Tense": "operated",
+    "Pronunciation": "/ˈɑpɝˌeɪt/, /ˈɔpɝˌeɪt/",
+    "Singular": "operates"
+  },
+  "oppose": {
+    "Definition": "to be against, to be opposed to, to be against something",
+    "Past Tense": "opposed",
+    "Pronunciation": "/əˈpoʊz/",
+    "Singular": "opposes"
+  },
+  "opt": {
+    "Definition": "to choose or select, to make a decision, to decide, to prefer",
+    "Past Tense": "opted",
+    "Pronunciation": "/ˈɑpt/",
+    "Singular": "opts"
+  },
+  "order": {
+    "Definition": "to give instructions to (someone) to do something",
+    "Past Tense": "ordered",
+    "Pronunciation": "/ˈɔɹdɝ/",
+    "Singular": "orders"
+  },
+  "organize": {
+    "Definition": "to arrange in a particular order, to put in order",
+    "Past Tense": "organized",
+    "Pronunciation": "/ˈɔɹɡəˌnaɪz/",
+    "Singular": "organizes"
+  },
+  "outline": {
+    "Definition": "to draw the outline of",
+    "Past Tense": "outlined",
+    "Pronunciation": "/ˈaʊtˌɫaɪn/",
+    "Singular": "outlines"
+  },
+  "overcome": {
+    "Definition": "to defeat or overcome (an opponent or problem)",
+    "Past Tense": "overcame",
+    "Pronunciation": "/ˈoʊvɝˌkəm/",
+    "Singular": "overcomes"
+  },
+  "overlook": {
+    "Definition": "to fail to notice or take notice of",
+    "Past Tense": "overlooked",
+    "Pronunciation": "/ˈoʊvɝˌɫʊk/",
+    "Singular": "overlooks"
+  },
+  "owe": {
+    "Definition": "to be indebted to someone for something",
+    "Past Tense": "owed",
+    "Pronunciation": "/ˈoʊ/",
+    "Singular": "owes"
+  },
+  "own": {
+    "Definition": "to have as one's own, to possess",
+    "Past Tense": "owned",
+    "Pronunciation": "/ˈoʊn/",
+    "Singular": "owns"
+  },
+  "pack": {
+    "Definition": "to put things into a container",
+    "Past Tense": "packed",
+    "Pronunciation": "/ˈpæk/",
+    "Singular": "packs"
+  },
+  "paint": {
+    "Definition": "to apply paint to (a surface)",
+    "Past Tense": "painted",
+    "Pronunciation": "/ˈpeɪnt/",
+    "Singular": "paints"
+  },
+  "park": {
+    "Definition": "to stop a vehicle in a parking space",
+    "Past Tense": "parked",
+    "Pronunciation": "/ˈpɑɹk/",
+    "Singular": "parks"
+  },
+  "participate": {
+    "Definition": "to take part in an activity",
+    "Past Tense": "participated",
+    "Pronunciation": "/pɑɹˈtɪsəˌpeɪt/",
+    "Singular": "participates"
+  },
+  "pass": {
+    "Definition": "to move from one place to another, to go from one place to another",
+    "Past Tense": "passed",
+    "Pronunciation": "/ˈpæs/",
+    "Singular": "passes"
+  },
+  "pause": {
+    "Definition": "to stop for a short time, to rest, to take a break",
+    "Past Tense": "paused",
+    "Pronunciation": "/ˈpɔz/",
+    "Singular": "pauses"
+  },
+  "pay": {
+    "Definition": "to give money to someone in exchange for goods or services",
+    "Past Tense": "paid",
+    "Pronunciation": "/ˈpeɪ/",
+    "Singular": "pays"
+  },
+  "penetrate": {
+    "Definition": "to enter or go into",
+    "Past Tense": "penetrated",
+    "Pronunciation": "/ˈpɛnəˌtɹeɪt/",
+    "Singular": "penetrates"
+  },
+  "perceive": {
+    "Definition": "to become aware of something, to notice something, to see something",
+    "Past Tense": "perceived",
+    "Pronunciation": "/pɝˈsiv/",
+    "Singular": "perceives"
+  },
+  "perform": {
+    "Definition": "to do something, to carry out, to execute, to do",
+    "Past Tense": "performed",
+    "Pronunciation": "/pɝˈfɔɹm/",
+    "Singular": "performs"
+  },
+  "permit": {
+    "Definition": "to allow something to happen or exist",
+    "Past Tense": "permitted",
+    "Pronunciation": "/ˈpɝˌmɪt/, /pɝˈmɪt/",
+    "Singular": "permits"
+  },
+  "persist": {
+    "Definition": "to continue in a state or condition, to remain unchanged",
+    "Past Tense": "persisted",
+    "Pronunciation": "/pɝˈsɪst/",
+    "Singular": "persists"
+  },
+  "persuade": {
+    "Definition": "to make someone do something by using arguments or persuasion",
+    "Past Tense": "persuaded",
+    "Pronunciation": "/pɝˈsweɪd/",
+    "Singular": "persuades"
+  },
+  "phone": {
+    "Definition": "to call someone on the telephone",
+    "Past Tense": "phoned",
+    "Pronunciation": "/ˈfoʊn/",
+    "Singular": "phones"
+  },
+  "pick": {
+    "Definition": "to choose or select from a number of possibilities",
+    "Past Tense": "picked",
+    "Pronunciation": "/ˈpɪk/",
+    "Singular": "picks"
+  },
+  "picture": {
+    "Definition": "to make a picture of (something)",
+    "Past Tense": "pictured",
+    "Pronunciation": "/ˈpɪktʃɝ/",
+    "Singular": "pictures"
+  },
+  "pin": {
+    "Definition": "to fasten with a pin",
+    "Past Tense": "pinned",
+    "Pronunciation": "/ˈpɪn/",
+    "Singular": "pins"
+  },
+  "place": {
+    "Definition": "to put or set (something) in a certain place, location",
+    "Past Tense": "placed",
+    "Pronunciation": "/ˈpɫeɪs/",
+    "Singular": "places"
+  },
+  "plan": {
+    "Definition": "to make a plan",
+    "Past Tense": "planned",
+    "Pronunciation": "/ˈpɫæn/",
+    "Singular": "plans"
+  },
+  "plant": {
+    "Definition": "to put or place (seeds, seedlings",
+    "Past Tense": "planted",
+    "Pronunciation": "/ˈpɫænt/",
+    "Singular": "plants"
+  },
+  "play": {
+    "Definition": "to move or operate (a machine or vehicle) with skill",
+    "Past Tense": "played",
+    "Pronunciation": "/ˈpɫeɪ/",
+    "Singular": "plays"
+  },
+  "plead": {
+    "Definition": "to make a formal request to a court, to ask for something",
+    "Past Tense": "pleaded",
+    "Pronunciation": "/ˈpɫid/",
+    "Singular": "pleads"
+  },
+  "please": {
+    "Definition": "to ask for something, to request, to ask for something, to request",
+    "Past Tense": "pleased",
+    "Pronunciation": "/ˈpɫiz/",
+    "Singular": "pleases"
+  },
+  "plug": {
+    "Definition": "to fill or block up, to stop up, to close",
+    "Past Tense": "plugged",
+    "Pronunciation": "/ˈpɫəɡ/",
+    "Singular": "plugs"
+  },
+  "point": {
+    "Definition": "to indicate or show, to point out, to indicate the direction of",
+    "Past Tense": "pointed",
+    "Pronunciation": "/ˈpɔɪnt/",
+    "Singular": "points"
+  },
+  "pop": {
+    "Definition": "to make a short",
+    "Past Tense": "popped",
+    "Pronunciation": "/ˈpɑp/",
+    "Singular": "pops"
+  },
+  "pose": {
+    "Definition": "to stand in a particular position",
+    "Past Tense": "posed",
+    "Pronunciation": "/ˈpoʊz/",
+    "Singular": "poses"
+  },
+  "position": {
+    "Definition": "to put in a particular place or position",
+    "Past Tense": "positioned",
+    "Pronunciation": "/pəˈzɪʃən/",
+    "Singular": "positions"
+  },
+  "possess": {
+    "Definition": "to have or own, to be in possession of",
+    "Past Tense": "possessed",
+    "Pronunciation": "/pəˈzɛs/",
+    "Singular": "possesses"
+  },
+  "postpone": {
+    "Definition": "to delay or put off, to put off until a later time",
+    "Past Tense": "postponed",
+    "Pronunciation": "/poʊˈspoʊn/, /poʊstˈpoʊn/",
+    "Singular": "postpones"
+  },
+  "pour": {
+    "Definition": "to pour liquid into a container, to pour liquid onto something",
+    "Past Tense": "poured",
+    "Pronunciation": "/ˈpɔɹ/",
+    "Singular": "pours"
+  },
+  "practice": {
+    "Definition": "to do something repeatedly in order to become good at it",
+    "Past Tense": "practiced",
+    "Pronunciation": "/ˈpɹæktəs/, /ˈpɹæktɪs/",
+    "Singular": "practices"
+  },
+  "praise": {
+    "Definition": "to say good things about someone or something",
+    "Past Tense": "praised",
+    "Pronunciation": "/ˈpɹeɪz/",
+    "Singular": "praises"
+  },
+  "pray": {
+    "Definition": "to ask for help or support from God or an object of worship",
+    "Past Tense": "prayed",
+    "Pronunciation": "/ˈpɹeɪ/",
+    "Singular": "prays"
+  },
+  "predict": {
+    "Definition": "to say what will happen in the future",
+    "Past Tense": "predicted",
+    "Pronunciation": "/pɹiˈdɪkt/, /pɹɪˈdɪkt/",
+    "Singular": "predicts"
+  },
+  "prefer": {
+    "Definition": "to have a preference for, to like better than others",
+    "Past Tense": "preferred",
+    "Pronunciation": "/pɹəˈfɝ/, /pɹiˈfɝ/, /pɹɪˈfɝ/",
+    "Singular": "prefers"
+  },
+  "prepare": {
+    "Definition": "to make ready for a particular purpose or event",
+    "Past Tense": "prepared",
+    "Pronunciation": "/pɹiˈpɛɹ/",
+    "Singular": "prepares"
+  },
+  "present": {
+    "Definition": "to be present, to be in the same place",
+    "Past Tense": "presented",
+    "Pronunciation": "/ˈpɹɛzənt/, /pɝˈzɛnt/, /pɹiˈzɛnt/",
+    "Singular": "presents"
+  },
+  "preserve": {
+    "Definition": "to keep safe from harm or injury",
+    "Past Tense": "preserved",
+    "Pronunciation": "/pɹəˈzɝv/, /pɹiˈzɝv/, /pɹɪˈzɝv/",
+    "Singular": "preserves"
+  },
+  "press": {
+    "Definition": "to force someone to do something, to force someone to do something",
+    "Past Tense": "pressed",
+    "Pronunciation": "/ˈpɹɛs/",
+    "Singular": "presses"
+  },
+  "presume": {
+    "Definition": "to suppose or assume without proof or evidence",
+    "Past Tense": "presumed",
+    "Pronunciation": "/pɹɪˈzum/",
+    "Singular": "presumes"
+  },
+  "pretend": {
+    "Definition": "to act as if something is true when it is not",
+    "Past Tense": "pretended",
+    "Pronunciation": "/pɹiˈtɛnd/",
+    "Singular": "pretends"
+  },
+  "prevail": {
+    "Definition": "to be more powerful or more influential than another",
+    "Past Tense": "prevailed",
+    "Pronunciation": "/pɹiˈveɪɫ/, /pɹɪˈveɪɫ/",
+    "Singular": "prevails"
+  },
+  "prevent": {
+    "Definition": "to stop something from happening or being done",
+    "Past Tense": "prevented",
+    "Pronunciation": "/pɹiˈvɛnt/, /pɹɪˈvɛnt/",
+    "Singular": "prevents"
+  },
+  "price": {
+    "Definition": "to put a price on something, to value something",
+    "Past Tense": "priced",
+    "Pronunciation": "/ˈpɹaɪs/",
+    "Singular": "prices"
+  },
+  "print": {
+    "Definition": "to produce (something, such as a book, newspaper",
+    "Past Tense": "printed",
+    "Pronunciation": "/ˈpɹɪnt/",
+    "Singular": "prints"
+  },
+  "proceed": {
+    "Definition": "to move forward, to go on, to continue, to advance",
+    "Past Tense": "proceeded",
+    "Pronunciation": "/pɝˈsid/, /pɹəˈsid/, /pɹoʊˈsid/",
+    "Singular": "proceeds"
+  },
+  "process": {
+    "Definition": "to make something more complex or more advanced, to make something more complicated",
+    "Past Tense": "processed",
+    "Pronunciation": "/ˈpɹɑˌsɛs/, /ˈpɹɔˌsɛs/",
+    "Singular": "processes"
+  },
+  "produce": {
+    "Definition": "to make something, to cause something to exist, to bring something into being",
+    "Past Tense": "produced",
+    "Pronunciation": "/ˈpɹoʊdus/, /pɹəˈdus/",
+    "Singular": "produces"
+  },
+  "profit": {
+    "Definition": "to make a profit, to gain money or advantage from something",
+    "Past Tense": "profited",
+    "Pronunciation": "/ˈpɹɑfət/, /ˈpɹɑfɪt/",
+    "Singular": "profits"
+  },
+  "progress": {
+    "Definition": "to move forward, to advance",
+    "Past Tense": "progressed",
+    "Pronunciation": "/ˈpɹɑˌɡɹɛs/, /pɹəˈɡɹɛs/, /pɹoʊˈɡɹɛs/",
+    "Singular": "progresses"
+  },
+  "project": {
+    "Definition": "to throw or propel something, to throw or propel something forward",
+    "Past Tense": "projected",
+    "Pronunciation": "/ˈpɹɑdʒɛkt/, /pɹəˈdʒɛkt/",
+    "Singular": "projects"
+  },
+  "promise": {
+    "Definition": "to say that you will do something",
+    "Past Tense": "promised",
+    "Pronunciation": "/ˈpɹɑməs/",
+    "Singular": "promises"
+  },
+  "promote": {
+    "Definition": "to make something more popular, to make something more successful",
+    "Past Tense": "promoted",
+    "Pronunciation": "/pɹəˈmoʊt/",
+    "Singular": "promotes"
+  },
+  "propose": {
+    "Definition": "to suggest something as a possibility, to put forward as a suggestion",
+    "Past Tense": "proposed",
+    "Pronunciation": "/pɹəˈpoʊz/",
+    "Singular": "proposes"
+  },
+  "protect": {
+    "Definition": "to keep safe from harm or injury",
+    "Past Tense": "protected",
+    "Pronunciation": "/pɹəˈtɛkt/",
+    "Singular": "protects"
+  },
+  "protest": {
+    "Definition": "to express opposition to something",
+    "Past Tense": "protested",
+    "Pronunciation": "/ˈpɹoʊˌtɛst/, /pɹəˈtɛst/",
+    "Singular": "protests"
+  },
+  "prove": {
+    "Definition": "to show that something is true or real",
+    "Past Tense": "proved",
+    "Pronunciation": "/ˈpɹuv/",
+    "Singular": "proves"
+  },
+  "provide": {
+    "Definition": "to give or supply",
+    "Past Tense": "provided",
+    "Pronunciation": "/pɹəˈvaɪd/",
+    "Singular": "provides"
+  },
+  "provoke": {
+    "Definition": "to cause (someone) to do or feel something",
+    "Past Tense": "provoked",
+    "Pronunciation": "/pɹəˈvoʊk/",
+    "Singular": "provokes"
+  },
+  "publish": {
+    "Definition": "to make known to the public, to make public",
+    "Past Tense": "published",
+    "Pronunciation": "/ˈpəbɫɪʃ/",
+    "Singular": "publishes"
+  },
+  "pull": {
+    "Definition": "to move something towards you, to move something towards you",
+    "Past Tense": "pulled",
+    "Pronunciation": "/ˈpʊɫ/",
+    "Singular": "pulls"
+  },
+  "punish": {
+    "Definition": "to inflict pain or suffering on (someone) as a penalty for an off",
+    "Past Tense": "punished",
+    "Pronunciation": "/ˈpənɪʃ/",
+    "Singular": "punishes"
+  },
+  "purchase": {
+    "Definition": "to buy something, to buy something, to buy something, to buy something",
+    "Past Tense": "purchased",
+    "Pronunciation": "/ˈpɝtʃəs/",
+    "Singular": "purchases"
+  },
+  "pursue": {
+    "Definition": "to follow or chase after, to go after",
+    "Past Tense": "pursued",
+    "Pronunciation": "/pɝˈsu/",
+    "Singular": "pursues"
+  },
+  "push": {
+    "Definition": "to force someone to do something, to make someone do something",
+    "Past Tense": "pushed",
+    "Pronunciation": "/ˈpʊʃ/",
+    "Singular": "pushes"
+  },
+  "put": {
+    "Definition": "to put something in a particular place",
+    "Past Tense": "put",
+    "Pronunciation": "/ˈpʊt/",
+    "Singular": "puts"
+  },
+  "qualify": {
+    "Definition": "to make (someone or something) suitable for a particular purpose or task",
+    "Past Tense": "qualified",
+    "Pronunciation": "/ˈkwɑɫəˌfaɪ/",
+    "Singular": "qualifies"
+  },
+  "question": {
+    "Definition": "to ask for information or an explanation",
+    "Past Tense": "questioned",
+    "Pronunciation": "/ˈkwɛstʃən/, /ˈkwɛʃən/",
+    "Singular": "questions"
+  },
+  "quit": {
+    "Definition": "to stop doing something, to stop being involved in something",
+    "Past Tense": "quit",
+    "Pronunciation": "/ˈkwɪt/",
+    "Singular": "quits"
+  },
+  "quote": {
+    "Definition": "to repeat (a passage of text) from a book, speech",
+    "Past Tense": "quoted",
+    "Pronunciation": "/ˈkwoʊt/",
+    "Singular": "quotes"
+  },
+  "race": {
+    "Definition": "to run a race, to compete in a race",
+    "Past Tense": "raced",
+    "Pronunciation": "/ˈɹeɪs/",
+    "Singular": "races"
+  },
+  "raise": {
+    "Definition": "to lift up, to elevate, to increase, to raise up",
+    "Past Tense": "raised",
+    "Pronunciation": "/ˈɹeɪz/",
+    "Singular": "raises"
+  },
+  "range": {
+    "Definition": "to move about freely, to roam, to wander",
+    "Past Tense": "ranged",
+    "Pronunciation": "/ˈɹeɪndʒ/",
+    "Singular": "ranges"
+  },
+  "reach": {
+    "Definition": "to arrive at a place",
+    "Past Tense": "reached",
+    "Pronunciation": "/ˈɹitʃ/",
+    "Singular": "reaches"
+  },
+  "react": {
+    "Definition": "to respond to something, to behave in a particular way in response to something",
+    "Past Tense": "reacted",
+    "Pronunciation": "/ɹiˈækt/",
+    "Singular": "reacts"
+  },
+  "read": {
+    "Definition": "to look at carefully so as to understand the meaning",
+    "Past Tense": "read",
+    "Pronunciation": "/ˈɹɛd/, /ˈɹid/",
+    "Singular": "reads"
+  },
+  "realize": {
+    "Definition": "to become aware of something, to understand something, to become conscious of something",
+    "Past Tense": "realized",
+    "Pronunciation": "/ˈɹiəˌɫaɪz/",
+    "Singular": "realizes"
+  },
+  "reassure": {
+    "Definition": "to make someone feel more confident or less worried",
+    "Past Tense": "reassured",
+    "Pronunciation": "/ˌɹiəˈʃʊɹ/",
+    "Singular": "reassures"
+  },
+  "rebuild": {
+    "Definition": "to build again, to reconstruct, to reconstruct, to rebuild",
+    "Past Tense": "rebuilt",
+    "Pronunciation": "/ɹiˈbɪɫd/",
+    "Singular": "rebuilds"
+  },
+  "recall": {
+    "Definition": "to remember something, to bring something to mind, to think of something",
+    "Past Tense": "recalled",
+    "Pronunciation": "/ˈɹiˌkɔɫ/, /ɹɪˈkɔɫ/",
+    "Singular": "recalls"
+  },
+  "receive": {
+    "Definition": "to get something, to take something in, to get something into your possession",
+    "Past Tense": "received",
+    "Pronunciation": "/ɹəˈsiv/, /ɹiˈsiv/, /ɹɪˈsiv/",
+    "Singular": "receives"
+  },
+  "reckon": {
+    "Definition": "to estimate the value of something",
+    "Past Tense": "reckoned",
+    "Pronunciation": "/ˈɹɛkən/",
+    "Singular": "reckons"
+  },
+  "recognize": {
+    "Definition": "to understand the meaning of (a word, phrase",
+    "Past Tense": "recognized",
+    "Pronunciation": "/ˈɹɛkəɡˌnaɪz/",
+    "Singular": "recognizes"
+  },
+  "recommend": {
+    "Definition": "to advise or urge strongly",
+    "Past Tense": "recommended",
+    "Pronunciation": "/ˌɹɛkəˈmɛnd/",
+    "Singular": "recommends"
+  },
+  "reconcile": {
+    "Definition": "to make (two people or groups) friendly again after a disagreement",
+    "Past Tense": "reconciled",
+    "Pronunciation": "/ˈɹɛkənˌsaɪɫ/",
+    "Singular": "reconciles"
+  },
+  "reconsider": {
+    "Definition": "to think about something again, to consider again, to think over again",
+    "Past Tense": "reconsidered",
+    "Pronunciation": "/ˌɹikənˈsɪdɝ/",
+    "Singular": "reconsiders"
+  },
+  "record": {
+    "Definition": "to write down, to make a written record of",
+    "Past Tense": "recorded",
+    "Pronunciation": "/ˈɹɛkɝd/, /ɹəˈkɔɹd/, /ɹɪˈkɔɹd/",
+    "Singular": "records"
+  },
+  "recover": {
+    "Definition": "to get back to a normal state",
+    "Past Tense": "recovered",
+    "Pronunciation": "/ɹɪˈkəvɝ/",
+    "Singular": "recovers"
+  },
+  "recruit": {
+    "Definition": "to get people to join the army or the police force",
+    "Past Tense": "recruited",
+    "Pronunciation": "/ɹəˈkɹut/, /ɹiˈkɹut/, /ɹɪˈkɹut/",
+    "Singular": "recruits"
+  },
+  "reduce": {
+    "Definition": "to make smaller or less",
+    "Past Tense": "reduced",
+    "Pronunciation": "/ɹəˈdus/, /ɹiˈdus/, /ɹɪˈdus/",
+    "Singular": "reduces"
+  },
+  "refer": {
+    "Definition": "to refer to, to mention, to relate to, to connect to",
+    "Past Tense": "referred",
+    "Pronunciation": "/ɹəˈfɝ/, /ɹɪˈfɝ/",
+    "Singular": "refers"
+  },
+  "reflect": {
+    "Definition": "to think about something carefully, to consider something, to think about something",
+    "Past Tense": "reflected",
+    "Pronunciation": "/ɹɪˈfɫɛkt/",
+    "Singular": "reflects"
+  },
+  "reform": {
+    "Definition": "to change something for the better",
+    "Past Tense": "reformed",
+    "Pronunciation": "/ɹəˈfɔɹm/, /ɹɪˈfɔɹm/",
+    "Singular": "reforms"
+  },
+  "refuse": {
+    "Definition": "to say that you do not want to do something",
+    "Past Tense": "refused",
+    "Pronunciation": "/ˈɹɛfˌjuz/, /ɹəfˈjuz/, /ɹɪfˈjuz/",
+    "Singular": "refuses"
+  },
+  "regain": {
+    "Definition": "to get back something that you have lost",
+    "Past Tense": "regained",
+    "Pronunciation": "/ɹɪˈɡeɪn/",
+    "Singular": "regains"
+  },
+  "regard": {
+    "Definition": "to look at or think about (something) carefully",
+    "Past Tense": "regarded",
+    "Pronunciation": "/ɹɪˈɡɑɹd/",
+    "Singular": "regards"
+  },
+  "register": {
+    "Definition": "to record in a register",
+    "Past Tense": "registered",
+    "Pronunciation": "/ˈɹɛdʒɪstɝ/",
+    "Singular": "registers"
+  },
+  "regret": {
+    "Definition": "to feel sorry for something that you have done or that has happened",
+    "Past Tense": "regretted",
+    "Pronunciation": "/ɹəˈɡɹɛt/, /ɹɪˈɡɹɛt/",
+    "Singular": "regrets"
+  },
+  "regulate": {
+    "Definition": "to control or direct the course of, to adjust to a standard",
+    "Past Tense": "regulated",
+    "Pronunciation": "/ˈɹɛɡjəˌɫeɪt/",
+    "Singular": "regulates"
+  },
+  "reinforce": {
+    "Definition": "to make stronger, to make more powerful, to make more effective",
+    "Past Tense": "reinforced",
+    "Pronunciation": "/ˌɹiɪnˈfɔɹs/",
+    "Singular": "reinforces"
+  },
+  "reject": {
+    "Definition": "to refuse to accept something, to refuse to believe something",
+    "Past Tense": "rejected",
+    "Pronunciation": "/ˈɹidʒɛkt/, /ɹɪˈdʒɛkt/",
+    "Singular": "rejects"
+  },
+  "relate": {
+    "Definition": "to be connected or associated with something, to be related to someone or something",
+    "Past Tense": "related",
+    "Pronunciation": "/ɹiˈɫeɪt/, /ɹɪˈɫeɪt/",
+    "Singular": "relates"
+  },
+  "relax": {
+    "Definition": "to become less tense or rigid",
+    "Past Tense": "relaxed",
+    "Pronunciation": "/ɹiˈɫæks/, /ɹɪˈɫæks/",
+    "Singular": "relaxes"
+  },
+  "release": {
+    "Definition": "to let go of (someone or something)",
+    "Past Tense": "released",
+    "Pronunciation": "/ɹiˈɫis/",
+    "Singular": "releases"
+  },
+  "relieve": {
+    "Definition": "to make less severe or painful, to make less severe or painful",
+    "Past Tense": "relieved",
+    "Pronunciation": "/ɹiˈɫiv/, /ɹɪˈɫiv/",
+    "Singular": "relieves"
+  },
+  "rely": {
+    "Definition": "to depend on someone or something, to trust someone or something",
+    "Past Tense": "relied",
+    "Pronunciation": "/ɹiˈɫaɪ/, /ɹɪˈɫaɪ/",
+    "Singular": "relies"
+  },
+  "remain": {
+    "Definition": "to continue to exist or live",
+    "Past Tense": "remained",
+    "Pronunciation": "/ɹiˈmeɪn/, /ɹɪˈmeɪn/",
+    "Singular": "remains"
+  },
+  "remedy": {
+    "Definition": "to make better, to improve, to correct, to amend",
+    "Past Tense": "remedied",
+    "Pronunciation": "/ˈɹɛmədi/",
+    "Singular": "remedies"
+  },
+  "remember": {
+    "Definition": "to recall knowledge from memory, to remember something",
+    "Past Tense": "remembered",
+    "Pronunciation": "/ɹiˈmɛmbɝ/, /ɹɪˈmɛmbɝ/",
+    "Singular": "remembers"
+  },
+  "remind": {
+    "Definition": "to tell someone about something that they have forgotten",
+    "Past Tense": "reminded",
+    "Pronunciation": "/ɹiˈmaɪnd/",
+    "Singular": "reminds"
+  },
+  "remove": {
+    "Definition": "to take away, to remove, to take away, to remove",
+    "Past Tense": "removed",
+    "Pronunciation": "/ɹiˈmuv/",
+    "Singular": "removes"
+  },
+  "render": {
+    "Definition": "to make something look or sound different",
+    "Past Tense": "rendered",
+    "Pronunciation": "/ˈɹɛndɝ/",
+    "Singular": "renders"
+  },
+  "renew": {
+    "Definition": "to make new again, to restore to a former state, to make new",
+    "Past Tense": "renewed",
+    "Pronunciation": "/ɹɪˈnu/",
+    "Singular": "renews"
+  },
+  "repair": {
+    "Definition": "to make something better, to make something work again",
+    "Past Tense": "repaired",
+    "Pronunciation": "/ɹɪˈpɛɹ/",
+    "Singular": "repairs"
+  },
+  "repay": {
+    "Definition": "to give back money that you owe",
+    "Past Tense": "repaid",
+    "Pronunciation": "/ɹiˈpeɪ/",
+    "Singular": "repays"
+  },
+  "repeat": {
+    "Definition": "to say or do something again",
+    "Past Tense": "repeated",
+    "Pronunciation": "/ɹiˈpit/, /ɹɪˈpit/",
+    "Singular": "repeats"
+  },
+  "replace": {
+    "Definition": "to replace something or someone with something or someone else",
+    "Past Tense": "replaced",
+    "Pronunciation": "/ˌɹiˈpɫeɪs/, /ɝˈpɫeɪs/",
+    "Singular": "replaces"
+  },
+  "reply": {
+    "Definition": "to answer back, to respond, to retort, to rebut",
+    "Past Tense": "replied",
+    "Pronunciation": "/ɹiˈpɫaɪ/, /ɹɪˈpɫaɪ/",
+    "Singular": "replies"
+  },
+  "report": {
+    "Definition": "to tell someone about something, to inform someone about something",
+    "Past Tense": "reported",
+    "Pronunciation": "/ɹiˈpɔɹt/, /ɹɪˈpɔɹt/",
+    "Singular": "reports"
+  },
+  "represent": {
+    "Definition": "to be a representative of, to be a spokesperson for",
+    "Past Tense": "represented",
+    "Pronunciation": "/ˌɹɛpɹɪˈzɛnt/",
+    "Singular": "represents"
+  },
+  "reproduce": {
+    "Definition": "to make a copy of something, to make a new version of something",
+    "Past Tense": "reproduced",
+    "Pronunciation": "/ˌɹipɹəˈdus/",
+    "Singular": "reproduces"
+  },
+  "request": {
+    "Definition": "to ask for something, to request something, to ask for something",
+    "Past Tense": "requested",
+    "Pronunciation": "/ɹiˈkwɛst/, /ɹɪˈkwɛst/",
+    "Singular": "requests"
+  },
+  "require": {
+    "Definition": "to need, to be necessary, to be essential",
+    "Past Tense": "required",
+    "Pronunciation": "/ˌɹiˈkwaɪɝ/, /ɹiˈkwaɪɹ/, /ɹɪˈkwaɪɝ/",
+    "Singular": "requires"
+  },
+  "rescue": {
+    "Definition": "to save (someone or something) from danger or harm",
+    "Past Tense": "rescued",
+    "Pronunciation": "/ˈɹɛskju/",
+    "Singular": "rescues"
+  },
+  "research": {
+    "Definition": "to study or investigate something in order to discover new information or reach a conclusion",
+    "Past Tense": "researched",
+    "Pronunciation": "/ˈɹisɝtʃ/, /ɹiˈsɝtʃ/",
+    "Singular": "researches"
+  },
+  "resemble": {
+    "Definition": "to be similar to",
+    "Past Tense": "resembled",
+    "Pronunciation": "/ɹiˈzɛmbəɫ/, /ɹɪˈzɛmbəɫ/",
+    "Singular": "resembles"
+  },
+  "reserve": {
+    "Definition": "to keep for future use, to set aside for future use",
+    "Past Tense": "reserved",
+    "Pronunciation": "/ɹiˈzɝv/, /ɹɪˈzɝv/",
+    "Singular": "reserves"
+  },
+  "resign": {
+    "Definition": "to give up (a position, office",
+    "Past Tense": "resigned",
+    "Pronunciation": "/ɹiˈsaɪn/, /ɹiˈzaɪn/, /ɹɪˈzaɪn/",
+    "Singular": "resigns"
+  },
+  "resist": {
+    "Definition": "to refuse to accept or comply with (something)",
+    "Past Tense": "resisted",
+    "Pronunciation": "/ɹiˈzɪst/, /ɹɪˈzɪst/",
+    "Singular": "resists"
+  },
+  "resolve": {
+    "Definition": "to find a solution to a problem, to solve a problem",
+    "Past Tense": "resolved",
+    "Pronunciation": "/ɹiˈzɑɫv/",
+    "Singular": "resolves"
+  },
+  "resource": {
+    "Definition": "to use (a resource)",
+    "Past Tense": "resourced",
+    "Pronunciation": "/ˈɹisɔɹs/",
+    "Singular": "resources"
+  },
+  "respect": {
+    "Definition": "to have a high opinion of someone or something",
+    "Past Tense": "respected",
+    "Pronunciation": "/ɹiˈspɛkt/, /ɹɪˈspɛkt/",
+    "Singular": "respects"
+  },
+  "respond": {
+    "Definition": "to react to something, to answer, to reply, to answer back",
+    "Past Tense": "responded",
+    "Pronunciation": "/ɹiˈspɑnd/, /ɹɪˈspɑnd/",
+    "Singular": "responds"
+  },
+  "rest": {
+    "Definition": "to stop working or moving for a period of time, rest",
+    "Past Tense": "rested",
+    "Pronunciation": "/ˈɹɛst/",
+    "Singular": "rests"
+  },
+  "restore": {
+    "Definition": "to return to a former state",
+    "Past Tense": "restored",
+    "Pronunciation": "/ɹɪˈstɔɹ/",
+    "Singular": "restores"
+  },
+  "restrain": {
+    "Definition": "to keep from moving or acting",
+    "Past Tense": "restrained",
+    "Pronunciation": "/ɹiˈstɹeɪn/",
+    "Singular": "restrains"
+  },
+  "restrict": {
+    "Definition": "to limit the amount of something that can be done or used",
+    "Past Tense": "restricted",
+    "Pronunciation": "/ɹiˈstɹɪkt/",
+    "Singular": "restricts"
+  },
+  "result": {
+    "Definition": "to be the result of, to be the consequence of",
+    "Past Tense": "resulted",
+    "Pronunciation": "/ɹiˈzəɫt/, /ɹɪˈzəɫt/",
+    "Singular": "results"
+  },
+  "resume": {
+    "Definition": "to take up again, to continue",
+    "Past Tense": "resumed",
+    "Pronunciation": "/ˈɹɛzəˌmeɪ/, /ɹiˈzum/, /ɹɪˈzum/",
+    "Singular": "resumes"
+  },
+  "retain": {
+    "Definition": "to keep in the mind, to remember, to hold in the memory",
+    "Past Tense": "retained",
+    "Pronunciation": "/ɹiˈteɪn/, /ɹɪˈteɪn/",
+    "Singular": "retains"
+  },
+  "retire": {
+    "Definition": "to leave a job or position",
+    "Past Tense": "retired",
+    "Pronunciation": "/ˌɹiˈtaɪɝ/, /ɹiˈtaɪɹ/, /ɹɪˈtaɪɹ/",
+    "Singular": "retires"
+  },
+  "retrieve": {
+    "Definition": "to get back, to get again, to get over, to get through",
+    "Past Tense": "retrieved",
+    "Pronunciation": "/ɹiˈtɹiv/, /ɹɪˈtɹiv/",
+    "Singular": "retrieves"
+  },
+  "return": {
+    "Definition": "to go back to a previous place or condition",
+    "Past Tense": "returned",
+    "Pronunciation": "/ɹiˈtɝn/, /ɹɪˈtɝn/",
+    "Singular": "returns"
+  },
+  "reveal": {
+    "Definition": "to show or make known, to make known, to make known or visible",
+    "Past Tense": "revealed",
+    "Pronunciation": "/ɹiˈviɫ/, /ɹɪˈviɫ/",
+    "Singular": "reveals"
+  },
+  "reverse": {
+    "Definition": "to turn something around, to change the direction of something",
+    "Past Tense": "reversed",
+    "Pronunciation": "/ɹiˈvɝs/, /ɹɪˈvɝs/",
+    "Singular": "reverses"
+  },
+  "revert": {
+    "Definition": "to return to a previous state",
+    "Past Tense": "reverted",
+    "Pronunciation": "/ɹiˈvɝt/, /ɹɪˈvɝt/",
+    "Singular": "reverts"
+  },
+  "review": {
+    "Definition": "to look at again, to examine again, to reconsider",
+    "Past Tense": "reviewed",
+    "Pronunciation": "/ˌɹivˈju/",
+    "Singular": "reviews"
+  },
+  "revise": {
+    "Definition": "to change something again, to make it better",
+    "Past Tense": "revised",
+    "Pronunciation": "/ɹiˈvaɪz/, /ɹɪˈvaɪz/",
+    "Singular": "revises"
+  },
+  "revive": {
+    "Definition": "to bring back to life, to restore to consciousness",
+    "Past Tense": "revived",
+    "Pronunciation": "/ɹiˈvaɪv/, /ɹɪˈvaɪv/",
+    "Singular": "revives"
+  },
+  "rid": {
+    "Definition": "to get rid of, to remove, to get rid of",
+    "Past Tense": "rid",
+    "Pronunciation": "/ˈɹɪd/",
+    "Singular": "rids"
+  },
+  "ride": {
+    "Definition": "to travel on a vehicle, to travel on a vehicle",
+    "Past Tense": "rode",
+    "Pronunciation": "/ˈɹaɪd/",
+    "Singular": "rides"
+  },
+  "ring": {
+    "Definition": "to make a ringing sound",
+    "Past Tense": "ringed",
+    "Pronunciation": "/ˈɹɪŋ/",
+    "Singular": "rings"
+  },
+  "rise": {
+    "Definition": "to become higher, to increase in amount, to increase in size",
+    "Past Tense": "rose",
+    "Pronunciation": "/ˈɹaɪz/",
+    "Singular": "rises"
+  },
+  "risk": {
+    "Definition": "to take a chance on something, to try something that might not work",
+    "Past Tense": "risked",
+    "Pronunciation": "/ˈɹɪsk/",
+    "Singular": "risks"
+  },
+  "roll": {
+    "Definition": "to move along a surface by turning over",
+    "Past Tense": "rolled",
+    "Pronunciation": "/ˈɹoʊɫ/",
+    "Singular": "rolls"
+  },
+  "round": {
+    "Definition": "to make something round, to make something circular, to make something curved",
+    "Past Tense": "rounded",
+    "Pronunciation": "/ˈɹaʊnd/",
+    "Singular": "rounds"
+  },
+  "row": {
+    "Definition": "to move a boat or ship by pushing against the water with oars",
+    "Past Tense": "rowed",
+    "Pronunciation": "/ˈɹoʊ/",
+    "Singular": "rows"
+  },
+  "rub": {
+    "Definition": "to move or press something against something else",
+    "Past Tense": "rubbed",
+    "Pronunciation": "/ˈɹəb/",
+    "Singular": "rubs"
+  },
+  "ruin": {
+    "Definition": "to make something bad or unsuccessful",
+    "Past Tense": "ruined",
+    "Pronunciation": "/ˈɹuən/, /ˈɹuɪn/",
+    "Singular": "ruins"
+  },
+  "rule": {
+    "Definition": "to be in charge of, to be in control of",
+    "Past Tense": "ruled",
+    "Pronunciation": "/ˈɹuɫ/",
+    "Singular": "rules"
+  },
+  "run": {
+    "Definition": "to move quickly by using your feet, to move quickly",
+    "Past Tense": "ran",
+    "Pronunciation": "/ˈɹən/",
+    "Singular": "runs"
+  },
+  "rush": {
+    "Definition": "to move quickly and in a dangerous way",
+    "Past Tense": "rushed",
+    "Pronunciation": "/ˈɹəʃ/",
+    "Singular": "rushes"
+  },
+  "safeguard": {
+    "Definition": "to protect from harm or danger",
+    "Past Tense": "safeguarded",
+    "Pronunciation": "/ˈseɪfˌɡɑɹd/",
+    "Singular": "safeguards"
+  },
+  "sail": {
+    "Definition": "to travel by ship, to travel by ship, to travel by ship",
+    "Past Tense": "sailed",
+    "Pronunciation": "/ˈseɪɫ/",
+    "Singular": "sails"
+  },
+  "satisfy": {
+    "Definition": "to fulfill a need or desire, to be enough",
+    "Past Tense": "satisfied",
+    "Pronunciation": "/ˈsætəsˌfaɪ/, /ˈsætɪsˌfaɪ/",
+    "Singular": "satisfies"
+  },
+  "save": {
+    "Definition": "to keep safe from harm or danger, to protect, to rescue",
+    "Past Tense": "saved",
+    "Pronunciation": "/ˈseɪv/",
+    "Singular": "saves"
+  },
+  "say": {
+    "Definition": "to express in words, to speak, to talk, to communicate",
+    "Past Tense": "said",
+    "Pronunciation": "/ˈseɪ/",
+    "Singular": "says"
+  },
+  "score": {
+    "Definition": "to win by a large margin",
+    "Past Tense": "scored",
+    "Pronunciation": "/ˈskɔɹ/",
+    "Singular": "scores"
+  },
+  "scratch": {
+    "Definition": "to make a mark or lines on a surface by rubbing",
+    "Past Tense": "scratched",
+    "Pronunciation": "/ˈskɹætʃ/",
+    "Singular": "scratches"
+  },
+  "scream": {
+    "Definition": "to make a loud, high-pitched sound",
+    "Past Tense": "screamed",
+    "Pronunciation": "/ˈskɹim/",
+    "Singular": "screams"
+  },
+  "seal": {
+    "Definition": "to make a seal, to make a mark, to make a signature",
+    "Past Tense": "sealed",
+    "Pronunciation": "/ˈsiɫ/",
+    "Singular": "seals"
+  },
+  "search": {
+    "Definition": "to look for something or someone, to try to find something or someone",
+    "Past Tense": "searched",
+    "Pronunciation": "/ˈsɝtʃ/",
+    "Singular": "searches"
+  },
+  "secure": {
+    "Definition": "to make sure that something will be safe or successful",
+    "Past Tense": "secured",
+    "Pronunciation": "/sɪkˈjʊɹ/",
+    "Singular": "secures"
+  },
+  "see": {
+    "Definition": "to see, to look at, to observe, to notice",
+    "Past Tense": "saw",
+    "Pronunciation": "/ˈsi/",
+    "Singular": "sees"
+  },
+  "seek": {
+    "Definition": "to try to find something or someone, to try to get something or someone",
+    "Past Tense": "sought",
+    "Pronunciation": "/ˈsik/",
+    "Singular": "seeks"
+  },
+  "seem": {
+    "Definition": "to appear to be something, to seem to be something",
+    "Past Tense": "seemed",
+    "Pronunciation": "/ˈsim/",
+    "Singular": "seems"
+  },
+  "seize": {
+    "Definition": "to take hold of, to take possession of, to take into custody",
+    "Past Tense": "seized",
+    "Pronunciation": "/ˈsiz/",
+    "Singular": "seizes"
+  },
+  "select": {
+    "Definition": "to choose from a number of possibilities",
+    "Past Tense": "selected",
+    "Pronunciation": "/səˈɫɛkt/",
+    "Singular": "selects"
+  },
+  "sell": {
+    "Definition": "to sell something, to exchange something for money",
+    "Past Tense": "sold",
+    "Pronunciation": "/ˈsɛɫ/",
+    "Singular": "sells"
+  },
+  "send": {
+    "Definition": "to cause to go somewhere",
+    "Past Tense": "sent",
+    "Pronunciation": "/ˈsɛnd/",
+    "Singular": "sends"
+  },
+  "sense": {
+    "Definition": "to have a feeling of or about something, to be aware of something",
+    "Past Tense": "sensed",
+    "Pronunciation": "/ˈsɛns/",
+    "Singular": "senses"
+  },
+  "separate": {
+    "Definition": "to separate or divide into two or more parts, to make different",
+    "Past Tense": "separated",
+    "Pronunciation": "/ˈsɛpɝˌeɪt/, /ˈsɛpɝɪt/, /ˈsɛpɹət/",
+    "Singular": "separates"
+  },
+  "serve": {
+    "Definition": "to be of service to, to be of use to",
+    "Past Tense": "served",
+    "Pronunciation": "/ˈsɝv/",
+    "Singular": "serves"
+  },
+  "service": {
+    "Definition": "to provide with what is necessary for the performance of a task or function",
+    "Past Tense": "serviced",
+    "Pronunciation": "/ˈsɝvəs/, /ˈsɝvɪs/",
+    "Singular": "services"
+  },
+  "set": {
+    "Definition": "to put or place",
+    "Past Tense": "set",
+    "Pronunciation": "/ˈsɛt/",
+    "Singular": "sets"
+  },
+  "settle": {
+    "Definition": "to make a decision about something, to reach a conclusion",
+    "Past Tense": "settled",
+    "Pronunciation": "/ˈsɛtəɫ/",
+    "Singular": "settles"
+  },
+  "shake": {
+    "Definition": "to move back and forth, to move up and down",
+    "Past Tense": "shook",
+    "Pronunciation": "/ˈʃeɪk/",
+    "Singular": "shakes"
+  },
+  "shall": {
+    "Definition": "to be or to become, to exist, to happen, to occur",
+    "Past Tense": "should",
+    "Pronunciation": "/ˈʃæɫ/",
+    "Singular": "shall"
+  },
+  "shape": {
+    "Definition": "to form or give a particular shape to",
+    "Past Tense": "shaped",
+    "Pronunciation": "/ˈʃeɪp/",
+    "Singular": "shapes"
+  },
+  "share": {
+    "Definition": "to give or receive something, especially information",
+    "Past Tense": "shared",
+    "Pronunciation": "/ˈʃɛɹ/",
+    "Singular": "shares"
+  },
+  "shed": {
+    "Definition": "to lose blood from a wound",
+    "Past Tense": "shed",
+    "Pronunciation": "/ˈʃɛd/",
+    "Singular": "sheds"
+  },
+  "shift": {
+    "Definition": "to move from one place to another, to change position",
+    "Past Tense": "shifted",
+    "Pronunciation": "/ˈʃɪft/",
+    "Singular": "shifts"
+  },
+  "shine": {
+    "Definition": "to be bright and attractive, to be successful, to be popular",
+    "Past Tense": "shone",
+    "Pronunciation": "/ˈʃaɪn/",
+    "Singular": "shines"
+  },
+  "ship": {
+    "Definition": "to send (goods or letters, etc.) by ship",
+    "Past Tense": "shipped",
+    "Pronunciation": "/ˈʃɪp/",
+    "Singular": "ships"
+  },
+  "shoot": {
+    "Definition": "to fire a gun or other weapon, to fire a missile",
+    "Past Tense": "shot",
+    "Pronunciation": "/ˈʃut/",
+    "Singular": "shoots"
+  },
+  "shop": {
+    "Definition": "to go to a shop to buy something",
+    "Past Tense": "shopped",
+    "Pronunciation": "/ˈʃɑp/",
+    "Singular": "shops"
+  },
+  "shout": {
+    "Definition": "to make a loud noise",
+    "Past Tense": "shouted",
+    "Pronunciation": "/ˈʃaʊt/",
+    "Singular": "shouts"
+  },
+  "show": {
+    "Definition": "to show, to demonstrate, to exhibit, to display, to manifest",
+    "Past Tense": "showed",
+    "Pronunciation": "/ˈʃoʊ/",
+    "Singular": "shows"
+  },
+  "shut": {
+    "Definition": "to close or make close",
+    "Past Tense": "shut",
+    "Pronunciation": "/ˈʃət/",
+    "Singular": "shuts"
+  },
+  "sign": {
+    "Definition": "to make a mark or a sign, to write one's name",
+    "Past Tense": "signed",
+    "Pronunciation": "/ˈsaɪn/",
+    "Singular": "signs"
+  },
+  "signal": {
+    "Definition": "to send a message to someone, to tell someone something",
+    "Past Tense": "signaled",
+    "Pronunciation": "/ˈsɪɡnəɫ/",
+    "Singular": "signals"
+  },
+  "sing": {
+    "Definition": "to make a musical sound with the voice",
+    "Past Tense": "sang",
+    "Pronunciation": "/ˈsɪŋ/",
+    "Singular": "sings"
+  },
+  "sink": {
+    "Definition": "to become lower in level or position",
+    "Past Tense": "sank",
+    "Pronunciation": "/ˈsɪŋk/",
+    "Singular": "sinks"
+  },
+  "sit": {
+    "Definition": "to be seated, to be in a sitting position",
+    "Past Tense": "sat",
+    "Pronunciation": "/ˈsɪt/",
+    "Singular": "sits"
+  },
+  "sleep": {
+    "Definition": "to be asleep, to be unconscious",
+    "Past Tense": "slept",
+    "Pronunciation": "/ˈsɫip/",
+    "Singular": "sleeps"
+  },
+  "slide": {
+    "Definition": "to move smoothly along a surface, to move smoothly along a surface",
+    "Past Tense": "slid",
+    "Pronunciation": "/ˈsɫaɪd/",
+    "Singular": "slides"
+  },
+  "slip": {
+    "Definition": "to move or slide along a surface, without support",
+    "Past Tense": "slipped",
+    "Pronunciation": "/ˈsɫɪp/",
+    "Singular": "slips"
+  },
+  "slow": {
+    "Definition": "to move or travel slowly, to move or travel at a slow rate",
+    "Past Tense": "slowed",
+    "Pronunciation": "/ˈsɫoʊ/",
+    "Singular": "slows"
+  },
+  "smell": {
+    "Definition": "to have a strong odor, to have a strong smell",
+    "Past Tense": "smelled",
+    "Pronunciation": "/ˈsmɛɫ/",
+    "Singular": "smells"
+  },
+  "smile": {
+    "Definition": "to show your teeth and your face when you are happy or pleased",
+    "Past Tense": "smiled",
+    "Pronunciation": "/ˈsmaɪɫ/",
+    "Singular": "smiles"
+  },
+  "smoke": {
+    "Definition": "to inhale and exhale the smoke of a cigarette",
+    "Past Tense": "smoked",
+    "Pronunciation": "/ˈsmoʊk/",
+    "Singular": "smokes"
+  },
+  "snap": {
+    "Definition": "to make a sudden, short, sharp sound",
+    "Past Tense": "snapped",
+    "Pronunciation": "/ˈsnæp/",
+    "Singular": "snaps"
+  },
+  "soften": {
+    "Definition": "to make (something) less severe or harsh",
+    "Past Tense": "softened",
+    "Pronunciation": "/ˈsɑfən/, /ˈsɔfən/",
+    "Singular": "softens"
+  },
+  "solve": {
+    "Definition": "to find a solution to a problem",
+    "Past Tense": "solved",
+    "Pronunciation": "/ˈsɑɫv/",
+    "Singular": "solves"
+  },
+  "sort": {
+    "Definition": "to arrange in a particular order",
+    "Past Tense": "sorted",
+    "Pronunciation": "/ˈsɔɹt/",
+    "Singular": "sorts"
+  },
+  "sound": {
+    "Definition": "to make a sound, to make a noise, to make a noise",
+    "Past Tense": "sounded",
+    "Pronunciation": "/ˈsaʊnd/",
+    "Singular": "sounds"
+  },
+  "spare": {
+    "Definition": "to not use something, to not spend something, to not give something",
+    "Past Tense": "spared",
+    "Pronunciation": "/ˈspɛɹ/",
+    "Singular": "spares"
+  },
+  "speak": {
+    "Definition": "to say something, to express in words, to communicate by speech",
+    "Past Tense": "spoke",
+    "Pronunciation": "/ˈspik/",
+    "Singular": "speaks"
+  },
+  "specify": {
+    "Definition": "to give a name to, to identify, to describe, to characterize",
+    "Past Tense": "specified",
+    "Pronunciation": "/ˈspɛsəˌfaɪ/",
+    "Singular": "specifies"
+  },
+  "speculate": {
+    "Definition": "to guess or suppose",
+    "Past Tense": "speculated",
+    "Pronunciation": "/ˈspɛkjəˌɫeɪt/",
+    "Singular": "speculates"
+  },
+  "speed": {
+    "Definition": "to move or travel at a fast rate",
+    "Past Tense": "sped",
+    "Pronunciation": "/ˈspid/",
+    "Singular": "speeds"
+  },
+  "spell": {
+    "Definition": "to write or print (letters, words",
+    "Past Tense": "spelled",
+    "Pronunciation": "/ˈspɛɫ/",
+    "Singular": "spells"
+  },
+  "spend": {
+    "Definition": "to use money for something, to buy something, to pay for something",
+    "Past Tense": "spent",
+    "Pronunciation": "/ˈspɛnd/",
+    "Singular": "spends"
+  },
+  "spill": {
+    "Definition": "to cause (a liquid) to flow out of a container",
+    "Past Tense": "spilled",
+    "Pronunciation": "/ˈspɪɫ/",
+    "Singular": "spills"
+  },
+  "spin": {
+    "Definition": "to make a record on a record player",
+    "Past Tense": "spun",
+    "Pronunciation": "/ˈspɪn/",
+    "Singular": "spins"
+  },
+  "split": {
+    "Definition": "to separate into two or more parts",
+    "Past Tense": "split",
+    "Pronunciation": "/ˈspɫɪt/",
+    "Singular": "splits"
+  },
+  "spoil": {
+    "Definition": "to make something bad or unpleasant",
+    "Past Tense": "spoiled",
+    "Pronunciation": "/ˈspɔɪɫ/",
+    "Singular": "spoils"
+  },
+  "spot": {
+    "Definition": "to see or notice something",
+    "Past Tense": "spotted",
+    "Pronunciation": "/ˈspɑt/",
+    "Singular": "spots"
+  },
+  "spread": {
+    "Definition": "to make something known to many people, to make something known to many people",
+    "Past Tense": "spread",
+    "Pronunciation": "/ˈspɹɛd/",
+    "Singular": "spreads"
+  },
+  "spring": {
+    "Definition": "to move or jump upward",
+    "Past Tense": "sprang",
+    "Pronunciation": "/ˈspɹɪŋ/, /spɝˈɪŋ/",
+    "Singular": "springs"
+  },
+  "squeeze": {
+    "Definition": "to press or force (something) so that it is compressed or constricted",
+    "Past Tense": "squeezed",
+    "Pronunciation": "/ˈskwiz/",
+    "Singular": "squeezes"
+  },
+  "stand": {
+    "Definition": "to be in a place or position",
+    "Past Tense": "stood",
+    "Pronunciation": "/ˈstænd/",
+    "Singular": "stands"
+  },
+  "stare": {
+    "Definition": "to look at someone or something for a long time without moving your eyes",
+    "Past Tense": "stared",
+    "Pronunciation": "/ˈstɛɹ/",
+    "Singular": "stares"
+  },
+  "start": {
+    "Definition": "to begin to do something, to start to do something",
+    "Past Tense": "started",
+    "Pronunciation": "/ˈstɑɹt/",
+    "Singular": "starts"
+  },
+  "state": {
+    "Definition": "to be in a state of being, to be in a state of being",
+    "Past Tense": "stated",
+    "Pronunciation": "/ˈsteɪt/",
+    "Singular": "states"
+  },
+  "stay": {
+    "Definition": "to remain in a place or position, to continue to exist",
+    "Past Tense": "stayed",
+    "Pronunciation": "/ˈsteɪ/",
+    "Singular": "stays"
+  },
+  "steal": {
+    "Definition": "to take something without permission",
+    "Past Tense": "stole",
+    "Pronunciation": "/ˈstiɫ/",
+    "Singular": "steals"
+  },
+  "steer": {
+    "Definition": "to direct the course of (a ship, aircraft, etc.)",
+    "Past Tense": "steered",
+    "Pronunciation": "/ˈstɪɹ/",
+    "Singular": "steers"
+  },
+  "stem": {
+    "Definition": "to be the source of",
+    "Past Tense": "stemmed",
+    "Pronunciation": "/ˈstɛm/",
+    "Singular": "stems"
+  },
+  "step": {
+    "Definition": "to move one's foot forward",
+    "Past Tense": "stepped",
+    "Pronunciation": "/ˈstɛp/",
+    "Singular": "steps"
+  },
+  "stick": {
+    "Definition": "to be stuck in a place",
+    "Past Tense": "sticked",
+    "Pronunciation": "/ˈstɪk/",
+    "Singular": "sticks"
+  },
+  "stimulate": {
+    "Definition": "to encourage or incite",
+    "Past Tense": "stimulated",
+    "Pronunciation": "/ˈstɪmjəˌɫeɪt/",
+    "Singular": "stimulates"
+  },
+  "stir": {
+    "Definition": "to mix or blend (substances) together",
+    "Past Tense": "stirred",
+    "Pronunciation": "/ˈstɝ/",
+    "Singular": "stirs"
+  },
+  "stock": {
+    "Definition": "to put (something) in a place for storage or sale",
+    "Past Tense": "stocked",
+    "Pronunciation": "/ˈstɑk/",
+    "Singular": "stocks"
+  },
+  "stop": {
+    "Definition": "to stop doing something, to stop working, to stop being active",
+    "Past Tense": "stopped",
+    "Pronunciation": "/ˈstɑp/",
+    "Singular": "stops"
+  },
+  "store": {
+    "Definition": "to keep something in a place for future use",
+    "Past Tense": "stored",
+    "Pronunciation": "/ˈstɔɹ/",
+    "Singular": "stores"
+  },
+  "strain": {
+    "Definition": "to put under pressure or effort, to make a great effort to do something",
+    "Past Tense": "strained",
+    "Pronunciation": "/ˈstɹeɪn/",
+    "Singular": "strains"
+  },
+  "strengthen": {
+    "Definition": "to make stronger, to make more powerful, to make more effective",
+    "Past Tense": "strengthened",
+    "Pronunciation": "/ˈstɹɛŋθən/",
+    "Singular": "strengthens"
+  },
+  "stress": {
+    "Definition": "to emphasize, to accentuate, to draw attention to",
+    "Past Tense": "stressed",
+    "Pronunciation": "/ˈstɹɛs/",
+    "Singular": "stresses"
+  },
+  "stretch": {
+    "Definition": "to extend or expand, to make longer, to make more extensive",
+    "Past Tense": "stretched",
+    "Pronunciation": "/ˈstɹɛtʃ/",
+    "Singular": "stretches"
+  },
+  "strike": {
+    "Definition": "to hit someone or something with force, to hit someone or something with force",
+    "Past Tense": "struck",
+    "Pronunciation": "/ˈstɹaɪk/",
+    "Singular": "strikes"
+  },
+  "strip": {
+    "Definition": "to remove clothing, to take off one's clothes",
+    "Past Tense": "stripped",
+    "Pronunciation": "/ˈstɹɪp/",
+    "Singular": "strips"
+  },
+  "strive": {
+    "Definition": "to try to achieve or obtain, to make an effort to achieve or obtain",
+    "Past Tense": "strove",
+    "Pronunciation": "/ˈstɹaɪv/",
+    "Singular": "strives"
+  },
+  "struggle": {
+    "Definition": "to fight or contend with something, to fight against something",
+    "Past Tense": "struggled",
+    "Pronunciation": "/ˈstɹəɡəɫ/",
+    "Singular": "struggles"
+  },
+  "study": {
+    "Definition": "to study",
+    "Past Tense": "studied",
+    "Pronunciation": "/ˈstədi/",
+    "Singular": "studies"
+  },
+  "submit": {
+    "Definition": "to give up (something) to another person or authority",
+    "Past Tense": "submitted",
+    "Pronunciation": "/səbˈmɪt/",
+    "Singular": "submits"
+  },
+  "subscribe": {
+    "Definition": "to pay for a newspaper or magazine, to pay for a service or product",
+    "Past Tense": "subscribed",
+    "Pronunciation": "/səbsˈkɹaɪb/",
+    "Singular": "subscribes"
+  },
+  "substitute": {
+    "Definition": "to take the place of, to replace, to substitute for",
+    "Past Tense": "substituted",
+    "Pronunciation": "/ˈsəbstəˌtut/",
+    "Singular": "substitutes"
+  },
+  "succeed": {
+    "Definition": "to achieve a goal, to be successful, to be victorious",
+    "Past Tense": "succeeded",
+    "Pronunciation": "/səkˈsid/",
+    "Singular": "succeeds"
+  },
+  "suck": {
+    "Definition": "to draw in or take in, to absorb, to take in",
+    "Past Tense": "sucked",
+    "Pronunciation": "/ˈsək/",
+    "Singular": "sucks"
+  },
+  "sue": {
+    "Definition": "to take legal action against someone, to bring a lawsuit against someone",
+    "Past Tense": "sued",
+    "Pronunciation": "/ˈsu/",
+    "Singular": "sues"
+  },
+  "suffer": {
+    "Definition": "to undergo (something unpleasant); \"I suffered through the boring lecture",
+    "Past Tense": "suffered",
+    "Pronunciation": "/ˈsəfɝ/",
+    "Singular": "suffers"
+  },
+  "suffice": {
+    "Definition": "to be enough, to be adequate, to be sufficient",
+    "Past Tense": "sufficed",
+    "Pronunciation": "/səˈfaɪs/",
+    "Singular": "suffices"
+  },
+  "suggest": {
+    "Definition": "to propose or recommend",
+    "Past Tense": "suggested",
+    "Pronunciation": "/səˈdʒɛst/",
+    "Singular": "suggests"
+  },
+  "suit": {
+    "Definition": "to be suitable for a particular purpose or situation, to be appropriate",
+    "Past Tense": "suited",
+    "Pronunciation": "/ˈsut/",
+    "Singular": "suits"
+  },
+  "summon": {
+    "Definition": "to call (someone) to come to you",
+    "Past Tense": "summoned",
+    "Pronunciation": "/ˈsəmən/",
+    "Singular": "summons"
+  },
+  "supervise": {
+    "Definition": "to watch over and direct (someone)",
+    "Past Tense": "supervised",
+    "Pronunciation": "/ˈsupɝˌvaɪz/",
+    "Singular": "supervises"
+  },
+  "supplement": {
+    "Definition": "to add something to something else, to make it more complete",
+    "Past Tense": "supplemented",
+    "Pronunciation": "/ˈsəpɫəmənt/, /ˌsəpɫəˈmɛnt/",
+    "Singular": "supplements"
+  },
+  "supply": {
+    "Definition": "to provide with something necessary or desirable",
+    "Past Tense": "supplied",
+    "Pronunciation": "/səˈpɫaɪ/",
+    "Singular": "supplies"
+  },
+  "support": {
+    "Definition": "to give help or permission to do something, to give support to",
+    "Past Tense": "supported",
+    "Pronunciation": "/səˈpɔɹt/",
+    "Singular": "supports"
+  },
+  "suppose": {
+    "Definition": "to think that something is true, without knowing for sure",
+    "Past Tense": "supposed",
+    "Pronunciation": "/səˈpoʊz/",
+    "Singular": "supposes"
+  },
+  "suppress": {
+    "Definition": "to stop something from happening or being done",
+    "Past Tense": "suppressed",
+    "Pronunciation": "/səˈpɹɛs/",
+    "Singular": "suppresses"
+  },
+  "surprise": {
+    "Definition": "to be surprised by something",
+    "Past Tense": "surprised",
+    "Pronunciation": "/səˈpɹaɪz/, /sɝˈpɹaɪz/",
+    "Singular": "surprises"
+  },
+  "surrender": {
+    "Definition": "to give up (something)",
+    "Past Tense": "surrendered",
+    "Pronunciation": "/sɝˈɛndɝ/",
+    "Singular": "surrenders"
+  },
+  "surround": {
+    "Definition": "to be surrounded by, to be enclosed by",
+    "Past Tense": "surrounded",
+    "Pronunciation": "/sɝˈaʊnd/",
+    "Singular": "surrounds"
+  },
+  "survive": {
+    "Definition": "to live through a difficult time or situation, to continue to live",
+    "Past Tense": "survived",
+    "Pronunciation": "/sɝˈvaɪv/",
+    "Singular": "survives"
+  },
+  "suspect": {
+    "Definition": "to think that someone is guilty of a crime or has done something wrong",
+    "Past Tense": "suspected",
+    "Pronunciation": "/ˈsəsˌpɛkt/, /səˈspɛkt/",
+    "Singular": "suspects"
+  },
+  "suspend": {
+    "Definition": "to stop something for a short time",
+    "Past Tense": "suspended",
+    "Pronunciation": "/səˈspɛnd/",
+    "Singular": "suspends"
+  },
+  "sustain": {
+    "Definition": "to support or hold up, to keep from falling",
+    "Past Tense": "sustained",
+    "Pronunciation": "/səˈsteɪn/",
+    "Singular": "sustains"
+  },
+  "swallow": {
+    "Definition": "to take in, to absorb, to ingest, to digest",
+    "Past Tense": "swallowed",
+    "Pronunciation": "/ˈswɑɫoʊ/, /ˈswɔɫoʊ/",
+    "Singular": "swallows"
+  },
+  "swap": {
+    "Definition": "to exchange, to trade, to give and receive, to change",
+    "Past Tense": "swapped",
+    "Pronunciation": "/ˈswɑp/",
+    "Singular": "swaps"
+  },
+  "swear": {
+    "Definition": "to make a solemn promise, to swear by something",
+    "Past Tense": "swore",
+    "Pronunciation": "/ˈswɛɹ/",
+    "Singular": "swears"
+  },
+  "sweep": {
+    "Definition": "to move quickly and in a wide area",
+    "Past Tense": "swept",
+    "Pronunciation": "/ˈswip/",
+    "Singular": "sweeps"
+  },
+  "swim": {
+    "Definition": "to move through water by using the limbs to propel the body forward",
+    "Past Tense": "swam",
+    "Pronunciation": "/ˈswɪm/",
+    "Singular": "swims"
+  },
+  "swing": {
+    "Definition": "to move back and forth, to move from side to side",
+    "Past Tense": "swung",
+    "Pronunciation": "/ˈswɪŋ/",
+    "Singular": "swings"
+  },
+  "switch": {
+    "Definition": "to change from one thing to another, to change from one person to another",
+    "Past Tense": "switched",
+    "Pronunciation": "/ˈswɪtʃ/",
+    "Singular": "switches"
+  },
+  "tackle": {
+    "Definition": "to deal with or attempt to deal with (a task or problem)",
+    "Past Tense": "tackled",
+    "Pronunciation": "/ˈtækəɫ/",
+    "Singular": "tackles"
+  },
+  "take": {
+    "Definition": "to take something or somebody with you, to take something or somebody away",
+    "Past Tense": "took",
+    "Pronunciation": "/ˈteɪk/",
+    "Singular": "takes"
+  },
+  "talk": {
+    "Definition": "to talk to someone, to talk to someone about something",
+    "Past Tense": "talked",
+    "Pronunciation": "/ˈtɔk/",
+    "Singular": "talks"
+  },
+  "tap": {
+    "Definition": "to hit or strike with a hard object",
+    "Past Tense": "tapped",
+    "Pronunciation": "/ˈtæp/",
+    "Singular": "taps"
+  },
+  "taste": {
+    "Definition": "to have a particular flavor, to have a particular flavor",
+    "Past Tense": "tasted",
+    "Pronunciation": "/ˈteɪst/",
+    "Singular": "tastes"
+  },
+  "tax": {
+    "Definition": "to charge a tax on (something)",
+    "Past Tense": "taxed",
+    "Pronunciation": "/ˈtæks/",
+    "Singular": "taxes"
+  },
+  "teach": {
+    "Definition": "to give instruction to (a person)",
+    "Past Tense": "taught",
+    "Pronunciation": "/ˈtitʃ/",
+    "Singular": "teaches"
+  },
+  "tear": {
+    "Definition": "to pull apart, to rip, to rend, to rend asunder",
+    "Past Tense": "tore",
+    "Pronunciation": "/ˈtɛɹ/, /ˈtɪɹ/",
+    "Singular": "tears"
+  },
+  "telephone": {
+    "Definition": "to call someone on the telephone",
+    "Past Tense": "telephoned",
+    "Pronunciation": "/ˈtɛɫəˌfoʊn/",
+    "Singular": "telephones"
+  },
+  "tell": {
+    "Definition": "to say something, to express in words, to communicate, to express",
+    "Past Tense": "told",
+    "Pronunciation": "/ˈtɛɫ/",
+    "Singular": "tells"
+  },
+  "tend": {
+    "Definition": "to be inclined to do something, to be likely to do something",
+    "Past Tense": "tended",
+    "Pronunciation": "/ˈtɛnd/",
+    "Singular": "tends"
+  },
+  "terminate": {
+    "Definition": "to end, to finish, to conclude, to come to an end",
+    "Past Tense": "terminated",
+    "Pronunciation": "/ˈtɝməˌneɪt/",
+    "Singular": "terminates"
+  },
+  "test": {
+    "Definition": "to try something to see if it works or not",
+    "Past Tense": "tested",
+    "Pronunciation": "/ˈtɛst/",
+    "Singular": "tests"
+  },
+  "thank": {
+    "Definition": "to express gratitude for something",
+    "Past Tense": "thanked",
+    "Pronunciation": "/ˈθæŋk/",
+    "Singular": "thanks"
+  },
+  "think": {
+    "Definition": "to have an opinion or a belief about something",
+    "Past Tense": "thought",
+    "Pronunciation": "/ˈθɪŋk/",
+    "Singular": "thinks"
+  },
+  "threaten": {
+    "Definition": "to say that you will do something bad to someone or something",
+    "Past Tense": "threatened",
+    "Pronunciation": "/ˈθɹɛtən/",
+    "Singular": "threatens"
+  },
+  "thrive": {
+    "Definition": "to grow and develop vigorously",
+    "Past Tense": "thrived",
+    "Pronunciation": "/ˈθɹaɪv/",
+    "Singular": "thrives"
+  },
+  "throw": {
+    "Definition": "to throw something away, to throw something away, to throw something away",
+    "Past Tense": "threw",
+    "Pronunciation": "/ˈθɹoʊ/",
+    "Singular": "throws"
+  },
+  "thrust": {
+    "Definition": "to push or force (something) into a place",
+    "Past Tense": "thrust",
+    "Pronunciation": "/ˈθɹəst/",
+    "Singular": "thrusts"
+  },
+  "tick": {
+    "Definition": "to move or cause to move back and forth",
+    "Past Tense": "ticked",
+    "Pronunciation": "/ˈtɪk/",
+    "Singular": "ticks"
+  },
+  "tie": {
+    "Definition": "to fasten with a rope or string",
+    "Past Tense": "tied",
+    "Pronunciation": "/ˈtaɪ/",
+    "Singular": "ties"
+  },
+  "tighten": {
+    "Definition": "to make tighter, to make more firm, to make more compact",
+    "Past Tense": "tightened",
+    "Pronunciation": "/ˈtaɪtən/",
+    "Singular": "tightens"
+  },
+  "time": {
+    "Definition": "to be in a particular place at a particular time",
+    "Past Tense": "timed",
+    "Pronunciation": "/ˈtaɪm/",
+    "Singular": "times"
+  },
+  "tip": {
+    "Definition": "to give a small amount of money to someone",
+    "Past Tense": "tipped",
+    "Pronunciation": "/ˈtɪp/",
+    "Singular": "tips"
+  },
+  "tolerate": {
+    "Definition": "to accept or allow something or someone, to put up with something or someone",
+    "Past Tense": "tolerated",
+    "Pronunciation": "/ˈtɑɫɝˌeɪt/",
+    "Singular": "tolerates"
+  },
+  "top": {
+    "Definition": "to be on top of something, to be in control of something",
+    "Past Tense": "topped",
+    "Pronunciation": "/ˈtɑp/, /ˈtɔp/",
+    "Singular": "tops"
+  },
+  "touch": {
+    "Definition": "to come into contact with, to make contact with",
+    "Past Tense": "touched",
+    "Pronunciation": "/ˈtətʃ/",
+    "Singular": "touches"
+  },
+  "tour": {
+    "Definition": "to travel around a place",
+    "Past Tense": "toured",
+    "Pronunciation": "/ˈtʊɹ/",
+    "Singular": "tours"
+  },
+  "trace": {
+    "Definition": "to follow the course of, to trace the route of",
+    "Past Tense": "traced",
+    "Pronunciation": "/ˈtɹeɪs/",
+    "Singular": "traces"
+  },
+  "track": {
+    "Definition": "to follow the path of, to go after, to pursue",
+    "Past Tense": "tracked",
+    "Pronunciation": "/ˈtɹæk/",
+    "Singular": "tracks"
+  },
+  "trade": {
+    "Definition": "to exchange goods or services, to give or receive in exchange",
+    "Past Tense": "traded",
+    "Pronunciation": "/ˈtɹeɪd/",
+    "Singular": "trades"
+  },
+  "train": {
+    "Definition": "to teach (a person or animal) to behave in a particular way",
+    "Past Tense": "trained",
+    "Pronunciation": "/ˈtɹeɪn/",
+    "Singular": "trains"
+  },
+  "transfer": {
+    "Definition": "to move from one place to another, to change location",
+    "Past Tense": "transferred",
+    "Pronunciation": "/ˈtɹænsfɝ/, /tɹænsˈfɝ/",
+    "Singular": "transfers"
+  },
+  "transform": {
+    "Definition": "to change into something else",
+    "Past Tense": "transformed",
+    "Pronunciation": "/ˈtɹænsfɔɹm/, /tɹænsˈfɔɹm/",
+    "Singular": "transforms"
+  },
+  "translate": {
+    "Definition": "to change from one language to another",
+    "Past Tense": "translated",
+    "Pronunciation": "/tɹænˈsɫeɪt/, /tɹænzˈɫeɪt/",
+    "Singular": "translates"
+  },
+  "transport": {
+    "Definition": "to move from one place to another",
+    "Past Tense": "transported",
+    "Pronunciation": "/ˈtɹænspɔɹt/, /tɹænˈspɔɹt/",
+    "Singular": "transports"
+  },
+  "trap": {
+    "Definition": "to catch (an animal or person) in a trap",
+    "Past Tense": "trapped",
+    "Pronunciation": "/ˈtɹæp/",
+    "Singular": "traps"
+  },
+  "travel": {
+    "Definition": "to move from one place to another, to go from one place to another",
+    "Past Tense": "travelled",
+    "Pronunciation": "/ˈtɹævəɫ/",
+    "Singular": "travels"
+  },
+  "treat": {
+    "Definition": "to deal with (a situation or problem) in a particular way",
+    "Past Tense": "treated",
+    "Pronunciation": "/ˈtɹit/",
+    "Singular": "treats"
+  },
+  "trust": {
+    "Definition": "to believe in the reliability, truth, or ability of someone or something",
+    "Past Tense": "trusted",
+    "Pronunciation": "/ˈtɹəst/",
+    "Singular": "trusts"
+  },
+  "try": {
+    "Definition": "to attempt to do something, to try to do something",
+    "Past Tense": "tried",
+    "Pronunciation": "/ˈtɹaɪ/",
+    "Singular": "tries"
+  },
+  "turn": {
+    "Definition": "to change from one form to another",
+    "Past Tense": "turned",
+    "Pronunciation": "/ˈtɝn/",
+    "Singular": "turns"
+  },
+  "twist": {
+    "Definition": "to twist or turn, to twist or turn something",
+    "Past Tense": "twisted",
+    "Pronunciation": "/ˈtwɪst/",
+    "Singular": "twists"
+  },
+  "undergo": {
+    "Definition": "to experience or suffer",
+    "Past Tense": "underwent",
+    "Pronunciation": "/ˌəndɝˈɡoʊ/",
+    "Singular": "undergoes"
+  },
+  "undermine": {
+    "Definition": "to weaken the support of (a person or institution)",
+    "Past Tense": "undermined",
+    "Pronunciation": "/ˈəndɝˌmaɪn/",
+    "Singular": "undermines"
+  },
+  "understand": {
+    "Definition": "to understand something, to know what it means",
+    "Past Tense": "understood",
+    "Pronunciation": "/ˌəndɝˈstænd/",
+    "Singular": "understands"
+  },
+  "undertake": {
+    "Definition": "to take on a task or responsibility, to do something",
+    "Past Tense": "undertook",
+    "Pronunciation": "/ˈəndɝˌteɪk/",
+    "Singular": "undertakes"
+  },
+  "unite": {
+    "Definition": "to join together, to become one, to combine, to fuse",
+    "Past Tense": "united",
+    "Pronunciation": "/ˈjuˌnaɪt/",
+    "Singular": "unites"
+  },
+  "update": {
+    "Definition": "to make changes to something, especially to make it more modern or more effective",
+    "Past Tense": "updated",
+    "Pronunciation": "/ˈəpˌdeɪt/, /əpˈdeɪt/",
+    "Singular": "updates"
+  },
+  "upgrade": {
+    "Definition": "to improve the quality of (something)",
+    "Past Tense": "upgraded",
+    "Pronunciation": "/ˈəpˈɡɹeɪd/, /əpˈɡɹeɪd/",
+    "Singular": "upgrades"
+  },
+  "upset": {
+    "Definition": "to make (someone) feel worried or angry",
+    "Past Tense": "upset",
+    "Pronunciation": "/ˈəpˌsɛt/, /əpˈsɛt/",
+    "Singular": "upsets"
+  },
+  "urge": {
+    "Definition": "to encourage or urge on, to push forward, to press on",
+    "Past Tense": "urged",
+    "Pronunciation": "/ˈɝdʒ/",
+    "Singular": "urges"
+  },
+  "use": {
+    "Definition": "to use, to make use of, to employ, to apply",
+    "Past Tense": "used",
+    "Pronunciation": "/ˈjus/, /ˈjuz/",
+    "Singular": "uses"
+  },
+  "value": {
+    "Definition": "to regard highly, to esteem, to respect, to admire",
+    "Past Tense": "valued",
+    "Pronunciation": "/ˈvæɫju/",
+    "Singular": "values"
+  },
+  "vary": {
+    "Definition": "to change, to alter, to modify, to vary",
+    "Past Tense": "varied",
+    "Pronunciation": "/ˈvɛɹi/",
+    "Singular": "varies"
+  },
+  "venture": {
+    "Definition": "to take a risk, to try something new, to be bold",
+    "Past Tense": "ventured",
+    "Pronunciation": "/ˈvɛntʃɝ/",
+    "Singular": "ventures"
+  },
+  "view": {
+    "Definition": "to look at something, to see something, to look at something",
+    "Past Tense": "viewed",
+    "Pronunciation": "/ˈvju/",
+    "Singular": "views"
+  },
+  "visit": {
+    "Definition": "to go to see (a place, a person, an event",
+    "Past Tense": "visited",
+    "Pronunciation": "/ˈvɪzɪt/",
+    "Singular": "visits"
+  },
+  "voice": {
+    "Definition": "to speak or express in words",
+    "Past Tense": "voiced",
+    "Pronunciation": "/ˈvɔɪs/",
+    "Singular": "voices"
+  },
+  "vote": {
+    "Definition": "to express a choice by ballot, vote, vote for, vote for",
+    "Past Tense": "voted",
+    "Pronunciation": "/ˈvoʊt/",
+    "Singular": "votes"
+  },
+  "wait": {
+    "Definition": "to remain inactive or in a state of readiness",
+    "Past Tense": "waited",
+    "Pronunciation": "/ˈweɪt/",
+    "Singular": "waits"
+  },
+  "wake": {
+    "Definition": "to become conscious, to become aware of one's surroundings",
+    "Past Tense": "woke",
+    "Pronunciation": "/ˈweɪk/",
+    "Singular": "wakes"
+  },
+  "walk": {
+    "Definition": "to move by lifting the feet and putting them down again in turn",
+    "Past Tense": "walked",
+    "Pronunciation": "/ˈwɑk/, /ˈwɔk/",
+    "Singular": "walks"
+  },
+  "wander": {
+    "Definition": "to move from place to place without a specific goal",
+    "Past Tense": "wandered",
+    "Pronunciation": "/ˈwɑndɝ/",
+    "Singular": "wanders"
+  },
+  "want": {
+    "Definition": "to have a desire for something, to want something, to wish for something",
+    "Past Tense": "wanted",
+    "Pronunciation": "/ˈwɑnt/, /ˈwɔnt/",
+    "Singular": "wants"
+  },
+  "warm": {
+    "Definition": "to make something hot, to heat something, to make something hotter",
+    "Past Tense": "warmed",
+    "Pronunciation": "/ˈwɔɹm/",
+    "Singular": "warms"
+  },
+  "warn": {
+    "Definition": "to give a warning to (someone)",
+    "Past Tense": "warned",
+    "Pronunciation": "/ˈwɔɹn/",
+    "Singular": "warns"
+  },
+  "warrant": {
+    "Definition": "to give a guarantee or assurance of the quality of something",
+    "Past Tense": "warranted",
+    "Pronunciation": "/ˈwɔɹənt/",
+    "Singular": "warrants"
+  },
+  "wash": {
+    "Definition": "to remove dirt from (someone or something)",
+    "Past Tense": "washed",
+    "Pronunciation": "/ˈwɑʃ/",
+    "Singular": "washes"
+  },
+  "waste": {
+    "Definition": "to use or spend (time, money",
+    "Past Tense": "wasted",
+    "Pronunciation": "/ˈweɪst/",
+    "Singular": "wastes"
+  },
+  "watch": {
+    "Definition": "to be on the lookout for something, to be alert",
+    "Past Tense": "watched",
+    "Pronunciation": "/ˈwɑtʃ/, /ˈwɔtʃ/",
+    "Singular": "watches"
+  },
+  "wave": {
+    "Definition": "to move your hand up and down in the air",
+    "Past Tense": "waved",
+    "Pronunciation": "/ˈweɪv/",
+    "Singular": "waves"
+  },
+  "weaken": {
+    "Definition": "to make weaker, to make less strong, to make less effective",
+    "Past Tense": "weakened",
+    "Pronunciation": "/ˈwikən/",
+    "Singular": "weakens"
+  },
+  "wear": {
+    "Definition": "to wear something, to have something on your body",
+    "Past Tense": "wore",
+    "Pronunciation": "/ˈwɛɹ/",
+    "Singular": "wears"
+  },
+  "wed": {
+    "Definition": "to marry, to unite in marriage, to become married",
+    "Past Tense": "wed",
+    "Pronunciation": "/ˈwɛd/",
+    "Singular": "weds"
+  },
+  "weigh": {
+    "Definition": "to consider carefully, to think about, to judge, to assess",
+    "Past Tense": "weighed",
+    "Pronunciation": "/ˈweɪ/",
+    "Singular": "weighs"
+  },
+  "welcome": {
+    "Definition": "to receive (a person) with courtesy and friendliness",
+    "Past Tense": "welcomed",
+    "Pronunciation": "/ˈwɛɫkəm/",
+    "Singular": "welcomes"
+  },
+  "widen": {
+    "Definition": "to make wider, to make more extensive, to make more comprehensive",
+    "Past Tense": "widened",
+    "Pronunciation": "/ˈwaɪdən/",
+    "Singular": "widens"
+  },
+  "will": {
+    "Definition": "to want to do something, to have a desire to do something",
+    "Past Tense": "would",
+    "Pronunciation": "/ˈwɪɫ/, /wəɫ/",
+    "Singular": "will"
+  },
+  "win": {
+    "Definition": "to be the victor in a contest or struggle",
+    "Past Tense": "won",
+    "Pronunciation": "/ˈwɪn/",
+    "Singular": "wins"
+  },
+  "wind": {
+    "Definition": "to twist or turn, to twist or wind something around something else",
+    "Past Tense": "winded",
+    "Pronunciation": "/ˈwaɪnd/, /ˈwɪnd/",
+    "Singular": "winds"
+  },
+  "wipe": {
+    "Definition": "to remove something by rubbing it with a cloth or piece of paper",
+    "Past Tense": "wiped",
+    "Pronunciation": "/ˈwaɪp/",
+    "Singular": "wipes"
+  },
+  "wish": {
+    "Definition": "to want something to happen or be true, to want something to be true",
+    "Past Tense": "wished",
+    "Pronunciation": "/ˈwɪʃ/",
+    "Singular": "wishes"
+  },
+  "withdraw": {
+    "Definition": "to take back, to remove, to retract, to rescind",
+    "Past Tense": "withdrew",
+    "Pronunciation": "/wɪðˈdɹɔ/, /wɪθˈdɹɔ/",
+    "Singular": "withdraws"
+  },
+  "withstand": {
+    "Definition": "to be able to withstand something, to be able to resist something",
+    "Past Tense": "withstood",
+    "Pronunciation": "/wɪθˈstænd/",
+    "Singular": "withstands"
+  },
+  "witness": {
+    "Definition": "to be present at an event or ceremony",
+    "Past Tense": "witnessed",
+    "Pronunciation": "/ˈwɪtnəs/",
+    "Singular": "witnesses"
+  },
+  "wonder": {
+    "Definition": "to be surprised or amazed",
+    "Past Tense": "wondered",
+    "Pronunciation": "/ˈwəndɝ/",
+    "Singular": "wonders"
+  },
+  "work": {
+    "Definition": "to do something in order to achieve a particular result or to gain a particular advantage",
+    "Past Tense": "worked",
+    "Pronunciation": "/ˈwɝk/",
+    "Singular": "works"
+  },
+  "worry": {
+    "Definition": "to feel anxious or nervous about something",
+    "Past Tense": "worried",
+    "Pronunciation": "/ˈwɝi/",
+    "Singular": "worries"
+  },
+  "wrap": {
+    "Definition": "to put something around something else, to cover something with something else",
+    "Past Tense": "wrapped",
+    "Pronunciation": "/ˈɹæp/",
+    "Singular": "wraps"
+  },
+  "write": {
+    "Definition": "to write or record in words or letters",
+    "Past Tense": "wrote",
+    "Pronunciation": "/ˈɹaɪt/",
+    "Singular": "writes"
+  },
+  "yield": {
+    "Definition": "to give in, to surrender, to submit, to comply",
+    "Past Tense": "yielded",
+    "Pronunciation": "/ˈjiɫd/",
+    "Singular": "yields"
+  }
+}

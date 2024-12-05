@@ -1,0 +1,3997 @@
+{
+  "DJ": {
+    "Duty": "play music",
+    "Industry": "music",
+    "Work Location": "club"
+  },
+  "UX designer": {
+    "Duty": "design user experience",
+    "Industry": "software",
+    "Work Location": "office"
+  },
+  "account collector": {
+    "Duty": "collect debts",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "accountant": {
+    "Duty": "prepare tax returns",
+    "Industry": "accounting",
+    "Work Location": "office"
+  },
+  "actor": {
+    "Duty": "entertain audience",
+    "Industry": "film",
+    "Work Location": "theatre"
+  },
+  "actuary": {
+    "Duty": "calculate risk",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "acupuncturist": {
+    "Duty": "treat patients",
+    "Industry": "health care",
+    "Work Location": "clinic"
+  },
+  "adjudicator": {
+    "Duty": "decide cases",
+    "Industry": "law",
+    "Work Location": "court"
+  },
+  "administrative assistant": {
+    "Duty": "assist the boss",
+    "Industry": "healthcare",
+    "Work Location": "office"
+  },
+  "advertising manager": {
+    "Duty": "sell advertising space",
+    "Industry": "advertising",
+    "Work Location": "office"
+  },
+  "advisor": {
+    "Duty": "give advice",
+    "Industry": "consulting",
+    "Work Location": "office"
+  },
+  "aerobics instructor": {
+    "Duty": "teach aerobics",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "aerospace engineer": {
+    "Duty": "design and build airplanes",
+    "Industry": "aerospace",
+    "Work Location": "space station"
+  },
+  "agent": {
+    "Duty": "represent clients in business",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "agricultural engineer": {
+    "Duty": "improve agricultural production",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural grader": {
+    "Duty": "grade fields",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural inspector": {
+    "Duty": "inspect agricultural products",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural manager": {
+    "Duty": "manage farm",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural sorter": {
+    "Duty": "sort out the good from the bad",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural technician": {
+    "Duty": "help farmers",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "agricultural worker": {
+    "Duty": "grow crops",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "aircraft mechanic": {
+    "Duty": "maintain aircraft",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "aircraft pilot": {
+    "Duty": "fly the plane",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "airline copilot": {
+    "Duty": "fly the plane",
+    "Industry": "airline",
+    "Work Location": "airport"
+  },
+  "airline pilot": {
+    "Duty": "fly the plane",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "ambulance dispatcher": {
+    "Duty": "dispatch ambulances",
+    "Industry": "ambulance service",
+    "Work Location": "hospital"
+  },
+  "ambulance driver": {
+    "Duty": "transport patients",
+    "Industry": "ambulance",
+    "Work Location": "hospital"
+  },
+  "anesthesiologist": {
+    "Duty": "administer anesthesia",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "animal breeder": {
+    "Duty": "breed animals",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "animal caretaker": {
+    "Duty": "care for animals",
+    "Industry": "animal caretaker",
+    "Work Location": "zoo"
+  },
+  "animal scientist": {
+    "Duty": "study animals",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "animal trainer": {
+    "Duty": "train animals",
+    "Industry": "film",
+    "Work Location": "zoo"
+  },
+  "animator": {
+    "Duty": "animate characters",
+    "Industry": "animation",
+    "Work Location": "studio"
+  },
+  "anthropologist": {
+    "Duty": "study people",
+    "Industry": "academia",
+    "Work Location": "university"
+  },
+  "apparel patternmaker": {
+    "Duty": "make patterns for clothing",
+    "Industry": "apparel",
+    "Work Location": "factory"
+  },
+  "apparel worker": {
+    "Duty": "make clothes",
+    "Industry": "apparel",
+    "Work Location": "factory"
+  },
+  "arbitrator": {
+    "Duty": "decide cases",
+    "Industry": "arbitration",
+    "Work Location": "court"
+  },
+  "archeologist": {
+    "Duty": "dig up the past",
+    "Industry": "archeology",
+    "Work Location": "museum"
+  },
+  "architect": {
+    "Duty": "design buildings",
+    "Industry": "architecture",
+    "Work Location": "office"
+  },
+  "architectural drafter": {
+    "Duty": "draw plans",
+    "Industry": "architecture",
+    "Work Location": "architectural firm"
+  },
+  "architectural manager": {
+    "Duty": "design buildings",
+    "Industry": "architecture",
+    "Work Location": "office"
+  },
+  "archivist": {
+    "Duty": "preserve records",
+    "Industry": "museums",
+    "Work Location": "library"
+  },
+  "art director": {
+    "Duty": "create art",
+    "Industry": "advertising",
+    "Work Location": "studio"
+  },
+  "art teacher": {
+    "Duty": "teach art",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "art therapist": {
+    "Duty": "help people express themselves through art",
+    "Industry": "art therapy",
+    "Work Location": "hospital"
+  },
+  "artist": {
+    "Duty": "create art",
+    "Industry": "art",
+    "Work Location": "studio"
+  },
+  "assembler": {
+    "Duty": "assemble cars",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "astronomer": {
+    "Duty": "observe the stars",
+    "Industry": "astronomy",
+    "Work Location": "observatory"
+  },
+  "athlete": {
+    "Duty": "win games",
+    "Industry": "football",
+    "Work Location": "stadium"
+  },
+  "athletic trainer": {
+    "Duty": "care for athletes",
+    "Industry": "sports",
+    "Work Location": "sports club"
+  },
+  "atmospheric scientist": {
+    "Duty": "report weather",
+    "Industry": "weather forecasting",
+    "Work Location": "laboratory"
+  },
+  "attendant": {
+    "Duty": "attend to the needs of the sick",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "attorney": {
+    "Duty": "represent clients in court",
+    "Industry": "law",
+    "Work Location": "law firm"
+  },
+  "audiologist": {
+    "Duty": "help people hear",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "auditor": {
+    "Duty": "audit financial statements",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "author": {
+    "Duty": "write books",
+    "Industry": "literature",
+    "Work Location": "library"
+  },
+  "automotive mechanic": {
+    "Duty": "repair cars",
+    "Industry": "automotive",
+    "Work Location": "garage"
+  },
+  "avionics technician": {
+    "Duty": "maintain aircraft",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "back-end developer": {
+    "Duty": "write code",
+    "Industry": "IT",
+    "Work Location": "office"
+  },
+  "baggage porter": {
+    "Duty": "carry baggage",
+    "Industry": "airline",
+    "Work Location": "airport"
+  },
+  "bailiff": {
+    "Duty": "serve summonses",
+    "Industry": "bailiff",
+    "Work Location": "court"
+  },
+  "baker": {
+    "Duty": "bake bread",
+    "Industry": "bakery",
+    "Work Location": "bakery"
+  },
+  "ballet instructor": {
+    "Duty": "teach dance",
+    "Industry": "ballet",
+    "Work Location": "studio"
+  },
+  "banker": {
+    "Duty": "safeguard deposits",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "barback": {
+    "Duty": "serve drinks",
+    "Industry": "hospitality",
+    "Work Location": "bar"
+  },
+  "barber": {
+    "Duty": "cut hair",
+    "Industry": "barbering",
+    "Work Location": "barber shop"
+  },
+  "barista": {
+    "Duty": "make coffee",
+    "Industry": "coffee",
+    "Work Location": "cafe"
+  },
+  "bartender": {
+    "Duty": "serve drinks",
+    "Industry": "hospitality",
+    "Work Location": "bar"
+  },
+  "bartender helper": {
+    "Duty": "serve drinks",
+    "Industry": "restaurant",
+    "Work Location": "bar"
+  },
+  "behavioral therapist": {
+    "Duty": "help patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "bellhop": {
+    "Duty": "carry bags",
+    "Industry": "hotel",
+    "Work Location": "hotel"
+  },
+  "bench carpenter": {
+    "Duty": "build benches",
+    "Industry": "construction",
+    "Work Location": "workshop"
+  },
+  "benefits manager": {
+    "Duty": "manage benefits",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "bicycle repairer": {
+    "Duty": "repair bicycles",
+    "Industry": "bicycle repair",
+    "Work Location": "workshop"
+  },
+  "biochemist": {
+    "Duty": "study the chemical composition of living organisms",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "bioengineer": {
+    "Duty": "develop new drugs",
+    "Industry": "biotechnology",
+    "Work Location": "laboratory"
+  },
+  "biological technician": {
+    "Duty": "collect samples",
+    "Industry": "biotechnology",
+    "Work Location": "laboratory"
+  },
+  "biologist": {
+    "Duty": "study nature",
+    "Industry": "biotechnology",
+    "Work Location": "laboratory"
+  },
+  "biomedical engineer": {
+    "Duty": "develop new medical devices",
+    "Industry": "biomedical engineering",
+    "Work Location": "hospital"
+  },
+  "biophysicist": {
+    "Duty": "study life",
+    "Industry": "biotechnology",
+    "Work Location": "laboratory"
+  },
+  "blaster": {
+    "Duty": "blow up buildings",
+    "Industry": "construction",
+    "Work Location": "quarry"
+  },
+  "blending worker": {
+    "Duty": "work for the company",
+    "Industry": "wine",
+    "Work Location": "factory"
+  },
+  "blockmason": {
+    "Duty": "build walls",
+    "Industry": "building",
+    "Work Location": "building site"
+  },
+  "blogger": {
+    "Duty": "blog",
+    "Industry": "blogger",
+    "Work Location": "home"
+  },
+  "boiler operator": {
+    "Duty": "operate boiler",
+    "Industry": "power plant",
+    "Work Location": "factory"
+  },
+  "boilermaker": {
+    "Duty": "build boilers",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "bookkeeper": {
+    "Duty": "keep books",
+    "Industry": "accounting",
+    "Work Location": "office"
+  },
+  "brazer": {
+    "Duty": "make money",
+    "Industry": "shipbuilding",
+    "Work Location": "factory"
+  },
+  "brazing worker": {
+    "Duty": "braze",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "brickmason": {
+    "Duty": "build brick walls",
+    "Industry": "brickmason",
+    "Work Location": "construction site"
+  },
+  "broadcast announcer": {
+    "Duty": "read news",
+    "Industry": "radio",
+    "Work Location": "radio station"
+  },
+  "broadcast technician": {
+    "Duty": "operate equipment",
+    "Industry": "broadcasting",
+    "Work Location": "radio station"
+  },
+  "brokerage clerk": {
+    "Duty": "sell stocks",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "budget analyst": {
+    "Duty": "analyze budget",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "building inspector": {
+    "Duty": "inspect buildings",
+    "Industry": "construction",
+    "Work Location": "office"
+  },
+  "bus driver": {
+    "Duty": "drive bus",
+    "Industry": "transportation",
+    "Work Location": "bus station"
+  },
+  "bus mechanic": {
+    "Duty": "fix buses",
+    "Industry": "buses",
+    "Work Location": "garage"
+  },
+  "butcher": {
+    "Duty": "cut meat",
+    "Industry": "meat processing",
+    "Work Location": "slaughterhouse"
+  },
+  "buyer": {
+    "Duty": "pay for goods",
+    "Industry": "retail",
+    "Work Location": "store"
+  },
+  "cabinetmaker": {
+    "Duty": "make cabinets",
+    "Industry": "furniture",
+    "Work Location": "workshop"
+  },
+  "cafeteria attendant": {
+    "Duty": "serve food",
+    "Industry": "food service",
+    "Work Location": "school"
+  },
+  "cafeteria cook": {
+    "Duty": "serve food",
+    "Industry": "food service",
+    "Work Location": "restaurant"
+  },
+  "camera operator": {
+    "Duty": "record events",
+    "Industry": "film",
+    "Work Location": "film studio"
+  },
+  "camera repairer": {
+    "Duty": "repair cameras",
+    "Industry": "camera repair",
+    "Work Location": "shop"
+  },
+  "cardiovascular technician": {
+    "Duty": "take care of patients",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "cargo agent": {
+    "Duty": "load and unload cargo",
+    "Industry": "airline",
+    "Work Location": "airport"
+  },
+  "carpenter": {
+    "Duty": "build houses",
+    "Industry": "construction",
+    "Work Location": "workshop"
+  },
+  "carpet installer": {
+    "Duty": "install carpets",
+    "Industry": "carpet installation",
+    "Work Location": "factory"
+  },
+  "cartographer": {
+    "Duty": "map the world",
+    "Industry": "cartography",
+    "Work Location": "office"
+  },
+  "cashier": {
+    "Duty": "give change",
+    "Industry": "retail",
+    "Work Location": "supermarket"
+  },
+  "caster": {
+    "Duty": "cast the ballot",
+    "Industry": "casting",
+    "Work Location": "factory"
+  },
+  "cement mason": {
+    "Duty": "lay cement",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "chauffeur": {
+    "Duty": "drive car",
+    "Industry": "transportation",
+    "Work Location": "garage"
+  },
+  "checker": {
+    "Duty": "check the groceries",
+    "Industry": "transportation",
+    "Work Location": "factory"
+  },
+  "chef": {
+    "Duty": "prepare food",
+    "Industry": "food and beverage",
+    "Work Location": "restaurant"
+  },
+  "chemical engineer": {
+    "Duty": "design chemical plants",
+    "Industry": "chemical industry",
+    "Work Location": "laboratory"
+  },
+  "chemical technician": {
+    "Duty": "test chemicals",
+    "Industry": "chemical industry",
+    "Work Location": "laboratory"
+  },
+  "chemist": {
+    "Duty": "conduct experiments",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "chemistry teacher": {
+    "Duty": "teach chemistry",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "chief executive": {
+    "Duty": "run the country",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "childcare administrator": {
+    "Duty": "care for children",
+    "Industry": "childcare",
+    "Work Location": "kindergarten"
+  },
+  "childcare worker": {
+    "Duty": "care for children",
+    "Industry": "childcare",
+    "Work Location": "nursery"
+  },
+  "chiropractor": {
+    "Duty": "treat patients",
+    "Industry": "health care",
+    "Work Location": "clinic"
+  },
+  "choreographer": {
+    "Duty": "create dances",
+    "Industry": "dance",
+    "Work Location": "studio"
+  },
+  "civil drafter": {
+    "Duty": "draft contracts",
+    "Industry": "civil engineering",
+    "Work Location": "office"
+  },
+  "civil engineer": {
+    "Duty": "design bridges",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "claims adjuster": {
+    "Duty": "settle claims",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "claims examiner": {
+    "Duty": "investigate claims",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "claims investigator": {
+    "Duty": "investigate claims",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "cleaner": {
+    "Duty": "clean house",
+    "Industry": "cleaning",
+    "Work Location": "house"
+  },
+  "clinical psychologist": {
+    "Duty": "help patients",
+    "Industry": "private practice",
+    "Work Location": "hospital"
+  },
+  "coach": {
+    "Duty": "win games",
+    "Industry": "football",
+    "Work Location": "stadium"
+  },
+  "coating worker": {
+    "Duty": "coat the surface of the product",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "coatroom attendant": {
+    "Duty": "keep coats in coatroom",
+    "Industry": "entertainment",
+    "Work Location": "hotel"
+  },
+  "coil finisher": {
+    "Duty": "finish coils",
+    "Industry": "manufacturing",
+    "Work Location": "factory"
+  },
+  "coil taper": {
+    "Duty": "make coils",
+    "Industry": "manufacturing",
+    "Work Location": "factory"
+  },
+  "coil winder": {
+    "Duty": "wind coils",
+    "Industry": "automobile",
+    "Work Location": "factory"
+  },
+  "commercial diver": {
+    "Duty": "dive for pearls",
+    "Industry": "oil and gas",
+    "Work Location": "ocean"
+  },
+  "commercial pilot": {
+    "Duty": "fly planes",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "communications teacher": {
+    "Duty": "teach students how to communicate",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "community manager": {
+    "Duty": "represent the community",
+    "Industry": "social media",
+    "Work Location": "office"
+  },
+  "compliance officer": {
+    "Duty": "ensure compliance with the law",
+    "Industry": "financial services",
+    "Work Location": "office"
+  },
+  "composer": {
+    "Duty": "compose music",
+    "Industry": "film",
+    "Work Location": "studio"
+  },
+  "computer operator": {
+    "Duty": "operate computer",
+    "Industry": "computer industry",
+    "Work Location": "office"
+  },
+  "computer programmer": {
+    "Duty": "write code",
+    "Industry": "software development",
+    "Work Location": "office"
+  },
+  "concierge": {
+    "Duty": "help guests",
+    "Industry": "hospitality",
+    "Work Location": "hotel"
+  },
+  "conciliator": {
+    "Duty": "help parties reach agreement",
+    "Industry": "conciliation",
+    "Work Location": "office"
+  },
+  "concrete finisher": {
+    "Duty": "finish concrete",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "conservation scientist": {
+    "Duty": "protect the environment",
+    "Industry": "conservation",
+    "Work Location": "museum"
+  },
+  "conservation worker": {
+    "Duty": "protect the environment",
+    "Industry": "conservation",
+    "Work Location": "museum"
+  },
+  "conservator": {
+    "Duty": "protect the ward's assets",
+    "Industry": "museums",
+    "Work Location": "museum"
+  },
+  "construction inspector": {
+    "Duty": "inspect construction",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "construction laborer": {
+    "Duty": "build buildings",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "construction manager": {
+    "Duty": "build a bridge",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "construction painter": {
+    "Duty": "paint buildings",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "construction worker": {
+    "Duty": "build houses",
+    "Industry": "construction",
+    "Work Location": "building site"
+  },
+  "content creator": {
+    "Duty": "entertain",
+    "Industry": "gaming",
+    "Work Location": "home office"
+  },
+  "convention planner": {
+    "Duty": "plan conventions",
+    "Industry": "convention planning",
+    "Work Location": "hotel"
+  },
+  "conveyor operator": {
+    "Duty": "convey goods",
+    "Industry": "mining",
+    "Work Location": "factory"
+  },
+  "cook": {
+    "Duty": "prepare food",
+    "Industry": "restaurant",
+    "Work Location": "restaurant"
+  },
+  "copy marker": {
+    "Duty": "copy the text",
+    "Industry": "advertising",
+    "Work Location": "office"
+  },
+  "correctional officer": {
+    "Duty": "protect inmates",
+    "Industry": "corrections",
+    "Work Location": "prison"
+  },
+  "correspondence clerk": {
+    "Duty": "write letters",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "correspondent": {
+    "Duty": "report news",
+    "Industry": "journalism",
+    "Work Location": "office"
+  },
+  "cosmetologist": {
+    "Duty": "make people look good",
+    "Industry": "beauty",
+    "Work Location": "beauty salon"
+  },
+  "cost estimator": {
+    "Duty": "estimate costs",
+    "Industry": "construction",
+    "Work Location": "office"
+  },
+  "costume attendant": {
+    "Duty": "dress up actors",
+    "Industry": "film",
+    "Work Location": "theatre"
+  },
+  "counseling psychologist": {
+    "Duty": "help clients",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "counselor": {
+    "Duty": "help clients solve problems",
+    "Industry": "education",
+    "Work Location": "office"
+  },
+  "counter worker": {
+    "Duty": "serve customers",
+    "Industry": "food",
+    "Work Location": "restaurant"
+  },
+  "courier": {
+    "Duty": "deliver messages",
+    "Industry": "transportation",
+    "Work Location": "office"
+  },
+  "court reporter": {
+    "Duty": "record proceedings",
+    "Industry": "court reporting",
+    "Work Location": "courtroom"
+  },
+  "craft artist": {
+    "Duty": "create art",
+    "Industry": "craft artist",
+    "Work Location": "studio"
+  },
+  "crane operator": {
+    "Duty": "operate crane",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "credit analyst": {
+    "Duty": "evaluate creditworthiness of clients",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "credit authorizer": {
+    "Duty": "determine creditworthiness of applicants",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "credit checker": {
+    "Duty": "check credit",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "credit counselor": {
+    "Duty": "help clients manage their finances",
+    "Industry": "credit counseling",
+    "Work Location": "office"
+  },
+  "criminal investigator": {
+    "Duty": "investigate crimes",
+    "Industry": "law enforcement",
+    "Work Location": "police station"
+  },
+  "crossing guard": {
+    "Duty": "protect children",
+    "Industry": "transportation",
+    "Work Location": "school"
+  },
+  "curator": {
+    "Duty": "preserve art",
+    "Industry": "art",
+    "Work Location": "museum"
+  },
+  "custom sewer": {
+    "Duty": "clean sewers",
+    "Industry": "sewer",
+    "Work Location": "home"
+  },
+  "cutter": {
+    "Duty": "cut wood",
+    "Industry": "clothing",
+    "Work Location": "factory"
+  },
+  "cutting worker": {
+    "Duty": "work",
+    "Industry": "textile",
+    "Work Location": "factory"
+  },
+  "dance instructor": {
+    "Duty": "teach dance",
+    "Industry": "dance",
+    "Work Location": "studio"
+  },
+  "dancer": {
+    "Duty": "dance",
+    "Industry": "ballet",
+    "Work Location": "theatre"
+  },
+  "database administrator": {
+    "Duty": "maintain database",
+    "Industry": "information technology",
+    "Work Location": "office"
+  },
+  "decorating worker": {
+    "Duty": "decorate",
+    "Industry": "decorating",
+    "Work Location": "shop"
+  },
+  "demonstrator": {
+    "Duty": "demonstrate",
+    "Industry": "textile",
+    "Work Location": "university"
+  },
+  "dental assistant": {
+    "Duty": "assist dentist",
+    "Industry": "dental",
+    "Work Location": "dental office"
+  },
+  "dental hygienist": {
+    "Duty": "clean teeth",
+    "Industry": "dental hygiene",
+    "Work Location": "dental clinic"
+  },
+  "dentist": {
+    "Duty": "treat patients",
+    "Industry": "dentistry",
+    "Work Location": "clinic"
+  },
+  "dermatologist": {
+    "Duty": "treat skin diseases",
+    "Industry": "dermatology",
+    "Work Location": "hospital"
+  },
+  "derrick operator": {
+    "Duty": "operate derrick",
+    "Industry": "oil and gas",
+    "Work Location": "oil field"
+  },
+  "designer": {
+    "Duty": "design",
+    "Industry": "fashion",
+    "Work Location": "studio"
+  },
+  "desktop publisher": {
+    "Duty": "produce a good-looking page",
+    "Industry": "publishing",
+    "Work Location": "office"
+  },
+  "detective": {
+    "Duty": "investigate crimes",
+    "Industry": "police",
+    "Work Location": "police station"
+  },
+  "developer": {
+    "Duty": "build houses",
+    "Industry": "software",
+    "Work Location": "office"
+  },
+  "development manager": {
+    "Duty": "raise funds for the organization",
+    "Industry": "non-profit",
+    "Work Location": "office"
+  },
+  "die maker": {
+    "Duty": "make dies",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "dietetic technician": {
+    "Duty": "help people eat healthy foods",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "dietitian": {
+    "Duty": "advise clients on nutrition",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "dinkey operator": {
+    "Duty": "operate dinkey",
+    "Industry": "mining",
+    "Work Location": "factory"
+  },
+  "director": {
+    "Duty": "make movies",
+    "Industry": "film",
+    "Work Location": "theatre"
+  },
+  "dishwasher": {
+    "Duty": "wash dishes",
+    "Industry": "restaurant",
+    "Work Location": "restaurant"
+  },
+  "dispatcher": {
+    "Duty": "send police to crime scenes",
+    "Industry": "transportation",
+    "Work Location": "office"
+  },
+  "distribution manager": {
+    "Duty": "distribute products",
+    "Industry": "food",
+    "Work Location": "office"
+  },
+  "doctor": {
+    "Duty": "heal patients",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "doula": {
+    "Duty": "support women in labor",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "drafter": {
+    "Duty": "draft documents",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "dragline operator": {
+    "Duty": "operate dragline",
+    "Industry": "coal mining",
+    "Work Location": "mine"
+  },
+  "drama teacher": {
+    "Duty": "teach drama",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "dredge operator": {
+    "Duty": "dredge",
+    "Industry": "mining",
+    "Work Location": "river"
+  },
+  "dressmaker": {
+    "Duty": "make clothes",
+    "Industry": "fashion",
+    "Work Location": "atelier"
+  },
+  "drier operator": {
+    "Duty": "operate dryer",
+    "Industry": "textile",
+    "Work Location": "factory"
+  },
+  "driver/sales worker": {
+    "Duty": "drive/sell",
+    "Industry": "transportation",
+    "Work Location": "trucking company"
+  },
+  "dry-cleaning worker": {
+    "Duty": "clean clothes",
+    "Industry": "dry cleaning",
+    "Work Location": "dry-cleaning shop"
+  },
+  "drywall installer": {
+    "Duty": "install drywall",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "earth driller": {
+    "Duty": "drill holes in the ground",
+    "Industry": "mining",
+    "Work Location": "mine"
+  },
+  "economics teacher": {
+    "Duty": "teach economics",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "economist": {
+    "Duty": "analyze economic data",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "editor": {
+    "Duty": "edit news",
+    "Industry": "publishing",
+    "Work Location": "publishing house"
+  },
+  "education administrator": {
+    "Duty": "educate students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "electrical engineer": {
+    "Duty": "design electrical systems",
+    "Industry": "electrical engineering",
+    "Work Location": "factory"
+  },
+  "electrical installer": {
+    "Duty": "install electrical wiring",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "electrician": {
+    "Duty": "install electrical wiring",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "electro-mechanical technician": {
+    "Duty": "repair machines",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "electromechanical assembler": {
+    "Duty": "assemble electromechanical devices",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "electronics engineer": {
+    "Duty": "design circuits",
+    "Industry": "telecommunications",
+    "Work Location": "laboratory"
+  },
+  "elevator installer": {
+    "Duty": "install elevators",
+    "Industry": "elevator installation",
+    "Work Location": "factory"
+  },
+  "elevator repairer": {
+    "Duty": "repair elevators",
+    "Industry": "elevator repair",
+    "Work Location": "elevator"
+  },
+  "eligibility interviewer": {
+    "Duty": "determine eligibility for benefits",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "embalmer": {
+    "Duty": "preserve the dead",
+    "Industry": "funeral services",
+    "Work Location": "mortuary"
+  },
+  "engine assembler": {
+    "Duty": "assemble engines",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "engineer": {
+    "Duty": "design bridges",
+    "Industry": "automotive",
+    "Work Location": "office"
+  },
+  "engineering manager": {
+    "Duty": "manage engineers",
+    "Industry": "automotive",
+    "Work Location": "office"
+  },
+  "engineering teacher": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "engraver": {
+    "Duty": "engrave",
+    "Industry": "engraver",
+    "Work Location": "studio"
+  },
+  "entertainment attendant": {
+    "Duty": "entertain people",
+    "Industry": "entertainment",
+    "Work Location": "cinema"
+  },
+  "entrepreneur": {
+    "Duty": "make money",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "environmental engineer": {
+    "Duty": "protect environment",
+    "Industry": "environmental engineering",
+    "Work Location": "office"
+  },
+  "environmental scientist": {
+    "Duty": "protect the environment",
+    "Industry": "environmental consulting",
+    "Work Location": "laboratory"
+  },
+  "epidemiologist": {
+    "Duty": "study disease",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "equipment repairer": {
+    "Duty": "repair equipment",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "escort": {
+    "Duty": "protect clients",
+    "Industry": "escort",
+    "Work Location": "hotel"
+  },
+  "esthetician": {
+    "Duty": "beautify",
+    "Industry": "beauty",
+    "Work Location": "salon"
+  },
+  "etcher": {
+    "Duty": "etch",
+    "Industry": "printmaking",
+    "Work Location": "studio"
+  },
+  "event coordinator": {
+    "Duty": "plan events",
+    "Industry": "entertainment",
+    "Work Location": "office"
+  },
+  "event planner": {
+    "Duty": "plan events",
+    "Industry": "entertainment",
+    "Work Location": "hotel"
+  },
+  "excavating operator": {
+    "Duty": "dig up the ground",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "except geographer": {
+    "Duty": "map the world",
+    "Industry": "except geographer",
+    "Work Location": "office"
+  },
+  "executive assistant": {
+    "Duty": "support the executive",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "executive secretary": {
+    "Duty": "take dictation and type letters",
+    "Industry": "education",
+    "Work Location": "office"
+  },
+  "exercise trainer": {
+    "Duty": "help clients achieve their fitness goals",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "exhibit designer": {
+    "Duty": "create exhibits that will help the attorney win the case",
+    "Industry": "museums",
+    "Work Location": "museum"
+  },
+  "expediting clerk": {
+    "Duty": "expedite the court process",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "explosives worker": {
+    "Duty": "handle explosives",
+    "Industry": "mining",
+    "Work Location": "factory"
+  },
+  "extraction worker": {
+    "Duty": "extract oil",
+    "Industry": "mining",
+    "Work Location": "mine"
+  },
+  "fabric mender": {
+    "Duty": "mend fabric",
+    "Industry": "textile",
+    "Work Location": "home"
+  },
+  "fabric patternmaker": {
+    "Duty": "make patterns",
+    "Industry": "textile",
+    "Work Location": "factory"
+  },
+  "fabricator": {
+    "Duty": "fabricate evidence",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "facilities manager": {
+    "Duty": "maintain buildings",
+    "Industry": "facilities management",
+    "Work Location": "office"
+  },
+  "faller": {
+    "Duty": "cut down trees",
+    "Industry": "logging",
+    "Work Location": "forest"
+  },
+  "family practitioner": {
+    "Duty": "treat patients",
+    "Industry": "health care",
+    "Work Location": "clinic"
+  },
+  "family therapist": {
+    "Duty": "help families",
+    "Industry": "health care",
+    "Work Location": "office"
+  },
+  "farm advisor": {
+    "Duty": "advise farmers",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "farmer": {
+    "Duty": "grow crops",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "farmworker": {
+    "Duty": "work in the fields",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "fashion designer": {
+    "Duty": "design clothes",
+    "Industry": "fashion",
+    "Work Location": "studio"
+  },
+  "fence erector": {
+    "Duty": "build fences",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "fertility specialist": {
+    "Duty": "help infertile couples have children",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "fiberglass fabricator": {
+    "Duty": "make fiberglass products",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "fiberglass laminator": {
+    "Duty": "make boats",
+    "Industry": "boat building",
+    "Work Location": "factory"
+  },
+  "file clerk": {
+    "Duty": "file documents",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "financial analyst": {
+    "Duty": "make recommendations to clients",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "financial examiner": {
+    "Duty": "examine financial statements",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "financial manager": {
+    "Duty": "manage finances",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "fine artist": {
+    "Duty": "create art",
+    "Industry": "art",
+    "Work Location": "studio"
+  },
+  "finisher": {
+    "Duty": "finish the race",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "finishing worker": {
+    "Duty": "finish the job",
+    "Industry": "automobile",
+    "Work Location": "factory"
+  },
+  "fire dispatcher": {
+    "Duty": "dispatch fire trucks",
+    "Industry": "fire department",
+    "Work Location": "fire station"
+  },
+  "fire inspector": {
+    "Duty": "inspect buildings for fire hazards",
+    "Industry": "fire department",
+    "Work Location": "office"
+  },
+  "fire investigator": {
+    "Duty": "determine cause of fire",
+    "Industry": "fire investigation",
+    "Work Location": "fire station"
+  },
+  "firefighter": {
+    "Duty": "put out fires",
+    "Industry": "firefighting",
+    "Work Location": "fire station"
+  },
+  "fish cutter": {
+    "Duty": "cut fish",
+    "Industry": "fishing",
+    "Work Location": "fish market"
+  },
+  "fish trimmer": {
+    "Duty": "trim fish",
+    "Industry": "fishing",
+    "Work Location": "fish factory"
+  },
+  "fisher": {
+    "Duty": "catch fish",
+    "Industry": "fishing",
+    "Work Location": "sea"
+  },
+  "fitness instructor": {
+    "Duty": "help clients achieve their fitness goals",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "fitness trainer": {
+    "Duty": "help clients achieve their fitness goals",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "flagger": {
+    "Duty": "direct traffic",
+    "Industry": "construction",
+    "Work Location": "highway"
+  },
+  "flight attendant": {
+    "Duty": "ensure safety of passengers",
+    "Industry": "airline",
+    "Work Location": "airplane"
+  },
+  "floor finisher": {
+    "Duty": "polish floors",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "floor layer": {
+    "Duty": "lay floors",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "floor sander": {
+    "Duty": "sand floors",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "floral designer": {
+    "Duty": "create beautiful arrangements",
+    "Industry": "florist",
+    "Work Location": "florist"
+  },
+  "food batchmaker": {
+    "Duty": "make food",
+    "Industry": "food",
+    "Work Location": "factory"
+  },
+  "food scientist": {
+    "Duty": "study food",
+    "Industry": "food industry",
+    "Work Location": "laboratory"
+  },
+  "food server": {
+    "Duty": "serve food",
+    "Industry": "food service",
+    "Work Location": "restaurant"
+  },
+  "food technologist": {
+    "Duty": "ensure that food is safe to eat",
+    "Industry": "food industry",
+    "Work Location": "laboratory"
+  },
+  "forest worker": {
+    "Duty": "protect forest",
+    "Industry": "forestry",
+    "Work Location": "forest"
+  },
+  "forester": {
+    "Duty": "protect forests",
+    "Industry": "forestry",
+    "Work Location": "forest"
+  },
+  "forestry teacher": {
+    "Duty": "teach students",
+    "Industry": "forestry",
+    "Work Location": "school"
+  },
+  "foundry coremaker": {
+    "Duty": "make cores",
+    "Industry": "foundry",
+    "Work Location": "factory"
+  },
+  "freight agent": {
+    "Duty": "load and unload freight",
+    "Industry": "transportation",
+    "Work Location": "office"
+  },
+  "freight mover": {
+    "Duty": "move freight",
+    "Industry": "transportation",
+    "Work Location": "warehouse"
+  },
+  "front-end developer": {
+    "Duty": "create a website",
+    "Industry": "software development",
+    "Work Location": "office"
+  },
+  "fundraiser": {
+    "Duty": "raise money",
+    "Industry": "non-profit",
+    "Work Location": "office"
+  },
+  "fundraising manager": {
+    "Duty": "raise money",
+    "Industry": "non-profit",
+    "Work Location": "office"
+  },
+  "funeral attendant": {
+    "Duty": "bury the dead",
+    "Industry": "funeral industry",
+    "Work Location": "cemetery"
+  },
+  "funeral director": {
+    "Duty": "bury the dead",
+    "Industry": "funeral services",
+    "Work Location": "cemetery"
+  },
+  "furnace operator": {
+    "Duty": "keep furnace running",
+    "Industry": "steel mill",
+    "Work Location": "factory"
+  },
+  "furnishings worker": {
+    "Duty": "make furniture",
+    "Industry": "furnishings",
+    "Work Location": "factory"
+  },
+  "furniture finisher": {
+    "Duty": "finish furniture",
+    "Industry": "furniture",
+    "Work Location": "factory"
+  },
+  "gaming dealer": {
+    "Duty": "deal cards",
+    "Industry": "casino",
+    "Work Location": "casino"
+  },
+  "gaming investigator": {
+    "Duty": "investigate gaming",
+    "Industry": "gaming",
+    "Work Location": "casino"
+  },
+  "gaming manager": {
+    "Duty": "manage gaming operations",
+    "Industry": "gaming",
+    "Work Location": "casino"
+  },
+  "garment mender": {
+    "Duty": "mend garments",
+    "Industry": "garment industry",
+    "Work Location": "home"
+  },
+  "garment presser": {
+    "Duty": "press garments",
+    "Industry": "garment industry",
+    "Work Location": "factory"
+  },
+  "gas compressor": {
+    "Duty": "compress gas",
+    "Industry": "oil and gas",
+    "Work Location": "factory"
+  },
+  "general manager": {
+    "Duty": "manage the company",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "general practitioner": {
+    "Duty": "treat patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "geographer": {
+    "Duty": "map the world",
+    "Industry": "geography",
+    "Work Location": "office"
+  },
+  "geography teacher": {
+    "Duty": "teach geography",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "geological engineer": {
+    "Duty": "study the earth",
+    "Industry": "mining",
+    "Work Location": "oil company"
+  },
+  "geological technician": {
+    "Duty": "collect data",
+    "Industry": "mining",
+    "Work Location": "mine"
+  },
+  "geoscience technician": {
+    "Duty": "collect data",
+    "Industry": "oil and gas",
+    "Work Location": "oil field"
+  },
+  "geoscientist": {
+    "Duty": "report geological data",
+    "Industry": "oil and gas",
+    "Work Location": "office"
+  },
+  "glazier": {
+    "Duty": "repair windows",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "grader": {
+    "Duty": "grade papers",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "graphic designer": {
+    "Duty": "create visuals",
+    "Industry": "advertising",
+    "Work Location": "studio"
+  },
+  "groundskeeper": {
+    "Duty": "maintain the grounds",
+    "Industry": "sports",
+    "Work Location": "park"
+  },
+  "groundskeeping worker": {
+    "Duty": "maintain the grounds",
+    "Industry": "groundskeeping",
+    "Work Location": "park"
+  },
+  "gynecologist": {
+    "Duty": "treat patients",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "hair stylist": {
+    "Duty": "cut hair",
+    "Industry": "hair stylist",
+    "Work Location": "salon"
+  },
+  "hairdresser": {
+    "Duty": "cut hair",
+    "Industry": "hairdressing",
+    "Work Location": "salon"
+  },
+  "hairstylist": {
+    "Duty": "cut hair",
+    "Industry": "hair",
+    "Work Location": "salon"
+  },
+  "hand laborer": {
+    "Duty": "work with hands",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "hand packager": {
+    "Duty": "pack goods",
+    "Industry": "food",
+    "Work Location": "warehouse"
+  },
+  "hand packer": {
+    "Duty": "pack goods",
+    "Industry": "food",
+    "Work Location": "warehouse"
+  },
+  "hand sewer": {
+    "Duty": "clean sewers",
+    "Industry": "clothing",
+    "Work Location": "home"
+  },
+  "head cook": {
+    "Duty": "prepare food",
+    "Industry": "restaurant",
+    "Work Location": "restaurant"
+  },
+  "health educator": {
+    "Duty": "educate people about health",
+    "Industry": "healthcare",
+    "Work Location": "school"
+  },
+  "healthcare practitioner": {
+    "Duty": "treat patients",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "hearing officer": {
+    "Duty": "hear evidence and make a decision",
+    "Industry": "government",
+    "Work Location": "court"
+  },
+  "heating installer": {
+    "Duty": "install heating systems",
+    "Industry": "heating",
+    "Work Location": "factory"
+  },
+  "heating mechanic": {
+    "Duty": "repair furnaces",
+    "Industry": "heating mechanic",
+    "Work Location": "factory"
+  },
+  "helper": {
+    "Duty": "help people",
+    "Industry": "agriculture",
+    "Work Location": "hospital"
+  },
+  "helpers--production worker": {
+    "Duty": "produce",
+    "Industry": "manufacturing",
+    "Work Location": "factory"
+  },
+  "herbalist": {
+    "Duty": "heal people",
+    "Industry": "herbalist",
+    "Work Location": "pharmacy"
+  },
+  "historian": {
+    "Duty": "record history",
+    "Industry": "historian",
+    "Work Location": "library"
+  },
+  "history teacher": {
+    "Duty": "teach history",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "host": {
+    "Duty": "entertain guests",
+    "Industry": "television",
+    "Work Location": "restaurant"
+  },
+  "hostess": {
+    "Duty": "entertain guests",
+    "Industry": "entertainment",
+    "Work Location": "restaurant"
+  },
+  "hostler": {
+    "Duty": "take care of horses",
+    "Industry": "railroad",
+    "Work Location": "stable"
+  },
+  "housekeeping cleaner": {
+    "Duty": "clean house",
+    "Industry": "hospitality",
+    "Work Location": "hotel"
+  },
+  "hunter": {
+    "Duty": "kill animals",
+    "Industry": "hunting",
+    "Work Location": "forest"
+  },
+  "hunting worker": {
+    "Duty": "hunt",
+    "Industry": "hunting",
+    "Work Location": "forest"
+  },
+  "hydrologist": {
+    "Duty": "study water",
+    "Industry": "water resources",
+    "Work Location": "laboratory"
+  },
+  "illustrator": {
+    "Duty": "illustrate",
+    "Industry": "advertising",
+    "Work Location": "studio"
+  },
+  "industrial designer": {
+    "Duty": "design products",
+    "Industry": "automotive",
+    "Work Location": "studio"
+  },
+  "industrial engineer": {
+    "Duty": "improve production",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "industrial-organizational psychologist": {
+    "Duty": "help organizations improve their performance",
+    "Industry": "consulting",
+    "Work Location": "university"
+  },
+  "information clerk": {
+    "Duty": "provide information",
+    "Industry": "public administration",
+    "Work Location": "office"
+  },
+  "inspector": {
+    "Duty": "investigate crimes",
+    "Industry": "mining",
+    "Work Location": "office"
+  },
+  "installer": {
+    "Duty": "install equipment",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "instructional coordinator": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "instructor": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "insulation worker": {
+    "Duty": "insulate",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "insurance underwriter": {
+    "Duty": "assess risk",
+    "Industry": "insurance",
+    "Work Location": "office"
+  },
+  "interior designer": {
+    "Duty": "design interiors",
+    "Industry": "architecture",
+    "Work Location": "office"
+  },
+  "internist": {
+    "Duty": "treat patients",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "interpreter": {
+    "Duty": "translate",
+    "Industry": "film",
+    "Work Location": "office"
+  },
+  "interviewer": {
+    "Duty": "ask questions",
+    "Industry": "radio",
+    "Work Location": "office"
+  },
+  "investigator": {
+    "Duty": "investigate",
+    "Industry": "private investigator",
+    "Work Location": "police station"
+  },
+  "jailer": {
+    "Duty": "keep prisoners in jail",
+    "Industry": "prison",
+    "Work Location": "prison"
+  },
+  "janitor": {
+    "Duty": "clean the building",
+    "Industry": "janitorial services",
+    "Work Location": "school"
+  },
+  "jeweler": {
+    "Duty": "sell jewelry",
+    "Industry": "jewelry",
+    "Work Location": "workshop"
+  },
+  "journalist": {
+    "Duty": "report news",
+    "Industry": "journalism",
+    "Work Location": "newspaper office"
+  },
+  "judge": {
+    "Duty": "decide cases",
+    "Industry": "law",
+    "Work Location": "court"
+  },
+  "kettle operator": {
+    "Duty": "boil water",
+    "Industry": "steel mill",
+    "Work Location": "factory"
+  },
+  "kiln operator": {
+    "Duty": "operate kiln",
+    "Industry": "glass",
+    "Work Location": "factory"
+  },
+  "kindergarten teacher": {
+    "Duty": "teach children",
+    "Industry": "education",
+    "Work Location": "kindergarten"
+  },
+  "laboratory technician": {
+    "Duty": "perform tests",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "laborer": {
+    "Duty": "work",
+    "Industry": "agriculture",
+    "Work Location": "construction site"
+  },
+  "lactation consultant": {
+    "Duty": "help mothers breastfeed",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "landscape architect": {
+    "Duty": "design landscapes",
+    "Industry": "landscape architecture",
+    "Work Location": "office"
+  },
+  "landscaping worker": {
+    "Duty": "maintain lawns",
+    "Industry": "landscaping",
+    "Work Location": "garden"
+  },
+  "lathe setter": {
+    "Duty": "set lathes",
+    "Industry": "automobile",
+    "Work Location": "factory"
+  },
+  "laundry worker": {
+    "Duty": "wash clothes",
+    "Industry": "laundry",
+    "Work Location": "laundry"
+  },
+  "law teacher": {
+    "Duty": "teach law",
+    "Industry": "law",
+    "Work Location": "university"
+  },
+  "lawyer": {
+    "Duty": "represent clients in court and to report news",
+    "Industry": "law",
+    "Work Location": "office"
+  },
+  "layout worker": {
+    "Duty": "lay out pages",
+    "Industry": "printing",
+    "Work Location": "factory"
+  },
+  "leather worker": {
+    "Duty": "make leather products",
+    "Industry": "leather industry",
+    "Work Location": "factory"
+  },
+  "legal assistant": {
+    "Duty": "assist attorneys in court",
+    "Industry": "law",
+    "Work Location": "law firm"
+  },
+  "legal secretary": {
+    "Duty": "type up legal documents",
+    "Industry": "law",
+    "Work Location": "office"
+  },
+  "legislator": {
+    "Duty": "make laws",
+    "Industry": "politics",
+    "Work Location": "parliament"
+  },
+  "librarian": {
+    "Duty": "provide information",
+    "Industry": "library",
+    "Work Location": "library"
+  },
+  "library assistant": {
+    "Duty": "help patrons find information",
+    "Industry": "library",
+    "Work Location": "library"
+  },
+  "library technician": {
+    "Duty": "help patrons find information",
+    "Industry": "library",
+    "Work Location": "library"
+  },
+  "life coach": {
+    "Duty": "help people live their best lives",
+    "Industry": "coaching",
+    "Work Location": "office"
+  },
+  "life scientist": {
+    "Duty": "discover new knowledge",
+    "Industry": "biotechnology",
+    "Work Location": "laboratory"
+  },
+  "lifeguard": {
+    "Duty": "save lives",
+    "Industry": "lifeguard",
+    "Work Location": "swimming pool"
+  },
+  "lighting technician": {
+    "Duty": "light the stage",
+    "Industry": "film",
+    "Work Location": "theatre"
+  },
+  "line installer": {
+    "Duty": "install lines",
+    "Industry": "telecommunications",
+    "Work Location": "telephone company"
+  },
+  "linguist": {
+    "Duty": "translate texts",
+    "Industry": "academia",
+    "Work Location": "university"
+  },
+  "literacy teacher": {
+    "Duty": "teach literacy",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "literature teacher": {
+    "Duty": "teach literature",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "loan clerk": {
+    "Duty": "process loans",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "loan interviewer": {
+    "Duty": "sell loans",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "loan officer": {
+    "Duty": "make loans",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "lobby attendant": {
+    "Duty": "lobby for clients",
+    "Industry": "hospitality",
+    "Work Location": "hotel"
+  },
+  "locksmith": {
+    "Duty": "open locks",
+    "Industry": "locksmith",
+    "Work Location": "workshop"
+  },
+  "locomotive engineer": {
+    "Duty": "drive train",
+    "Industry": "rail transport",
+    "Work Location": "railway"
+  },
+  "locomotive firer": {
+    "Duty": "fire the locomotive",
+    "Industry": "railways",
+    "Work Location": "railway"
+  },
+  "lodging manager": {
+    "Duty": "provide lodging",
+    "Industry": "hospitality",
+    "Work Location": "hotel"
+  },
+  "log grader": {
+    "Duty": "grade logs",
+    "Industry": "logging",
+    "Work Location": "forest"
+  },
+  "logging worker": {
+    "Duty": "fell trees",
+    "Industry": "logging",
+    "Work Location": "forest"
+  },
+  "logistician": {
+    "Duty": "deliver goods",
+    "Industry": "logistics",
+    "Work Location": "warehouse"
+  },
+  "machine feeder": {
+    "Duty": "feed the machine",
+    "Industry": "food industry",
+    "Work Location": "factory"
+  },
+  "machinist": {
+    "Duty": "make parts",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "magistrate": {
+    "Duty": "administer justice",
+    "Industry": "law",
+    "Work Location": "court"
+  },
+  "magistrate judge": {
+    "Duty": "decide cases",
+    "Industry": "law",
+    "Work Location": "courtroom"
+  },
+  "maid": {
+    "Duty": "clean house",
+    "Industry": "domestic service",
+    "Work Location": "hotel"
+  },
+  "mail clerk": {
+    "Duty": "deliver mail",
+    "Industry": "post office",
+    "Work Location": "post office"
+  },
+  "mail superintendent": {
+    "Duty": "deliver mail",
+    "Industry": "railroad",
+    "Work Location": "post office"
+  },
+  "maintenance painter": {
+    "Duty": "paint houses",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "maintenance worker": {
+    "Duty": "maintain the building",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "makeup artist": {
+    "Duty": "make people look good",
+    "Industry": "film",
+    "Work Location": "film studio"
+  },
+  "management analyst": {
+    "Duty": "advise management",
+    "Industry": "management consulting",
+    "Work Location": "office"
+  },
+  "manager": {
+    "Duty": "manage the company",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "manicurist": {
+    "Duty": "cut nails",
+    "Industry": "beauty",
+    "Work Location": "beauty salon"
+  },
+  "mapping technician": {
+    "Duty": "map the world",
+    "Industry": "mining",
+    "Work Location": "office"
+  },
+  "marble setter": {
+    "Duty": "set marble",
+    "Industry": "marble industry",
+    "Work Location": "factory"
+  },
+  "marine engineer": {
+    "Duty": "maintain ships",
+    "Industry": "shipbuilding",
+    "Work Location": "ship"
+  },
+  "marine oiler": {
+    "Duty": "keep the ship afloat",
+    "Industry": "navy",
+    "Work Location": "ship"
+  },
+  "marketing manager": {
+    "Duty": "sell products",
+    "Industry": "marketing",
+    "Work Location": "office"
+  },
+  "marketing specialist": {
+    "Duty": "sell products",
+    "Industry": "marketing",
+    "Work Location": "office"
+  },
+  "marriage therapist": {
+    "Duty": "help couples",
+    "Industry": "marriage therapist",
+    "Work Location": "office"
+  },
+  "massage therapist": {
+    "Duty": "massage clients",
+    "Industry": "massage therapy",
+    "Work Location": "spa"
+  },
+  "material mover": {
+    "Duty": "move material",
+    "Industry": "construction",
+    "Work Location": "warehouse"
+  },
+  "materials engineer": {
+    "Duty": "design materials",
+    "Industry": "automotive",
+    "Work Location": "laboratory"
+  },
+  "materials scientist": {
+    "Duty": "study materials",
+    "Industry": "materials science",
+    "Work Location": "laboratory"
+  },
+  "mathematical technician": {
+    "Duty": "solve mathematical problems",
+    "Industry": "mathematics",
+    "Work Location": "university"
+  },
+  "mathematician": {
+    "Duty": "prove theorems",
+    "Industry": "mathematics",
+    "Work Location": "university"
+  },
+  "maxillofacial surgeon": {
+    "Duty": "perform surgery",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "measurer": {
+    "Duty": "measure",
+    "Industry": "agriculture",
+    "Work Location": "factory"
+  },
+  "meat cutter": {
+    "Duty": "cut meat",
+    "Industry": "meat packing",
+    "Work Location": "butcher shop"
+  },
+  "meat packer": {
+    "Duty": "sell meat",
+    "Industry": "meat packing",
+    "Work Location": "slaughterhouse"
+  },
+  "meat trimmer": {
+    "Duty": "trim meat",
+    "Industry": "meat processing",
+    "Work Location": "slaughterhouse"
+  },
+  "mechanic": {
+    "Duty": "fix cars",
+    "Industry": "automotive",
+    "Work Location": "garage"
+  },
+  "mechanical drafter": {
+    "Duty": "draw blueprints",
+    "Industry": "automotive",
+    "Work Location": "office"
+  },
+  "mechanical engineer": {
+    "Duty": "design machines",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "mediator": {
+    "Duty": "help parties reach agreement",
+    "Industry": "business",
+    "Work Location": "office"
+  },
+  "medical assistant": {
+    "Duty": "assist doctors",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "medical receptionist": {
+    "Duty": "greet patients and schedule appointments",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "medical scientist": {
+    "Duty": "find cures for diseases",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "medical secretary": {
+    "Duty": "type medical reports",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "medical transcriptionist": {
+    "Duty": "transcribe medical reports",
+    "Industry": "healthcare",
+    "Work Location": "home"
+  },
+  "meeting planner": {
+    "Duty": "plan meetings",
+    "Industry": "travel",
+    "Work Location": "hotel"
+  },
+  "merchandise displayer": {
+    "Duty": "display merchandise",
+    "Industry": "retail",
+    "Work Location": "store"
+  },
+  "messenger": {
+    "Duty": "deliver messages",
+    "Industry": "messenger",
+    "Work Location": "office"
+  },
+  "metal caster": {
+    "Duty": "cast metal",
+    "Industry": "foundry",
+    "Work Location": "factory"
+  },
+  "metal patternmaker": {
+    "Duty": "make metal patterns",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "metal pourer": {
+    "Duty": "pour metal",
+    "Industry": "foundry",
+    "Work Location": "factory"
+  },
+  "metal worker": {
+    "Duty": "make metal products",
+    "Industry": "metal industry",
+    "Work Location": "factory"
+  },
+  "meteorologist": {
+    "Duty": "predict weather",
+    "Industry": "television",
+    "Work Location": "weather station"
+  },
+  "meter reader": {
+    "Duty": "read meters",
+    "Industry": "electricity",
+    "Work Location": "city"
+  },
+  "microbiologist": {
+    "Duty": "study microbes",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "midwife": {
+    "Duty": "help women give birth",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "midwifery assistant": {
+    "Duty": "help women give birth",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "military officer": {
+    "Duty": "obey orders",
+    "Industry": "military",
+    "Work Location": "army"
+  },
+  "millwright": {
+    "Duty": "repair mills",
+    "Industry": "millwright",
+    "Work Location": "factory"
+  },
+  "mining engineer": {
+    "Duty": "extract minerals",
+    "Industry": "mining",
+    "Work Location": "mine"
+  },
+  "model": {
+    "Duty": "model",
+    "Industry": "fashion",
+    "Work Location": "studio"
+  },
+  "model maker": {
+    "Duty": "make models",
+    "Industry": "film",
+    "Work Location": "studio"
+  },
+  "molder": {
+    "Duty": "mold",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "mortician": {
+    "Duty": "prepare bodies for burial",
+    "Industry": "funeral home",
+    "Work Location": "cemetery"
+  },
+  "motorboat mechanic": {
+    "Duty": "repair motors",
+    "Industry": "motorboat mechanic",
+    "Work Location": "garage"
+  },
+  "motorboat operator": {
+    "Duty": "operate motorboat safely",
+    "Industry": "fishing",
+    "Work Location": "sea"
+  },
+  "motorcycle mechanic": {
+    "Duty": "repair motorcycles",
+    "Industry": "motorcycle racing",
+    "Work Location": "garage"
+  },
+  "movers": {
+    "Duty": "move furniture",
+    "Industry": "moving",
+    "Work Location": "moving company"
+  },
+  "multimedia artist": {
+    "Duty": "create art",
+    "Industry": "advertising",
+    "Work Location": "studio"
+  },
+  "museum technician": {
+    "Duty": "preserve artifacts",
+    "Industry": "museums",
+    "Work Location": "museum"
+  },
+  "music director": {
+    "Duty": "conduct orchestra",
+    "Industry": "film",
+    "Work Location": "orchestra"
+  },
+  "music teacher": {
+    "Duty": "teach music",
+    "Industry": "music",
+    "Work Location": "school"
+  },
+  "music therapist": {
+    "Duty": "help people through music",
+    "Industry": "music therapy",
+    "Work Location": "hospital"
+  },
+  "musician": {
+    "Duty": "entertain people",
+    "Industry": "music",
+    "Work Location": "studio"
+  },
+  "naval architect": {
+    "Duty": "design ships",
+    "Industry": "shipbuilding",
+    "Work Location": "shipyard"
+  },
+  "news vendor": {
+    "Duty": "sell news",
+    "Industry": "news vendor",
+    "Work Location": "street"
+  },
+  "nuclear engineer": {
+    "Duty": "design safe reactors",
+    "Industry": "nuclear power",
+    "Work Location": "nuclear power plant"
+  },
+  "nuclear technician": {
+    "Duty": "operate nuclear reactor",
+    "Industry": "nuclear power",
+    "Work Location": "nuclear power plant"
+  },
+  "nurse": {
+    "Duty": "care for patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "nurse practitioner": {
+    "Duty": "provide health care",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "nursing aide": {
+    "Duty": "care for patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "nursing instructor": {
+    "Duty": "teach nursing",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "nursing teacher": {
+    "Duty": "teach nursing",
+    "Industry": "nursing",
+    "Work Location": "hospital"
+  },
+  "nutrition coach": {
+    "Duty": "help clients achieve their health goals",
+    "Industry": "health and wellness",
+    "Work Location": "gym"
+  },
+  "nutritionist": {
+    "Duty": "advise clients on diet",
+    "Industry": "food",
+    "Work Location": "hospital"
+  },
+  "obstetrician": {
+    "Duty": "deliver babies",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "occupational therapist": {
+    "Duty": "help people with disabilities",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "offbearer": {
+    "Duty": "carry the flag",
+    "Industry": "mining",
+    "Work Location": "office"
+  },
+  "office clerk": {
+    "Duty": "keep office running smoothly",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "operating engineer": {
+    "Duty": "operate equipment",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "operations manager": {
+    "Duty": "manage operations",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "operator": {
+    "Duty": "operate the machine",
+    "Industry": "mining",
+    "Work Location": "factory"
+  },
+  "optician": {
+    "Duty": "correct vision",
+    "Industry": "optician",
+    "Work Location": "shop"
+  },
+  "optometrist": {
+    "Duty": "test eyesight",
+    "Industry": "health care",
+    "Work Location": "clinic"
+  },
+  "oral surgeon": {
+    "Duty": "perform surgery",
+    "Industry": "dentistry",
+    "Work Location": "hospital"
+  },
+  "order clerk": {
+    "Duty": "issue orders",
+    "Industry": "retail",
+    "Work Location": "office"
+  },
+  "order filler": {
+    "Duty": "fill orders",
+    "Industry": "retail",
+    "Work Location": "warehouse"
+  },
+  "orderly": {
+    "Duty": "keep the peace",
+    "Industry": "hospital",
+    "Work Location": "hospital"
+  },
+  "orthodontist": {
+    "Duty": "straighten teeth",
+    "Industry": "dentistry",
+    "Work Location": "clinic"
+  },
+  "orthotist": {
+    "Duty": "fit braces",
+    "Industry": "orthotics",
+    "Work Location": "hospital"
+  },
+  "oven operator": {
+    "Duty": "bake bread",
+    "Industry": "bakery",
+    "Work Location": "factory"
+  },
+  "packer": {
+    "Duty": "pack goods",
+    "Industry": "food",
+    "Work Location": "warehouse"
+  },
+  "painter": {
+    "Duty": "paint pictures",
+    "Industry": "artist",
+    "Work Location": "studio"
+  },
+  "painting worker": {
+    "Duty": "paint",
+    "Industry": "painting",
+    "Work Location": "studio"
+  },
+  "paperhanger": {
+    "Duty": "hang paper",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "paralegal": {
+    "Duty": "assist attorneys in court",
+    "Industry": "law",
+    "Work Location": "law firm"
+  },
+  "paramedic": {
+    "Duty": "save lives",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "parking attendant": {
+    "Duty": "enforce parking rules",
+    "Industry": "parking",
+    "Work Location": "parking lot"
+  },
+  "parts salesperson": {
+    "Duty": "sell parts",
+    "Industry": "automotive",
+    "Work Location": "auto parts store"
+  },
+  "passenger attendant": {
+    "Duty": "serve passengers",
+    "Industry": "airline",
+    "Work Location": "airport"
+  },
+  "payroll clerk": {
+    "Duty": "pay employees",
+    "Industry": "banking",
+    "Work Location": "office"
+  },
+  "pediatric nurse": {
+    "Duty": "care for children",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "pediatrician": {
+    "Duty": "care for children",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "pedicurist": {
+    "Duty": "trim toenails",
+    "Industry": "beauty",
+    "Work Location": "beauty salon"
+  },
+  "personal chef": {
+    "Duty": "cook food",
+    "Industry": "food and beverage",
+    "Work Location": "private home"
+  },
+  "personal trainer": {
+    "Duty": "help clients achieve their fitness goals",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "pesticide applicator": {
+    "Duty": "apply pesticides",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "pesticide handler": {
+    "Duty": "apply pesticides",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "pesticide sprayer": {
+    "Duty": "spray pesticides",
+    "Industry": "agriculture",
+    "Work Location": "field"
+  },
+  "petroleum engineer": {
+    "Duty": "find oil",
+    "Industry": "oil and gas",
+    "Work Location": "oil field"
+  },
+  "petroleum gauger": {
+    "Duty": "measure petroleum",
+    "Industry": "petroleum",
+    "Work Location": "oil field"
+  },
+  "petroleum technician": {
+    "Duty": "drill for oil",
+    "Industry": "oil and gas",
+    "Work Location": "oil field"
+  },
+  "pharmacist": {
+    "Duty": "dispense medicines",
+    "Industry": "pharmaceutical industry",
+    "Work Location": "pharmacy"
+  },
+  "pharmacy aide": {
+    "Duty": "dispense medications",
+    "Industry": "pharmacy",
+    "Work Location": "pharmacy"
+  },
+  "pharmacy technician": {
+    "Duty": "dispense medications",
+    "Industry": "pharmacy",
+    "Work Location": "pharmacy"
+  },
+  "philosophy teacher": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "phlebotomist": {
+    "Duty": "draw blood",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "photogrammetrist": {
+    "Duty": "measure and map the earth",
+    "Industry": "photogrammetry",
+    "Work Location": "office"
+  },
+  "photographer": {
+    "Duty": "take pictures",
+    "Industry": "photography",
+    "Work Location": "studio"
+  },
+  "physical therapist": {
+    "Duty": "help patients recover from injuries",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "physician": {
+    "Duty": "heal patients",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "physician assistant": {
+    "Duty": "assist physician",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "physicist": {
+    "Duty": "discover truth",
+    "Industry": "physics",
+    "Work Location": "laboratory"
+  },
+  "physics teacher": {
+    "Duty": "teach physics",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "pilates instructor": {
+    "Duty": "teach clients how to do pilates",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  },
+  "pile-driver operator": {
+    "Duty": "drive pile",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "pilot": {
+    "Duty": "fly plane",
+    "Industry": "aviation",
+    "Work Location": "airport"
+  },
+  "pipefitter": {
+    "Duty": "install pipes",
+    "Industry": "oil and gas",
+    "Work Location": "factory"
+  },
+  "pipelayer": {
+    "Duty": "lay pipes",
+    "Industry": "oil and gas",
+    "Work Location": "construction site"
+  },
+  "planning clerk": {
+    "Duty": "plan",
+    "Industry": "construction",
+    "Work Location": "office"
+  },
+  "plant operator": {
+    "Duty": "operate plant",
+    "Industry": "mining",
+    "Work Location": "factory"
+  },
+  "plant scientist": {
+    "Duty": "study plants",
+    "Industry": "agriculture",
+    "Work Location": "laboratory"
+  },
+  "plasterer": {
+    "Duty": "plaster walls",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "plastic patternmaker": {
+    "Duty": "make plastic models of clothes",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "plastic worker": {
+    "Duty": "make plastic",
+    "Industry": "plastics",
+    "Work Location": "factory"
+  },
+  "play therapist": {
+    "Duty": "help children",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "plumber": {
+    "Duty": "fix leaks",
+    "Industry": "plumbing",
+    "Work Location": "house"
+  },
+  "podiatrist": {
+    "Duty": "treat foot problems",
+    "Industry": "health care",
+    "Work Location": "clinic"
+  },
+  "police dispatcher": {
+    "Duty": "answer calls for help",
+    "Industry": "police",
+    "Work Location": "police station"
+  },
+  "police officer": {
+    "Duty": "enforce laws",
+    "Industry": "police",
+    "Work Location": "police station"
+  },
+  "political scientist": {
+    "Duty": "study politics",
+    "Industry": "politics",
+    "Work Location": "university"
+  },
+  "postmaster": {
+    "Duty": "deliver mail",
+    "Industry": "post office",
+    "Work Location": "post office"
+  },
+  "postsecondary teacher": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "poultry cutter": {
+    "Duty": "cut up chickens",
+    "Industry": "poultry processing",
+    "Work Location": "slaughterhouse"
+  },
+  "poultry trimmer": {
+    "Duty": "trim poultry",
+    "Industry": "poultry processing",
+    "Work Location": "slaughterhouse"
+  },
+  "power dispatcher": {
+    "Duty": "dispatch power",
+    "Industry": "power generation",
+    "Work Location": "power station"
+  },
+  "power distributor": {
+    "Duty": "distribute power",
+    "Industry": "power distribution",
+    "Work Location": "power station"
+  },
+  "prepress technician": {
+    "Duty": "prepare the final version of the printed material",
+    "Industry": "printing",
+    "Work Location": "printing house"
+  },
+  "preschool teacher": {
+    "Duty": "teach children",
+    "Industry": "education",
+    "Work Location": "kindergarten"
+  },
+  "presser": {
+    "Duty": "make sure that the news is reported accurately",
+    "Industry": "clothing",
+    "Work Location": "factory"
+  },
+  "priest": {
+    "Duty": "preach the gospel",
+    "Industry": "Catholic Church",
+    "Work Location": "church"
+  },
+  "private detective": {
+    "Duty": "investigate",
+    "Industry": "private detective",
+    "Work Location": "office"
+  },
+  "probation officer": {
+    "Duty": "supervise offenders",
+    "Industry": "probation",
+    "Work Location": "prison"
+  },
+  "procurement clerk": {
+    "Duty": "procure goods and services for the company",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "producer": {
+    "Duty": "produce a film",
+    "Industry": "film",
+    "Work Location": "studio"
+  },
+  "product manager": {
+    "Duty": "sell products",
+    "Industry": "software",
+    "Work Location": "office"
+  },
+  "product promoter": {
+    "Duty": "promote products",
+    "Industry": "food and beverage",
+    "Work Location": "office"
+  },
+  "production clerk": {
+    "Duty": "produce a product",
+    "Industry": "manufacturing",
+    "Work Location": "factory"
+  },
+  "production occupation": {
+    "Duty": "produce goods",
+    "Industry": "film industry",
+    "Work Location": "factory"
+  },
+  "professor": {
+    "Duty": "teach students",
+    "Industry": "university",
+    "Work Location": "university"
+  },
+  "promotions manager": {
+    "Duty": "promote products",
+    "Industry": "advertising",
+    "Work Location": "office"
+  },
+  "proofreader": {
+    "Duty": "check for errors in text",
+    "Industry": "publishing",
+    "Work Location": "office"
+  },
+  "property appraiser": {
+    "Duty": "determine value of property",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "property manager": {
+    "Duty": "manage property",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "prosthetist": {
+    "Duty": "make artificial limbs",
+    "Industry": "prosthetics",
+    "Work Location": "hospital"
+  },
+  "prosthodontist": {
+    "Duty": "restore teeth",
+    "Industry": "dentistry",
+    "Work Location": "dental clinic"
+  },
+  "psychiatric aide": {
+    "Duty": "help patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "psychiatric technician": {
+    "Duty": "care for patients",
+    "Industry": "mental health",
+    "Work Location": "hospital"
+  },
+  "psychiatrist": {
+    "Duty": "treat patients",
+    "Industry": "psychiatry",
+    "Work Location": "hospital"
+  },
+  "psychologist": {
+    "Duty": "help people",
+    "Industry": "psychology",
+    "Work Location": "office"
+  },
+  "psychology teacher": {
+    "Duty": "teach psychology",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "pump operator": {
+    "Duty": "pump water",
+    "Industry": "oil and gas",
+    "Work Location": "factory"
+  },
+  "purchasing agent": {
+    "Duty": "buy goods at lowest price",
+    "Industry": "retail",
+    "Work Location": "office"
+  },
+  "purchasing manager": {
+    "Duty": "buy goods at the lowest price",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "radiation therapist": {
+    "Duty": "treat patients with radiation",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "radio announcer": {
+    "Duty": "read news",
+    "Industry": "radio",
+    "Work Location": "radio station"
+  },
+  "radio operator": {
+    "Duty": "transmit messages",
+    "Industry": "radio",
+    "Work Location": "radio station"
+  },
+  "radiologic technician": {
+    "Duty": "take x-rays",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "radiologic technologist": {
+    "Duty": "perform diagnostic imaging procedures",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "railroad conductor": {
+    "Duty": "get passengers to their destination",
+    "Industry": "railroad",
+    "Work Location": "train"
+  },
+  "railroad police": {
+    "Duty": "protect railroad property",
+    "Industry": "railroad police",
+    "Work Location": "railway"
+  },
+  "rancher": {
+    "Duty": "raise cattle",
+    "Industry": "agriculture",
+    "Work Location": "ranch"
+  },
+  "rebar worker": {
+    "Duty": "build bridges",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "receiving clerk": {
+    "Duty": "receive and distribute mail",
+    "Industry": "manufacturing",
+    "Work Location": "office"
+  },
+  "receptionist": {
+    "Duty": "greet visitors",
+    "Industry": "healthcare",
+    "Work Location": "office"
+  },
+  "record clerk": {
+    "Duty": "record court proceedings",
+    "Industry": "music",
+    "Work Location": "office"
+  },
+  "recreation manager": {
+    "Duty": "provide recreation facilities",
+    "Industry": "recreation",
+    "Work Location": "park"
+  },
+  "recreation teacher": {
+    "Duty": "teach children how to play",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "recreation worker": {
+    "Duty": "help people have fun",
+    "Industry": "recreation",
+    "Work Location": "camp"
+  },
+  "recreational therapist": {
+    "Duty": "help patients recover from illness",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "referee": {
+    "Duty": "make a decision",
+    "Industry": "football",
+    "Work Location": "stadium"
+  },
+  "refrigeration installer": {
+    "Duty": "install refrigerators",
+    "Industry": "refrigeration",
+    "Work Location": "factory"
+  },
+  "refrigeration mechanic": {
+    "Duty": "repair refrigerators",
+    "Industry": "refrigeration",
+    "Work Location": "factory"
+  },
+  "refuse collector": {
+    "Duty": "collect refuse",
+    "Industry": "refuse collection",
+    "Work Location": "street"
+  },
+  "regional planner": {
+    "Duty": "plan for the future",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "registered dietitian": {
+    "Duty": "provide nutrition counseling",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "registered nurse": {
+    "Duty": "care for patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "rehabilitation counselor": {
+    "Duty": "help clients overcome their problems",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "reiki practitioner": {
+    "Duty": "heal people",
+    "Industry": "reiki",
+    "Work Location": "home"
+  },
+  "related repairer": {
+    "Duty": "repair the car",
+    "Industry": "related repairer",
+    "Work Location": "factory"
+  },
+  "related worker": {
+    "Duty": "do his job",
+    "Industry": "related worker",
+    "Work Location": "office"
+  },
+  "religion teacher": {
+    "Duty": "teach religion",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "religious worker": {
+    "Duty": "preach the gospel",
+    "Industry": "religious worker",
+    "Work Location": "church"
+  },
+  "rental clerk": {
+    "Duty": "rent out apartments",
+    "Industry": "rental clerk",
+    "Work Location": "office"
+  },
+  "repair worker": {
+    "Duty": "fix things",
+    "Industry": "automotive",
+    "Work Location": "garage"
+  },
+  "repairer": {
+    "Duty": "repair things",
+    "Industry": "automobile",
+    "Work Location": "workshop"
+  },
+  "reporter": {
+    "Duty": "report news",
+    "Industry": "journalism",
+    "Work Location": "newspaper office"
+  },
+  "research scientist": {
+    "Duty": "publish research results",
+    "Industry": "pharmaceuticals",
+    "Work Location": "laboratory"
+  },
+  "residential advisor": {
+    "Duty": "protect students",
+    "Industry": "education",
+    "Work Location": "dormitory"
+  },
+  "respiratory therapist": {
+    "Duty": "treat patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "retail buyer": {
+    "Duty": "buy goods for the store",
+    "Industry": "retail",
+    "Work Location": "store"
+  },
+  "retail salesperson": {
+    "Duty": "sell products",
+    "Industry": "retail",
+    "Work Location": "store"
+  },
+  "revenue agent": {
+    "Duty": "collect taxes",
+    "Industry": "Internal Revenue Service",
+    "Work Location": "office"
+  },
+  "rigger": {
+    "Duty": "rig a ship",
+    "Industry": "oil and gas",
+    "Work Location": "shipyard"
+  },
+  "rock splitter": {
+    "Duty": "split rocks",
+    "Industry": "mining",
+    "Work Location": "quarry"
+  },
+  "roof bolter": {
+    "Duty": "keep roof from falling on him",
+    "Industry": "mining",
+    "Work Location": "mine"
+  },
+  "roofer": {
+    "Duty": "repair roofs",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "roustabout": {
+    "Duty": "roust around",
+    "Industry": "oil",
+    "Work Location": "oil rig"
+  },
+  "safe repairer": {
+    "Duty": "repair cars",
+    "Industry": "safe repairer",
+    "Work Location": "factory"
+  },
+  "sailor": {
+    "Duty": "sail ship",
+    "Industry": "shipbuilding",
+    "Work Location": "ship"
+  },
+  "sales engineer": {
+    "Duty": "sell products",
+    "Industry": "automotive",
+    "Work Location": "office"
+  },
+  "sales manager": {
+    "Duty": "sell products",
+    "Industry": "automotive",
+    "Work Location": "office"
+  },
+  "sales representative": {
+    "Duty": "sell products",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "sampler": {
+    "Duty": "make samplers",
+    "Industry": "textile",
+    "Work Location": "factory"
+  },
+  "scaler": {
+    "Duty": "scale the mountain",
+    "Industry": "gaming",
+    "Work Location": "office"
+  },
+  "school psychologist": {
+    "Duty": "help students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "scout leader": {
+    "Duty": "teach boys how to be good citizens",
+    "Industry": "scouting",
+    "Work Location": "camp"
+  },
+  "sculptor": {
+    "Duty": "create art",
+    "Industry": "art",
+    "Work Location": "studio"
+  },
+  "secretary": {
+    "Duty": "type letters",
+    "Industry": "education",
+    "Work Location": "office"
+  },
+  "security guard": {
+    "Duty": "protect people and property",
+    "Industry": "security guard",
+    "Work Location": "shopping mall"
+  },
+  "segmental paver": {
+    "Duty": "lay pavers",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "semiconductor processor": {
+    "Duty": "process semiconductors",
+    "Industry": "Intel",
+    "Work Location": "factory"
+  },
+  "service technician": {
+    "Duty": "repair equipment",
+    "Industry": "automotive",
+    "Work Location": "service center"
+  },
+  "set designer": {
+    "Duty": "create a set",
+    "Industry": "film",
+    "Work Location": "theatre"
+  },
+  "shampooer": {
+    "Duty": "wash hair",
+    "Industry": "beauty",
+    "Work Location": "salon"
+  },
+  "shaper": {
+    "Duty": "make things beautiful",
+    "Industry": "surfing",
+    "Work Location": "factory"
+  },
+  "ship captain": {
+    "Duty": "navigate ship",
+    "Industry": "shipping",
+    "Work Location": "ship"
+  },
+  "ship engineer": {
+    "Duty": "keep the ship afloat",
+    "Industry": "shipbuilding",
+    "Work Location": "ship"
+  },
+  "ship loader": {
+    "Duty": "load ships",
+    "Industry": "shipbuilding",
+    "Work Location": "port"
+  },
+  "shipmate": {
+    "Duty": "obey orders",
+    "Industry": "shipbuilding",
+    "Work Location": "ship"
+  },
+  "shipping clerk": {
+    "Duty": "ship goods",
+    "Industry": "shipping",
+    "Work Location": "office"
+  },
+  "shoe worker": {
+    "Duty": "make shoes",
+    "Industry": "shoe industry",
+    "Work Location": "factory"
+  },
+  "shuttle driver": {
+    "Duty": "drive shuttle",
+    "Industry": "space travel",
+    "Work Location": "airport"
+  },
+  "signal operator": {
+    "Duty": "send messages",
+    "Industry": "telecommunications",
+    "Work Location": "railway station"
+  },
+  "signal repairer": {
+    "Duty": "repair signals",
+    "Industry": "railways",
+    "Work Location": "railway station"
+  },
+  "singer": {
+    "Duty": "entertain audience",
+    "Industry": "music",
+    "Work Location": "concert hall"
+  },
+  "ski patrol": {
+    "Duty": "ski patrol",
+    "Industry": "skiing",
+    "Work Location": "mountain"
+  },
+  "skincare specialist": {
+    "Duty": "provide skincare services",
+    "Industry": "beauty",
+    "Work Location": "spa"
+  },
+  "slaughterer": {
+    "Duty": "slaughter animals",
+    "Industry": "slaughterhouse",
+    "Work Location": "slaughterhouse"
+  },
+  "slot supervisor": {
+    "Duty": "ensure that the slot machines are working properly",
+    "Industry": "gaming",
+    "Work Location": "casino"
+  },
+  "social scientist": {
+    "Duty": "study society",
+    "Industry": "academia",
+    "Work Location": "university"
+  },
+  "social worker": {
+    "Duty": "help people",
+    "Industry": "social work",
+    "Work Location": "office"
+  },
+  "sociologist": {
+    "Duty": "study society",
+    "Industry": "sociology",
+    "Work Location": "university"
+  },
+  "sociology teacher": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "university"
+  },
+  "software developer": {
+    "Duty": "write code",
+    "Industry": "finance",
+    "Work Location": "office"
+  },
+  "software engineer": {
+    "Duty": "write code",
+    "Industry": "finance",
+    "Work Location": "office"
+  },
+  "soil scientist": {
+    "Duty": "study soil",
+    "Industry": "agriculture",
+    "Work Location": "laboratory"
+  },
+  "solderer": {
+    "Duty": "fight for his country",
+    "Industry": "electronics",
+    "Work Location": "factory"
+  },
+  "sonographer": {
+    "Duty": "perform ultrasound",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "sorter": {
+    "Duty": "sort mail",
+    "Industry": "textile",
+    "Work Location": "warehouse"
+  },
+  "space scientist": {
+    "Duty": "study space",
+    "Industry": "space exploration",
+    "Work Location": "space station"
+  },
+  "speech therapist": {
+    "Duty": "help people speak",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "speech-language pathologist": {
+    "Duty": "help people communicate",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "sports competitor": {
+    "Duty": "win",
+    "Industry": "football",
+    "Work Location": "stadium"
+  },
+  "sports entertainer": {
+    "Duty": "entertain",
+    "Industry": "professional wrestling",
+    "Work Location": "stadium"
+  },
+  "sports performer": {
+    "Duty": "perform",
+    "Industry": "football",
+    "Work Location": "stadium"
+  },
+  "stationary engineer": {
+    "Duty": "keep the boiler running",
+    "Industry": "power generation",
+    "Work Location": "power plant"
+  },
+  "statistical assistant": {
+    "Duty": "collect data",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "statistician": {
+    "Duty": "report facts",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "steamfitter": {
+    "Duty": "install pipes",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "steel worker": {
+    "Duty": "make steel",
+    "Industry": "steel mill",
+    "Work Location": "factory"
+  },
+  "stock clerk": {
+    "Duty": "stock shelves",
+    "Industry": "retail",
+    "Work Location": "warehouse"
+  },
+  "stock mover": {
+    "Duty": "make money for his clients",
+    "Industry": "finance",
+    "Work Location": "warehouse"
+  },
+  "stocker": {
+    "Duty": "stock shelves",
+    "Industry": "retail",
+    "Work Location": "warehouse"
+  },
+  "stonemason": {
+    "Duty": "build walls",
+    "Industry": "stonemasonry",
+    "Work Location": "construction site"
+  },
+  "street vendor": {
+    "Duty": "sell goods",
+    "Industry": "street vendor",
+    "Work Location": "street"
+  },
+  "streetcar operator": {
+    "Duty": "drive streetcar",
+    "Industry": "streetcar",
+    "Work Location": "streetcar"
+  },
+  "stucco mason": {
+    "Duty": "lay stucco",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "subway operator": {
+    "Duty": "transport passengers",
+    "Industry": "transportation",
+    "Work Location": "subway"
+  },
+  "surgeon": {
+    "Duty": "heal patients",
+    "Industry": "medicine",
+    "Work Location": "hospital"
+  },
+  "surgical technologist": {
+    "Duty": "assist surgeon in operating room",
+    "Industry": "healthcare",
+    "Work Location": "hospital"
+  },
+  "survey researcher": {
+    "Duty": "report the truth",
+    "Industry": "market research",
+    "Work Location": "university"
+  },
+  "surveying technician": {
+    "Duty": "survey land",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "surveyor": {
+    "Duty": "survey land",
+    "Industry": "construction",
+    "Work Location": "office"
+  },
+  "switch operator": {
+    "Duty": "switch trains",
+    "Industry": "railroad",
+    "Work Location": "telephone exchange"
+  },
+  "switchboard operator": {
+    "Duty": "connect calls",
+    "Industry": "telecommunications",
+    "Work Location": "office"
+  },
+  "system operator": {
+    "Duty": "operate the system",
+    "Industry": "power plant",
+    "Work Location": "power plant"
+  },
+  "systems assembler": {
+    "Duty": "assemble systems",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "tailor": {
+    "Duty": "make clothes",
+    "Industry": "tailor",
+    "Work Location": "tailor shop"
+  },
+  "taper": {
+    "Duty": "make music",
+    "Industry": "film",
+    "Work Location": "factory"
+  },
+  "tax collector": {
+    "Duty": "collect taxes",
+    "Industry": "tax collector",
+    "Work Location": "office"
+  },
+  "tax examiner": {
+    "Duty": "collect taxes",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "tax preparer": {
+    "Duty": "prepare tax returns",
+    "Industry": "tax preparation",
+    "Work Location": "office"
+  },
+  "taxi driver": {
+    "Duty": "take passengers to their destination",
+    "Industry": "taxi driver",
+    "Work Location": "city"
+  },
+  "teacher": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "teacher assistant": {
+    "Duty": "assist teachers",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "team assembler": {
+    "Duty": "assemble teams",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "technical writer": {
+    "Duty": "write technical documents",
+    "Industry": "software",
+    "Work Location": "office"
+  },
+  "technician": {
+    "Duty": "repair equipment",
+    "Industry": "automotive",
+    "Work Location": "laboratory"
+  },
+  "telemarketer": {
+    "Duty": "sell products",
+    "Industry": "telecommunications",
+    "Work Location": "call center"
+  },
+  "telephone operator": {
+    "Duty": "connect calls",
+    "Industry": "telecommunications",
+    "Work Location": "telephone exchange"
+  },
+  "television announcer": {
+    "Duty": "inform the public",
+    "Industry": "television",
+    "Work Location": "studio"
+  },
+  "teller": {
+    "Duty": "count money",
+    "Industry": "banking",
+    "Work Location": "bank"
+  },
+  "tender": {
+    "Duty": "deliver goods",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "terrazzo finisher": {
+    "Duty": "lay terrazzo floors",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "terrazzo worker": {
+    "Duty": "lay tiles",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "tester": {
+    "Duty": "test software",
+    "Industry": "software",
+    "Work Location": "laboratory"
+  },
+  "textile presser": {
+    "Duty": "press textiles",
+    "Industry": "textile",
+    "Work Location": "factory"
+  },
+  "textile worker": {
+    "Duty": "produce cloth",
+    "Industry": "textile industry",
+    "Work Location": "factory"
+  },
+  "therapist": {
+    "Duty": "help patients",
+    "Industry": "health care",
+    "Work Location": "hospital"
+  },
+  "ticket agent": {
+    "Duty": "sell tickets",
+    "Industry": "airline",
+    "Work Location": "airport"
+  },
+  "ticket taker": {
+    "Duty": "collect tickets",
+    "Industry": "entertainment",
+    "Work Location": "cinema"
+  },
+  "tile setter": {
+    "Duty": "set tiles",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "timekeeping clerk": {
+    "Duty": "keep time",
+    "Industry": "railroad",
+    "Work Location": "office"
+  },
+  "tire builder": {
+    "Duty": "build tires",
+    "Industry": "tire industry",
+    "Work Location": "factory"
+  },
+  "tire changer": {
+    "Duty": "change tires",
+    "Industry": "automotive",
+    "Work Location": "garage"
+  },
+  "tire repairer": {
+    "Duty": "repair tires",
+    "Industry": "tire repair",
+    "Work Location": "garage"
+  },
+  "title abstractor": {
+    "Duty": "prepare title abstracts",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "title examiner": {
+    "Duty": "examine title to property",
+    "Industry": "title insurance",
+    "Work Location": "office"
+  },
+  "title searcher": {
+    "Duty": "search for title defects",
+    "Industry": "real estate",
+    "Work Location": "office"
+  },
+  "tool filer": {
+    "Duty": "file tools",
+    "Industry": "tool and die maker",
+    "Work Location": "factory"
+  },
+  "tool grinder": {
+    "Duty": "grind tools",
+    "Industry": "automotive",
+    "Work Location": "factory"
+  },
+  "tool maker": {
+    "Duty": "make tools",
+    "Industry": "tool making",
+    "Work Location": "factory"
+  },
+  "tool sharpener": {
+    "Duty": "sharpen tools",
+    "Industry": "tool manufacturing",
+    "Work Location": "workshop"
+  },
+  "tour guide": {
+    "Duty": "show tourists around",
+    "Industry": "tourism",
+    "Work Location": "museum"
+  },
+  "tower operator": {
+    "Duty": "operate tower",
+    "Industry": "telecommunications",
+    "Work Location": "radio station"
+  },
+  "tractor operator": {
+    "Duty": "operate tractor",
+    "Industry": "agriculture",
+    "Work Location": "farm"
+  },
+  "traffic clerk": {
+    "Duty": "issue traffic tickets",
+    "Industry": "traffic clerk",
+    "Work Location": "office"
+  },
+  "traffic technician": {
+    "Duty": "enforce traffic laws",
+    "Industry": "traffic technician",
+    "Work Location": "traffic control center"
+  },
+  "transit police": {
+    "Duty": "protect passengers",
+    "Industry": "public transport",
+    "Work Location": "subway"
+  },
+  "translator": {
+    "Duty": "translate texts",
+    "Industry": "translation",
+    "Work Location": "office"
+  },
+  "transportation inspector": {
+    "Duty": "inspect transportation vehicles",
+    "Industry": "transportation",
+    "Work Location": "highway"
+  },
+  "transportation worker": {
+    "Duty": "drive buses",
+    "Industry": "transportation",
+    "Work Location": "airport"
+  },
+  "trapper": {
+    "Duty": "trap animals",
+    "Industry": "trapping",
+    "Work Location": "forest"
+  },
+  "travel agent": {
+    "Duty": "sell travel packages",
+    "Industry": "travel",
+    "Work Location": "office"
+  },
+  "travel clerk": {
+    "Duty": "book travel arrangements",
+    "Industry": "travel agency",
+    "Work Location": "travel agency"
+  },
+  "travel guide": {
+    "Duty": "inform tourists about the country they are visiting",
+    "Industry": "travel",
+    "Work Location": "tourist agency"
+  },
+  "tree pruner": {
+    "Duty": "prune trees",
+    "Industry": "forestry",
+    "Work Location": "forest"
+  },
+  "tree trimmer": {
+    "Duty": "trim trees",
+    "Industry": "construction",
+    "Work Location": "forest"
+  },
+  "trimmer": {
+    "Duty": "trim the hedges",
+    "Industry": "film",
+    "Work Location": "factory"
+  },
+  "truck loader": {
+    "Duty": "load trucks",
+    "Industry": "transportation",
+    "Work Location": "warehouse"
+  },
+  "truck mechanic": {
+    "Duty": "fix trucks",
+    "Industry": "trucking",
+    "Work Location": "garage"
+  },
+  "tuner": {
+    "Duty": "tune pianos",
+    "Industry": "automotive",
+    "Work Location": "garage"
+  },
+  "tutor": {
+    "Duty": "teach students",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "typist": {
+    "Duty": "type",
+    "Industry": "government",
+    "Work Location": "office"
+  },
+  "umpire": {
+    "Duty": "call balls and strikes",
+    "Industry": "baseball",
+    "Work Location": "stadium"
+  },
+  "undertaker": {
+    "Duty": "bury the dead",
+    "Industry": "funeral industry",
+    "Work Location": "cemetery"
+  },
+  "upholsterer": {
+    "Duty": "upholster furniture",
+    "Industry": "furniture",
+    "Work Location": "workshop"
+  },
+  "urban planner": {
+    "Duty": "plan cities",
+    "Industry": "architecture",
+    "Work Location": "city hall"
+  },
+  "usher": {
+    "Duty": "seat people in theater",
+    "Industry": "film",
+    "Work Location": "cinema"
+  },
+  "valve installer": {
+    "Duty": "install valves",
+    "Industry": "oil and gas",
+    "Work Location": "factory"
+  },
+  "veterinarian": {
+    "Duty": "treat animals",
+    "Industry": "veterinary medicine",
+    "Work Location": "clinic"
+  },
+  "veterinary assistant": {
+    "Duty": "care for animals",
+    "Industry": "veterinary medicine",
+    "Work Location": "clinic"
+  },
+  "veterinary technician": {
+    "Duty": "care for animals",
+    "Industry": "veterinary medicine",
+    "Work Location": "clinic"
+  },
+  "vocational counselor": {
+    "Duty": "help people find jobs",
+    "Industry": "education",
+    "Work Location": "school"
+  },
+  "waiter": {
+    "Duty": "serve food",
+    "Industry": "restaurant",
+    "Work Location": "restaurant"
+  },
+  "waitress": {
+    "Duty": "serve food",
+    "Industry": "restaurant",
+    "Work Location": "restaurant"
+  },
+  "watch repairer": {
+    "Duty": "repair watches",
+    "Industry": "watch repair",
+    "Work Location": "workshop"
+  },
+  "web developer": {
+    "Duty": "develop websites",
+    "Industry": "software",
+    "Work Location": "office"
+  },
+  "weigher": {
+    "Duty": "weigh goods",
+    "Industry": "food industry",
+    "Work Location": "factory"
+  },
+  "welder": {
+    "Duty": "weld",
+    "Industry": "construction",
+    "Work Location": "factory"
+  },
+  "wellhead pumper": {
+    "Duty": "pump oil from the wellhead",
+    "Industry": "oil and gas",
+    "Work Location": "oil field"
+  },
+  "wellness coach": {
+    "Duty": "help clients achieve their goals",
+    "Industry": "health and wellness",
+    "Work Location": "gym"
+  },
+  "wholesale buyer": {
+    "Duty": "buy in bulk",
+    "Industry": "retail",
+    "Work Location": "office"
+  },
+  "wildlife biologist": {
+    "Duty": "protect wildlife",
+    "Industry": "government",
+    "Work Location": "forest"
+  },
+  "winch operator": {
+    "Duty": "winch",
+    "Industry": "oil and gas",
+    "Work Location": "shipyard"
+  },
+  "window trimmer": {
+    "Duty": "trim windows",
+    "Industry": "construction",
+    "Work Location": "construction site"
+  },
+  "wood patternmaker": {
+    "Duty": "make wood patterns",
+    "Industry": "furniture",
+    "Work Location": "factory"
+  },
+  "woodworker": {
+    "Duty": "make furniture",
+    "Industry": "furniture",
+    "Work Location": "workshop"
+  },
+  "word processor": {
+    "Duty": "type documents",
+    "Industry": "publishing",
+    "Work Location": "office"
+  },
+  "writer": {
+    "Duty": "write",
+    "Industry": "film",
+    "Work Location": "home"
+  },
+  "yardmaster": {
+    "Duty": "keep trains running on time",
+    "Industry": "railroad",
+    "Work Location": "railway"
+  },
+  "yoga instructor": {
+    "Duty": "teach yoga",
+    "Industry": "yoga",
+    "Work Location": "studio"
+  },
+  "yoga therapist": {
+    "Duty": "help people",
+    "Industry": "yoga",
+    "Work Location": "yoga studio"
+  },
+  "zoologist": {
+    "Duty": "study animals",
+    "Industry": "science",
+    "Work Location": "zoo"
+  },
+  "zumba instructor": {
+    "Duty": "teach zumba",
+    "Industry": "fitness",
+    "Work Location": "gym"
+  }
+}

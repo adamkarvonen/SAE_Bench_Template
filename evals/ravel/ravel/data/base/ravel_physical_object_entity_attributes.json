@@ -1,0 +1,3380 @@
+{
+  "American football": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "Amethyst": {
+    "Category": "non-living thing",
+    "Color": "purple",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "Anjou pear": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Bosc pear": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Chartreux cat": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Cheddar cheese": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "Feta cheese": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Granny Smith": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "Lilac": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "Monstera": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "Mozzarella": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Pansy": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Peridot": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "Poinsettia": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "Steller's jay": {
+    "Category": "animal",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "acai": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "acai berry": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "aceola": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "acorn squash": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "alfalfa sprout": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "alizarin": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "alligator": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "almond": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "aloe vera": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "amaranth": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "amaryllis": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "amber": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "amethyst": {
+    "Category": "non-living things",
+    "Color": "purple",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "ant": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "antelope": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "apple": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "apricot": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "aqua": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "aquamarine": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "artichoke": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "arugula": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "asparagus": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "aubergine": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "avocado": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "axe": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "azuki bean": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "bagel": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bamboo": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "banana": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "banana squash": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "barrel": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "baseball glove": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "basil": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "basketball": {
+    "Category": "non-living thing",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "bat": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bay leaf": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bean sprout": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bear": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "beaver": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "bee": {
+    "Category": "animal",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "beehive": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "beer": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "beet": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "bicycle wheel": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "binoculars": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "bison": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "bitter melon": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "blackberry": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "blueberry": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "boar": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "bok choy": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bondi-blue": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bone": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "borlotti bean": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "bottlebrush": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "boysenberries": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "brass": {
+    "Category": "non-living things",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "broad beans": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "broccoflower": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "broccoli": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "brownie": {
+    "Category": "non-living things",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "brussels sprout": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "buffalo": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "bull": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "burgundy": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "bus": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "butter": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "buttercup": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "butternut squash": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cabbage": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cake stand": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "calabrese": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "camel": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "camera": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "canary": {
+    "Category": "animal",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "candle": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cannon": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "canoe": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "cantaloupe": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cantaloupe flesh": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "capybara": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "caraway": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cardinal": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "carmine": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "carrot": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cashew": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cassette deck": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "caterpillar": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cattle": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "cauliflower": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cayenne pepper": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "celadon": {
+    "Category": "non-living things",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "celery": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "centipede": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cerise": {
+    "Category": "non-living things",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cerulean": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "chameleon": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "charcoal": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "chard": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "chayote": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cherimoya": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cherry": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cherry blossom": {
+    "Category": "plant",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "chestnut": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "chili pepper": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "chimpanzee": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "chipmunk": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "chocolate": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "christmas tree": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "cilantro": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cinnabar": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cinnamon": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "clementine": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cloud": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "km",
+    "Texture": "soft"
+  },
+  "coal": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cobalt": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "coconut meat": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "coffee": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "coffee table": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "coffeemaker": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "computer keyboard": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "computer monitor": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "computer mouse": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "concrete": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "cookie": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "coot": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "coriander": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "corn": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "corn salad": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cornbread": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cornflower": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cornmeal": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "courgette": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cow": {
+    "Category": "animal",
+    "Color": "black and white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "cowboy hat": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "crab": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cranberry": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "cream": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "crocodile": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "croissant": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "crow": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cucumber": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "cutting board": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "daffodil": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "daikon": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "daisy": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dandelion": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dates": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "deer": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "denim": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "diaper": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dice": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "dill": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dolphin": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "door": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "doughnut": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dragon fruit": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "dried plums": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "eagle": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "edelweiss": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "egg": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "egg yolk": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "eggplant": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "elephant": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "elk": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "emerald": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "endive": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "envelope": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "eraser": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "escarole": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "feijoa": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "fennel": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "fern": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "ferret": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "fiddlehead": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "fire": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "fire extinguisher": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "fire hydrant": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "firebrick": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "flamingo": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "flax": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "flour": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "forest": {
+    "Category": "non-living things",
+    "Color": "green",
+    "Size": "km",
+    "Texture": "soft"
+  },
+  "forget me not": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "fox": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "french fries": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "frisee": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "frog": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "frying pan": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "gamboge": {
+    "Category": "non-living things",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "garlic": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "gas stove": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "ginger": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "giraffe": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "goji berries": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "goldenrod": {
+    "Category": "non-living things",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "goldfinch": {
+    "Category": "animal",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "goldfish": {
+    "Category": "animal",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "golf ball": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "golf cart": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "goose": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "gooseberries": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "gooseberry": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "gopher": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "gorilla": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "grape": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "grapefruit": {
+    "Category": "plant",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "grasshopper": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "grizzly bear": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "ground hog": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "guacamole": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "guava": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "habanero": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "hair dryer": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "hamburger": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "hand dryer": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "handgun": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "hazelnut": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "headphones": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "hedgehog": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "herb": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "herbs and spice": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "high heels": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "hippopotamus": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "hominy": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "honey": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "honeycomb": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "honeydew": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "horse": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "house": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "houseplant": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "hubbard squash": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "hyacinth macaw": {
+    "Category": "animal",
+    "Color": "blue",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "iceberg lettuce": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "iguana": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "iris": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "iron": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "ivory": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "jade": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "jalapeno": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "jasmine": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "jeans": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "kale": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "kangaroo": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "ketchup": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "kiwi": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "knife": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "koala": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "ladybug": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lagoon": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "lamb": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lantern": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lavender": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "leaf": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "lemon": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "lemur": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "leopard": {
+    "Category": "animal",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "lettuce": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "light bulb": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "light switch": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lighthouse": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "lima bean": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lime": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "limousine": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "linen": {
+    "Category": "non-living things",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "lion": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "lipstick": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "lizard": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "llama": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "lobster": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "lucuma": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "lynx": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "magnolia": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "malachite": {
+    "Category": "non-living things",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mandarin": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mangetout": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "mango": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mangosteen": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "maroon": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "marshmallow": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "matcha": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mauve": {
+    "Category": "non-living things",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mayonnaise": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "measuring cup": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "melon": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "microphone": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "milk": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "mimosa": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "miniskirt": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mink": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mint": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mobile phone": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "mole": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "monarch butterfly": {
+    "Category": "animal",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mongoose": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "moose": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "morpho": {
+    "Category": "animal",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "moss": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "motorcycle": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "mountain goat": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "mouse": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "muffin": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mug": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "mule": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "mushroom": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "muskrat": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mustang": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "mustard": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "mynah bird": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "myrtle": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "nail clipper": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "napa": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "nectarine": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "new zealand spinach": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "nopale": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "northern cardinal": {
+    "Category": "animal",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "ocean": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "km",
+    "Texture": "soft"
+  },
+  "ochre": {
+    "Category": "non-living things",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "okra": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "olive": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "olivine": {
+    "Category": "non-living things",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "opossum": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "orange": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "oregano": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "otter": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "owl": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "palm tree": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "pancake": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "panda": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "panther": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "papaya": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "paper box": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "paper towel": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "paprika": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "parakeet": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "parking meter": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "parrot": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "parsley": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "parsnip": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "passion fruit": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "passport": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "pastry": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pea": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "peanut": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "peanut butter": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pecan": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "pelican": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "penguin": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "periwinkle": {
+    "Category": "plant",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "persimmon": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pesto": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "piano": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "picnic basket": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "pig": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "pigeon": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "piglet": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pillow": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pineapple": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pinto bean": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pizza": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pizza cutter": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "plantain": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "plastic bag": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "plate": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "platter": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "platypus": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "plum": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "polar bear": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "pomegranate": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pomelo": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "popcorn": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "poppy": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "potato": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "prairie dog": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pretzel": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "puma": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "pummelo": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "pumpkin": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "quince": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "raccoon": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "radicchio": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "radish": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "raspberry": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "raven": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "razzmatazz": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "red cabbage": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "reindeer": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "remote control": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "reptile": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "rhinoceros": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "rhubarb": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "rice": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "ring binder": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "robin egg": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "romaine lettuce": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "rosemary": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "rubber ducky": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "ruby": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "rugby ball": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "runner bean": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "rust": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "saffron": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "sage": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "salad": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "salmon": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "salt": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "sand": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "sandal": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "sangria": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "sapphire": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "saucer": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "scallion": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "scarlet": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "school bus": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "sea cucumber": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "seahorse": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "seal": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "seashell": {
+    "Category": "non-living things",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "segway": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "sepia": {
+    "Category": "non-living things",
+    "Color": "brown",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "shamrock": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "shark": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "sheep": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "shotgun": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "shrew": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "shrimp": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "skateboard": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "skull": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "skunk": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "sky": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "km",
+    "Texture": "soft"
+  },
+  "smalt": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "snail": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "snake": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "snap pea": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "snappers": {
+    "Category": "animal",
+    "Color": "pink",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "snow": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "km",
+    "Texture": "soft"
+  },
+  "snowman": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "soap dispenser": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "soil": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "sombrero": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "spaghetti squash": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "sparrow": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "spatula": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "spider": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "spinach": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "spoon": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "spruce": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "squash": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "squirrel": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "star fruit": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "starfish": {
+    "Category": "animal",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "stationary bicycle": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "steam": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "steel": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "stool": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "stop sign": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "strawberry": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "street light": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "string beans": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "submarine": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "succulent": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "sugar": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "suit": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "sunflower": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "sunglasses": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "swan": {
+    "Category": "animal",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "sweet corn": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "sweet potato": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "swimming pool": {
+    "Category": "non-living thing",
+    "Color": "blue",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "sword": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tabasco pepper": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tan": {
+    "Category": "non-living things",
+    "Color": "brown",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "tangelo": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tangerine": {
+    "Category": "plant",
+    "Color": "orange",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tank": {
+    "Category": "non-living thing",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tansy": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "mm",
+    "Texture": "soft"
+  },
+  "tapir": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "taupe": {
+    "Category": "non-living things",
+    "Color": "brown",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "taxi": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tea": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "teal": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "mm",
+    "Texture": "hard"
+  },
+  "teddy bear": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "television": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tennis ball": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "thyme": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tiger": {
+    "Category": "animal",
+    "Color": "orange",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "tin can": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "tire": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "toilet": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "toilet paper": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tomatillo": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tomato": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "tooth": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "tortoise": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "treadmill": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tree": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tree house": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tripod": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "trumpet": {
+    "Category": "non-living thing",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "turkey": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "turmeric": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "turnip": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "turquoise": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "turtle": {
+    "Category": "animal",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "tuxedo": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "ube": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "ultramarine": {
+    "Category": "non-living things",
+    "Color": "blue",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "umbrella": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "unicycle": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "vase": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "vegetable": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "vermilion": {
+    "Category": "non-living things",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "violet": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "violin": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "viridian": {
+    "Category": "non-living things",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "volleyball": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "waffle": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "wall clock": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "warthog": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "wasabi": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "washing machine": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "watch": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "water chestnut": {
+    "Category": "plant",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "watercress": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "watermelon flesh": {
+    "Category": "plant",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "watermelon rind": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "waxed beans": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "weasel": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "wedding dress": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "whale": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "wheat": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "wheel": {
+    "Category": "non-living thing",
+    "Color": "black",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "wheelchair": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "white radish": {
+    "Category": "plant",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "whiteboard": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "wildcat": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "willow": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "window blind": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "wine": {
+    "Category": "non-living thing",
+    "Color": "red",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "wisteria": {
+    "Category": "plant",
+    "Color": "purple",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "wolf": {
+    "Category": "animal",
+    "Color": "gray",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "wood": {
+    "Category": "non-living thing",
+    "Color": "brown",
+    "Size": "m",
+    "Texture": "hard"
+  },
+  "worm": {
+    "Category": "animal",
+    "Color": "brown",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "wrench": {
+    "Category": "non-living thing",
+    "Color": "gray",
+    "Size": "cm",
+    "Texture": "hard"
+  },
+  "yogurt": {
+    "Category": "non-living thing",
+    "Color": "white",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "yuzu": {
+    "Category": "plant",
+    "Color": "yellow",
+    "Size": "cm",
+    "Texture": "soft"
+  },
+  "zebra": {
+    "Category": "animal",
+    "Color": "black",
+    "Size": "m",
+    "Texture": "soft"
+  },
+  "zucchini": {
+    "Category": "plant",
+    "Color": "green",
+    "Size": "cm",
+    "Texture": "soft"
+  }
+}
