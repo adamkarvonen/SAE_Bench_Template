@@ -2,6 +2,12 @@
   "$defs": {
     "AbsorptionEvalConfig": {
       "properties": {
+        "model_name": {
+          "default": "",
+          "description": "Model name. Must be set with a command line argument. For this eval, we currently recommend to only use models >= 2B parameters.",
+          "title": "Model Name",
+          "type": "string"
+        },
         "random_seed": {
           "default": 42,
           "description": "Random seed",
@@ -32,20 +38,14 @@
           "title": "Prompt Token Position",
           "type": "integer"
         },
-        "model_name": {
-          "default": "",
-          "description": "Model name. Must be set with a command line argument. For this eval, we currently recommend to only use models >= 2B parameters.",
-          "title": "Model Name",
-          "type": "string"
-        },
         "llm_batch_size": {
-          "default": null,
+          "default": 10,
           "description": "LLM batch size. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Batch Size",
           "type": "integer"
         },
         "llm_dtype": {
-          "default": "",
+          "default": "float32",
           "description": "LLM data type. This is set by default in the main script, or it can be set with a command line argument.",
           "title": "LLM Data Type",
           "type": "string"
@@ -55,6 +55,18 @@
           "description": "L1 decay for k-sparse probes.",
           "title": "K-Sparse Probe L1 Decay",
           "type": "number"
+        },
+        "k_sparse_probe_batch_size": {
+          "default": 4096,
+          "description": "Batch size for k-sparse probes.",
+          "title": "K-Sparse Probe Batch Size",
+          "type": "integer"
+        },
+        "k_sparse_probe_num_epochs": {
+          "default": 50,
+          "description": "Number of epochs for k-sparse probes.",
+          "title": "K-Sparse Probe Number of Epochs",
+          "type": "integer"
         }
       },
       "title": "AbsorptionEvalConfig",
@@ -213,6 +225,18 @@
       "description": "The version of SAE Lens that ran the evaluation.",
       "title": "SAE Lens Version"
     },
+    "sae_cfg_dict": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The configuration of the SAE (custom or from SAE Lens) that ran the evaluation. This should match the SAE Lens config schema.",
+      "title": "SAE Config Dict"
+    },
     "eval_result_unstructured": {
       "anyOf": [
         {},
@@ -233,7 +257,8 @@
     "sae_bench_commit_hash",
     "sae_lens_id",
     "sae_lens_release_id",
-    "sae_lens_version"
+    "sae_lens_version",
+    "sae_cfg_dict"
   ],
   "title": "Absorption",
   "type": "object"
