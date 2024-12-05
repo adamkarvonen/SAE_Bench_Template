@@ -613,6 +613,18 @@
       "description": "The version of SAE Lens that ran the evaluation.",
       "title": "SAE Lens Version"
     },
+    "sae_cfg_dict": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The configuration of the SAE (custom or from SAE Lens) that ran the evaluation. This should match the SAE Lens config schema.",
+      "title": "SAE Config Dict"
+    },
     "eval_result_unstructured": {
       "anyOf": [
         {},
@@ -633,7 +645,8 @@
     "sae_bench_commit_hash",
     "sae_lens_id",
     "sae_lens_release_id",
-    "sae_lens_version"
+    "sae_lens_version",
+    "sae_cfg_dict"
   ],
   "title": "Sparse Probing",
   "type": "object"
