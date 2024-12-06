@@ -81,8 +81,7 @@
         "llm_test_accuracy": {
           "description": "Linear probe accuracy when training on the full LLM residual stream",
           "title": "LLM Test Accuracy",
-          "type": "number",
-          "ui_default_display": true
+          "type": "number"
         },
         "llm_top_1_test_accuracy": {
           "anyOf": [
@@ -109,8 +108,7 @@
           ],
           "default": null,
           "description": "Linear probe accuracy when trained on the LLM top 2 residual stream channels test accuracy",
-          "title": "LLM Top 2 Test Accuracy",
-          "ui_default_display": true
+          "title": "LLM Top 2 Test Accuracy"
         },
         "llm_top_5_test_accuracy": {
           "anyOf": [
@@ -123,8 +121,7 @@
           ],
           "default": null,
           "description": "Linear probe accuracy when trained on the LLM top 5 residual stream channels test accuracy",
-          "title": "LLM Top 5 Test Accuracy",
-          "ui_default_display": true
+          "title": "LLM Top 5 Test Accuracy"
         },
         "llm_top_10_test_accuracy": {
           "anyOf": [
@@ -435,8 +432,7 @@
           ],
           "default": null,
           "description": "Linear probe accuracy when trained on all SAE latents",
-          "title": "SAE Test Accuracy",
-          "ui_default_display": true
+          "title": "SAE Test Accuracy"
         },
         "sae_top_1_test_accuracy": {
           "anyOf": [
@@ -463,8 +459,7 @@
           ],
           "default": null,
           "description": "Linear probe accuracy when trained on the top 2 SAE latents",
-          "title": "SAE Top 2 Test Accuracy",
-          "ui_default_display": true
+          "title": "SAE Top 2 Test Accuracy"
         },
         "sae_top_5_test_accuracy": {
           "anyOf": [
@@ -477,8 +472,7 @@
           ],
           "default": null,
           "description": "Linear probe accuracy when trained on the top 5 SAE latents",
-          "title": "SAE Top 5 Test Accuracy",
-          "ui_default_display": true
+          "title": "SAE Top 5 Test Accuracy"
         },
         "sae_top_10_test_accuracy": {
           "anyOf": [
