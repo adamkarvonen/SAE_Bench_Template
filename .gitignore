@@ -13,6 +13,7 @@
 */.pytest_cache/
 */.coverage
 *.pyc
+*.sh
 
 Pipfile
 Pipfile.lock
@@ -30,6 +31,7 @@ auth/*
 
 evals/ravel/data/
 evals/ravel/models/
+evals/ravel/dev/
 
 # unlearning: the forget dataset cannot be uploaded
 **bio-forget-corpus.jsonl

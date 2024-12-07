@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 packages = ["."]
 
 [project]
-name = "sae_bench_template"
+name = "SAEBench"
 version = "0.1.0"
 requires-python = ">=3.10"
 
@@ -23,7 +23,6 @@ dependencies = [
     "scikit-learn>=1.5.2",
     "collectibles>=0.1.5",
     "pydantic>=2.9.2",
-
     # Plotting stuff
     "seaborn>=0.13.2",
     "plotly>=5.22.0",
