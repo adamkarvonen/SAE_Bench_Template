@@ -24,6 +24,15 @@ TRAINER_MARKERS = {
     "gated": "d",
 }
 
+TRAINER_COLORS = {
+    "standard": "blue",
+    "jumprelu": "orange",
+    "topk": "green",
+    "p_anneal": "red",
+    "gated": "purple",
+}
+
+
 TRAINER_LABELS = {
     "standard": "Standard",
     "jumprelu": "JumpReLU",
@@ -68,6 +77,51 @@ def get_best_results(
     return results_dict
 
 
+def get_single_figure(
+    selected_saes: list[tuple[str, str]],
+    results_path: str,
+    core_results_path: str,
+    image_base_name: str,
+    k: Optional[int] = None,
+    trainer_markers: Optional[dict[str, str]] = None,
+    title: Optional[str] = None,
+    title_prefix: str = "",
+    plot_type: bool = True,
+):
+    eval_results = get_eval_results(selected_saes, results_path)
+    core_results = get_core_results(selected_saes, core_results_path)
+
+    for sae in eval_results:
+        eval_results[sae].update(core_results[sae])
+
+    custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
+
+    if not title:
+        title = f"{title_prefix}L0 vs {custom_metric_name}"
+
+    if plot_type:
+        fig = plot_2var_graph(
+            eval_results,
+            custom_metric,
+            y_label=custom_metric_name,
+            title=title,
+            output_filename=f"{image_base_name}_2var_sae_type.png",
+            trainer_markers=trainer_markers,
+            return_fig=True,
+        )
+    else:
+        fig = plot_2var_graph_dict_size(
+            eval_results,
+            custom_metric,
+            y_label=custom_metric_name,
+            title=title,
+            output_filename=f"{image_base_name}_2var_dict_size.png",
+            return_fig=True,
+        )
+
+    return fig
+
+
 def plot_results(
     selected_saes: list[tuple[str, str]],
     results_path: str,
@@ -76,6 +130,7 @@ def plot_results(
     k: Optional[int] = None,
     trainer_markers: Optional[dict[str, str]] = None,
     title_prefix: str = "",
+    return_fig: bool = False,
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -96,7 +151,7 @@ def plot_results(
         output_filename=f"{image_base_name}_3var.png",
         trainer_markers=trainer_markers,
     )
-    plot_2var_graph(
+    fig = plot_2var_graph(
         eval_results,
         custom_metric,
         y_label=custom_metric_name,
@@ -112,6 +167,9 @@ def plot_results(
         title=title_2var,
         output_filename=f"{image_base_name}_2var_dict_size.png",
     )
+
+    if return_fig:
+        return fig
 
 
 def plot_best_of_ks_results(
@@ -235,6 +293,19 @@ def get_sae_bench_train_tokens(sae_release: str, sae_id: str) -> int:
             raise ValueError("No step match found")
 
 
+def get_d_sae_string(d_sae: int) -> str:
+    rounded_d_sae = round(d_sae / 1000) * 1000
+
+    # TODO: Temp SAE Bench fix
+    if rounded_d_sae == 66000:
+        rounded_d_sae = 65000
+
+    if rounded_d_sae >= 1_000_000 and rounded_d_sae <= 1_060_000:
+        return "1M"
+    else:
+        return f"{rounded_d_sae//1000}k"
+
+
 def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) -> dict[str, dict]:
     eval_results = {}
     for sae_release, sae_id in selected_saes:
@@ -286,13 +357,7 @@ def get_eval_results(selected_saes: list[tuple[str, str]], results_path: str) ->
             sae_config, sae_release
         )
 
-        rounded_d_sae = round(sae_config["d_sae"] / 1000) * 1000
-
-        # TODO: Temp SAE Bench fix
-        if rounded_d_sae == 66000:
-            rounded_d_sae = 65000
-
-        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = rounded_d_sae
+        eval_results[f"{sae_release}_{sae_id}"]["d_sae"] = get_d_sae_string(sae_config["d_sae"])
 
         if "sae_bench" in sae_release:
             eval_results[f"{sae_release}_{sae_id}"]["train_tokens"] = get_sae_bench_train_tokens(
@@ -500,9 +565,14 @@ def plot_2var_graph(
     original_acc: Optional[float] = None,
     x_axis_key: str = "l0",
     trainer_markers: Optional[dict[str, str]] = None,
+    trainer_colors: Optional[dict[str, str]] = None,
+    return_fig: bool = False,
 ):
     if not trainer_markers:
         trainer_markers = TRAINER_MARKERS
+
+    if not trainer_colors:
+        trainer_colors = TRAINER_COLORS
     # Extract data from results
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
@@ -529,17 +599,15 @@ def plot_2var_graph(
             marker=marker,
             s=100,
             label=trainer,
+            color=TRAINER_COLORS[trainer],
             edgecolor="black",
         )
 
-        # custom legend stuff
-        _handle, _ = scatter.legend_elements(prop="sizes")
-        _handle[0].set_markeredgecolor("black")
-        _handle[0].set_markerfacecolor("white")
-        _handle[0].set_markersize(10)
-        if marker == "d":
-            _handle[0].set_markersize(13)
-        handles += _handle
+        # Create custom legend handle with both marker and color
+        legend_handle = plt.scatter(
+            [], [], marker=marker, s=100, color=TRAINER_COLORS[trainer], edgecolor="black"
+        )
+        handles.append(legend_handle)
 
         if trainer in TRAINER_LABELS:
             trainer_label = TRAINER_LABELS[trainer]
@@ -568,10 +636,11 @@ def plot_2var_graph(
     # Save and show the plot
     if output_filename:
         plt.savefig(output_filename, bbox_inches="tight")
+
+    if return_fig:
+        return fig
+
     plt.show()
-
-
-available_markers = ["o", "s", "D", "^", "v", "<", ">", "p", "h", "*"]
 
 
 def plot_2var_graph_dict_size(
@@ -585,54 +654,60 @@ def plot_2var_graph_dict_size(
     legend_location: str = "lower right",
     original_acc: Optional[float] = None,
     x_axis_key: str = "l0",
+    return_fig: bool = False,
 ):
     # Extract data
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
-
     dict_sizes = [data["d_sae"] for data in results.values()]
-
-    # Identify unique dictionary sizes and assign markers
-    unique_dict_sizes = list(set(dict_sizes))
-    marker_map = {
-        size: available_markers[i % len(available_markers)]
-        for i, size in enumerate(unique_dict_sizes)
-    }
 
     # Create the scatter plot
     fig, ax = plt.subplots(figsize=(10, 6))
 
+    # Define possible dict sizes and their markers
+    possible_sizes = ["4k", "16k", "65k", "131k", "1M"]
+
+    # Create color map with more exaggerated differences for 3 colors
+    colors = [plt.cm.Reds(x) for x in [0.1, 0.5, 0.9]]  # Light, medium, dark red
+
+    # Get unique dict sizes present in the data while preserving order from possible_sizes
+    unique_sizes = [
+        size for size in possible_sizes if size in set(v["d_sae"] for v in results.values())
+    ]
+
+    assert len(unique_sizes) <= len(colors), "Too many unique dictionary sizes for color map"
+
+    size_to_color = {size: colors[i] for i, size in enumerate(unique_sizes)}
+
     # Iterate over each unique dictionary size
     handles, labels = [], []
 
-    for dict_size in unique_dict_sizes:
+    for dict_size in unique_sizes:
         # Filter data points for the current dictionary size
         size_data = {k: v for k, v in results.items() if v["d_sae"] == dict_size}
-
-        # If there are no points, skip this size
-        if not size_data:
-            continue
 
         # Get values for l0 and custom metric for this dictionary size
         l0_values = [data[x_axis_key] for data in size_data.values()]
         custom_metric_values = [data[custom_metric] for data in size_data.values()]
+        sae_classes = [data["sae_class"] for data in size_data.values()]
 
-        # Plot data points with the assigned marker
-        scatter = ax.scatter(
-            l0_values,
-            custom_metric_values,
-            marker=marker_map[dict_size],
-            s=100,
-            label=f"Dict Size: {dict_size}",
-            edgecolor="black",
-        )
+        # Plot data points with the assigned marker and color
+        for l0, metric, sae_class in zip(l0_values, custom_metric_values, sae_classes):
+            marker = TRAINER_MARKERS[sae_class]
+            scatter = ax.scatter(
+                l0,
+                metric,
+                marker=marker,
+                s=100,
+                color=size_to_color[dict_size],
+                edgecolor="black",
+            )
 
         # Collect legend handles and labels
-        _handle, _ = scatter.legend_elements(prop="sizes")
-        _handle[0].set_markeredgecolor("black")
-        _handle[0].set_markerfacecolor("white")
-        _handle[0].set_markersize(10)
-        handles += _handle
+        _handle = plt.scatter(
+            [], [], marker="o", s=100, color=size_to_color[dict_size], edgecolor="black"
+        )
+        handles.append(_handle)
         labels.append(f"SAE Width: {dict_size}")
 
     # Set labels and title
@@ -656,6 +731,9 @@ def plot_2var_graph_dict_size(
     # Save and show the plot
     if output_filename:
         plt.savefig(output_filename, bbox_inches="tight")
+
+    if return_fig:
+        return fig
     plt.show()
 
 
