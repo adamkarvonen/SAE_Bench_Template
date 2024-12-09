@@ -87,6 +87,8 @@ def get_single_figure(
     title: Optional[str] = None,
     title_prefix: str = "",
     plot_type: bool = True,
+    baseline_sae: Optional[tuple[str, str]] = None,
+    baseline_label: Optional[str] = None,
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -95,6 +97,18 @@ def get_single_figure(
         eval_results[sae].update(core_results[sae])
 
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
+
+    if baseline_sae:
+        baseline_results = get_eval_results([baseline_sae], results_path)
+        baseline_id = f"{baseline_sae[0]}_{baseline_sae[1]}"
+        baseline_results[baseline_id].update(
+            get_core_results([baseline_sae], core_results_path)[baseline_id]
+        )
+        baseline_value = baseline_results[baseline_id][custom_metric]
+        assert baseline_label, "Please provide a label for the baseline"
+    else:
+        baseline_value = None
+        assert baseline_label is None, "Please do not provide a label for the baseline"
 
     if not title:
         title = f"{title_prefix}L0 vs {custom_metric_name}"
@@ -108,6 +122,8 @@ def get_single_figure(
             output_filename=f"{image_base_name}_2var_sae_type.png",
             trainer_markers=trainer_markers,
             return_fig=True,
+            baseline_value=baseline_value,
+            baseline_label=baseline_label,
         )
     else:
         fig = plot_2var_graph_dict_size(
@@ -117,6 +133,8 @@ def get_single_figure(
             title=title,
             output_filename=f"{image_base_name}_2var_dict_size.png",
             return_fig=True,
+            baseline_value=baseline_value,
+            baseline_label=baseline_label,
         )
 
     return fig
@@ -131,6 +149,8 @@ def plot_results(
     trainer_markers: Optional[dict[str, str]] = None,
     title_prefix: str = "",
     return_fig: bool = False,
+    baseline_sae: Optional[tuple[str, str]] = None,
+    baseline_label: Optional[str] = None,
 ):
     eval_results = get_eval_results(selected_saes, results_path)
     core_results = get_core_results(selected_saes, core_results_path)
@@ -139,6 +159,18 @@ def plot_results(
         eval_results[sae].update(core_results[sae])
 
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
+
+    if baseline_sae:
+        baseline_results = get_eval_results([baseline_sae], results_path)
+        baseline_id = f"{baseline_sae[0]}_{baseline_sae[1]}"
+        baseline_results[baseline_id].update(
+            get_core_results([baseline_sae], core_results_path)[baseline_id]
+        )
+        baseline_value = baseline_results[baseline_id][custom_metric]
+        assert baseline_label, "Please provide a label for the baseline"
+    else:
+        baseline_value = None
+        assert baseline_label is None, "Please do not provide a label for the baseline"
 
     title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
     title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
@@ -158,6 +190,8 @@ def plot_results(
         title=title_2var,
         output_filename=f"{image_base_name}_2var_sae_type.png",
         trainer_markers=trainer_markers,
+        baseline_value=baseline_value,
+        baseline_label=baseline_label,
     )
 
     plot_2var_graph_dict_size(
@@ -166,6 +200,8 @@ def plot_results(
         y_label=custom_metric_name,
         title=title_2var,
         output_filename=f"{image_base_name}_2var_dict_size.png",
+        baseline_value=baseline_value,
+        baseline_label=baseline_label,
     )
 
     if return_fig:
@@ -180,6 +216,8 @@ def plot_best_of_ks_results(
     ks: list[int],
     trainer_markers: Optional[dict[str, str]] = None,
     title_prefix: str = "",
+    baseline_sae: Optional[tuple[str, str]] = None,
+    baseline_label: Optional[str] = None,
 ):
     dummy_k = 0
 
@@ -194,6 +232,20 @@ def plot_best_of_ks_results(
     custom_metric = "best_custom_metric"
     custom_metric_name = custom_metric_name.replace(f"Top {dummy_k}", f"Best of {ks}")
     eval_results = get_best_results(eval_results, results_path, ks)
+
+    if baseline_sae:
+        baseline_results = get_eval_results([baseline_sae], results_path)
+        baseline_id = f"{baseline_sae[0]}_{baseline_sae[1]}"
+        baseline_results[baseline_id].update(
+            get_core_results([baseline_sae], core_results_path)[baseline_id]
+        )
+
+        baseline_results = get_best_results(baseline_results, results_path, ks)
+        baseline_value = baseline_results[baseline_id]["best_custom_metric"]
+        assert baseline_label, "Please provide a label for the baseline"
+    else:
+        baseline_value = None
+        assert baseline_label is None, "Please do not provide a label for the baseline"
 
     title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
     title_2var = f"{title_prefix}L0 vs {custom_metric_name}"
@@ -213,6 +265,8 @@ def plot_best_of_ks_results(
         title=title_2var,
         output_filename=f"{image_base_name}_2var_sae_type.png",
         trainer_markers=trainer_markers,
+        baseline_value=baseline_value,
+        baseline_label=baseline_label,
     )
 
     plot_2var_graph_dict_size(
@@ -221,6 +275,8 @@ def plot_best_of_ks_results(
         y_label=custom_metric_name,
         title=title_2var,
         output_filename=f"{image_base_name}_2var_dict_size.png",
+        baseline_value=baseline_value,
+        baseline_label=baseline_label,
     )
 
 
@@ -562,7 +618,8 @@ def plot_2var_graph(
     ylims: Optional[tuple[float, float]] = None,
     output_filename: Optional[str] = None,
     legend_location: str = "lower right",
-    original_acc: Optional[float] = None,
+    baseline_value: Optional[float] = None,
+    baseline_label: Optional[str] = None,
     x_axis_key: str = "l0",
     trainer_markers: Optional[dict[str, str]] = None,
     trainer_colors: Optional[dict[str, str]] = None,
@@ -620,8 +677,10 @@ def plot_2var_graph(
     ax.set_ylabel(y_label)
     ax.set_title(title)
 
-    if original_acc:
-        ax.axhline(original_acc, color="red", linestyle="--", label="Original Probe Accuracy")
+    if baseline_value is not None:
+        ax.axhline(baseline_value, color="red", linestyle="--", label=baseline_label)
+        labels.append(baseline_label)
+        handles.append(Line2D([0], [0], color="red", linestyle="--", label=baseline_label))
 
     ax.legend(handles, labels, loc=legend_location)
 
@@ -652,7 +711,8 @@ def plot_2var_graph_dict_size(
     ylims: Optional[tuple[float, float]] = None,
     output_filename: Optional[str] = None,
     legend_location: str = "lower right",
-    original_acc: Optional[float] = None,
+    baseline_value: Optional[float] = None,
+    baseline_label: Optional[str] = None,
     x_axis_key: str = "l0",
     return_fig: bool = False,
 ):
@@ -715,8 +775,10 @@ def plot_2var_graph_dict_size(
     ax.set_ylabel(y_label)
     ax.set_title(title)
 
-    if original_acc:
-        ax.axhline(original_acc, color="red", linestyle="--", label="Original Probe Accuracy")
+    if baseline_value:
+        ax.axhline(baseline_value, color="red", linestyle="--", label=baseline_label)
+        labels.append(baseline_label)
+        handles.append(Line2D([0], [0], color="red", linestyle="--", label=baseline_label))
 
     ax.legend(handles, labels, loc=legend_location)
 
