@@ -104,7 +104,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "eval_results/scr",
+                "eval_results",  # We add scr or tpp depending on perform_scr
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,
@@ -121,7 +121,7 @@ def run_evals(
                 ),
                 selected_saes,
                 device,
-                "eval_results/tpp",
+                "eval_results",  # We add scr or tpp depending on perform_scr
                 force_rerun,
                 clean_up_activations=True,
                 save_activations=save_activations,

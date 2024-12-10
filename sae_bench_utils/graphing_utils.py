@@ -147,6 +147,7 @@ def plot_results(
     image_base_name: str,
     k: Optional[int] = None,
     trainer_markers: Optional[dict[str, str]] = None,
+    trainer_colors: Optional[dict[str, str]] = None,
     title_prefix: str = "",
     return_fig: bool = False,
     baseline_sae: Optional[tuple[str, str]] = None,
@@ -190,6 +191,7 @@ def plot_results(
         title=title_2var,
         output_filename=f"{image_base_name}_2var_sae_type.png",
         trainer_markers=trainer_markers,
+        trainer_colors=trainer_colors,
         baseline_value=baseline_value,
         baseline_label=baseline_label,
     )
@@ -202,6 +204,7 @@ def plot_results(
         output_filename=f"{image_base_name}_2var_dict_size.png",
         baseline_value=baseline_value,
         baseline_label=baseline_label,
+        trainer_markers=trainer_markers,
     )
 
     if return_fig:
@@ -656,13 +659,13 @@ def plot_2var_graph(
             marker=marker,
             s=100,
             label=trainer,
-            color=TRAINER_COLORS[trainer],
+            color=trainer_colors[trainer],
             edgecolor="black",
         )
 
         # Create custom legend handle with both marker and color
         legend_handle = plt.scatter(
-            [], [], marker=marker, s=100, color=TRAINER_COLORS[trainer], edgecolor="black"
+            [], [], marker=marker, s=100, color=trainer_colors[trainer], edgecolor="black"
         )
         handles.append(legend_handle)
 
@@ -715,7 +718,11 @@ def plot_2var_graph_dict_size(
     baseline_label: Optional[str] = None,
     x_axis_key: str = "l0",
     return_fig: bool = False,
+    trainer_markers: Optional[dict[str, str]] = None,
 ):
+    if not trainer_markers:
+        trainer_markers = TRAINER_MARKERS
+
     # Extract data
     l0_values = [data[x_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
@@ -753,7 +760,7 @@ def plot_2var_graph_dict_size(
 
         # Plot data points with the assigned marker and color
         for l0, metric, sae_class in zip(l0_values, custom_metric_values, sae_classes):
-            marker = TRAINER_MARKERS[sae_class]
+            marker = trainer_markers[sae_class]
             scatter = ax.scatter(
                 l0,
                 metric,
