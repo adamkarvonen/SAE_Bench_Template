@@ -21,7 +21,7 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **[Spurious Correlation Removal (SCR)](https://arxiv.org/abs/2411.18895)**
 - **[Targeted Probe Pertubation (TPP)](https://arxiv.org/abs/2411.18895)**
 - **Sparse Probing**
-- **[Unlearning](https://arxiv.org/abs/2410.19278)** (requires access to the WMDP dataset, see README)
+- **[Unlearning](https://arxiv.org/abs/2410.19278)**
 
 ### Supported Models and SAEs
 - **SAE Lens Pretrained Models**: Supports evaluations on any SAE Lens pretrained model.
