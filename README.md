@@ -23,8 +23,10 @@ SAE Bench is a comprehensive suite of 8 evaluations for Sparse Autoencoder (SAE)
 - **Sparse Probing**
 - **[Unlearning](https://arxiv.org/abs/2410.19278)**
 
+For more information, refer to our [blog post](https://www.neuronpedia.org/sae-bench/info).
+
 ### Supported Models and SAEs
-- **SAE Lens Pretrained Models**: Supports evaluations on any SAE Lens pretrained model.
+- **SAE Lens Pretrained SAEs**: Supports evaluations on any SAE Lens SAE.
 - **Custom SAEs**: Supports any general SAE object with `encode()` and `decode()` methods (see [Custom SAE Usage](#custom-sae-usage)).
 
 ### Installation
