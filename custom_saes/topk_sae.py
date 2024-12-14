@@ -5,72 +5,56 @@ from huggingface_hub import hf_hub_download
 import numpy as np
 from abc import ABC, abstractmethod
 import json
-from custom_saes import custom_sae_config as sae_config
 from typing import Optional
 
-
-class Dictionary(ABC):
-    """
-    A dictionary consists of a collection of vectors, an encoder, and a decoder.
-    """
-
-    dict_size: int  # number of features in the dictionary
-    activation_dim: int  # dimension of the activation vectors
-
-    @abstractmethod
-    def encode(self, x):
-        """
-        Encode a vector x in the activation space.
-        """
-        pass
-
-    @abstractmethod
-    def decode(self, f):
-        """
-        Decode a dictionary vector f (i.e. a linear combination of dictionary elements)
-        """
-        pass
+from custom_saes import custom_sae_config as sae_config
 
 
-class AutoEncoderTopK(Dictionary, nn.Module):
+class AutoEncoderTopK(nn.Module):
     """
     The top-k autoencoder architecture and initialization used in https://arxiv.org/abs/2406.04093
-    NOTE: (From Adam Karvonen) There is an unmaintained implementation using Triton kernels in the topk-triton-implementation branch.
-    We abandoned it as we didn't notice a significant speedup and it added complications, which are noted
-    in the AutoEncoderTopK class docstring in that branch.
-
-    With some additional effort, you can train a Top-K SAE with the Triton kernels and modify the state dict for compatibility with this class.
-    Notably, the Triton kernels currently have the decoder to be stored in nn.Parameter, not nn.Linear, and the decoder weights must also
-    be stored in the same shape as the encoder.
+    Implementation adapted from saprmarks/dictionary_learning repo.
     """
 
     def __init__(
-        self, d_in: int, d_sae: int, k: int, model_name: str, hook_layer: int, hook_name: Optional[str] = None
+        self,
+        d_in: int,
+        d_sae: int,
+        k: int,
+        model_name: str,
+        hook_layer: int,
+        hook_name: Optional[str] = None,
     ):
         super().__init__()
         self.activation_dim = d_in
         self.dict_size = d_sae
         self.k = k
 
-        self.encoder = nn.Linear(d_in, d_sae)
-        self.encoder.bias.data.zero_()
+        # self.W_enc = nn.Linear(d_in, d_sae)
+        # self.W_enc.bias.data.zero_()
+        # self.W_dec = nn.Linear(d_sae, d_in, bias=False)
+        # self.W_dec.weight.data = self.W_enc.weight.data.clone().T
+        # self.b_dec = nn.Parameter(t.zeros(d_in))
+        # self.device: t.device = t.device("cuda" if t.cuda.is_available() else "cpu")
+        # self.dtype: t.dtype = t.float32
+        # self.set_decoder_norm_to_unit_norm()
 
-        self.decoder = nn.Linear(d_sae, d_in, bias=False)
-        self.decoder.weight.data = self.encoder.weight.data.clone().T
+        self.W_enc = nn.Parameter(t.zeros(d_in, d_sae))
+        self.W_dec = nn.Parameter(t.zeros(d_sae, d_in))
+        self.b_enc = nn.Parameter(t.zeros(d_sae))
+        self.b_dec = nn.Parameter(t.zeros(d_in))
         self.device: t.device = t.device("cuda" if t.cuda.is_available() else "cpu")
         self.dtype: t.dtype = t.float32
-        self.set_decoder_norm_to_unit_norm()
 
         if hook_name is None:
             hook_name = f"blocks.{hook_layer}.hook_resid_post"
 
-        self.b_dec = nn.Parameter(t.zeros(d_in))
         self.cfg = sae_config.CustomSAEConfig(
             model_name, d_in=d_in, d_sae=d_sae, hook_name=hook_name, hook_layer=hook_layer
         )
 
     def encode(self, x: t.Tensor, return_topk: bool = False):
-        post_relu_feat_acts_BF = nn.functional.relu(self.encoder(x - self.b_dec))
+        post_relu_feat_acts_BF = nn.functional.relu((x - self.b_dec) @ self.W_enc + self.b_enc)
         post_topk = post_relu_feat_acts_BF.topk(self.k, sorted=False, dim=-1)
 
         # We can't split immediately due to nnsight
@@ -86,7 +70,7 @@ class AutoEncoderTopK(Dictionary, nn.Module):
             return encoded_acts_BF
 
     def decode(self, x: t.Tensor) -> t.Tensor:
-        return self.decoder(x) + self.b_dec
+        return x @ self.W_dec + self.b_dec
 
     def forward(self, x: t.Tensor, output_features: bool = False):
         encoded_acts_BF = self.encode(x)
@@ -96,39 +80,6 @@ class AutoEncoderTopK(Dictionary, nn.Module):
         else:
             return x_hat_BD, encoded_acts_BF
 
-    @t.no_grad()
-    def set_decoder_norm_to_unit_norm(self):
-        eps = t.finfo(self.decoder.weight.dtype).eps
-        norm = t.norm(self.decoder.weight.data, dim=0, keepdim=True)
-        self.decoder.weight.data /= norm + eps
-
-    @t.no_grad()
-    def remove_gradient_parallel_to_decoder_directions(self):
-        assert self.decoder.weight.grad is not None  # keep pyright happy
-
-        parallel_component = einops.einsum(
-            self.decoder.weight.grad,
-            self.decoder.weight.data,
-            "d_in d_sae, d_in d_sae -> d_sae",
-        )
-        self.decoder.weight.grad -= einops.einsum(
-            parallel_component,
-            self.decoder.weight.data,
-            "d_sae, d_in d_sae -> d_in d_sae",
-        )
-
-    def from_pretrained(self, path, k: int, device=None):
-        """
-        Load a pretrained autoencoder from a file.
-        """
-        state_dict = t.load(path)
-        dict_size, activation_dim = state_dict["encoder.weight"].shape
-        autoencoder = AutoEncoderTopK(activation_dim, dict_size, k)
-        autoencoder.load_state_dict(state_dict)
-        if device is not None:
-            autoencoder.to(device)
-        return autoencoder
-    
     # required as we have device and dtype class attributes
     def to(self, *args, **kwargs):
         super().to(*args, **kwargs)
@@ -190,15 +141,18 @@ def load_topk_sae(repo_id: str, filename: str, config_filename: str, layer: int)
         hook_layer=layer,
     )
 
-    sae.load_state_dict(pt_params)
+    sae.load_state_dict(renamed_params)
 
     return sae
 
 
 if __name__ == "__main__":
-    repo_id = "canrager/additivity"
-    filename = "pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_0/ae.pt"
-    config_filename = "pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_0/config.json"
+    repo_id = "webcrg/additivity"
+    filename = "gemma-2-2b_layer-4_width-2pow13_date-1204/trainer_0/ae.pt"
+    config_filename = "gemma-2-2b_layer-4_width-2pow13_date-1204/trainer_0/config.json"
     layer = 4
 
     sae = load_topk_sae(repo_id, filename, config_filename, layer)
+    sae = sae.to(sae.device)
+    dummy_act = t.randn(1, 20, 2304).to(sae.device)
+    print(sae(dummy_act))

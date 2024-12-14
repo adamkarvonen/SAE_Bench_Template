@@ -43,7 +43,7 @@ def load_and_format_sae(
     """Handle both pretrained SAEs (identified by string) and custom SAEs (passed as objects)"""
     if isinstance(sae_object_or_sae_lens_id, str):
         sae, _, sparsity = SAE.from_pretrained(
-            release=sae_release_or_unique_id,
+        release=sae_release_or_unique_id,
             sae_id=sae_object_or_sae_lens_id,
             device=device,
         )

@@ -83,6 +83,8 @@ def plot_results(
     for sae in eval_results:
         eval_results[sae].update(core_results[sae])
 
+    print(eval_results)
+
     custom_metric, custom_metric_name = get_custom_metric_key_and_name(results_path, k)
 
     title_3var = f"{title_prefix}L0 vs Loss Recovered vs {custom_metric_name}"
@@ -346,6 +348,8 @@ def plot_3var_graph(
     l0_values = [data[x_axis_key] for data in results.values()]
     frac_recovered_values = [data[y_axis_key] for data in results.values()]
     custom_metric_values = [data[custom_metric] for data in results.values()]
+
+    
 
     # Create the scatter plot
     fig, ax = plt.subplots(figsize=(10, 6))

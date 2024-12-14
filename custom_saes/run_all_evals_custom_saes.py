@@ -16,17 +16,18 @@ RANDOM_SEED = 42
 
 MODEL_CONFIGS = {
     "pythia-70m-deduped": {"batch_size": 512, "dtype": "float32", "layers": [4], "d_model": 512},
-    "gemma-2-2b": {"batch_size": 32, "dtype": "bfloat16", "layers": [5, 12, 19], "d_model": 2304},
+    "gemma-2-2b": {"batch_size": 32, "dtype": "bfloat16", "layers": [4], "d_model": 2304},
 }
 
+output_base_folder = "eval_results/additivity"
 output_folders = {
-    "absorption": "eval_results/absorption",
-    "autointerp": "eval_results/autointerp",
-    "core": "eval_results/core",
-    "scr": "eval_results/scr",
-    "tpp": "eval_results/tpp",
-    "sparse_probing": "eval_results/sparse_probing",
-    "unlearning": "eval_results/unlearning",
+    "absorption": os.path.join(output_base_folder, "absorption"),
+    "autointerp": os.path.join(output_base_folder, "autointerp"),
+    "core": os.path.join(output_base_folder, "core"),
+    "scr": os.path.join(output_base_folder, "scr"),
+    "tpp": os.path.join(output_base_folder, "tpp"),
+    "sparse_probing": os.path.join(output_base_folder, "sparse_probing"),
+    "unlearning": os.path.join(output_base_folder, "unlearning"),
 }
 
 
@@ -188,8 +189,8 @@ if __name__ == "__main__":
 
     device = general_utils.setup_environment()
 
-    model_name = "pythia-70m-deduped"
-    # model_name = "gemma-2-2b"
+    # model_name = "pythia-70m-deduped"
+    model_name = "gemma-2-2b"
     d_model = MODEL_CONFIGS[model_name]["d_model"]
     llm_batch_size = MODEL_CONFIGS[model_name]["batch_size"]
     llm_dtype = MODEL_CONFIGS[model_name]["dtype"]
@@ -200,14 +201,16 @@ if __name__ == "__main__":
 
     # Select your eval types here.
     eval_types = [
-        # "absorption",
-        "autointerp",
-        "core",
-        "scr",
-        "tpp",
+        # "scr",
+        # "tpp",
         "sparse_probing",
-        # "unlearning",
+        # "core",
     ]
+    # eval_types = [
+    #     "absorption",
+    #     # "autointerp",
+    #     # "unlearning",
+    # ]
 
     if "autointerp" in eval_types:
         try:
@@ -220,13 +223,14 @@ if __name__ == "__main__":
 
     # If evaluating multiple SAEs on the same layer, set save_activations to True
     # This will require at least 100GB of disk space
-    save_activations = False
+    save_activations = True
 
     for hook_layer in MODEL_CONFIGS[model_name]["layers"]:
-        for trainer_id in range(12):
-            repo_id = "canrager/additivity"
-            filename = f"pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_{trainer_id}/ae.pt"
-            config_filename = f"pythia-70m-deduped_layer-4_topk_width-2pow14_date-1201/trainer_{trainer_id}/config.json"
+        for trainer_id in range(16):
+            repo_id = "webcrg/additivity"
+            trainer_path = f"gemma-2-2b_layer-4_width-2pow13_date-1204/trainer_{trainer_id}"
+            filename = os.path.join(trainer_path, "ae.pt")
+            config_filename = os.path.join(trainer_path, "config.json")
             sae = load_topk_sae(repo_id, filename, config_filename, hook_layer)
             # sae = identity_sae.IdentitySAE(model_name, d_model, hook_layer, context_size=128)
             selected_saes = [(f"{model_name}_layer_{hook_layer}_additivity_trainer_{trainer_id}", sae)]
@@ -250,5 +254,5 @@ if __name__ == "__main__":
                 eval_types=eval_types,
                 api_key=api_key,
                 force_rerun=False,
-                save_activations=False,
+                save_activations=save_activations,
             )
